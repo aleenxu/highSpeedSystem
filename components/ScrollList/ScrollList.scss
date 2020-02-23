@@ -1,0 +1,151 @@
+// 折叠面板
+:global(.ant-collapse-icon-position-right > .ant-collapse-item > .ant-collapse-header){
+    background: rgba(19,27,37,.8);
+    color:#fff;
+    padding-left:40px;
+}
+:global(.ant-collapse > .ant-collapse-item:last-child){
+    border-radius: unset;
+}
+:global(.ant-collapse){
+    background:unset;
+    border:unset;
+    border-bottom:1px solid #ccc;
+    color:#fff;
+    border-radius: 0;
+    position: relative;
+}
+:global(.ant-collapse-content){
+    background:unset;
+    color:#fff;
+    border-radius: unset;
+}
+:global(.ant-collapse > i){
+    position: absolute;
+    left:10px;
+    top:16px;
+    z-index: 99;
+}
+// 数据列表
+.listBox{
+    .listItem{
+        display: flex;
+        justify-content: space-around;
+        border-bottom:1px #cdcdcd dotted;
+        > span {
+            padding:3px 5px;
+            font-size: 12px;
+            color:#6d738d;
+            text-align: center;
+        }
+        > span.tit {
+            color:#4a759c;
+            border-right:1px #4a759c solid;
+
+            padding:0 5px;
+        }
+        > span.state {
+            color:#ff0000;
+        }
+        > span:nth-child(1),> span:nth-child(3),> span:nth-child(5){
+            width:60px;
+        }
+        > span:nth-child(2){
+            width:90px;
+            white-space:nowrap; 
+            overflow:hidden; 
+            text-overflow:ellipsis;
+            box-sizing: border-box;
+        }
+        > span:nth-child(4){
+            width:50px;
+        }
+    }
+    .listItem:first-child{
+        border-bottom:unset;
+    }
+    .listItem:last-child{
+        border-bottom:unset;
+    }
+}
+// 进度条
+.ProgressTotal{
+    padding:0 0 8px;
+    text-align: right;
+    display: block;
+    font-size:12px;
+    color:#4a759c;
+    >em{
+        display: flex;
+        justify-self: start;
+        font-style: normal;
+        color:#fff;
+    }
+}
+.ProgressBox{
+    padding:2px;
+    display: flex;
+    justify-content: center;
+    color:#4a759c;
+    >em{
+        width:80px;
+        text-align: right;
+        display: inline-block;
+        font-size:12px;
+        font-style: normal;
+        margin-right:8px;
+        position: relative;
+        top:2px;
+    }
+}
+:global(.ant-progress-text){
+    color:#fff;
+}
+// eacharts
+:global(.ant-collapse-content > .ant-collapse-content-box){
+    padding:8px 0;
+}
+.eachartsBox{
+    display: flex;
+    justify-content: space-around;
+    .leftEacharts{
+        width:100%;
+        display: flex;
+        flex:1;
+    }
+    .rightInfoBox{
+        display: flex;
+        flex:2;
+        align-items: center;
+        flex-wrap: wrap;
+        > p{
+            width:100%;
+            display: flex;
+            justify-content: space-around;
+            > span{
+                flex: 1;
+                text-align: center;
+                font-size: 12px;;
+                flex-wrap: nowrap;
+            }
+            > span:nth-child(1){
+               color:#74ccd3;
+            }
+            > span:nth-child(2){
+               color:#2762a5
+            }
+            > span:nth-child(3){
+               color:#5cff6b
+            }
+            > span:nth-child(4){
+               color:#2777a5
+            }
+        }
+        > p:nth-child(1){
+            span{
+                text-align: right;
+                cursor: pointer;
+            }
+        }
+    }
+}

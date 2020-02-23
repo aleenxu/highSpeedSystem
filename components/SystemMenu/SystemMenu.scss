@@ -1,0 +1,44 @@
+.SystemMenuBox {
+  background: #0a1a29;
+  position: relative;
+  .logoBox{
+    margin:0 60px;
+  }
+  :global(.ant-menu-horizontal) {
+    line-height: 50px;
+    background: #0a1a29;
+    color:#fff;
+  }
+  :global(.ant-menu-horizontal > .ant-menu-item > a) {
+    color:#fff;
+  }
+  :global(.ant-menu-horizontal > .ant-menu-item > a:hover) {
+    color:#1890ff;
+  }
+  :global(.ant-menu-horizontal > .ant-menu-item-selected > a) {
+    color:#1890ff;
+  }
+  
+}
+:global(.ant-menu-submenu > .ant-menu) {
+    background-color: #163451!important;
+    color:#fff;
+    border:1px #1890ff solid;
+}
+:global(.ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected){
+  border-bottom:1px #1890ff solid;
+  background-color: rgba(255,255,255,.1) !important;
+}
+:global(.ant-menu-vertical .ant-menu-item){
+  margin:0;
+}
+:global(.ant-menu-vertical .ant-menu-item:not(:last-child)){
+  margin:0;
+}
+:global(.ant-menu-item > a){
+  color:#fff;
+}
+:global(.ant-menu-horizontal){
+  display: inline-block;
+  border-bottom: none;
+}

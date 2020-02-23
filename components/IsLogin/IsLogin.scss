@@ -1,0 +1,37 @@
+.isLoginBox{
+    position: absolute;
+    top:10px;
+    right:10px;
+    color:#fff;
+    .imgHead{
+        border:1px #fff solid;
+        border-radius: 100%;
+        width:30px;
+        height:30px;
+        margin-right:5px;
+        color:#fff;
+        line-height:30px;
+    }
+    .arrow{
+        color:#fff;
+        font-size:20px;
+    }
+}
+:global(.ant-dropdown-menu) {
+    background-color: #163451!important;
+    border:1px #1890ff solid;
+    padding:0;
+}
+:global(.ant-dropdown-menu-item) {
+    color:#fff;
+}
+:global(.ant-dropdown-menu-item-active) {
+    color:#1890ff;
+    background-color: rgba(255,255,255,.1) !important;
+}
+:global(.ant-dropdown-menu-item:hover) {
+    color:#1890ff;
+    background-color: rgba(255,255,255,.1) !important;
+}
+
+
