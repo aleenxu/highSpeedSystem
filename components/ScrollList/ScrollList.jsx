@@ -116,7 +116,7 @@ class ScrollList extends React.Component {
             >
               <Icon type="appstore" /><Panel header="管控方案管理" key="1">
                 <div>
-                  <div className={styles.ProgressTotal}><em>管控方案发布管理</em>方案总数:16</div>
+                  <div className={styles.ProgressTotal}><em>管控方案发布管理</em>方案总数：16</div>
                   <div className={styles.ProgressBox}><em>待发布</em><Progress strokeColor="#ed7d30" showInfo="false" percent={18.75} format={percent => `${3}`} status="active" /></div>
                   <div className={styles.ProgressBox}><em>请求发布</em><Progress strokeColor="#34baff" percent={25} format={percent => `${4}`} status="active" /></div>
                   <div className={styles.ProgressBox}><em>已发布</em><Progress strokeColor="#f4ea2a" percent={12.5} format={percent => `${2}`} status="active" /></div>
