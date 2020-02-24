@@ -1,1 +1,111 @@
-.MonitoringModule{}
+.MonitoringModule{
+    position: fixed;
+    left:0;
+    right:0;
+    bottom:0;
+    height: 100%;
+    width: 100%;
+    .searchBox{
+        position: absolute;
+        top:55px;
+        left:24%;
+        z-index: 9;
+        margin-left: 15px;
+        :global(.ant-input){
+            height: 28px;
+            line-height: 28px;
+            background: rgba(21,24,30,.7);
+            border-radius: unset;
+            border-color: #959595;
+            color: #fff;
+            font-size: 12px;
+        }
+        :global(.ant-input-search-button){
+            border: unset;
+            height: 28px;
+        }
+    }
+    .mapIconManage{
+        position: absolute;
+        top:55px;
+        right:24%;
+        z-index: 9;
+        margin-right: 15px;
+        border:1px #838a9a solid;    
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background:#153a61;
+        box-sizing: border-box;
+        > span {
+            padding:2px 5px;
+            border-right:1px #838a9a solid; 
+            font-size: 14px;
+            color: #fff;
+            cursor: pointer;
+            &:hover{
+                background: #1b4574;
+            }
+        } 
+        > span.select{
+            background: #1b4574;
+        }
+        > span:last-child {
+            border-right:unset; 
+        } 
+    }
+    .roadState{
+        position: absolute;
+        left:24%;
+        bottom:5px;
+        z-index: 9;
+        padding:10px 15px 5px;
+        margin-left: 15px;
+        border:1px #838a9a solid;    
+        background: rgba(0,1,6,.5);
+        color:#fff;
+        
+        > p {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding-bottom: 8px;
+            > h5{
+                width:100%;
+                color:#fff;
+                background: url(../../imgs/icon_status.png) no-repeat;
+                background-position: left center;
+                text-indent: 20px;
+
+            }
+            > span{
+                padding:2px 4px;
+                color: #fff;
+                display: flex;
+                font-size:12px;
+            }
+            > span:nth-child(1){
+                background:#ff263a;
+            }
+            > span:nth-child(2){
+                background: #ff6000;
+            }
+            > span:nth-child(3){
+                background: #ffcc00;
+            }
+            > span:nth-child(4){
+                background: #26ff6d;
+            }
+        }
+        > p:last-child{
+            padding-bottom: 0px;
+            h5{
+                background: url(../../imgs/icon_accident.png) no-repeat;
+                background-position: left center;
+                text-indent: 30px;
+            }
+        }
+        
+    }
+}
