@@ -24,7 +24,12 @@ class SidePop extends React.Component {
   componentDidMount = () => {
 
   }
-
+  handleEventPopup = (Boolean) => {
+    const { handleEventPopup } = this.props
+    if (handleEventPopup) {
+      handleEventPopup(Boolean)
+    }
+  }
   render() {
     const { boxLeft, boxRight } = this.state
     const eachartsData = {} //eacharts数据
@@ -56,7 +61,7 @@ class SidePop extends React.Component {
       <div style={this.styles}>
         {boxRight === 'unset' &&
           <div style={{ width: '100%' }}>
-            <ScrollList type="1" dataRes="eacharts"></ScrollList>
+            <ScrollList type="1" dataRes="eacharts" handleEventPopup={this.handleEventPopup}></ScrollList>
             <ScrollList Tit="交通拥堵(1)" Title={listTitData} dataRes={listData}></ScrollList>
             <ScrollList Tit="道路施工(1)" Title={listTitData} dataRes={listData}></ScrollList>
             <ScrollList Tit="极端天气(1)" Title={listTitData} dataRes={listData}></ScrollList>

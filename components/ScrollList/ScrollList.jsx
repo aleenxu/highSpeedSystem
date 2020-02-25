@@ -77,6 +77,12 @@ class ScrollList extends React.Component {
     }
     return option
   }
+  handleEventPopup = (Boolean) => {
+    const { handleEventPopup } = this.props
+    if (handleEventPopup) {
+      handleEventPopup(Boolean)
+    }
+  }
   render() {
     const { listType, listTit, listTitle, data } = this.state
     return (
@@ -88,7 +94,9 @@ class ScrollList extends React.Component {
               onChange={callback}
               expandIconPosition="right"
             >
-              <Icon type="pie-chart" /><Panel header="事件监视" key="1">
+              <Icon type="pie-chart" />
+              <Panel header="事件监视" key="1">
+                <Icon type="setting" className={styles.setting} onClick={() => { this.handleEventPopup(true) }} />
                 <div className={styles.eachartsBox}>
                   <div className={styles.leftEacharts}>
                     <ReactEcharts option={this.getOption()} style={{ height: '100px', width: '100%' }} />
@@ -104,6 +112,7 @@ class ScrollList extends React.Component {
                   </div>
                 </div>
               </Panel>
+
             </Collapse>
           </div>
         }
