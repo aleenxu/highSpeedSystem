@@ -3,6 +3,7 @@ import SystemMenu from '../../components/SystemMenu/SystemMenu'
 import GMap from '../../components/GMap/GMap'
 import SidePop from '../../components/SidePop/SidePop'
 import styles from './MonitoringModule.scss'
+import classNames from 'classnames'
 import { Input, Checkbox, Radio, Icon } from 'antd';
 
 const { Search } = Input;
@@ -22,25 +23,36 @@ class MonitoringModule extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      eventPopup: null // 事件检测过滤设置弹窗数据
+      eventPopup: null,// 事件检测过滤设置弹窗数据
+      controlPopup: null, // 管控方案检测过滤设置
     }
   }
   componentDidMount = () => {
 
   }
   // 控制事件检测过滤设置弹窗
-  handleEventPopup = (boolean) => {
-    this.setState({
-      eventPopup: boolean,
-    })
+  handleEventPopup = (type, boolean) => {
+    console.log(type, boolean);
+    
+    if (type === 'Event') {
+      this.setState({
+        eventPopup: boolean,
+      })
+    }
+    if (type === 'Control') {
+      this.setState({
+        controlPopup: boolean,
+      })
+    }
+
   }
   render() {
-    const { eventPopup } = this.state
+    const { eventPopup, controlPopup } = this.state
     return (
       <div className={styles.MonitoringModule}>
         <SystemMenu />
         <SidePop left="5px" handleEventPopup={this.handleEventPopup} />
-        <SidePop right="5px" />
+        <SidePop right="5px" handleEventPopup={this.handleEventPopup}/>
         <GMap />
         <div className={styles.searchBox}><Search placeholder="请输入内容" onSearch={value => console.log(value)} enterButton /></div>
         <div className={styles.mapIconManage}>
@@ -60,7 +72,7 @@ class MonitoringModule extends React.Component {
         {eventPopup ?
           <div className={styles.MaskBox}>
             <div className={styles.EventPopup}>
-              <div className={styles.Title}>事件检测过滤设置<Icon className={styles.Close} onClick={() => { this.handleEventPopup(false) }} type="close" /></div>
+              <div className={styles.Title}>事件检测过滤设置<Icon className={styles.Close} onClick={() => { this.handleEventPopup('Event', false) }} type="close" /></div>
               <div className={styles.Centent}>
                 <div className={styles.ItemBox}>
                   <span className={styles.ItemName}>道&nbsp;路&nbsp;名&nbsp;称&nbsp;:</span>
@@ -91,13 +103,38 @@ class MonitoringModule extends React.Component {
                   </div>
                 </div>
                 <div className={styles.ItemFooter}>
-                  <span onClick={() => { this.handleEventPopup(false) }}>确认</span>
-                  <span onClick={() => { this.handleEventPopup(false) }}>返回</span>
+                  <span onClick={() => { this.handleEventPopup('Event', false) }}>确认</span>
+                  <span onClick={() => { this.handleEventPopup('Event', false) }}>返回</span>
                 </div>
               </div>
             </div>
           </div> : null}
-
+        {/* 管控方案检测过滤设置 */}
+        {controlPopup ?
+          <div className={styles.MaskBox}>
+            <div className={classNames(styles.EventPopup, styles.ControlPopup)}>
+              <div className={styles.Title}>管控方案检测过滤设置<Icon className={styles.Close} onClick={() => { this.handleEventPopup('Control', false) }} type="close" /></div>
+              <div className={styles.Centent}>
+                <div className={styles.ItemBox}>
+                  <span className={styles.ItemName}>上&nbsp;报&nbsp;时&nbsp;间&nbsp;:</span>
+                  <div className={styles.ItemInput}>
+                    <Radio.Group name="radiogroup" defaultValue={1}>
+                      <Radio value={1}>待发布</Radio>
+                      <Radio value={2}>请求发布</Radio>
+                      <Radio value={3}>发布中</Radio>
+                      <Radio value={4}>撤销</Radio>
+                      <Radio value={5}>延时</Radio>
+                      <Radio value={6}>完成</Radio>
+                    </Radio.Group>
+                  </div>
+                </div>
+                <div className={styles.ItemFooter}>
+                  <span onClick={() => { this.handleEventPopup('Control', false) }}>确认</span>
+                  <span onClick={() => { this.handleEventPopup('Control', false) }}>返回</span>
+                </div>
+              </div>
+            </div>
+          </div> : null}
       </div>
     )
   }

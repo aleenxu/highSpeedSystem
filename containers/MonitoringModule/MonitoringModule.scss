@@ -117,7 +117,7 @@
   }
   // 事件检测过滤设置弹窗
   .EventPopup {
-    width: 540px;
+    width: 584px;
     height: 318px;
     background: url(../../imgs/popupBg.png) center center no-repeat;
     background-size: 100% 100%;
@@ -144,7 +144,7 @@
       width: 100%;
       height: 268px;
       padding: 25px 22px;
-      box-sizing: content-box;
+      box-sizing: border-box;
       // 每一行
       .ItemBox {
         width: calc(100% - 44px);
@@ -218,6 +218,26 @@
           }
         }
       }
+    }
+  }
+  .ControlPopup {
+    width: 500px;
+    left: 42%;
+    top: 50%;
+    .Centent {
+      .ItemName {
+        vertical-align: top;
+      }
+      .ItemInput {
+        :global(.ant-radio-wrapper) {
+          width: 89px;
+          height: 55px;
+        }
+      }
+    }
+    .ItemFooter {
+      position: absolute;
+      bottom: 20px;
     }
   }
 }
