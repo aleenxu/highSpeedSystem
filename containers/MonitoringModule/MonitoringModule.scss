@@ -138,7 +138,7 @@
   }
   // 尾部 确认 返回
   .ItemFooter {
-    width: calc(100% - 44px);
+    width: 100%;
     height: 90px;
     line-height: 90px;
     text-align: center;
@@ -155,6 +155,16 @@
       &:hover {
         background: #191c22;
       }
+    }
+  }
+  .CloneItem {
+    color: #fff;
+    margin-right: 7px;
+    cursor: pointer;
+    &:hover {
+      color: #26ff6d;
+      transition: all 0.5s;
+      transform: rotate(180deg);
     }
   }
   .ItemInput {
@@ -192,11 +202,11 @@
       background-color: #191c22 !important;
     }
     // 日期选择框
-    :global(.ant-calendar-picker-clear){
+    :global(.ant-calendar-picker-clear) {
       background-color: #191c22;
       color: #ccc;
     }
-    :global(.ant-calendar-picker-icon){
+    :global(.ant-calendar-picker-icon) {
       color: #ccc;
     }
   }
@@ -207,7 +217,7 @@
     background: url(../../imgs/popupBg.png) center center no-repeat;
     background-size: 100% 100%;
     position: absolute;
-    left: 26%;
+    left: 30%;
     top: 50%;
     margin-top: -159px;
     color: #fff;
@@ -264,7 +274,7 @@
     background: url(../../imgs/popup_one.png) center center no-repeat;
     background-size: 100% 100%;
     position: absolute;
-    left: 30%;
+    left: 26%;
     top: 50%;
     margin-top: -353px;
     color: #fff;
@@ -293,6 +303,13 @@
           background: #0e151c;
           color: #4a759c;
           padding: 0px 22px;
+          .AddItem {
+            float: right;
+            cursor: pointer;
+            &:hover{
+              color: #26ff6d;
+            }
+          }
         }
         .RowBox {
           width: 100%;
@@ -316,9 +333,22 @@
     }
   }
   .ReserveBox {
+    background: url(../../imgs/popup_two.png) center center no-repeat;
+    background-size: 100% 100%;
     width: 430px;
-    height: 930px;
+    /* height: 930px;
+    margin-top: -465px; */
     left: 52%;
-    margin-top: -465px;
+    height: 98%;
+    top: 10px;
+    margin-top:0;
+    overflow-y: auto;
+  }
+  .WhethePopupr {
+    width: 420px;
+    height: 115px;
+    .Centent{
+      height: auto;
+    }
   }
 }

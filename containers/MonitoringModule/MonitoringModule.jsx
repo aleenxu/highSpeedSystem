@@ -27,6 +27,7 @@ class MonitoringModule extends React.Component {
       controlPopup: null, // 管控方案检测过滤设置
       detailsPopup: null,
       reservePopup: null,
+      whethePopup: null,
       startValue: null,
       endValue: null,
       endOpen: false,
@@ -94,9 +95,14 @@ class MonitoringModule extends React.Component {
         reservePopup: boolean,
       })
     }
+    if (type === 'Whethe') {
+      this.setState({
+        whethePopup: boolean,
+      })
+    }
   }
   render() {
-    const { eventPopup, controlPopup, detailsPopup, reservePopup, startValue, endValue, endOpen } = this.state
+    const { eventPopup, controlPopup, detailsPopup, whethePopup, reservePopup, startValue, endValue, endOpen } = this.state
     return (
       <div className={styles.MonitoringModule}>
         <SystemMenu />
@@ -302,32 +308,32 @@ class MonitoringModule extends React.Component {
                   <div className={styles.RowBox}>施工时间&nbsp;:&nbsp;&nbsp;2020-02-14  12:00:00   —  2020-02-15  12:00:00</div>
                 </div>
                 <div className={styles.ItemBox}>
-                  <div className={styles.HeadItem}>可变情报板管控预案设置</div>
+                  <div className={styles.HeadItem}>可变情报板管控预案设置<span className={styles.AddItem} onClick={() => { this.handleEventPopup('Whethe', true) }}><Icon type="plus" />添加</span></div>
                   <div className={styles.RowBox}>
-                    **地点断面可变情报板&nbsp;:&nbsp;&nbsp;<p className={styles.ItemInput}><Input defaultValue="小心驾驶/请勿超速" /></p>
+                    <Icon type="close-circle" className={styles.CloneItem} />**地点断面可变情报板&nbsp;:&nbsp;&nbsp;<p className={styles.ItemInput}><Input defaultValue="小心驾驶/请勿超速" /></p>
                   </div>
                   <div className={styles.RowBox}>
-                    **地点车道可变情报板&nbsp;:&nbsp;&nbsp;一车道限速&nbsp;:&nbsp;&nbsp; <p style={{ width: 105 }} className={styles.ItemInput}><Input defaultValue="100km/h" /></p>
+                    <Icon type="close-circle" className={styles.CloneItem} />**地点车道可变情报板&nbsp;:&nbsp;&nbsp;一车道限速&nbsp;:&nbsp;&nbsp; <p style={{ width: 105 }} className={styles.ItemInput}><Input defaultValue="100km/h" /></p>
                   </div>
                   <div className={styles.RowBox}>
                     <span style={{ width: '154px', display: 'inline-block' }} />
                     二车道限速&nbsp;:&nbsp;&nbsp;<p style={{ width: 105 }} className={styles.ItemInput}><Input defaultValue="80km/h" /></p>
                   </div>
                   <div className={styles.RowBox}>
-                    **地点断面可变情报板&nbsp;:&nbsp;&nbsp;<p className={styles.ItemInput}><Input defaultValue="应急车道禁止通行" /></p>
+                    <Icon type="close-circle" className={styles.CloneItem} />**地点断面可变情报板&nbsp;:&nbsp;&nbsp;<p className={styles.ItemInput}><Input defaultValue="应急车道禁止通行" /></p>
                   </div>
                 </div>
                 <div className={styles.ItemBox}>
-                  <div className={styles.HeadItem}>收费站出入口管控设置</div>
+                  <div className={styles.HeadItem}>收费站出入口管控设置<span className={styles.AddItem} onClick={() => { this.handleEventPopup('Whethe', true) }}><Icon type="plus" />添加</span></div>
                   <div className={styles.RowBox}>
-                    ****地点**收费站入口&nbsp;:&nbsp;&nbsp;<p><Switch checkedChildren="开放" unCheckedChildren="关闭" /></p>
+                    <Icon type="close-circle" className={styles.CloneItem} />****地点**收费站入口&nbsp;:&nbsp;&nbsp;<p><Switch checkedChildren="开放" unCheckedChildren="关闭" /></p>
                   </div>
                   <div className={styles.RowBox}>
-                    ****地点**收费站出口&nbsp;:&nbsp;&nbsp;<p><Switch checkedChildren="开放" unCheckedChildren="关闭" defaultChecked /></p>
+                    <Icon type="close-circle" className={styles.CloneItem} />****地点**收费站出口&nbsp;:&nbsp;&nbsp;<p><Switch checkedChildren="开放" unCheckedChildren="关闭" defaultChecked /></p>
                   </div>
                 </div>
                 <div className={styles.ItemBox}>
-                  <div className={styles.HeadItem}>管控时段</div>
+                  <div className={styles.HeadItem}>管控时段<span className={styles.AddItem} onClick={() => { this.handleEventPopup('Whethe', true) }}><Icon type="plus" />添加</span></div>
                   <div className={styles.RowBox}>
                     起始时间&nbsp;:&nbsp;&nbsp;
                     <p className={styles.ItemInput}>
@@ -378,6 +384,16 @@ class MonitoringModule extends React.Component {
                   <span onClick={() => { this.handleEventPopup('Reserve', false) }}>发&nbsp;&nbsp;布</span>
                   <span onClick={() => { this.handleEventPopup('Reserve', false) }}>返&nbsp;&nbsp;回</span>
                 </div>
+              </div>
+            </div>
+          </div> : null}
+        {whethePopup ?
+          <div className={styles.MaskBox}>
+            <div className={classNames(styles.EventPopup, styles.WhethePopupr)}>
+              <div className={styles.Title}>是否添加**地点**断面可变情报板至***管控预案?</div>
+              <div className={styles.ItemFooter}>
+                <span onClick={() => { this.handleEventPopup('Whethe', false) }}>确&nbsp;&nbsp;认</span>
+                <span onClick={() => { this.handleEventPopup('Whethe', false) }}>返&nbsp;&nbsp;回</span>
               </div>
             </div>
           </div> : null}
