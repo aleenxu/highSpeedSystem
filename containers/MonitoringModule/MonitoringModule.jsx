@@ -4,9 +4,9 @@ import GMap from '../../components/GMap/GMap'
 import SidePop from '../../components/SidePop/SidePop'
 import styles from './MonitoringModule.scss'
 import classNames from 'classnames'
-import { Input, Checkbox, Radio, Icon } from 'antd';
+import { Input, Checkbox, Radio, Icon, Switch, DatePicker } from 'antd'
 
-const { Search } = Input;
+const { Search } = Input
 const options = [
   { label: '交通拥堵', value: '1' },
   { label: '道路施工', value: '2' },
@@ -23,18 +23,57 @@ class MonitoringModule extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      eventPopup: null,// 事件检测过滤设置弹窗数据
+      eventPopup: null, // 事件检测过滤设置弹窗数据
       controlPopup: null, // 管控方案检测过滤设置
       detailsPopup: null,
+      reservePopup: null,
+      startValue: null,
+      endValue: null,
+      endOpen: false,
+
     }
   }
   componentDidMount = () => {
 
   }
+  onStartChange = (value) => {
+    this.onPickerChange('startValue', value)
+  }
+  onEndChange = (value) => {
+    this.onPickerChange('endValue', value)
+  }
+  onPickerChange = (field, value) => {
+    this.setState({
+      [field]: value,
+    })
+  }
+  disabledStartDate = (startValue) => {
+    const { endValue } = this.state
+    if (!startValue || !endValue) {
+      return false
+    }
+    return startValue.valueOf() > endValue.valueOf()
+  }
+
+  disabledEndDate = (endValue) => {
+    const { startValue } = this.state
+    if (!endValue || !startValue) {
+      return false
+    }
+    return endValue.valueOf() <= startValue.valueOf()
+  }
+
+  handleStartOpenChange = (open) => {
+    if (!open) {
+      this.setState({ endOpen: true })
+    }
+  }
+
+  handleEndOpenChange = (open) => {
+    this.setState({ endOpen: open })
+  }
   // 控制事件检测过滤设置弹窗
   handleEventPopup = (type, boolean) => {
-    console.log(type, boolean);
-
     if (type === 'Event') {
       this.setState({
         eventPopup: boolean,
@@ -50,9 +89,14 @@ class MonitoringModule extends React.Component {
         detailsPopup: boolean,
       })
     }
+    if (type === 'Reserve') {
+      this.setState({
+        reservePopup: boolean,
+      })
+    }
   }
   render() {
-    const { eventPopup, controlPopup, detailsPopup } = this.state
+    const { eventPopup, controlPopup, detailsPopup, reservePopup, startValue, endValue, endOpen } = this.state
     return (
       <div className={styles.MonitoringModule}>
         <SystemMenu />
@@ -207,83 +251,136 @@ class MonitoringModule extends React.Component {
                   </div>
                 </div>
                 <div className={styles.ItemFooter}>
-                  <span>查看管控预案</span>
+                  <span onClick={() => { this.handleEventPopup('Reserve', true) }}>查看管控预案</span>
                   <span onClick={() => { this.handleEventPopup('Details', false) }}>返&nbsp;&nbsp;回</span>
                 </div>
               </div>
             </div>
           </div> : null}
-        {/*   <div className={styles.MaskBox}>
-          <div className={classNames(styles.DetailsBox, styles.ReserveBox)}>
-            <div className={styles.Title}>管控预案查询<Icon className={styles.Close} onClick={() => { this.handleEventPopup('Details', false) }} type="close" /></div>
-            <div className={styles.Content}>
-              <div className={styles.Header}>
-                <span>事件编号&nbsp;:&nbsp;&nbsp;10001</span>
-                <span>事件类型&nbsp;:&nbsp;&nbsp;交通拥堵</span>
-              </div>
-              <div className={styles.ItemBox}>
-                <div className={styles.HeadItem}>基本信息</div>
-                <div className={styles.RowBox}>道路名称：G6告诉公路清河收费站</div>
-                <div className={styles.RowBox}>
-                  <p>方向&nbsp;:&nbsp;&nbsp;北向南</p>
-                  <p>车道&nbsp;:&nbsp;&nbsp;所有</p>
+        {/* 管控预案查询 */}
+        {reservePopup ?
+          <div className={styles.MaskBox}>
+            <div className={classNames(styles.DetailsBox, styles.ReserveBox)}>
+              <div className={styles.Title}>管控预案查询<Icon className={styles.Close} onClick={() => { this.handleEventPopup('Reserve', false) }} type="close" /></div>
+              <div className={styles.Content}>
+                <div className={styles.Header}>
+                  <span>事件编号&nbsp;:&nbsp;&nbsp;10001</span>
+                  <span>事件类型&nbsp;:&nbsp;&nbsp;交通拥堵</span>
                 </div>
-                <div className={styles.RowBox}>
-                  <p>起始公里桩号&nbsp;:&nbsp;&nbsp;K100+100 </p>
-                  <p>结束公里桩号&nbsp;:&nbsp;&nbsp;K120+200</p>
+                <div className={styles.ItemBox}>
+                  <div className={styles.HeadItem}>基本信息</div>
+                  <div className={styles.RowBox}>道路名称：G6告诉公路清河收费站</div>
+                  <div className={styles.RowBox}>
+                    <p>方向&nbsp;:&nbsp;&nbsp;北向南</p>
+                    <p>车道&nbsp;:&nbsp;&nbsp;所有</p>
+                  </div>
+                  <div className={styles.RowBox}>
+                    <p>起始公里桩号&nbsp;:&nbsp;&nbsp;K100+100 </p>
+                    <p>结束公里桩号&nbsp;:&nbsp;&nbsp;K120+200</p>
+                  </div>
+                  <div className={styles.RowBox}>数据来源&nbsp;:&nbsp;&nbsp;高德数据</div>
                 </div>
-                <div className={styles.RowBox}>数据来源&nbsp;:&nbsp;&nbsp;高德数据</div>
-              </div>
-              <div className={styles.ItemBox}>
-                <div className={styles.HeadItem}>当前路况</div>
-                <div className={styles.RowBox}>
-                  <p>拥堵级别&nbsp;:&nbsp;&nbsp;<span style={{ color: '#b90303' }}>严重拥堵</span></p>
-                  <p>平局车速&nbsp;:&nbsp;&nbsp;<span style={{ color: '#b90303' }}>20kmh</span></p>
+                <div className={styles.ItemBox}>
+                  <div className={styles.HeadItem}>当前路况</div>
+                  <div className={styles.RowBox}>
+                    <p>拥堵级别&nbsp;:&nbsp;&nbsp;<span style={{ color: '#b90303' }}>严重拥堵</span></p>
+                    <p>平局车速&nbsp;:&nbsp;&nbsp;<span style={{ color: '#b90303' }}>20kmh</span></p>
+                  </div>
                 </div>
-              </div>
-              <div className={styles.ItemBox}>
-                <div className={styles.HeadItem}>天气情况</div>
-                <div className={styles.RowBox}>
-                  <p>天气&nbsp;:&nbsp;&nbsp;<span style={{ color: '#ff7e00' }}>大雾</span></p>
-                  <p>能见度&nbsp;:&nbsp;&nbsp;<span style={{ color: '#ff7e00' }}>小于50米</span></p>
+                <div className={styles.ItemBox}>
+                  <div className={styles.HeadItem}>天气情况</div>
+                  <div className={styles.RowBox}>
+                    <p>天气&nbsp;:&nbsp;&nbsp;<span style={{ color: '#ff7e00' }}>大雾</span></p>
+                    <p>能见度&nbsp;:&nbsp;&nbsp;<span style={{ color: '#ff7e00' }}>小于50米</span></p>
+                  </div>
                 </div>
-              </div>
-              <div className={styles.ItemBox}>
-                <div className={styles.HeadItem}>道路施工</div>
-                <div className={styles.RowBox}>
-                  <p>事件等级&nbsp;:&nbsp;&nbsp;<span style={{ color: '#b90303' }}>重大</span></p>
+                <div className={styles.ItemBox}>
+                  <div className={styles.HeadItem}>道路施工</div>
+                  <div className={styles.RowBox}>
+                    <p>事件等级&nbsp;:&nbsp;&nbsp;<span style={{ color: '#b90303' }}>重大</span></p>
+                  </div>
+                  <div className={styles.RowBox}>施工时间&nbsp;:&nbsp;&nbsp;2020-02-14  12:00:00   —  2020-02-15  12:00:00</div>
                 </div>
-                <div className={styles.RowBox}>施工时间&nbsp;:&nbsp;&nbsp;2020-02-14  12:00:00   —  2020-02-15  12:00:00</div>
-              </div>
-              <div className={styles.ItemBox}>
-                <div className={styles.HeadItem}>可变情报板管控预案设置</div>
-                <div className={styles.RowBox}>
-                  **地点断面可变情报板&nbsp;:&nbsp;&nbsp;<p className={styles.ItemInput}><Input /></p>
+                <div className={styles.ItemBox}>
+                  <div className={styles.HeadItem}>可变情报板管控预案设置</div>
+                  <div className={styles.RowBox}>
+                    **地点断面可变情报板&nbsp;:&nbsp;&nbsp;<p className={styles.ItemInput}><Input defaultValue="小心驾驶/请勿超速" /></p>
+                  </div>
+                  <div className={styles.RowBox}>
+                    **地点车道可变情报板&nbsp;:&nbsp;&nbsp;一车道限速&nbsp;:&nbsp;&nbsp; <p style={{ width: 105 }} className={styles.ItemInput}><Input defaultValue="100km/h" /></p>
+                  </div>
+                  <div className={styles.RowBox}>
+                    <span style={{ width: '154px', display: 'inline-block' }} />
+                    二车道限速&nbsp;:&nbsp;&nbsp;<p style={{ width: 105 }} className={styles.ItemInput}><Input defaultValue="80km/h" /></p>
+                  </div>
+                  <div className={styles.RowBox}>
+                    **地点断面可变情报板&nbsp;:&nbsp;&nbsp;<p className={styles.ItemInput}><Input defaultValue="应急车道禁止通行" /></p>
+                  </div>
                 </div>
-                <div className={styles.RowBox}>
-                  **地点车道可变情报板&nbsp;:&nbsp;&nbsp;一车道限速&nbsp;:&nbsp;&nbsp; <div className={styles.ItemInput}><Input /></div>
+                <div className={styles.ItemBox}>
+                  <div className={styles.HeadItem}>收费站出入口管控设置</div>
+                  <div className={styles.RowBox}>
+                    ****地点**收费站入口&nbsp;:&nbsp;&nbsp;<p><Switch checkedChildren="开放" unCheckedChildren="关闭" /></p>
+                  </div>
+                  <div className={styles.RowBox}>
+                    ****地点**收费站出口&nbsp;:&nbsp;&nbsp;<p><Switch checkedChildren="开放" unCheckedChildren="关闭" defaultChecked /></p>
+                  </div>
                 </div>
-                <div className={styles.RowBox}>
-                  <span style={{ width: '154px', display: 'inline-block' }} />
-                  二车道限速&nbsp;:&nbsp;&nbsp;<span style={{ color: '#11e002' }}>80km/h</span>
+                <div className={styles.ItemBox}>
+                  <div className={styles.HeadItem}>管控时段</div>
+                  <div className={styles.RowBox}>
+                    起始时间&nbsp;:&nbsp;&nbsp;
+                    <p className={styles.ItemInput}>
+                      <DatePicker
+                        disabledDate={this.disabledStartDate}
+                        showTime
+                        format="YYYY-MM-DD HH:mm:ss"
+                        value={startValue}
+                        placeholder="开始时间"
+                        onChange={this.onStartChange}
+                        onOpenChange={this.handleStartOpenChange}
+                      />
+                    </p>
+                  </div>
+                  <div className={styles.RowBox}>
+                    结束时间&nbsp;:&nbsp;&nbsp;
+                    <p className={styles.ItemInput}>
+                      <DatePicker
+                        disabledDate={this.disabledEndDate}
+                        showTime
+                        format="YYYY-MM-DD HH:mm:ss"
+                        value={endValue}
+                        placeholder="结束时间"
+                        onChange={this.onEndChange}
+                        open={endOpen}
+                        onOpenChange={this.handleEndOpenChange}
+                      />
+                    </p>
+                  </div>
                 </div>
-                <div className={styles.RowBox}>
-                  **地点断面可变情报板&nbsp;:&nbsp;&nbsp;<span style={{ color: '#b90303' }}>应急车道禁止通行</span>
+                <div className={styles.ItemBox}>
+                  <div className={styles.HeadItem}>事件描述</div>
+                  <div className={styles.RowBox}>
+                    <div style={{ width: '100%' }} className={styles.ItemInput}><Input defaultValue="7:40京哈高速进京方向K100公里700米处，发生事故，占用左侧车道" /></div>
+                  </div>
                 </div>
-                <div className={styles.RowBox}>
-                  ****地点**收费站入口&nbsp;:&nbsp;&nbsp;<span style={{ color: '#11e002' }}>开放</span>
+                <div className={styles.ItemBox}>
+                  <div className={styles.HeadItem}>发布渠道
+                    <div style={{ marginLeft: '10px' }} className={styles.ItemInput}>
+                      <Radio.Group defaultValue={1}>
+                        <Radio value={1}>高德</Radio>
+                        <Radio value={2}>可变情报表</Radio>
+                      </Radio.Group>
+                    </div>
+                  </div>
                 </div>
-                <div className={styles.RowBox}>
-                  ****地点**收费站出口&nbsp;:&nbsp;&nbsp;<span style={{ color: '#11e002' }}>开放</span>
+                <div className={styles.ItemFooter}>
+                  <span onClick={() => { this.handleEventPopup('Reserve', false) }}>发&nbsp;&nbsp;布</span>
+                  <span onClick={() => { this.handleEventPopup('Reserve', false) }}>返&nbsp;&nbsp;回</span>
                 </div>
-              </div>
-              <div className={styles.ItemFooter}>
-                <span>查看管控预案</span>
-                <span onClick={() => { this.handleEventPopup('Details', false) }}>返&nbsp;&nbsp;回</span>
               </div>
             </div>
-          </div>
-        </div> */}
+          </div> : null}
       </div>
     )
   }

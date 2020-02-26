@@ -191,6 +191,14 @@
     :global(.ant-radio-inner) {
       background-color: #191c22 !important;
     }
+    // 日期选择框
+    :global(.ant-calendar-picker-clear){
+      background-color: #191c22;
+      color: #ccc;
+    }
+    :global(.ant-calendar-picker-icon){
+      color: #ccc;
+    }
   }
   // 事件检测过滤设置弹窗
   .EventPopup {
@@ -199,7 +207,7 @@
     background: url(../../imgs/popupBg.png) center center no-repeat;
     background-size: 100% 100%;
     position: absolute;
-    left: 30%;
+    left: 26%;
     top: 50%;
     margin-top: -159px;
     color: #fff;
@@ -225,12 +233,11 @@
           line-height: 25px;
           text-align: left;
           text-indent: 10px;
-        } 
+        }
       }
-      
     }
   }
- 
+
   .ControlPopup {
     width: 500px;
     left: 42%;
@@ -295,12 +302,20 @@
           > p {
             width: 50%;
             display: inline-block;
+            :global(.ant-switch) {
+              background-color: #191c22;
+              border: 1px solid #959595;
+            }
+            :global(.ant-switch-checked) {
+              background-color: #26ff6d !important;
+              border: 1px solid #959595;
+            }
           }
         }
       }
     }
   }
-  .ReserveBox{
+  .ReserveBox {
     width: 430px;
     height: 930px;
     left: 52%;
