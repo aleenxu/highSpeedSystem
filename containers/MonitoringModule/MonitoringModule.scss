@@ -115,6 +115,83 @@
     top: 0;
     z-index: 999;
   }
+  // 标题
+  .Title {
+    width: 100%;
+    height: 50px;
+    line-height: 50px;
+    text-indent: 22px;
+    font-size: 17px;
+    position: relative;
+    .Close {
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      margin-top: -8.5px;
+      cursor: pointer;
+      & svg:hover {
+        transition: all 0.5s;
+        transform: rotate(180deg);
+        color: #26ff6d;
+      }
+    }
+  }
+  // 尾部 确认 返回
+  .ItemFooter {
+    width: calc(100% - 44px);
+    height: 90px;
+    line-height: 90px;
+    text-align: center;
+    span {
+      width: 95px;
+      height: 25px;
+      display: inline-block;
+      background: #153757;
+      border: 1px solid #4f4f4f;
+      line-height: 25px;
+      text-align: center;
+      margin: 0 19px;
+      cursor: pointer;
+      &:hover {
+        background: #191c22;
+      }
+    }
+  }
+  .ItemInput {
+    width: calc(100% - 120px);
+    height: 100%;
+    display: inline-block;
+    // 修改input 框样式
+    :global(.ant-input) {
+      height: 25px;
+      line-height: 25px;
+      color: #fff;
+      background-color: #191c22;
+      border: 1px solid #959595;
+      border-radius: 0;
+    }
+    // 修改多选框按钮
+    :global(.ant-checkbox-wrapper) {
+      color: #fff;
+    }
+    :global(.ant-checkbox-group-item) {
+      width: 88px !important;
+    }
+    :global(.ant-checkbox-checked .ant-checkbox-inner) {
+      background-color: #191c22;
+      border: 1px solid #959595;
+    }
+    :global(.ant-checkbox-inner) {
+      background-color: #191c22;
+    }
+    // 修改单选按钮
+    :global(.ant-radio-wrapper) {
+      color: #fff;
+    }
+    :global(.ant-radio-inner) {
+      background-color: #191c22 !important;
+    }
+  }
   // 事件检测过滤设置弹窗
   .EventPopup {
     width: 584px;
@@ -126,19 +203,7 @@
     top: 50%;
     margin-top: -159px;
     color: #fff;
-    // 标题
-    .Title {
-      width: 100%;
-      height: 50px;
-      line-height: 50px;
-      text-indent: 22px;
-      .Close {
-        position: absolute;
-        right: 15px;
-        top: 20px;
-        cursor: pointer;
-      }
-    }
+
     // 内容
     .Centent {
       width: 100%;
@@ -160,66 +225,12 @@
           line-height: 25px;
           text-align: left;
           text-indent: 10px;
-        }
-        .ItemInput {
-          width: calc(100% - 120px);
-          height: 100%;
-          display: inline-block;
-          // 修改input 框样式
-          :global(.ant-input) {
-            height: 25px;
-            line-height: 25px;
-            color: #fff;
-            background-color: #191c22;
-            border: 1px solid #959595;
-            border-radius: 0;
-          }
-          // 修改多选框按钮
-          :global(.ant-checkbox-wrapper) {
-            color: #fff;
-          }
-          :global(.ant-checkbox-group-item) {
-            width: 88px !important;
-          }
-          :global(.ant-checkbox-checked .ant-checkbox-inner) {
-            background-color: #191c22;
-            border: 1px solid #959595;
-          }
-          :global(.ant-checkbox-inner) {
-            background-color: #191c22;
-          }
-          // 修改单选按钮
-          :global(.ant-radio-wrapper) {
-            color: #fff;
-          }
-          :global(.ant-radio-inner) {
-            background-color: #191c22 !important;
-          }
-        }
+        } 
       }
-      // 尾部 确认 返回
-      .ItemFooter {
-        width: calc(100% - 44px);
-        height: 90px;
-        line-height: 90px;
-        text-align: center;
-        span {
-          width: 90px;
-          height: 25px;
-          display: inline-block;
-          background: #153757;
-          border: 1px solid #4f4f4f;
-          line-height: 25px;
-          text-align: center;
-          margin: 0 19px;
-          cursor: pointer;
-          &:hover {
-            background: #191c22;
-          }
-        }
-      }
+      
     }
   }
+ 
   .ControlPopup {
     width: 500px;
     left: 42%;
@@ -239,5 +250,60 @@
       position: absolute;
       bottom: 20px;
     }
+  }
+  .DetailsBox {
+    width: 430px;
+    height: 706px;
+    background: url(../../imgs/popup_one.png) center center no-repeat;
+    background-size: 100% 100%;
+    position: absolute;
+    left: 30%;
+    top: 50%;
+    margin-top: -353px;
+    color: #fff;
+    .Content {
+      width: 100%;
+      height: calc(100% - 50px);
+      .Header {
+        width: 100%;
+        height: 60px;
+        display: inline-block;
+        padding: 0px 22px;
+        span {
+          width: 50%;
+          height: 100%;
+          display: inline-block;
+          line-height: 60px;
+          font-size: 16px;
+        }
+      }
+      .ItemBox {
+        width: 100%;
+        .HeadItem {
+          width: 100%;
+          height: 20px;
+          line-height: 20px;
+          background: #0e151c;
+          color: #4a759c;
+          padding: 0px 22px;
+        }
+        .RowBox {
+          width: 100%;
+          margin: 6px 0;
+          padding: 0px 22px;
+          color: #6d738d;
+          > p {
+            width: 50%;
+            display: inline-block;
+          }
+        }
+      }
+    }
+  }
+  .ReserveBox{
+    width: 430px;
+    height: 930px;
+    left: 52%;
+    margin-top: -465px;
   }
 }

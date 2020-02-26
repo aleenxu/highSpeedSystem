@@ -5,9 +5,6 @@ import { Collapse, Icon, Progress } from 'antd';
 import styles from './ScrollList.scss'
 
 const { Panel } = Collapse;
-function callback(key) {
-  console.log(key);
-}
 
 const text = `
   A dog is a type of domesticated animal.
@@ -77,6 +74,10 @@ class ScrollList extends React.Component {
     }
     return option
   }
+  callback = (key) => {
+    console.log(key);
+
+  }
   handleEventPopup = (type, boolean) => {
     const { handleEventPopup } = this.props
     if (handleEventPopup) {
@@ -91,7 +92,7 @@ class ScrollList extends React.Component {
           <div>
             <Collapse
               defaultActiveKey={['1']}
-              onChange={callback}
+              onChange={this.callback}
               expandIconPosition="right"
             >
               <Icon type="pie-chart" />
@@ -120,7 +121,7 @@ class ScrollList extends React.Component {
           <div>
             <Collapse
               defaultActiveKey={['1']}
-              onChange={callback}
+              onChange={this.callback}
               expandIconPosition="right"
             >
               <Icon type="appstore" /><Panel header="管控方案管理" key="1">
@@ -141,7 +142,7 @@ class ScrollList extends React.Component {
         {!listType &&
           <div>
             <Collapse
-              onChange={callback}
+              onChange={this.callback}
               expandIconPosition="right"
             >
               <Icon type="menu-unfold" /><Panel header={listTit} key="2">
@@ -156,7 +157,7 @@ class ScrollList extends React.Component {
                     </div>
                   }
                   {data && data.map((item, index) => (
-                    <div className={styles.listItem}>
+                    <div className={styles.listItem} onClick={() => { this.handleEventPopup('Details', true) }}>
                       <span>{item.id}</span>
                       <span title={item.roadName}>{item.roadName}</span>
                       <span>{item.upTime}</span>

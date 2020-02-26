@@ -63,10 +63,10 @@ class SidePop extends React.Component {
         {boxRight === 'unset' &&
           <div style={{ width: '100%' }}>
             <ScrollList type="1" dataRes="eacharts" handleEventPopup={this.handleEventPopup}></ScrollList>
-            <ScrollList Tit="交通拥堵(1)" Title={listTitData} dataRes={listData}></ScrollList>
-            <ScrollList Tit="道路施工(1)" Title={listTitData} dataRes={listData}></ScrollList>
-            <ScrollList Tit="极端天气(1)" Title={listTitData} dataRes={listData}></ScrollList>
-            <ScrollList Tit="交通事故(1)" Title={listTitData} dataRes={listData}></ScrollList>
+            <ScrollList Tit="交通拥堵(1)" Title={listTitData} dataRes={listData} handleEventPopup={this.handleEventPopup}></ScrollList>
+            <ScrollList Tit="道路施工(1)" Title={listTitData} dataRes={listData} handleEventPopup={this.handleEventPopup}></ScrollList>
+            <ScrollList Tit="极端天气(1)" Title={listTitData} dataRes={listData} handleEventPopup={this.handleEventPopup}></ScrollList>
+            <ScrollList Tit="交通事故(1)" Title={listTitData} dataRes={listData} handleEventPopup={this.handleEventPopup}></ScrollList>
           </div>
         }
         {boxLeft === 'unset' &&
