@@ -3,7 +3,7 @@ import echarts from 'echarts'
 import ReactEcharts from 'echarts-for-react'
 import { Collapse, Icon, Progress } from 'antd';
 import styles from './ScrollList.scss'
-
+import classNames from 'classnames'
 const { Panel } = Collapse;
 
 const text = `
@@ -78,7 +78,17 @@ class ScrollList extends React.Component {
     console.log(key);
 
   }
-  handleEventPopup = (type, boolean) => {
+  handleEventPopup = (e, type, boolean) => {
+    const listItem = document.getElementsByClassName('listItem')
+    if (e.currentTarget.style.background === '#74ccd3') {
+      e.currentTarget.style.background = ''
+    } else {
+      for (let i = 0; i < listItem.length; i++) {
+        listItem[i].style.background = ''
+      }
+      e.currentTarget.style.background = '#74ccd3'
+      window.listItemDom=e.currentTarget
+    }
     const { handleEventPopup } = this.props
     if (handleEventPopup) {
       handleEventPopup(type, boolean)
@@ -157,7 +167,7 @@ class ScrollList extends React.Component {
                     </div>
                   }
                   {data && data.map((item, index) => (
-                    <div className={styles.listItem} onClick={() => { this.handleEventPopup('Details', true) }}>
+                    <div className={classNames(styles.listItem, 'listItem')} onClick={(e) => { this.handleEventPopup(e, 'Details', true) }}>
                       <span>{item.id}</span>
                       <span title={item.roadName}>{item.roadName}</span>
                       <span>{item.upTime}</span>
@@ -165,7 +175,6 @@ class ScrollList extends React.Component {
                       <span>{item.state}</span>
                     </div>
                   ))
-
                   }
                 </div>
               </Panel>

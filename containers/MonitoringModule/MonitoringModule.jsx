@@ -85,6 +85,9 @@ class MonitoringModule extends React.Component {
       })
     }
     if (type === 'Details') {
+      if (window.listItemDom && boolean === false) {
+        window.listItemDom.style.background = ''
+      }
       this.setState({
         detailsPopup: boolean,
       })
