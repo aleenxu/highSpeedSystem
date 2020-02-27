@@ -103,7 +103,7 @@ class ScrollList extends React.Component {
                     <ReactEcharts option={this.getOption()} style={{ height: '100px', width: '100%' }} />
                   </div>
                   <div className={styles.rightInfoBox}>
-                    <p>重大事件 140起 <span>详情 ></span></p>
+                    <p>重大事件 140起 </p>
                     <p>
                       <span>30<br />交通拥堵</span>
                       <span>80<br />道路施工</span>
