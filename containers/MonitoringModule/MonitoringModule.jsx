@@ -423,8 +423,8 @@ class MonitoringModule extends React.Component {
               defaultActiveKey={['1', '2', '3']}
               expandIconPosition="right"
             >
+             <Icon className={styles.Close} onClick={() => { this.handleEventPopup('Details', false) }} type="close" />
               <Panel header="事件详情" key="1" extra={this.genExtra()}>
-                <Icon className={styles.Close} onClick={() => { this.handleEventPopup('Details', false) }} type="close" />
                 <div className={styles.Content}>
                   <div className={styles.Header}>
                     <span>事件编号&nbsp;:&nbsp;&nbsp;10001</span>
