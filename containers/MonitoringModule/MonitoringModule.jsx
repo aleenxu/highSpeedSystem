@@ -4,8 +4,8 @@ import GMap from '../../components/GMap/GMap'
 import SidePop from '../../components/SidePop/SidePop'
 import styles from './MonitoringModule.scss'
 import classNames from 'classnames'
-import { Input, Checkbox, Radio, Icon, Switch, DatePicker } from 'antd'
-
+import { Input, Checkbox, Radio, Icon, Switch, DatePicker, Collapse } from 'antd'
+const { Panel } = Collapse
 const { Search } = Input
 const options = [
   { label: '交通拥堵', value: '1' },
@@ -31,7 +31,6 @@ class MonitoringModule extends React.Component {
       startValue: null,
       endValue: null,
       endOpen: false,
-
     }
   }
   componentDidMount = () => {
@@ -101,13 +100,22 @@ class MonitoringModule extends React.Component {
       })
     }
   }
+  genExtra = () => (
+    <Icon
+      type="setting"
+      onClick={(event) => {
+        event.stopPropagation()
+        this.handleEventPopup('Reserve', true)
+      }}
+    />
+  )
   render() {
     const { eventPopup, controlPopup, detailsPopup, whethePopup, reservePopup, startValue, endValue, endOpen } = this.state
     return (
       <div className={styles.MonitoringModule}>
         <SystemMenu />
         <SidePop left="5px" handleEventPopup={this.handleEventPopup} />
-        <SidePop right="5px" handleEventPopup={this.handleEventPopup} />
+        {!!detailsPopup || <SidePop right="5px" handleEventPopup={this.handleEventPopup} />}
         <GMap />
         <div className={styles.searchBox}><Search placeholder="请输入内容" onSearch={value => console.log(value)} enterButton /></div>
         <div className={styles.mapIconManage}>
@@ -191,7 +199,7 @@ class MonitoringModule extends React.Component {
             </div>
           </div> : null}
         {/* 事件详情 */}
-        {detailsPopup ?
+        {/* {detailsPopup ?
           <div className={styles.MaskBox}>
             <div className={styles.DetailsBox}>
               <div className={styles.Title}>事件详情<Icon className={styles.Close} onClick={() => { this.handleEventPopup('Details', false) }} type="close" /></div>
@@ -262,7 +270,7 @@ class MonitoringModule extends React.Component {
                 </div>
               </div>
             </div>
-          </div> : null}
+          </div> : null} */}
         {/* 管控预案查询 */}
         {reservePopup ?
           <div className={styles.MaskBox}>
@@ -396,6 +404,66 @@ class MonitoringModule extends React.Component {
                 <span onClick={() => { this.handleEventPopup('Whethe', false) }}>返&nbsp;&nbsp;回</span>
               </div>
             </div>
+          </div> : null}
+        {/*  <div className={styles.MaskBox}>
+          <div className={classNames(styles.EventPopup, styles.WhethePopupr)}>
+            <div className={styles.Title} style={{ textIndent: 0, textAlign: 'center' }}>延时&nbsp;:<div className={classNames(styles.ItemInput, styles.WhetheInput)}><Input defaultValue="120" style={{ color: '#26ff6d' }} /></div>分钟</div>
+            <div className={styles.ItemFooter}>
+              <span onClick={() => { this.handleEventPopup('Whethe', false) }}>确&nbsp;&nbsp;认</span>
+              <span onClick={() => { this.handleEventPopup('Whethe', false) }}>返&nbsp;&nbsp;回</span>
+            </div>
+          </div>
+        </div> */}
+        {detailsPopup ?
+          <div className={styles.Eventdetails}>
+            <Collapse
+              defaultActiveKey={['1', '2', '3']}
+              expandIconPosition="right"
+            >
+              <Panel header="事件详情" key="1" extra={this.genExtra()}>
+                <Icon className={styles.Close} onClick={() => { this.handleEventPopup('Details', false) }} type="close" />
+                <div className={styles.Content}>
+                  <div className={styles.Header}>
+                    <span>事件编号&nbsp;:&nbsp;&nbsp;10001</span>
+                    <span>事件类型&nbsp;:&nbsp;&nbsp;交通拥堵</span>
+                  </div>
+                  <div className={styles.ItemBox}>
+                    <div className={styles.HeadItem}>基本信息</div>
+                    <div className={styles.RowBox}>道路名称：G6告诉公路清河收费站</div>
+                    <div className={styles.RowBox}>
+                      <p>方向&nbsp;:&nbsp;&nbsp;北向南</p>
+                      <p>车道&nbsp;:&nbsp;&nbsp;所有</p>
+                    </div>
+                    <div className={styles.RowBox}>
+                      <p>起始公里桩号&nbsp;:&nbsp;&nbsp;K100+100 </p>
+                      <p>结束公里桩号&nbsp;:&nbsp;&nbsp;K120+200</p>
+                    </div>
+                    <div className={styles.RowBox}>数据来源&nbsp;:&nbsp;&nbsp;高德数据</div>
+                  </div>
+                  <div className={styles.ItemBox}>
+                    <div className={styles.HeadItem}>当前路况</div>
+                    <div className={styles.RowBox}>
+                      <p>拥堵级别&nbsp;:&nbsp;&nbsp;<span style={{ color: '#e90202' }}>严重拥堵</span></p>
+                      <p>平局车速&nbsp;:&nbsp;&nbsp;<span style={{ color: '#e90202' }}>20kmh</span></p>
+                    </div>
+                  </div>
+                </div>
+              </Panel>
+              <Panel header="可变情报板" key="2">
+                {
+                  [1, 2, 3].map((item) => {
+                    return <p className={styles.PanelItem} key={item}>*****可变情报板：  *******高速    K20+  100</p>
+                  })
+                }
+              </Panel>
+              <Panel header="收费站" key="3">
+                {
+                  [4, 5].map((item) => {
+                    return <p className={styles.PanelItem} key={item}>*****收费站：  *******高速    K20+  100</p>
+                  })
+                }
+              </Panel>
+            </Collapse>
           </div> : null}
       </div>
     )
