@@ -138,7 +138,7 @@
   }
   // 尾部 确认 返回
   .ItemFooter {
-    width: calc(100% - 44px);
+    width: 100%;
     height: 90px;
     line-height: 90px;
     text-align: center;
@@ -155,6 +155,16 @@
       &:hover {
         background: #191c22;
       }
+    }
+  }
+  .CloneItem {
+    color: #fff;
+    margin-right: 7px;
+    cursor: pointer;
+    &:hover {
+      color: #26ff6d;
+      transition: all 0.5s;
+      transform: rotate(180deg);
     }
   }
   .ItemInput {
@@ -192,11 +202,11 @@
       background-color: #191c22 !important;
     }
     // 日期选择框
-    :global(.ant-calendar-picker-clear){
+    :global(.ant-calendar-picker-clear) {
       background-color: #191c22;
       color: #ccc;
     }
-    :global(.ant-calendar-picker-icon){
+    :global(.ant-calendar-picker-icon) {
       color: #ccc;
     }
   }
@@ -207,7 +217,7 @@
     background: url(../../imgs/popupBg.png) center center no-repeat;
     background-size: 100% 100%;
     position: absolute;
-    left: 26%;
+    left: 30%;
     top: 50%;
     margin-top: -159px;
     color: #fff;
@@ -264,61 +274,138 @@
     background: url(../../imgs/popup_one.png) center center no-repeat;
     background-size: 100% 100%;
     position: absolute;
-    left: 30%;
+    left: 26%;
     top: 50%;
     margin-top: -353px;
     color: #fff;
-    .Content {
+  }
+  .Content {
+    width: 100%;
+    height: calc(100% - 50px);
+    .Header {
       width: 100%;
-      height: calc(100% - 50px);
-      .Header {
-        width: 100%;
-        height: 60px;
+      height: 60px;
+      display: inline-block;
+      padding: 0px 22px;
+      span {
+        width: 50%;
+        height: 100%;
         display: inline-block;
+        line-height: 60px;
+        font-size: 16px;
+      }
+    }
+    .ItemBox {
+      width: 100%;
+      .HeadItem {
+        width: 100%;
+        height: 20px;
+        line-height: 20px;
+        background: #0e151c;
+        color: #4a759c;
         padding: 0px 22px;
-        span {
-          width: 50%;
-          height: 100%;
-          display: inline-block;
-          line-height: 60px;
-          font-size: 16px;
+        .AddItem {
+          float: right;
+          cursor: pointer;
+          &:hover {
+            color: #26ff6d;
+          }
         }
       }
-      .ItemBox {
+      .RowBox {
         width: 100%;
-        .HeadItem {
-          width: 100%;
-          height: 20px;
-          line-height: 20px;
-          background: #0e151c;
-          color: #4a759c;
-          padding: 0px 22px;
-        }
-        .RowBox {
-          width: 100%;
-          margin: 6px 0;
-          padding: 0px 22px;
-          color: #6d738d;
-          > p {
-            width: 50%;
-            display: inline-block;
-            :global(.ant-switch) {
-              background-color: #191c22;
-              border: 1px solid #959595;
-            }
-            :global(.ant-switch-checked) {
-              background-color: #26ff6d !important;
-              border: 1px solid #959595;
-            }
+        margin: 6px 0;
+        padding: 0px 22px;
+        color: #6d738d;
+        > p {
+          width: 50%;
+          display: inline-block;
+          :global(.ant-switch) {
+            background-color: #191c22;
+            border: 1px solid #959595;
+          }
+          :global(.ant-switch-checked) {
+            background-color: #26ff6d !important;
+            border: 1px solid #959595;
           }
         }
       }
     }
   }
   .ReserveBox {
+    background: url(../../imgs/popup_two.png) center center no-repeat;
+    background-size: 100% 100%;
     width: 430px;
-    height: 930px;
+    /* height: 930px;
+    margin-top: -465px; */
     left: 52%;
-    margin-top: -465px;
+    height: 98%;
+    top: 10px;
+    margin-top: 0;
+    overflow-y: auto;
+  }
+  .WhethePopupr {
+    width: 420px;
+    height: 115px;
+    background: url(../../imgs/popup_three.png) center center no-repeat;
+    background-size: 100% 100%;
+    .Centent {
+      height: auto;
+    }
+  }
+}
+.WhetheInput {
+  width: 185px !important;
+  margin: 0 8px;
+}
+.Eventdetails {
+  position: fixed;
+  top: 55px;
+  bottom: 5px;
+  right: 5px;
+  width: 24%;
+  display: flex;
+  align-items: flex-start;
+  background-color: rgba(20, 21, 24, 0.9);
+  z-index: 99;
+  overflow-y: auto;
+  :global(.ant-collapse) {
+    width: 100%;
+  }
+  :global(.ant-collapse > .ant-collapse-item > .ant-collapse-header) {
+    background: rgba(19, 27, 37, 0.8);
+    color: #fff;
+  }
+
+  :global(.anticon-setting svg) {
+    color: #2d81ad;
+    &:hover {
+      transition: all 0.5s;
+      transform: rotate(180deg);
+      color: #26ff6d;
+    }
+  }
+  .PanelItem {
+    height: 50px;
+    line-height: 50px;
+    margin: 0;
+    text-indent: 22px;
+    color: #5a5f74;
+    border-bottom: 1px solid #696969;
+    &:last-child {
+      border-bottom: 0;
+    }
+  }
+  .Close {
+    position: absolute;
+    top: 16px;
+    left: 10px;
+    color: #2d81ad;
+    cursor: pointer;
+    & svg:hover {
+      transition: all 0.5s;
+      transform: rotate(180deg);
+      color: #26ff6d;
+    }
   }
 }
