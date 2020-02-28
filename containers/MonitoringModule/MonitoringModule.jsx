@@ -163,7 +163,7 @@ class MonitoringModule extends React.Component {
                   </div>
                 </div>
                 <div className={styles.ItemBox}>
-                  <span className={styles.ItemName}>时间严重程度:</span>
+                  <span className={styles.ItemName}>事件严重程度:</span>
                   <div className={styles.ItemInput}>
                     <Checkbox.Group options={plainOptions} defaultValue={['2', '4']} />
                   </div>
