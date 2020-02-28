@@ -89,27 +89,28 @@ class GMap extends React.Component {
         position: item,
         zIndex: 10
       });
-      var infoWindow = new SimpleInfoWindow({
-        myCustomHeader: '我的header',
-        myCustomFooter: '我的footer',
-        infoTitle: '<strong>这里是标题</strong>',
-        infoBody: '<p class="my-desc"><strong>这里是内容。</strong></p>',
+     
 
-        //基点指向marker的头部位置
-        offset: new AMap.Pixel(0, -40)
-      });
-
-      _this.openInfoWin(infoWindow,map,marker)
+      /* _this.openInfoWin(infoWindow,map,marker) */
 
       //marker 点击时打开
-      AMap.event.addListener(marker, 'click', function () {
-        _this.openInfoWin(infoWindow,map,marker)
+      marker.on( 'click', function () {
+        _this.openInfoWin(map,marker,SimpleInfoWindow)
       });
 
-      _this.openInfoWin(infoWindow,map,marker)
+      /* _this.openInfoWin(infoWindow,map,marker) */
     })
   }
-  openInfoWin = (infoWindow, map, marker) => {
+  openInfoWin = ( map, marker,SimpleInfoWindow) => {
+    var infoWindow = new SimpleInfoWindow({
+      myCustomHeader: '我的header',
+      myCustomFooter: '我的footer',
+      infoTitle: '<strong>这里是标题</strong>',
+      infoBody: '<p class="my-desc"><strong>这里是内容。</strong></p>',
+
+      //基点指向marker的头部位置
+      offset: new AMap.Pixel(0, -40)
+    });
     infoWindow.open(map, marker.getPosition());
   }
   searchKeyWords = e => {
