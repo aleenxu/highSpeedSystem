@@ -85,6 +85,9 @@ class MonitoringModule extends React.Component {
       })
     }
     if (type === 'Details') {
+      if (window.listItemDom && boolean === false) {
+        window.listItemDom.style.background = ''
+      }
       this.setState({
         detailsPopup: boolean,
       })
@@ -393,10 +396,10 @@ class MonitoringModule extends React.Component {
                     </div>
                   </div>
                 </div>
-                <div className={styles.ItemFooter}>
-                  <span onClick={() => { this.handleEventPopup('Reserve', false) }}>发&nbsp;&nbsp;布</span>
-                  <span onClick={() => { this.handleEventPopup('Reserve', false) }}>返&nbsp;&nbsp;回</span>
-                </div>
+              </div>
+              <div className={styles.ItemFooter}>
+                <span onClick={() => { this.handleEventPopup('Reserve', false) }}>发&nbsp;&nbsp;布</span>
+                <span onClick={() => { this.handleEventPopup('Reserve', false) }}>返&nbsp;&nbsp;回</span>
               </div>
             </div>
           </div> : null}
@@ -425,8 +428,8 @@ class MonitoringModule extends React.Component {
               defaultActiveKey={['1', '2', '3']}
               expandIconPosition="right"
             >
+              <Icon className={styles.Close} onClick={() => { this.handleEventPopup('Details', false) }} type="close" />
               <Panel header="事件详情" key="1" extra={this.genExtra()}>
-                <Icon className={styles.Close} onClick={() => { this.handleEventPopup('Details', false) }} type="close" />
                 <div className={styles.Content}>
                   <div className={styles.Header}>
                     <span>事件编号&nbsp;:&nbsp;&nbsp;10001</span>

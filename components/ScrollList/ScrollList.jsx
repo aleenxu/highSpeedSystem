@@ -3,7 +3,7 @@ import echarts from 'echarts'
 import ReactEcharts from 'echarts-for-react'
 import { Collapse, Icon, Progress } from 'antd';
 import styles from './ScrollList.scss'
-
+import classNames from 'classnames'
 const { Panel } = Collapse;
 
 const text = `
@@ -78,7 +78,22 @@ class ScrollList extends React.Component {
     console.log(key);
 
   }
-  handleEventPopup = (type, boolean) => {
+  handleEventPopup = (e, type, boolean) => {
+    console.log(type);
+
+    if (type === 'Details') {
+      const listItem = document.getElementsByClassName('listItem')
+      if (e.currentTarget.style.background === '#74ccd3') {
+        e.currentTarget.style.background = ''
+      } else {
+        for (let i = 0; i < listItem.length; i++) {
+          listItem[i].style.background = ''
+        }
+        e.currentTarget.style.background = '#74ccd3'
+        window.listItemDom = e.currentTarget
+      }
+    }
+
     const { handleEventPopup } = this.props
     if (handleEventPopup) {
       handleEventPopup(type, boolean)
@@ -97,7 +112,7 @@ class ScrollList extends React.Component {
             >
               <Icon type="pie-chart" />
               <Panel header="事件监视" key="1">
-                <Icon type="setting" className={styles.setting} onClick={() => { this.handleEventPopup('Event', true) }} />
+                <Icon type="setting" className={styles.setting} onClick={(e) => { this.handleEventPopup(e, 'Event', true) }} />
                 <div className={styles.eachartsBox}>
                   <div className={styles.leftEacharts}>
                     <ReactEcharts option={this.getOption()} style={{ height: '100px', width: '100%' }} />
@@ -125,7 +140,7 @@ class ScrollList extends React.Component {
               expandIconPosition="right"
             >
               <Icon type="appstore" /><Panel header="管控方案管理" key="1">
-                <Icon type="setting" className={styles.setting} onClick={() => { this.handleEventPopup('Control', true) }} />
+                <Icon type="setting" className={styles.setting} onClick={(e) => { this.handleEventPopup(e,'Control', true) }} />
                 <div>
                   <div className={styles.ProgressTotal}><em>管控方案发布管理</em>方案总数：16</div>
                   <div className={styles.ProgressBox}><em>待发布</em><Progress strokeColor="#ed7d30" showInfo="false" percent={18.75} format={percent => `${3}`} status="active" /></div>
@@ -157,7 +172,7 @@ class ScrollList extends React.Component {
                     </div>
                   }
                   {data && data.map((item, index) => (
-                    <div className={styles.listItem} onClick={() => { this.handleEventPopup('Details', true) }}>
+                    <div className={classNames(styles.listItem, 'listItem')} onClick={(e) => { this.handleEventPopup(e, 'Details', true) }}>
                       <span>{item.id}</span>
                       <span title={item.roadName}>{item.roadName}</span>
                       <span>{item.upTime}</span>
@@ -165,7 +180,6 @@ class ScrollList extends React.Component {
                       <span>{item.state}</span>
                     </div>
                   ))
-
                   }
                 </div>
               </Panel>
