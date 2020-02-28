@@ -117,7 +117,7 @@ class MonitoringModule extends React.Component {
         <SidePop left="5px" handleEventPopup={this.handleEventPopup} />
         {!!detailsPopup || <SidePop right="5px" handleEventPopup={this.handleEventPopup} />}
         <GMap />
-        <div className={styles.searchBox}><Search placeholder="请输入内容" onSearch={value => console.log(value)} enterButton /></div>
+        <div className={styles.searchBox}><Search id="tipinput" placeholder="请输入内容" enterButton /></div>
         <div className={styles.mapIconManage}>
           <span>设备显示</span><span>事件标注</span>
         </div>
@@ -129,7 +129,12 @@ class MonitoringModule extends React.Component {
             <span>缓行</span>
             <span>畅通</span>
           </p>
-          <p><h5>事故地点</h5></p>
+          <p>
+            <em>收费站</em>
+            <em>F屏情报板</em>
+            <em>限速牌专用</em>
+            <em>可变情报板</em>
+          </p>
         </div>
         {/* 事件检测过滤设置弹窗 */}
         {eventPopup ?
