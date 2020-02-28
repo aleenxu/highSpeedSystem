@@ -71,6 +71,7 @@
       justify-content: center;
       align-items: center;
       padding-bottom: 8px;
+      flex-wrap: wrap;
       > h5 {
         width: 100%;
         color: #fff;
@@ -79,7 +80,7 @@
         text-indent: 20px;
       }
       > span {
-        padding: 2px 4px;
+        padding: 1px 6px;
         color: #fff;
         display: flex;
         font-size: 12px;
@@ -98,11 +99,33 @@
       }
     }
     > p:last-child {
+      width:180px;
       padding-bottom: 0px;
+      display: flex;
+      justify-content: start;
       h5 {
-        background: url(../../imgs/icon_accident.png) no-repeat;
+        background:none;
+      }
+      >em {
+        width: 50%;
+        height:26px;
+        line-height:22px;
+        font-size:12px;
+        color: #fff;
+        display: inline-block;
+        font-style: normal;
+        background:url(../../imgs/tollStation_s.png) no-repeat;
         background-position: left center;
-        text-indent: 30px;
+        padding-left:25px;
+      }
+      > em:nth-child(2) {
+        background:url(../../imgs/fBoard_s.png) no-repeat;
+      }
+      > em:nth-child(3) {
+        background:url(../../imgs/speedLimit_s.png) no-repeat;
+      }
+      > em:nth-child(4) {
+        background:url(../../imgs/turnBoard_s.png) no-repeat;
       }
     }
   }
