@@ -391,10 +391,10 @@ class MonitoringModule extends React.Component {
                     </div>
                   </div>
                 </div>
-                <div className={styles.ItemFooter}>
-                  <span onClick={() => { this.handleEventPopup('Reserve', false) }}>发&nbsp;&nbsp;布</span>
-                  <span onClick={() => { this.handleEventPopup('Reserve', false) }}>返&nbsp;&nbsp;回</span>
-                </div>
+              </div>
+              <div className={styles.ItemFooter}>
+                <span onClick={() => { this.handleEventPopup('Reserve', false) }}>发&nbsp;&nbsp;布</span>
+                <span onClick={() => { this.handleEventPopup('Reserve', false) }}>返&nbsp;&nbsp;回</span>
               </div>
             </div>
           </div> : null}
