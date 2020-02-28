@@ -8,6 +8,24 @@
     <title>智慧高速管控系统</title>
     <script src="https://cache.amap.com/lbs/static/es5.min.js"></script>
     <script src="https://webapi.amap.com/maps?v=1.4.15&key=e9c21a13b9e2994799069908c9f56f9b&plugin=AMap.Autocomplete,AMap.PlaceSearch"></script>
+    <script src="//webapi.amap.com/ui/1.0/main.js?v=1.0.11"></script>
+    <!-- 这里定义模板内容 -->
+    <script id="my-infowin-tpl" type="text/template">
+        <div class="amap-ui-smp-ifwn-container">
+            <a class="amap-ui-infowindow-close amap-ui-smp-ifwn-def-tr-close">&#10006;</a>
+            <div class="amap-ui-smp-ifwn-content-body" style="width:300px;">
+                <h1><%= myCustomHeader %></h1>
+                <h3 class="amap-ui-infowindow-title" style="width:100px;float:left"><%= infoTitle %></h3>
+                <div class="amap-ui-infowindow-body" style="width:200px;height:60px; float:right;background:#eee; ">
+                    <%= infoBody %>
+                </div>
+                <div style="clear:both"></div>
+                <h4><%= myCustomFooter %></h4>
+                <button class="amap-ui-infowindow-close" style="margin:0 auto; display:block; width:100px;">关闭</button>
+            </div>
+            <div class="amap-ui-smp-ifwn-combo-sharp"></div>
+        </div>
+    </script>
 </head>
 
 <body>
