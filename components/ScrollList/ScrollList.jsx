@@ -105,6 +105,7 @@ class ScrollList extends React.Component {
       <div>
         {listType === "1" &&
           <div>
+            <Icon type="setting" className={styles.setting} onClick={(e) => { this.handleEventPopup(e, 'Event', true) }} />
             <Collapse
               defaultActiveKey={['1']}
               onChange={this.callback}
@@ -112,7 +113,7 @@ class ScrollList extends React.Component {
             >
               <Icon type="pie-chart" />
               <Panel header="事件监视" key="1">
-                <Icon type="setting" className={styles.setting} onClick={(e) => { this.handleEventPopup(e, 'Event', true) }} />
+
                 <div className={styles.eachartsBox}>
                   <div className={styles.leftEacharts}>
                     <ReactEcharts option={this.getOption()} style={{ height: '100px', width: '100%' }} />
@@ -134,13 +135,13 @@ class ScrollList extends React.Component {
         }
         {listType === "2" &&
           <div>
+            <Icon type="setting" className={styles.setting} onClick={(e) => { this.handleEventPopup(e, 'Control', true) }} />
             <Collapse
               defaultActiveKey={['1']}
               onChange={this.callback}
               expandIconPosition="right"
             >
               <Icon type="appstore" /><Panel header="管控方案管理" key="1">
-                <Icon type="setting" className={styles.setting} onClick={(e) => { this.handleEventPopup(e,'Control', true) }} />
                 <div>
                   <div className={styles.ProgressTotal}><em>管控方案发布管理</em>方案总数：16</div>
                   <div className={styles.ProgressBox}><em>待发布</em><Progress strokeColor="#ed7d30" showInfo="false" percent={18.75} format={percent => `${3}`} status="active" /></div>
