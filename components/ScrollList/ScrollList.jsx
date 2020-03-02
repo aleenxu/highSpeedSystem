@@ -19,12 +19,34 @@ class ScrollList extends React.Component {
       data: this.props.dataRes, // 数据
       listTit: this.props.Tit, // 模块标题
       listTitle: this.props.Title, // 标题名
+      eachartData: this.props.eachartData,
+      sideachart: null,
     }
   }
   componentDidMount = () => {
-
+    console.log(this.props.eachartData);
+    const { eachartData } = this.props
+    if (eachartData) {
+      const data = []
+      eachartData.forEach((item) => {
+        data.push({ value: item.eventLength, name: item.eventName })
+      })
+      this.getOption(data)
+    }
   }
-  getOption = () => {
+  componentWillReceiveProps = (nextProps) => {
+    if (this.props.eachartData !== nextProps.eachartData) {
+      if (nextProps.eachartData) {
+        const data = []
+        nextProps.eachartData.forEach((item) => {
+          data.push({ value: item.eventLength, name: item.eventName })
+        })
+        this.getOption(data)
+      }    
+      this.setState({ eachartData: nextProps.eachartData })
+    }
+  }
+  getOption = (data) => {
     const option = {
       series: [
         {
@@ -38,12 +60,7 @@ class ScrollList extends React.Component {
               show: false
             }
           },
-          data: [
-            { value: 30, name: '交通拥堵' },
-            { value: 80, name: '道路施工' },
-            { value: 20, name: '极端天气' },
-            { value: 10, name: '交通事故' }
-          ],
+          data: data,
           emphasis: {
             itemStyle: {
               shadowBlur: 10,
@@ -61,7 +78,7 @@ class ScrollList extends React.Component {
               color: function (params) {
                 //自定义颜色
                 var colorList = [
-                  '#74ccd3', '#2762a5', '#5cff6b', '#2777a5',
+                  '#74ccd3', '#2762a5', '#5cff6b', '#2777a5', '#74ccd3',
                 ];
                 return colorList[params.dataIndex]
               }
@@ -72,7 +89,7 @@ class ScrollList extends React.Component {
       ],
 
     }
-    return option
+    this.setState({ sideachart: option })
   }
   callback = (key) => {
     console.log(key);
@@ -99,8 +116,19 @@ class ScrollList extends React.Component {
       handleEventPopup(type, boolean)
     }
   }
+  getDate = (time) => {
+    const today = new Date(time)
+    const year = today.getFullYear()
+    const month = ('0' + (today.getMonth() + 1)).slice(-2)
+    const day = ('0' + (today.getDate())).slice(-2)
+    const hour = ('0' + (today.getHours())).slice(-2)
+    const minutes = ('0' + (today.getMinutes())).slice(-2)
+    const seconds = ('0' + (today.getSeconds())).slice(-2)
+    const navtime = year + '.' + month + '.' + day + '' + ' ' + hour + ':' + minutes + ':' + seconds
+    return navtime
+  }
   render() {
-    const { listType, listTit, listTitle, data } = this.state
+    const { listType, listTit, listTitle, data, eachartData, sideachart } = this.state
     return (
       <div>
         {listType === "1" &&
@@ -116,15 +144,18 @@ class ScrollList extends React.Component {
 
                 <div className={styles.eachartsBox}>
                   <div className={styles.leftEacharts}>
-                    <ReactEcharts option={this.getOption()} style={{ height: '100px', width: '100%' }} />
+                    {!!sideachart && <ReactEcharts option={sideachart} style={{ height: '100px', width: '100%' }} />}
                   </div>
                   <div className={styles.rightInfoBox}>
                     <p>重大事件 140起 </p>
                     <p>
-                      <span>30<br />交通拥堵</span>
+                      {!!eachartData && eachartData.map((item) => {
+                        return <span key={item.eventLength + item.eventName}>{item.eventLength}<br />{item.eventName}</span>
+                      })}
+                      {/* <span>30<br />交通拥堵</span>
                       <span>80<br />道路施工</span>
                       <span>20<br />极端天气</span>
-                      <span>10<br />交通事故</span>
+                      <span>10<br />交通事故</span> */}
                     </p>
                   </div>
                 </div>
@@ -172,13 +203,13 @@ class ScrollList extends React.Component {
                       <span>{listTitle.state}</span>
                     </div>
                   }
-                  {data && data.map((item, index) => (
+                  {data && data.map((item) => (
                     <div className={classNames(styles.listItem, 'listItem')} onClick={(e) => { this.handleEventPopup(e, 'Details', true) }}>
-                      <span>{item.id}</span>
+                      <span>{item.eventId}</span>
                       <span title={item.roadName}>{item.roadName}</span>
-                      <span>{item.upTime}</span>
-                      <span>{item.traffic}</span>
-                      <span>{item.state}</span>
+                      <span>{this.getDate(item.updateTime)}</span>
+                      <span>{item.situation}</span>
+                      <span>{item.controlStatus}</span>
                     </div>
                   ))
                   }
