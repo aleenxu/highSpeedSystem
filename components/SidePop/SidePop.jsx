@@ -1,5 +1,6 @@
 import React from 'react'
 import ScrollList from '../ScrollList/ScrollList'
+
 class SidePop extends React.Component {
   constructor(props) {
     super(props)
@@ -26,7 +27,7 @@ class SidePop extends React.Component {
   }
   handleEventPopup = (type, boolean) => {
     const { handleEventPopup } = this.props
-    console.log(type, boolean,handleEventPopup);
+    console.log(type, boolean, handleEventPopup);
     if (handleEventPopup) {
       handleEventPopup(type, boolean)
     }

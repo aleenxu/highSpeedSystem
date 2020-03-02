@@ -1,10 +1,10 @@
 import axios from 'axios'
 
 const instance = axios.create({
-  baseURL: 'http://39.100.128.220:20199', // http://221.13.10.30:20199
+  baseURL: 'http://192.168.1.95:20203',
 })
 // 请求拦截
-instance.interceptors.request.use((config) => {
+/* instance.interceptors.request.use((config) => {
   const pathName = (config.url.split('/')).pop()
   if (pathName !== 'login') {
     const userInfo = JSON.parse(localStorage.getItem('userInfo'))
@@ -15,16 +15,16 @@ instance.interceptors.request.use((config) => {
     }
   }
   return config
-}, error => (Promise.reject(error)))
+}, error => (Promise.reject(error))) */
 
 // 返回拦截
-instance.interceptors.response.use((response) => {
+/* instance.interceptors.response.use((response) => {
   if (response.data.code === -10) {
     localStorage.clear()
     window.location.href = '#/login'
   }
   return response
-}, error => (Promise.reject(error)))
+}, error => (Promise.reject(error))) */
 
 export default async function getResponseDatas(type, url, requestParams, setHead) {
   try {

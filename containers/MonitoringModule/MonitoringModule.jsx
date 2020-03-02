@@ -4,6 +4,7 @@ import GMap from '../../components/GMap/GMap'
 import SidePop from '../../components/SidePop/SidePop'
 import styles from './MonitoringModule.scss'
 import classNames from 'classnames'
+import getResponseDatas from '../../plugs/HttpData/getResponseData'
 import { Input, Checkbox, Radio, Icon, Switch, DatePicker, Collapse } from 'antd'
 const { Panel } = Collapse
 const { Search } = Input
@@ -32,9 +33,20 @@ class MonitoringModule extends React.Component {
       endValue: null,
       endOpen: false,
     }
+    this.eventQuery = {
+      accidentCheck: true,
+      constructionCheck: true,
+      eventLevel: [1, 2, 3, 4],
+      reportMinRange: 10,
+      roadName: '',
+      trafficCheck: true,
+      weatherCheck: true,
+    }
+    this.eventListUrl = '/control/event/list/events'
   }
   componentDidMount = () => {
-
+    // 查询左侧列表数据
+    this.handleEventList()
   }
   onStartChange = (value) => {
     this.onPickerChange('startValue', value)
@@ -112,6 +124,27 @@ class MonitoringModule extends React.Component {
       }}
     />
   )
+  handleInput = (value, name) => {
+    this.eventQuery[name] = value
+  }
+  handleCheckboxGroup = (value, name) => {
+    console.log(value, name)
+    if (name === 'reportMinRange') {
+      this.eventQuery[name] = value
+    } else {
+      this.eventQuery[name] = Boolean(value[0])
+    }
+  }
+  // 获取左侧列表数据
+  handleEventList = () => {
+    getResponseDatas('post', this.eventListUrl, this.eventQuery).then((res) => {
+      const result = res.data
+      console.log(result)
+      if (result.code === 200) {
+        this.setState({ eventPopup: null })
+      }
+    })
+  }
   render() {
     const { eventPopup, controlPopup, detailsPopup, whethePopup, reservePopup, startValue, endValue, endOpen } = this.state
     return (
@@ -148,29 +181,40 @@ class MonitoringModule extends React.Component {
                 <div className={styles.ItemBox}>
                   <span className={styles.ItemName}>道&nbsp;路&nbsp;名&nbsp;称&nbsp;:</span>
                   <div className={styles.ItemInput}>
-                    <Input />
+                    <Input onChange={(e) => { this.handleInput(e, 'roadName') }} />
                   </div>
                 </div>
                 <div className={styles.ItemBox}>
                   <span className={styles.ItemName}>事&nbsp;件&nbsp;类&nbsp;型&nbsp;:</span>
                   <div className={styles.ItemInput}>
-                    <Checkbox.Group options={options} defaultValue={['1', '3']} />
+                    <Checkbox.Group onChange={(e) => { this.handleCheckboxGroup(e, 'trafficCheck') }}>
+                      <Checkbox value={1} >交通拥堵</Checkbox>
+                    </Checkbox.Group>
+                    <Checkbox.Group onChange={(e) => { this.handleCheckboxGroup(e, 'constructionCheck') }}>
+                      <Checkbox value={1} >道路施工</Checkbox>
+                    </Checkbox.Group>
+                    <Checkbox.Group onChange={(e) => { this.handleCheckboxGroup(e, 'weatherCheck') }} >
+                      <Checkbox value={1} >极端天气</Checkbox>
+                    </Checkbox.Group>
+                    <Checkbox.Group onChange={(e) => { this.handleCheckboxGroup(e, 'accidentCheck') }}>
+                      <Checkbox value={1} >交通事故</Checkbox>
+                    </Checkbox.Group>
                   </div>
                 </div>
                 <div className={styles.ItemBox}>
                   <span className={styles.ItemName}>上&nbsp;报&nbsp;时&nbsp;间&nbsp;:</span>
                   <div className={styles.ItemInput}>
-                    <Radio.Group name="radiogroup" defaultValue={1}>
-                      <Radio value={1}>十分钟以内</Radio>
-                      <Radio value={2}>三十分钟以内</Radio>
-                      <Radio value={3}>无限制</Radio>
+                    <Radio.Group name="radiogroup" defaultValue={10} onChange={(e) => { this.handleInput(e, 'reportMinRange') }}>
+                      <Radio value={10}>十分钟以内</Radio>
+                      <Radio value={30}>三十分钟以内</Radio>
+                      <Radio value={0}>无限制</Radio>
                     </Radio.Group>
                   </div>
                 </div>
                 <div className={styles.ItemBox}>
                   <span className={styles.ItemName}>事件严重程度:</span>
                   <div className={styles.ItemInput}>
-                    <Checkbox.Group options={plainOptions} defaultValue={['2', '4']} />
+                    <Checkbox.Group options={plainOptions} defaultValue={['2', '4']} onChange={(e) => { this.handleCheckboxGroup(e, 'eventLevel') }} />
                   </div>
                 </div>
                 <div className={styles.ItemFooter}>
