@@ -85,7 +85,7 @@ class GMap extends React.Component {
         //设置基点偏移
         offset: new AMap.Pixel(-10, -10),
         map: map,
-        showPositionPoint: true,
+        showPositionPoint: false,
         position: item,
         zIndex: 10
       });
@@ -109,7 +109,7 @@ class GMap extends React.Component {
       infoBody: '<p class="my-desc"><strong>这里是内容。</strong></p>',
 
       //基点指向marker的头部位置
-      offset: new AMap.Pixel(0, -40)
+      offset: new AMap.Pixel(0, -10)
     });
     infoWindow.open(map, marker.getPosition());
   }
