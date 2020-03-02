@@ -17,6 +17,11 @@ const pointArr2 = [
 const pointArr3 = [
   [119.9041380000, 32.4097840000]
 ]
+const lineData = [
+  { "name": "起点 -> 终点", "path": [[119.9334060000, 32.4345900000], [119.9339210000, 32.4328910000], [119.9335780000, 32.4313020000], [119.9347800000, 32.4301430000], [119.9346080000, 32.4288390000]] },
+  { "name": "起点 -> 终点", "path": [[119.9346080000, 32.4288390000], [119.9342650000, 32.4271000000], [119.9342650000, 32.4257960000], [119.9342650000, 32.4242020000], [119.9337500000, 32.4226080000], [119.9327200000, 32.4200000000]] },
+  { "name": "起点 -> 终点", "path": [[119.9327200000, 32.4200000000], [119.9330630000, 32.4171020000], [119.9344360000, 32.4147830000], [119.9349510000, 32.4131890000], [119.9361530000, 32.4113050000], [119.9358100000, 32.4085520000]] }
+];
 class GMap extends React.Component {
   constructor(props) {
     super(props)
@@ -64,7 +69,61 @@ class GMap extends React.Component {
       _this.createPoint(pointArr2, speedLimitIcon, SimpleMarker, SimpleInfoWindow, map)
       // 图标四
       _this.createPoint(pointArr3, turnBoardIcon, SimpleMarker, SimpleInfoWindow, map)
+
     })
+    // 线的绘制
+    AMapUI.load(['ui/misc/PathSimplifier', 'lib/$'], function (PathSimplifier, $) {
+
+      if (!PathSimplifier.supportCanvas) {
+        alert('当前环境不支持 Canvas！');
+        return;
+      }
+
+      //just some colors
+      var colors = ["red", "yellow", "green"];
+      var pathSimplifierIns = new PathSimplifier({
+        zIndex: 100,
+        autoSetFitView: false,
+        map: map, //所属的地图实例
+        getPath: function (pathData, pathIndex) {
+          return pathData.path;
+        },
+        getHoverTitle: function (pathData, pathIndex, pointIndex) {
+          if (pointIndex >= 0) {
+            //point 
+            return pathData.name + '，点:' + pointIndex + '/' + pathData.path.length;
+          }
+
+          return pathData.name + '，坐标点数量' + pathData.path.length;
+        },
+        renderOptions: {
+          pathLineStyle: {
+            dirArrowStyle: false
+          },
+          getPathStyle: function (pathItem, zoom) {
+            var color = colors[pathItem.pathIndex],
+              lineWidth = 3;
+            return {
+              pathLineStyle: {
+                strokeStyle: color,
+                lineWidth: lineWidth
+              },
+              pathLineSelectedStyle: {
+                lineWidth: lineWidth + 2
+              },
+              pathNavigatorStyle: {
+                fillStyle: color
+              }
+            }
+          }
+        }
+      });
+
+      window.pathSimplifierIns = pathSimplifierIns;
+      var d = lineData;
+      pathSimplifierIns.setData(d);
+
+    });
     // 弹层的自定义
     //覆盖默认的dom结构
     AMapUI.defineTpl("ui/overlay/SimpleInfoWindow/tpl/container.html", [], function () {
@@ -89,19 +148,19 @@ class GMap extends React.Component {
         position: item,
         zIndex: 10
       });
-     
+
 
       /* _this.openInfoWin(infoWindow,map,marker) */
 
       //marker 点击时打开
-      marker.on( 'click', function () {
-        _this.openInfoWin(map,marker,SimpleInfoWindow)
+      marker.on('click', function () {
+        _this.openInfoWin(map, marker, SimpleInfoWindow)
       });
 
       /* _this.openInfoWin(infoWindow,map,marker) */
     })
   }
-  openInfoWin = ( map, marker,SimpleInfoWindow) => {
+  openInfoWin = (map, marker, SimpleInfoWindow) => {
     var infoWindow = new SimpleInfoWindow({
       myCustomHeader: '我的header',
       myCustomFooter: '我的footer',
