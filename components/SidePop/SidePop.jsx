@@ -7,6 +7,7 @@ class SidePop extends React.Component {
     this.state = {
       boxLeft: this.props.left ? this.props.left : 'unset',
       boxRight: this.props.right ? this.props.right : 'unset',
+      SidePopLeft: this.props.SidePopLeft || ''
     }
     this.styles = {
       position: 'fixed',
@@ -25,6 +26,11 @@ class SidePop extends React.Component {
   componentDidMount = () => {
 
   }
+  componentWillReceiveProps = (nextProps) => {
+    if (this.props.SidePopLeft !== nextProps.SidePopLeft) {
+      this.setState({ SidePopLeft: nextProps.SidePopLeft })
+    }
+  }
   handleEventPopup = (type, boolean) => {
     const { handleEventPopup } = this.props
     console.log(type, boolean, handleEventPopup);
@@ -33,7 +39,7 @@ class SidePop extends React.Component {
     }
   }
   render() {
-    const { boxLeft, boxRight } = this.state
+    const { boxLeft, boxRight, SidePopLeft } = this.state
     const eachartsData = {} //eacharts数据
     const progressData = {} //进度条数据
     const listData = [
@@ -60,23 +66,27 @@ class SidePop extends React.Component {
       state: '管控状态'
     } //标题数据
     return (
-      <div style={this.styles}>
+      < div style={this.styles} >
         {boxRight === 'unset' &&
           <div style={{ width: '100%' }}>
-            <ScrollList type="1" dataRes="eacharts" handleEventPopup={this.handleEventPopup}></ScrollList>
-            <ScrollList Tit="交通拥堵(1)" Title={listTitData} dataRes={listData} handleEventPopup={this.handleEventPopup}></ScrollList>
+            {!!SidePopLeft && <ScrollList eachartData={SidePopLeft} type="1" dataRes="eacharts" handleEventPopup={this.handleEventPopup}></ScrollList>}
+            {!!SidePopLeft && SidePopLeft.map((item, index) => {
+              return <ScrollList key={item.eventName + item.eventLength} Tit={item.eventName + ' (' + item.eventLength + ')'} Title={listTitData} dataRes={item.eventData} handleEventPopup={this.handleEventPopup}></ScrollList>
+            })}
+            {/* <ScrollList Tit="交通拥堵(1)" Title={listTitData} dataRes={listData} handleEventPopup={this.handleEventPopup}></ScrollList>
             <ScrollList Tit="道路施工(1)" Title={listTitData} dataRes={listData} handleEventPopup={this.handleEventPopup}></ScrollList>
             <ScrollList Tit="极端天气(1)" Title={listTitData} dataRes={listData} handleEventPopup={this.handleEventPopup}></ScrollList>
-            <ScrollList Tit="交通事故(1)" Title={listTitData} dataRes={listData} handleEventPopup={this.handleEventPopup}></ScrollList>
+            <ScrollList Tit="交通事故(1)" Title={listTitData} dataRes={listData} handleEventPopup={this.handleEventPopup}></ScrollList> */}
           </div>
         }
-        {boxLeft === 'unset' &&
+        {
+          boxLeft === 'unset' &&
           <div style={{ width: '100%' }}>
             <ScrollList type="2" dataRes="进度条" handleEventPopup={this.handleEventPopup}></ScrollList>
             <ScrollList Tit="管控方案" Title={listTitData} dataRes={listData} handleEventPopup={this.handleEventPopup}></ScrollList>
           </div>
         }
-      </div>
+      </div >
     )
   }
 }

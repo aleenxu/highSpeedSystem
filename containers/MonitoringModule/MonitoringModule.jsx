@@ -32,6 +32,7 @@ class MonitoringModule extends React.Component {
       startValue: null,
       endValue: null,
       endOpen: false,
+      SidePopLeft: null,
     }
     this.eventQuery = {
       accidentCheck: true,
@@ -127,9 +128,13 @@ class MonitoringModule extends React.Component {
   handleInput = (value, name) => {
     this.eventQuery[name] = value
   }
+  handleradiog = (e, name) => {
+    console.log(e, name, e.target.value);
+    this.eventQuery[name] = e.target.value
+  }
   handleCheckboxGroup = (value, name) => {
     console.log(value, name)
-    if (name === 'reportMinRange') {
+    if (name === 'eventLevel') {
       this.eventQuery[name] = value
     } else {
       this.eventQuery[name] = Boolean(value[0])
@@ -141,16 +146,16 @@ class MonitoringModule extends React.Component {
       const result = res.data
       console.log(result)
       if (result.code === 200) {
-        this.setState({ eventPopup: null })
+        this.setState({ eventPopup: null, SidePopLeft: result.data })
       }
     })
   }
   render() {
-    const { eventPopup, controlPopup, detailsPopup, whethePopup, reservePopup, startValue, endValue, endOpen } = this.state
+    const { eventPopup, controlPopup, detailsPopup, whethePopup, reservePopup, startValue, endValue, endOpen, SidePopLeft } = this.state
     return (
       <div className={styles.MonitoringModule}>
         <SystemMenu />
-        <SidePop left="5px" handleEventPopup={this.handleEventPopup} />
+        <SidePop left="5px" SidePopLeft={SidePopLeft} handleEventPopup={this.handleEventPopup} />
         {!!detailsPopup || <SidePop right="5px" handleEventPopup={this.handleEventPopup} />}
         <GMap />
         <div className={styles.searchBox}><Search id="tipinput" placeholder="请输入内容" enterButton /></div>
@@ -187,16 +192,16 @@ class MonitoringModule extends React.Component {
                 <div className={styles.ItemBox}>
                   <span className={styles.ItemName}>事&nbsp;件&nbsp;类&nbsp;型&nbsp;:</span>
                   <div className={styles.ItemInput}>
-                    <Checkbox.Group onChange={(e) => { this.handleCheckboxGroup(e, 'trafficCheck') }}>
+                    <Checkbox.Group defaultValue={[1]} onChange={(e) => { this.handleCheckboxGroup(e, 'trafficCheck') }}>
                       <Checkbox value={1} >交通拥堵</Checkbox>
                     </Checkbox.Group>
-                    <Checkbox.Group onChange={(e) => { this.handleCheckboxGroup(e, 'constructionCheck') }}>
+                    <Checkbox.Group defaultValue={[1]} onChange={(e) => { this.handleCheckboxGroup(e, 'constructionCheck') }}>
                       <Checkbox value={1} >道路施工</Checkbox>
                     </Checkbox.Group>
-                    <Checkbox.Group onChange={(e) => { this.handleCheckboxGroup(e, 'weatherCheck') }} >
+                    <Checkbox.Group defaultValue={[1]} onChange={(e) => { this.handleCheckboxGroup(e, 'weatherCheck') }} >
                       <Checkbox value={1} >极端天气</Checkbox>
                     </Checkbox.Group>
-                    <Checkbox.Group onChange={(e) => { this.handleCheckboxGroup(e, 'accidentCheck') }}>
+                    <Checkbox.Group defaultValue={[1]} onChange={(e) => { this.handleCheckboxGroup(e, 'accidentCheck') }}>
                       <Checkbox value={1} >交通事故</Checkbox>
                     </Checkbox.Group>
                   </div>
@@ -204,7 +209,7 @@ class MonitoringModule extends React.Component {
                 <div className={styles.ItemBox}>
                   <span className={styles.ItemName}>上&nbsp;报&nbsp;时&nbsp;间&nbsp;:</span>
                   <div className={styles.ItemInput}>
-                    <Radio.Group name="radiogroup" defaultValue={10} onChange={(e) => { this.handleInput(e, 'reportMinRange') }}>
+                    <Radio.Group name="radiogroup" defaultValue={10} onChange={(e) => { this.handleradiog(e, 'reportMinRange') }}>
                       <Radio value={10}>十分钟以内</Radio>
                       <Radio value={30}>三十分钟以内</Radio>
                       <Radio value={0}>无限制</Radio>
@@ -214,11 +219,11 @@ class MonitoringModule extends React.Component {
                 <div className={styles.ItemBox}>
                   <span className={styles.ItemName}>事件严重程度:</span>
                   <div className={styles.ItemInput}>
-                    <Checkbox.Group options={plainOptions} defaultValue={['2', '4']} onChange={(e) => { this.handleCheckboxGroup(e, 'eventLevel') }} />
+                    <Checkbox.Group options={plainOptions} defaultValue={['1', '2', '3', '4']} onChange={(e) => { this.handleCheckboxGroup(e, 'eventLevel') }} />
                   </div>
                 </div>
                 <div className={styles.ItemFooter}>
-                  <span onClick={() => { this.handleEventPopup('Event', false) }}>确&nbsp;&nbsp;认</span>
+                  <span onClick={this.handleEventList}>确&nbsp;&nbsp;认</span>
                   <span onClick={() => { this.handleEventPopup('Event', false) }}>返&nbsp;&nbsp;回</span>
                 </div>
               </div>
@@ -231,7 +236,7 @@ class MonitoringModule extends React.Component {
               <div className={styles.Title}>管控方案检测过滤设置<Icon className={styles.Close} onClick={() => { this.handleEventPopup('Control', false) }} type="close" /></div>
               <div className={styles.Centent}>
                 <div className={styles.ItemBox}>
-                  <span className={styles.ItemName}>上&nbsp;报&nbsp;时&nbsp;间&nbsp;:</span>
+                  <span className={styles.ItemName}>方&nbsp;案&nbsp;状&nbsp;态&nbsp;:</span>
                   <div className={styles.ItemInput}>
                     <Radio.Group name="radiogroup" defaultValue={1}>
                       <Radio value={1}>待发布</Radio>
