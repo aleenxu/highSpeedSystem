@@ -5,9 +5,10 @@ import SidePop from '../../components/SidePop/SidePop'
 import styles from './MonitoringModule.scss'
 import classNames from 'classnames'
 import getResponseDatas from '../../plugs/HttpData/getResponseData'
-import { Input, Checkbox, Radio, Icon, Switch, DatePicker, Collapse } from 'antd'
+import { Input, Checkbox, Radio, Icon, Switch, DatePicker, Collapse, Select } from 'antd'
 const { Panel } = Collapse
 const { Search } = Input
+const { Option } = Select
 const options = [
   { label: '交通拥堵', value: '1' },
   { label: '道路施工', value: '2' },
@@ -184,12 +185,22 @@ class MonitoringModule extends React.Component {
               <div className={styles.Title}>事件检测过滤设置<Icon className={styles.Close} onClick={() => { this.handleEventPopup('Event', false) }} type="close" /></div>
               <div className={styles.Centent}>
                 <div className={styles.ItemBox}>
+                  <span className={styles.ItemName}>高&nbsp;速&nbsp;名&nbsp;称&nbsp;:</span>
+                  <div className={styles.ItemInput}>
+                    <Select defaultValue="lucy" style={{ width: '100%' }}>
+                      <Option value="jack">Jack</Option>
+                      <Option value="lucy">Lucy</Option>
+                      <Option value="Yiminghe">yiminghe</Option>
+                    </Select>
+                  </div>
+                </div>
+                <div className={styles.ItemBox}>
                   <span className={styles.ItemName}>道&nbsp;路&nbsp;名&nbsp;称&nbsp;:</span>
                   <div className={styles.ItemInput}>
                     <Input onChange={(e) => { this.handleInput(e, 'roadName') }} />
                   </div>
                 </div>
-                <div className={styles.ItemBox}>
+                {/*  <div className={styles.ItemBox}>
                   <span className={styles.ItemName}>事&nbsp;件&nbsp;类&nbsp;型&nbsp;:</span>
                   <div className={styles.ItemInput}>
                     <Checkbox.Group defaultValue={[1]} onChange={(e) => { this.handleCheckboxGroup(e, 'trafficCheck') }}>
@@ -221,7 +232,7 @@ class MonitoringModule extends React.Component {
                   <div className={styles.ItemInput}>
                     <Checkbox.Group options={plainOptions} defaultValue={['1', '2', '3', '4']} onChange={(e) => { this.handleCheckboxGroup(e, 'eventLevel') }} />
                   </div>
-                </div>
+                </div> */}
                 <div className={styles.ItemFooter}>
                   <span onClick={this.handleEventList}>确&nbsp;&nbsp;认</span>
                   <span onClick={() => { this.handleEventPopup('Event', false) }}>返&nbsp;&nbsp;回</span>

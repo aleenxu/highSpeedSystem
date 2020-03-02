@@ -34,7 +34,7 @@
     border-bottom: 1px #cdcdcd dotted;
     cursor: pointer;
     > span {
-      flex:1;
+      flex: 1;
       padding: 3px 5px;
       font-size: 12px;
       color: #6d738d;
@@ -64,6 +64,13 @@
     }
     > span:nth-child(4) {
       width: 50px;
+    }
+    > i {
+      width: 18px;
+      display: inline-block;
+      height: 18px;
+      border-radius: 50%;
+      margin-left: 10px;
     }
     &:hover {
       background: #74ccd3;
@@ -172,4 +179,41 @@
   cursor: pointer;
   z-index: 9999;
   color: #fff;
+}
+
+.scrollBox {
+  :global(.anticon-setting svg) {
+    color: #2d81ad;
+    &:hover {
+      transition: all 0.5s;
+      transform: rotate(180deg);
+      color: #26ff6d;
+    }
+  }
+  .settingTitle {
+    position: absolute;
+    left: 28%;
+    top: 12px;
+    z-index: 9999;
+    color: #fff;
+    > span {
+      margin-right: 8px;
+      &:nth-child(1) i {
+        background: red;
+        box-shadow: red 0px 0px 20px;
+      }
+      &:nth-child(2) i {
+        background: green;
+        box-shadow: green 0px 0px 20px;
+      }
+      > i {
+        width: 18px;
+        display: inline-block;
+        height: 18px;
+        border-radius: 50%;
+        margin-right: 8px;
+        vertical-align: sub;
+      }
+    }
+  }
 }

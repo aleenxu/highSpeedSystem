@@ -31,11 +31,11 @@ class SidePop extends React.Component {
       this.setState({ SidePopLeft: nextProps.SidePopLeft })
     }
   }
-  handleEventPopup = (type, boolean) => {
+  handleEventPopup = (type, boolean, data) => {
     const { handleEventPopup } = this.props
-    console.log(type, boolean, handleEventPopup);
+    console.log(type, boolean, handleEventPopup,data)
     if (handleEventPopup) {
-      handleEventPopup(type, boolean)
+      handleEventPopup(type, boolean, data)
     }
   }
   render() {
@@ -59,19 +59,28 @@ class SidePop extends React.Component {
       }
     ] //列表数据
     const listTitData = {
-      id: '事件编号',
-      roadName: '道路名称',
-      upTime: '上报时间',
-      traffic: '路况',
-      state: '管控状态'
+      id: '道路编号',
+      roadName: '路段',
+      upTime: '方向',
+      traffic: '路况(km/h)',
+      state: '上报时间'
     } //标题数据
     return (
-      < div style={this.styles} >
+      <div style={this.styles} >
         {boxRight === 'unset' &&
           <div style={{ width: '100%' }}>
             {!!SidePopLeft && <ScrollList eachartData={SidePopLeft} type="1" dataRes="eacharts" handleEventPopup={this.handleEventPopup}></ScrollList>}
             {!!SidePopLeft && SidePopLeft.map((item, index) => {
-              return <ScrollList key={item.eventName + item.eventLength} Tit={item.eventName + ' (' + item.eventLength + ')'} Title={listTitData} dataRes={item.eventData} handleEventPopup={this.handleEventPopup}></ScrollList>
+              const listTit = {
+                id: '道路编号',
+                roadName: '路段',
+                upTime: '方向',
+                traffic: item.eventName === '交通拥堵' ? '路况(km/h)' : item.eventName === '极端天气' ? '能见度(m)' : '影响车道',
+                state: '上报时间',
+                type: item.eventType,
+                name: item.eventName,
+              }
+              return <ScrollList key={item.eventName + item.eventLength} Tit={item.eventName + ' (' + item.eventLength + ')'} Title={listTit} dataRes={item.eventData} handleEventPopup={this.handleEventPopup}></ScrollList>
             })}
             {/* <ScrollList Tit="交通拥堵(1)" Title={listTitData} dataRes={listData} handleEventPopup={this.handleEventPopup}></ScrollList>
             <ScrollList Tit="道路施工(1)" Title={listTitData} dataRes={listData} handleEventPopup={this.handleEventPopup}></ScrollList>

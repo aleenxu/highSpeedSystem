@@ -1,7 +1,7 @@
 import React from 'react'
 import echarts from 'echarts'
 import ReactEcharts from 'echarts-for-react'
-import { Collapse, Icon, Progress } from 'antd';
+import { Collapse, Icon, Progress,Checkbox } from 'antd';
 import styles from './ScrollList.scss'
 import classNames from 'classnames'
 const { Panel } = Collapse;
@@ -42,7 +42,7 @@ class ScrollList extends React.Component {
           data.push({ value: item.eventLength, name: item.eventName })
         })
         this.getOption(data)
-      }    
+      }
       this.setState({ eachartData: nextProps.eachartData })
     }
   }
@@ -127,13 +127,24 @@ class ScrollList extends React.Component {
     const navtime = year + '.' + month + '.' + day + '' + ' ' + hour + ':' + minutes + ':' + seconds
     return navtime
   }
+  genExtra = (data) => (
+    <Icon
+      type="setting"
+      onClick={(event) => {
+        event.stopPropagation()
+        console.log(event, data)
+        this.handleEventPopup(event, 'Event', true, data)
+      }}
+    />
+  )
   render() {
     const { listType, listTit, listTitle, data, eachartData, sideachart } = this.state
     return (
-      <div>
+      <div className={styles.scrollBox}>
         {listType === "1" &&
           <div>
-            <Icon type="setting" className={styles.setting} onClick={(e) => { this.handleEventPopup(e, 'Event', true) }} />
+            {/*  <Icon type="setting" className={styles.setting} onClick={(e) => { this.handleEventPopup(e, 'Event', true) }} /> */}
+            <div className={styles.settingTitle}><span><i />未管控</span><span><i />已管控</span></div>
             <Collapse
               defaultActiveKey={['1']}
               onChange={this.callback}
@@ -166,13 +177,14 @@ class ScrollList extends React.Component {
         }
         {listType === "2" &&
           <div>
-            <Icon type="setting" className={styles.setting} onClick={(e) => { this.handleEventPopup(e, 'Control', true) }} />
+            {/*  <Icon type="setting" className={styles.setting} onClick={(e) => { this.handleEventPopup(e, 'Control', true) }} /> */}
             <Collapse
               defaultActiveKey={['1']}
               onChange={this.callback}
               expandIconPosition="right"
             >
-              <Icon type="appstore" /><Panel header="管控方案管理" key="1">
+              <Icon type="appstore" />
+              <Panel header="管控方案管理" key="1" extra={this.genExtra()}>
                 <div>
                   <div className={styles.ProgressTotal}><em>管控方案发布管理</em>方案总数：16</div>
                   <div className={styles.ProgressBox}><em>待发布</em><Progress strokeColor="#ed7d30" showInfo="false" percent={18.75} format={percent => `${3}`} status="active" /></div>
@@ -192,10 +204,15 @@ class ScrollList extends React.Component {
               onChange={this.callback}
               expandIconPosition="right"
             >
-              <Icon type="menu-unfold" /><Panel header={listTit} key="2">
+              {/* <Icon type="menu-unfold" /> */}
+              <Checkbox.Group defaultValue={[1]} onChange={(e) => { this.handleCheckboxGroup(e, 'accidentCheck') }}>
+                <Checkbox value={1} />
+              </Checkbox.Group>
+              <Panel header={listTit} key="2" extra={this.genExtra(listTitle)}>
                 <div className={styles.listBox}>
                   {listTitle &&
                     <div className={styles.listItem}>
+                      <i />
                       <span className={styles.tit}>{listTitle.id}</span>
                       <span className={styles.tit}>{listTitle.roadName}</span>
                       <span className={styles.tit}>{listTitle.upTime}</span>
@@ -203,8 +220,9 @@ class ScrollList extends React.Component {
                       <span>{listTitle.state}</span>
                     </div>
                   }
-                  {data && data.map((item) => (
+                  {data && data.map((item, index) => (
                     <div className={classNames(styles.listItem, 'listItem')} onClick={(e) => { this.handleEventPopup(e, 'Details', true) }}>
+                      <i style={{ background: index / 2 ? 'green' : 'red', boxShadow: index / 2 ? 'green 0px 0px 20px' : 'red 0px 0px 20px' }} />
                       <span>{item.eventId}</span>
                       <span title={item.roadName}>{item.roadName}</span>
                       <span>{this.getDate(item.updateTime)}</span>
