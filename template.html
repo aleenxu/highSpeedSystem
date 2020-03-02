@@ -9,18 +9,55 @@
     <script src="https://cache.amap.com/lbs/static/es5.min.js"></script>
     <script src="https://webapi.amap.com/maps?v=1.4.15&key=e9c21a13b9e2994799069908c9f56f9b&plugin=AMap.Autocomplete,AMap.PlaceSearch"></script>
     <script src="//webapi.amap.com/ui/1.0/main.js?v=1.0.11"></script>
+    <style>
+    /* 地图弹层信息 */
+    .amap-ui-smp-ifwn-content-body{
+        background:rgba(9,9,9,.8)!important;
+        padding:0px!important;
+    }
+    .amap-ui-smp-ifwn-content-body h1,.amap-ui-smp-ifwn-content-body h3,.amap-ui-smp-ifwn-content-body h4{
+        color:#fff!important;
+    }
+    .amap-ui-smp-ifwn-content-body h1{
+        line-height:50px;
+        font-size:20px;
+        text-indent: 20px;
+        background:rgba(19,27,37,.6)!important;
+    }
+    .amap-ui-smp-ifwn-content-body .amap-ui-infowindow-body{
+        width:100%!important;
+        background:transparent!important;
+        text-indent: 20px;
+        color:#fff;
+    }
+    .amap-ui-smp-ifwn-content-body .amap-ui-infowindow-close{
+        background:#1890ff!important;
+        border-color: rgb(9,9,9)!important;
+        color:#fff!important;
+        margin-bottom:8px!important;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    .amap-ui-smp-ifwn-def-tr-close:hover{
+        transition: all 0.5s;
+        transform: rotate(180deg);
+        color: #26ff6d!important;
+        background:none!important;
+        border:none!important;
+    }
+    </style>
     <!-- 这里定义模板内容 -->
     <script id="my-infowin-tpl" type="text/template">
         <div class="amap-ui-smp-ifwn-container">
             <a class="amap-ui-infowindow-close amap-ui-smp-ifwn-def-tr-close">&#10006;</a>
             <div class="amap-ui-smp-ifwn-content-body" style="width:300px;">
                 <h1><%= myCustomHeader %></h1>
-                <h3 class="amap-ui-infowindow-title" style="width:100px;float:left"><%= infoTitle %></h3>
+               <!--  <h3 class="amap-ui-infowindow-title" style="width:100px;float:left"><%= infoTitle %></h3> -->
                 <div class="amap-ui-infowindow-body" style="width:200px;height:60px; float:right;background:#eee; ">
                     <%= infoBody %>
                 </div>
                 <div style="clear:both"></div>
-                <h4><%= myCustomFooter %></h4>
+                <!-- <h4><%= myCustomFooter %></h4> -->
                 <button class="amap-ui-infowindow-close" style="margin:0 auto; display:block; width:100px;">关闭</button>
             </div>
             <div class="amap-ui-smp-ifwn-combo-sharp"></div>
