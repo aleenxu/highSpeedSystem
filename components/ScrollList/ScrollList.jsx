@@ -137,6 +137,13 @@ class ScrollList extends React.Component {
       handleEventPopup(type, boolean)
     }
   }
+  formatDuring=(mss)=> {
+  /*   var days = parseInt(mss / (1000 * 60 * 60 * 24)); */
+    const hours = parseInt((mss % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = parseInt((mss % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = (mss % (1000 * 60)) / 1000;
+    return  hours + ":" + minutes + ":" + seconds;
+}
   getDate = (time) => {
     const today = new Date(time)
     const year = today.getFullYear()
@@ -250,7 +257,7 @@ class ScrollList extends React.Component {
                   }
                   {data && data.map((item, index) => (
                     <div key={item.roadCode + item.locs} className={classNames(styles.listItem, 'listItem')} onClick={(e) => { this.handleEventPopup(e, 'Details', true) }}>
-                      <i style={{ background: item.controlStatusType? 'green' : 'red', boxShadow: item.controlStatusType ? 'green 0px 0px 20px' : 'red 0px 0px 20px' }} />
+                      <i style={{ background: item.controlStatusType ? 'green' : 'red', boxShadow: item.controlStatusType ? 'green 0px 0px 20px' : 'red 0px 0px 20px' }} />
                       <span>{item.roadCode}</span>
                       <span title={item.locs}>{item.locs}</span>
                       <span>{item.directionName}</span>
@@ -289,7 +296,7 @@ class ScrollList extends React.Component {
                     <div key={item.eventId + item.roadName} className={classNames(styles.listItem)} onClick={(e) => { this.handleEventPopup(e, 'Details', true) }}>
                       <span>{item.eventId}</span>
                       <span title={item.roadName}>{item.roadName}</span>
-                      <span>{this.getDate(item.startTime)}</span>
+                      <span>{this.formatDuring(new Date(item.endTime).getTime()-new Date(item.startTime).getTime())}</span>
                       <span>{this.getDate(item.endTime)}</span>
                       <span>{item.planStatusName}</span>
                     </div>
