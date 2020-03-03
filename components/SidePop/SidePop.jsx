@@ -9,6 +9,8 @@ class SidePop extends React.Component {
       boxRight: this.props.right ? this.props.right : 'unset',
       SidePopLeft: this.props.SidePopLeft || '',
       groupType: this.props.groupType || '',
+      groupStatus: this.props.groupStatus,
+      SidplanList: this.props.SidplanList,
     }
     this.styles = {
       position: 'fixed',
@@ -25,7 +27,6 @@ class SidePop extends React.Component {
     }
   }
   componentDidMount = () => {
-    console.log(this.props.groupType);
 
   }
   componentWillReceiveProps = (nextProps) => {
@@ -35,6 +36,13 @@ class SidePop extends React.Component {
     if (this.props.groupType !== nextProps.groupType) {
       this.setState({ groupType: nextProps.groupType })
     }
+    if (this.props.groupStatus !== nextProps.groupStatus) {
+      this.setState({ groupStatus: nextProps.groupStatus })
+    }
+    if (this.props.SidplanList !== nextProps.SidplanList) {
+      this.setState({ SidplanList: nextProps.SidplanList })
+    }
+    console.log(this.props.SidplanList , nextProps.SidplanList,'===============8555');
   }
   handleEventPopup = (type, boolean) => {
     const { handleEventPopup } = this.props
@@ -45,7 +53,7 @@ class SidePop extends React.Component {
   }
 
   render() {
-    const { boxLeft, boxRight, SidePopLeft, groupType } = this.state
+    const { boxLeft, boxRight, SidplanList, SidePopLeft, groupType, groupStatus } = this.state
     const eachartsData = {} //eacharts数据
     const progressData = {} //进度条数据
     const listData = [
@@ -63,7 +71,15 @@ class SidePop extends React.Component {
         traffic: '严重',
         state: '未管控'
       }
-    ] //列表数据
+    ]
+    const listTit = {
+      id: '方案编号',
+      roadName: '道路名称',
+      upTime: '管控时常',
+      traffic: '剩余时间',
+      state: '状态'
+    }
+    //列表数据
     const listTitData = {
       id: '道路编号',
       roadName: '路段',
@@ -86,7 +102,7 @@ class SidePop extends React.Component {
                 type: item.eventType,
                 name: item.eventName,
               }
-              return <ScrollList key={item.eventName + item.eventLength} Tit={item.eventName + ' (' + item.eventLength + ')'} Title={listTit} dataRes={item.eventData} handleEventPopup={this.handleEventPopup}></ScrollList>
+              return <ScrollList type="3" key={item.eventName + item.eventLength} Tit={item.eventName + ' (' + item.eventLength + ')'} Title={listTit} dataRes={item.eventData} handleEventPopup={this.handleEventPopup}></ScrollList>
             })}
             {/* <ScrollList Tit="交通拥堵(1)" Title={listTitData} dataRes={listData} handleEventPopup={this.handleEventPopup}></ScrollList>
             <ScrollList Tit="道路施工(1)" Title={listTitData} dataRes={listData} handleEventPopup={this.handleEventPopup}></ScrollList>
@@ -97,8 +113,8 @@ class SidePop extends React.Component {
         {
           boxLeft === 'unset' &&
           <div style={{ width: '100%' }}>
-            <ScrollList type="2" dataRes="进度条" handleEventPopup={this.handleEventPopup}></ScrollList>
-            <ScrollList Tit="管控方案" Title={listTitData} dataRes={listData} handleEventPopup={this.handleEventPopup}></ScrollList>
+            {groupStatus && <ScrollList type="2" ProgressData={groupStatus} dataRes="进度条" handleEventPopup={this.handleEventPopup}></ScrollList>}
+            {SidplanList && <ScrollList type="4" Tit="管控方案" Title={listTit} dataRes={SidplanList} handleEventPopup={this.handleEventPopup}></ScrollList>}
           </div>
         }
       </div >

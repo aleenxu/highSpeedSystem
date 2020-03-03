@@ -21,28 +21,50 @@ class ScrollList extends React.Component {
       listTitle: this.props.Title, // 标题名
       eachartData: this.props.eachartData,
       sideachart: null,
+      ProgressData: this.props.ProgressData,
     }
+    this.eachartLength = 0
+    this.ProgressLength = 0
   }
   componentDidMount = () => {
-    const { eachartData } = this.props
+    const { eachartData, ProgressData } = this.props
     if (eachartData) {
       const data = []
+      this.eachartLength = 0
       eachartData.forEach((item) => {
+        this.eachartLength += item.total
         data.push({ value: item.total, name: item.name })
       })
       this.getOption(data)
+    }
+    if (ProgressData) {
+      this.ProgressLength = 0
+      ProgressData.forEach((item) => {
+        this.ProgressLength += item.count
+      })
     }
   }
   componentWillReceiveProps = (nextProps) => {
     if (this.props.eachartData !== nextProps.eachartData) {
       if (nextProps.eachartData) {
         const data = []
+        this.eachartLength = 0
         nextProps.eachartData.forEach((item) => {
+          this.eachartLength += item.total
           data.push({ value: item.total, name: item.name })
         })
         this.getOption(data)
       }
       this.setState({ eachartData: nextProps.eachartData })
+    }
+    if (this.props.ProgressData !== nextProps.ProgressData) {
+      if (nextProps.ProgressData) {
+        this.ProgressLength = 0
+        nextProps.ProgressData.forEach((item) => {
+          this.ProgressLength += item.count
+        })
+      }
+      this.setState({ ProgressData: nextProps.ProgressData })
     }
   }
   getOption = (data) => {
@@ -136,7 +158,7 @@ class ScrollList extends React.Component {
     />
   )
   render() {
-    const { listType, listTit, listTitle, data, eachartData, sideachart } = this.state
+    const { listType, listTit, listTitle, ProgressData, data, eachartData, sideachart } = this.state
     return (
       <div className={styles.scrollBox}>
         {listType === "1" &&
@@ -156,7 +178,7 @@ class ScrollList extends React.Component {
                     {!!sideachart && <ReactEcharts option={sideachart} style={{ height: '100px', width: '100%' }} />}
                   </div>
                   <div className={styles.rightInfoBox}>
-                    <p>重大事件 140起 </p>
+                    <p>重大事件 {this.eachartLength}起 </p>
                     <p>
                       {!!eachartData && eachartData.map((item) => {
                         return <span key={item.total + item.name}>{item.total}<br />{item.name}</span>
@@ -184,19 +206,27 @@ class ScrollList extends React.Component {
               <Icon type="appstore" />
               <Panel header="管控方案管理" key="1" extra={this.genExtra()}>
                 <div>
-                  <div className={styles.ProgressTotal}><em>管控方案发布管理</em>方案总数：16</div>
+                  <div className={styles.ProgressTotal}><em>管控方案发布管理</em>方案总数:{this.ProgressLength}</div>
+                  {
+                    ProgressData && ProgressData.map((item) => {
+                      return (
+                        <div className={styles.ProgressBox}><em>{item.name}</em><Progress strokeColor={`rgba(${Math.round(Math.random() * 255)},${Math.round(Math.random() * 255)},${Math.round(Math.random() * 255)}`} percent={item.count} format={percent => `${item.count}`} status="active" /></div>
+                      )
+                    })
+                  }
+                  {/* <div className={styles.ProgressTotal}><em>管控方案发布管理</em>方案总数：16</div>
                   <div className={styles.ProgressBox}><em>待发布</em><Progress strokeColor="#ed7d30" showInfo="false" percent={18.75} format={percent => `${3}`} status="active" /></div>
                   <div className={styles.ProgressBox}><em>请求发布</em><Progress strokeColor="#34baff" percent={25} format={percent => `${4}`} status="active" /></div>
                   <div className={styles.ProgressBox}><em>已发布</em><Progress strokeColor="#f4ea2a" percent={12.5} format={percent => `${2}`} status="active" /></div>
                   <div className={styles.ProgressBox}><em>撤销</em><Progress strokeColor="#6d6e6e" percent={6.25} format={percent => `${1}`} status="active" /></div>
                   <div className={styles.ProgressBox}><em>延时</em><Progress strokeColor="#ef6c77" percent={6.25} format={percent => `${1}`} status="active" /></div>
-                  <div className={styles.ProgressBox}><em>完成</em><Progress strokeColor="#619540" percent={31.25} format={percent => `${5}`} status="active" /></div>
+                  <div className={styles.ProgressBox}><em>完成</em><Progress strokeColor="#619540" percent={31.25} format={percent => `${5}`} status="active" /></div> */}
                 </div>
               </Panel>
             </Collapse>
           </div>
         }
-        {!listType &&
+        {listType === "3" &&
           <div>
             <Collapse
               onChange={this.callback}
@@ -220,12 +250,48 @@ class ScrollList extends React.Component {
                   }
                   {data && data.map((item, index) => (
                     <div key={item.roadCode + item.locs} className={classNames(styles.listItem, 'listItem')} onClick={(e) => { this.handleEventPopup(e, 'Details', true) }}>
-                      <i style={{ background: index / 2 ? 'green' : 'red', boxShadow: index / 2 ? 'green 0px 0px 20px' : 'red 0px 0px 20px' }} />
+                      <i style={{ background: item.controlStatusType? 'green' : 'red', boxShadow: item.controlStatusType ? 'green 0px 0px 20px' : 'red 0px 0px 20px' }} />
                       <span>{item.roadCode}</span>
                       <span title={item.locs}>{item.locs}</span>
                       <span>{item.directionName}</span>
                       <span>{item.situation}</span>
                       <span>{this.getDate(item.updateTime)}</span>
+                    </div>
+                  ))
+                  }
+                </div>
+              </Panel>
+            </Collapse>
+          </div>
+        }
+        {listType === "4" &&
+          <div>
+            <Collapse
+              onChange={this.callback}
+              expandIconPosition="right"
+            >
+              {/* <Icon type="menu-unfold" /> */}
+              {/*   <Checkbox.Group defaultValue={[1]} onChange={(e) => { this.handleCheckboxGroup(e, 'accidentCheck') }}>
+                <Checkbox value={1} />
+              </Checkbox.Group> */}
+              <Panel header={listTit} key="2" extra={this.genExtra(listTitle)}>
+                <div className={styles.listBox}>
+                  {listTitle &&
+                    <div className={styles.listItem}>
+                      <span className={styles.tit}>{listTitle.id}</span>
+                      <span className={styles.tit}>{listTitle.roadName}</span>
+                      <span className={styles.tit}>{listTitle.upTime}</span>
+                      <span className={styles.tit}>{listTitle.traffic}</span>
+                      <span>{listTitle.state}</span>
+                    </div>
+                  }
+                  {data && data.map((item, index) => (
+                    <div key={item.eventId + item.roadName} className={classNames(styles.listItem)} onClick={(e) => { this.handleEventPopup(e, 'Details', true) }}>
+                      <span>{item.eventId}</span>
+                      <span title={item.roadName}>{item.roadName}</span>
+                      <span>{this.getDate(item.startTime)}</span>
+                      <span>{this.getDate(item.endTime)}</span>
+                      <span>{item.planStatusName}</span>
                     </div>
                   ))
                   }

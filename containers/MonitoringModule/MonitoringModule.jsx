@@ -35,20 +35,29 @@ class MonitoringModule extends React.Component {
       endOpen: false,
       groupType: null,
       SidePopLeft: null,
+      groupStatus: null,
+      planList: null,
     }
     this.eventQuery = {
       eventType: '',
       hWayId: '',
       roadName: '',
     }
+    this.planStatus = 0
     this.eventListUrl = '/control/event/list/events' // 根据条件查询所有事件
     this.groupTypeUrl = '/control/event/total/number/group/type' //  统计事件数量，根据事件状态分组
+    this.groupStatusUrl = '/control/plan/total/number/group/status' // 统计方案数量，根据方案状态分组
+    this.planListUrl = '/control/plan/list/' // {planStatus}'根据方案状态，查询方案集合，页面初始加载，查询所有，传0
   }
   componentDidMount = () => {
     // 查询左侧列表数据
     this.handleEventList()
     // 查询饼图数据
     this.handlegroupType()
+    // 查询右侧柱状图
+    this.handlegroupStatus()
+    // 查询管控方案
+    this.handleplanList()
   }
   onStartChange = (value) => {
     this.onPickerChange('startValue', value)
@@ -183,13 +192,36 @@ class MonitoringModule extends React.Component {
       }
     })
   }
+  // 获取右侧柱状图数据
+  handlegroupStatus = () => {
+    getResponseDatas('get', this.groupStatusUrl).then((res) => {
+      const result = res.data
+      console.log(result,'====================7777')
+      if (result.code === 200) {
+        this.setState({ groupStatus: result.data })
+      }
+    })
+  }
+  // 获取右侧管控方案列表
+  handleplanList = () => {
+    getResponseDatas('get', this.planListUrl + this.planStatus).then((res) => {
+      const result = res.data
+      console.log(result)
+      debugger
+      if (result.code === 200) {
+        this.setState({ planList: result.data })
+      }
+    })
+  }
   render() {
-    const { eventsPopup, groupType, controlPopup, detailsPopup, whethePopup, reservePopup, startValue, endValue, endOpen, SidePopLeft } = this.state
+    const {
+      eventsPopup, groupType, planList, groupStatus, controlPopup, detailsPopup, whethePopup, reservePopup, startValue, endValue, endOpen, SidePopLeft
+    } = this.state
     return (
       <div className={styles.MonitoringModule}>
         <SystemMenu />
         <SidePop left="5px" groupType={groupType} SidePopLeft={SidePopLeft} handleEventPopup={this.handleEventPopup} />
-        {!!detailsPopup || <SidePop right="5px" handleEventPopup={this.handleEventPopup} />}
+        {!!detailsPopup || <SidePop SidplanList={planList} groupStatus={groupStatus} right="5px" handleEventPopup={this.handleEventPopup} />}
         <GMap />
         <div className={styles.searchBox}><Search id="tipinput" placeholder="请输入内容" enterButton /></div>
         <div className={styles.mapIconManage}>
