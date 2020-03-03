@@ -1,7 +1,7 @@
 import React from 'react'
 import echarts from 'echarts'
 import ReactEcharts from 'echarts-for-react'
-import { Collapse, Icon, Progress,Checkbox } from 'antd';
+import { Collapse, Icon, Progress, Checkbox } from 'antd';
 import styles from './ScrollList.scss'
 import classNames from 'classnames'
 const { Panel } = Collapse;
@@ -24,12 +24,11 @@ class ScrollList extends React.Component {
     }
   }
   componentDidMount = () => {
-    console.log(this.props.eachartData);
     const { eachartData } = this.props
     if (eachartData) {
       const data = []
       eachartData.forEach((item) => {
-        data.push({ value: item.eventLength, name: item.eventName })
+        data.push({ value: item.total, name: item.name })
       })
       this.getOption(data)
     }
@@ -39,7 +38,7 @@ class ScrollList extends React.Component {
       if (nextProps.eachartData) {
         const data = []
         nextProps.eachartData.forEach((item) => {
-          data.push({ value: item.eventLength, name: item.eventName })
+          data.push({ value: item.total, name: item.name })
         })
         this.getOption(data)
       }
@@ -132,8 +131,7 @@ class ScrollList extends React.Component {
       type="setting"
       onClick={(event) => {
         event.stopPropagation()
-        console.log(event, data)
-        this.handleEventPopup(event, 'Event', true, data)
+        this.handleEventPopup('', 'Event', data)
       }}
     />
   )
@@ -161,7 +159,7 @@ class ScrollList extends React.Component {
                     <p>重大事件 140起 </p>
                     <p>
                       {!!eachartData && eachartData.map((item) => {
-                        return <span key={item.eventLength + item.eventName}>{item.eventLength}<br />{item.eventName}</span>
+                        return <span key={item.total + item.name}>{item.total}<br />{item.name}</span>
                       })}
                       {/* <span>30<br />交通拥堵</span>
                       <span>80<br />道路施工</span>
@@ -205,7 +203,7 @@ class ScrollList extends React.Component {
               expandIconPosition="right"
             >
               {/* <Icon type="menu-unfold" /> */}
-            {/*   <Checkbox.Group defaultValue={[1]} onChange={(e) => { this.handleCheckboxGroup(e, 'accidentCheck') }}>
+              {/*   <Checkbox.Group defaultValue={[1]} onChange={(e) => { this.handleCheckboxGroup(e, 'accidentCheck') }}>
                 <Checkbox value={1} />
               </Checkbox.Group> */}
               <Panel header={listTit} key="2" extra={this.genExtra(listTitle)}>
@@ -221,13 +219,13 @@ class ScrollList extends React.Component {
                     </div>
                   }
                   {data && data.map((item, index) => (
-                    <div className={classNames(styles.listItem, 'listItem')} onClick={(e) => { this.handleEventPopup(e, 'Details', true) }}>
+                    <div key={item.roadCode + item.locs} className={classNames(styles.listItem, 'listItem')} onClick={(e) => { this.handleEventPopup(e, 'Details', true) }}>
                       <i style={{ background: index / 2 ? 'green' : 'red', boxShadow: index / 2 ? 'green 0px 0px 20px' : 'red 0px 0px 20px' }} />
-                      <span>{item.eventId}</span>
-                      <span title={item.roadName}>{item.roadName}</span>
-                      <span>{this.getDate(item.updateTime)}</span>
+                      <span>{item.roadCode}</span>
+                      <span title={item.locs}>{item.locs}</span>
+                      <span>{item.directionName}</span>
                       <span>{item.situation}</span>
-                      <span>{item.controlStatus}</span>
+                      <span>{this.getDate(item.updateTime)}</span>
                     </div>
                   ))
                   }

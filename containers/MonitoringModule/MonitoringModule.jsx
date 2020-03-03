@@ -25,7 +25,7 @@ class MonitoringModule extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      eventPopup: null, // 事件检测过滤设置弹窗数据
+      eventsPopup: null, // 事件检测过滤设置弹窗数据
       controlPopup: null, // 管控方案检测过滤设置
       detailsPopup: null,
       reservePopup: null,
@@ -33,6 +33,7 @@ class MonitoringModule extends React.Component {
       startValue: null,
       endValue: null,
       endOpen: false,
+      groupType: null,
       SidePopLeft: null,
     }
     this.eventQuery = {
@@ -46,6 +47,8 @@ class MonitoringModule extends React.Component {
   componentDidMount = () => {
     // 查询左侧列表数据
     this.handleEventList()
+    // 查询饼图数据
+    this.handlegroupType()
   }
   onStartChange = (value) => {
     this.onPickerChange('startValue', value)
@@ -85,9 +88,17 @@ class MonitoringModule extends React.Component {
   }
   // 控制事件检测过滤设置弹窗
   handleEventPopup = (type, boolean) => {
+    console.log(type, boolean)
     if (type === 'Event') {
+      if (boolean) {
+        this.eventQuery = {
+          eventType: boolean.type,
+          hWayId: '',
+          roadName: '',
+        }
+      }
       this.setState({
-        eventPopup: boolean,
+        eventsPopup: boolean,
       })
     }
     if (type === 'Control') {
@@ -123,8 +134,9 @@ class MonitoringModule extends React.Component {
       }}
     />
   )
-  handleInput = (value, name) => {
-    this.eventQuery[name] = value
+  handleInput = (e, name) => {
+    console.log(e, name);
+    this.eventQuery[name] = e.target.value
   }
   handleradiog = (e, name) => {
     console.log(e, name, e.target.value);
@@ -144,16 +156,39 @@ class MonitoringModule extends React.Component {
       const result = res.data
       console.log(result)
       if (result.code === 200) {
-        this.setState({ eventPopup: null, SidePopLeft: result.data })
+        const { eventType } = this.eventQuery
+        if (eventType) {
+          const { SidePopLeft } = this.state
+          SidePopLeft.forEach((item, index) => {
+            if (item.eventType === eventType) {
+              SidePopLeft[index].eventData = result.data
+              SidePopLeft[index].eventLength = result.data.length
+            }
+          })
+          console.log(SidePopLeft);
+          this.setState({ eventsPopup: null, SidePopLeft })
+        } else {
+          this.setState({ eventsPopup: null, SidePopLeft: result.data })
+        }
+      }
+    })
+  }
+  // 获取饼图数据
+  handlegroupType = () => {
+    getResponseDatas('get', this.groupTypeUrl).then((res) => {
+      const result = res.data
+      console.log(result)
+      if (result.code === 200) {
+        this.setState({ groupType: result.data })
       }
     })
   }
   render() {
-    const { eventPopup, controlPopup, detailsPopup, whethePopup, reservePopup, startValue, endValue, endOpen, SidePopLeft } = this.state
+    const { eventsPopup, groupType, controlPopup, detailsPopup, whethePopup, reservePopup, startValue, endValue, endOpen, SidePopLeft } = this.state
     return (
       <div className={styles.MonitoringModule}>
         <SystemMenu />
-        <SidePop left="5px" SidePopLeft={SidePopLeft} handleEventPopup={this.handleEventPopup} />
+        <SidePop left="5px" groupType={groupType} SidePopLeft={SidePopLeft} handleEventPopup={this.handleEventPopup} />
         {!!detailsPopup || <SidePop right="5px" handleEventPopup={this.handleEventPopup} />}
         <GMap />
         <div className={styles.searchBox}><Search id="tipinput" placeholder="请输入内容" enterButton /></div>
@@ -176,18 +211,18 @@ class MonitoringModule extends React.Component {
           </p>
         </div>
         {/* 事件检测过滤设置弹窗 */}
-        {eventPopup ?
+        {eventsPopup ?
           <div className={styles.MaskBox}>
             <div className={styles.EventPopup}>
-              <div className={styles.Title}>事件检测过滤设置<Icon className={styles.Close} onClick={() => { this.handleEventPopup('Event', false) }} type="close" /></div>
+              <div className={styles.Title}>{eventsPopup.name}事件过滤设置<Icon className={styles.Close} onClick={() => { this.handleEventPopup('Event', false) }} type="close" /></div>
               <div className={styles.Centent}>
                 <div className={styles.ItemBox}>
                   <span className={styles.ItemName}>高&nbsp;速&nbsp;名&nbsp;称&nbsp;:</span>
                   <div className={styles.ItemInput}>
                     <Select defaultValue="lucy" style={{ width: '100%' }}>
-                      <Option value="jack">Jack</Option>
-                      <Option value="lucy">Lucy</Option>
-                      <Option value="Yiminghe">yiminghe</Option>
+                      <Option value="jack">京哈高速</Option>
+                      <Option value="lucy">浙江高速</Option>
+                      <Option value="Yiminghe">北京高速</Option>
                     </Select>
                   </div>
                 </div>

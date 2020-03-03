@@ -7,7 +7,8 @@ class SidePop extends React.Component {
     this.state = {
       boxLeft: this.props.left ? this.props.left : 'unset',
       boxRight: this.props.right ? this.props.right : 'unset',
-      SidePopLeft: this.props.SidePopLeft || ''
+      SidePopLeft: this.props.SidePopLeft || '',
+      groupType: this.props.groupType || '',
     }
     this.styles = {
       position: 'fixed',
@@ -24,22 +25,27 @@ class SidePop extends React.Component {
     }
   }
   componentDidMount = () => {
+    console.log(this.props.groupType);
 
   }
   componentWillReceiveProps = (nextProps) => {
     if (this.props.SidePopLeft !== nextProps.SidePopLeft) {
       this.setState({ SidePopLeft: nextProps.SidePopLeft })
     }
-  }
-  handleEventPopup = (type, boolean, data) => {
-    const { handleEventPopup } = this.props
-    console.log(type, boolean, handleEventPopup,data)
-    if (handleEventPopup) {
-      handleEventPopup(type, boolean, data)
+    if (this.props.groupType !== nextProps.groupType) {
+      this.setState({ groupType: nextProps.groupType })
     }
   }
+  handleEventPopup = (type, boolean) => {
+    const { handleEventPopup } = this.props
+    console.log(type, boolean, handleEventPopup)
+    if (handleEventPopup) {
+      handleEventPopup(type, boolean)
+    }
+  }
+
   render() {
-    const { boxLeft, boxRight, SidePopLeft } = this.state
+    const { boxLeft, boxRight, SidePopLeft, groupType } = this.state
     const eachartsData = {} //eacharts数据
     const progressData = {} //进度条数据
     const listData = [
@@ -69,7 +75,7 @@ class SidePop extends React.Component {
       <div style={this.styles} >
         {boxRight === 'unset' &&
           <div style={{ width: '100%' }}>
-            {!!SidePopLeft && <ScrollList eachartData={SidePopLeft} type="1" dataRes="eacharts" handleEventPopup={this.handleEventPopup}></ScrollList>}
+            {!!groupType && <ScrollList eachartData={groupType} type="1" dataRes="eacharts" handleEventPopup={this.handleEventPopup}></ScrollList>}
             {!!SidePopLeft && SidePopLeft.map((item, index) => {
               const listTit = {
                 id: '道路编号',
