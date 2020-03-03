@@ -36,15 +36,12 @@ class MonitoringModule extends React.Component {
       SidePopLeft: null,
     }
     this.eventQuery = {
-      accidentCheck: true,
-      constructionCheck: true,
-      eventLevel: [1, 2, 3, 4],
-      reportMinRange: 10,
+      eventType: '',
+      hWayId: '',
       roadName: '',
-      trafficCheck: true,
-      weatherCheck: true,
     }
-    this.eventListUrl = '/control/event/list/events'
+    this.eventListUrl = '/control/event/list/events' // 根据条件查询所有事件
+    this.groupTypeUrl = '/control/event/total/number/group/type' //  统计事件数量，根据事件状态分组
   }
   componentDidMount = () => {
     // 查询左侧列表数据
@@ -143,7 +140,7 @@ class MonitoringModule extends React.Component {
   }
   // 获取左侧列表数据
   handleEventList = () => {
-    getResponseDatas('post', this.eventListUrl, this.eventQuery).then((res) => {
+    getResponseDatas('get', this.eventListUrl, this.eventQuery).then((res) => {
       const result = res.data
       console.log(result)
       if (result.code === 200) {

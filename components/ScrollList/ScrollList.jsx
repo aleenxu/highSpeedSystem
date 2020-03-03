@@ -205,9 +205,9 @@ class ScrollList extends React.Component {
               expandIconPosition="right"
             >
               {/* <Icon type="menu-unfold" /> */}
-              <Checkbox.Group defaultValue={[1]} onChange={(e) => { this.handleCheckboxGroup(e, 'accidentCheck') }}>
+            {/*   <Checkbox.Group defaultValue={[1]} onChange={(e) => { this.handleCheckboxGroup(e, 'accidentCheck') }}>
                 <Checkbox value={1} />
-              </Checkbox.Group>
+              </Checkbox.Group> */}
               <Panel header={listTit} key="2" extra={this.genExtra(listTitle)}>
                 <div className={styles.listBox}>
                   {listTitle &&
