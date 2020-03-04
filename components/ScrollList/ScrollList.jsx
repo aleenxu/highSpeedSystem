@@ -66,6 +66,9 @@ class ScrollList extends React.Component {
       }
       this.setState({ ProgressData: nextProps.ProgressData })
     }
+    if (this.props.dataRes !== nextProps.dataRes) {
+      this.setState({ data: nextProps.dataRes })
+    }
   }
   getOption = (data) => {
     const option = {
@@ -159,12 +162,12 @@ class ScrollList extends React.Component {
     const navtime = year + '.' + month + '.' + day + '' + ' ' + hour + ':' + minutes + ':' + seconds
     return navtime
   }
-  genExtra = (data) => (
+  genExtra = (data, name) => (
     <Icon
       type="setting"
       onClick={(event) => {
         event.stopPropagation()
-        this.handleEventPopup('', 'Event', data)
+        this.handleEventPopup('', name, data)
       }}
     />
   )
@@ -172,7 +175,7 @@ class ScrollList extends React.Component {
     const { listType, listTit, listTitle, ProgressData, data, eachartData, sideachart } = this.state
     return (
       <div className={styles.scrollBox}>
-        {listType === "1" &&
+        {listType === '1' &&
           <div>
             {/*  <Icon type="setting" className={styles.setting} onClick={(e) => { this.handleEventPopup(e, 'Event', true) }} /> */}
             <div className={styles.settingTitle}><span><i />未管控</span><span><i />已管控</span></div>
@@ -206,7 +209,7 @@ class ScrollList extends React.Component {
             </Collapse>
           </div>
         }
-        {listType === "2" &&
+        {listType === '2' &&
           <div>
             {/*  <Icon type="setting" className={styles.setting} onClick={(e) => { this.handleEventPopup(e, 'Control', true) }} /> */}
             <Collapse
@@ -237,7 +240,7 @@ class ScrollList extends React.Component {
             </Collapse>
           </div>
         }
-        {listType === "3" &&
+        {listType === '3' &&
           <div>
             <Collapse
               onChange={this.callback}
@@ -247,7 +250,7 @@ class ScrollList extends React.Component {
               {/*   <Checkbox.Group defaultValue={[1]} onChange={(e) => { this.handleCheckboxGroup(e, 'accidentCheck') }}>
                 <Checkbox value={1} />
               </Checkbox.Group> */}
-              <Panel header={listTit} key="2" extra={this.genExtra(listTitle)}>
+              <Panel header={listTit} key="2" extra={this.genExtra(listTitle, 'Event')}>
                 <div className={styles.listBox}>
                   {listTitle &&
                     <div className={styles.listItem}>
@@ -260,8 +263,8 @@ class ScrollList extends React.Component {
                     </div>
                   }
                   {data && data.map((item, index) => (
-                    <div key={item.roadCode + item.locs} className={classNames(styles.listItem, 'listItem')} onClick={(e) => { this.handleEventPopup(e, 'Details', true) }}>
-                      <i style={{ background: item.controlStatusType ? 'green' : 'red', boxShadow: item.controlStatusType ? 'green 0px 0px 20px' : 'red 0px 0px 20px' }} />
+                    <div key={item.roadCode + item.locs} className={classNames(styles.listItem, 'listItem')} onClick={(e) => { this.handleEventPopup(e, 'Details', item) }}>
+                      <i style={{ background: item.controlStatusType ? 'green' : 'red', boxShadow: item.controlStatusType > 0 ? 'green 0px 0px 20px' : 'red 0px 0px 20px' }} />
                       <span>{item.roadCode}</span>
                       <span title={item.locs}>{item.locs}</span>
                       <span>{item.directionName}</span>
@@ -285,7 +288,7 @@ class ScrollList extends React.Component {
               {/*   <Checkbox.Group defaultValue={[1]} onChange={(e) => { this.handleCheckboxGroup(e, 'accidentCheck') }}>
                 <Checkbox value={1} />
               </Checkbox.Group> */}
-              <Panel header={listTit} key="2" extra={this.genExtra(listTitle)}>
+              <Panel header={listTit} key="2" extra={this.genExtra(listTitle, 'Control')}>
                 <div className={styles.listBox}>
                   {listTitle &&
                     <div className={styles.listItem}>
@@ -297,7 +300,7 @@ class ScrollList extends React.Component {
                     </div>
                   }
                   {data && data.map((item, index) => (
-                    <div key={item.eventId + item.roadName} className={classNames(styles.listItem,'listItem')} onClick={(e) => { this.handleEventPopup(e, 'Details', true) }}>
+                    <div key={item.eventId + item.roadName} className={classNames(styles.listItem, 'listItem')} >
                       <span>{item.eventId}</span>
                       <span title={item.roadName}>{item.roadName}</span>
                       <span>{this.formatDuring(new Date(item.endTime).getTime() - new Date(item.startTime).getTime())}</span>

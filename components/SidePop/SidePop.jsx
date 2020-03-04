@@ -42,7 +42,6 @@ class SidePop extends React.Component {
     if (this.props.SidplanList !== nextProps.SidplanList) {
       this.setState({ SidplanList: nextProps.SidplanList })
     }
-    console.log(this.props.SidplanList , nextProps.SidplanList,'===============8555');
   }
   handleEventPopup = (type, boolean) => {
     const { handleEventPopup } = this.props

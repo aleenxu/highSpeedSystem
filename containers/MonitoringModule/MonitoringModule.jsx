@@ -37,6 +37,7 @@ class MonitoringModule extends React.Component {
       SidePopLeft: null,
       groupStatus: null,
       planList: null,
+      hwayList: null,
     }
     this.eventQuery = {
       eventType: '',
@@ -49,6 +50,8 @@ class MonitoringModule extends React.Component {
     this.groupStatusUrl = '/control/plan/total/number/group/status' // 统计方案数量，根据方案状态分组
     this.planListUrl = '/control/plan/list/' // {planStatus}'根据方案状态，查询方案集合，页面初始加载，查询所有，传0
     this.detailUrl = '/control/event/get/detail/' // {eventId}/{eventType}查看事件详情'
+    this.listDetailUrl = '/control/dict/code/list/detail/' // {codeType} 根据字典类型，获取字典详情相关信息'
+    this.hwayUrl = '/control/road/list/hway' //  获取高速编号，用于下拉框'
   }
   componentDidMount = () => {
     // 查询左侧列表数据
@@ -59,6 +62,8 @@ class MonitoringModule extends React.Component {
     this.handlegroupStatus()
     // 查询管控方案
     this.handleplanList()
+    // 高速下拉
+    this.handlelishway()
   }
   onStartChange = (value) => {
     this.onPickerChange('startValue', value)
@@ -112,17 +117,29 @@ class MonitoringModule extends React.Component {
       })
     }
     if (type === 'Control') {
-      this.setState({
-        controlPopup: boolean,
-      })
+      if (boolean) {
+        this.planStatus = 0
+        this.handlelistDetail('controlPopup', 14)
+      } else {
+        this.setState({
+          controlPopup: boolean,
+        })
+      }
     }
     if (type === 'Details') {
       if (window.listItemDom && boolean === false) {
         window.listItemDom.style.background = ''
       }
-      this.setState({
+      if (boolean) {
+        this.handledetai(boolean)
+      } else {
+        this.setState({
+          detailsPopup: false,
+        })
+      }
+      /* this.setState({
         detailsPopup: boolean,
-      })
+      }) */
     }
     if (type === 'Reserve') {
       this.setState({
@@ -150,7 +167,13 @@ class MonitoringModule extends React.Component {
   }
   handleradiog = (e, name) => {
     console.log(e, name, e.target.value);
-    this.eventQuery[name] = e.target.value
+    if (name === 'reportMinRange') {
+      this.eventQuery[name] = e.target.value
+    } else {
+      this.planStatus = e.target.value
+    }
+
+
   }
   handleCheckboxGroup = (value, name) => {
     console.log(value, name)
@@ -197,7 +220,6 @@ class MonitoringModule extends React.Component {
   handlegroupStatus = () => {
     getResponseDatas('get', this.groupStatusUrl).then((res) => {
       const result = res.data
-      console.log(result, '====================7777')
       if (result.code === 200) {
         this.setState({ groupStatus: result.data })
       }
@@ -207,16 +229,46 @@ class MonitoringModule extends React.Component {
   handleplanList = () => {
     getResponseDatas('get', this.planListUrl + this.planStatus).then((res) => {
       const result = res.data
-      console.log(result)
-      debugger
       if (result.code === 200) {
-        this.setState({ planList: result.data })
+        this.setState({ planList: result.data, controlPopup: false })
       }
     })
   }
+  // 获取右侧事件详情
+  handledetai = (item) => {
+    getResponseDatas('get', this.detailUrl + '/' + item.eventId + '/' + item.eventType).then((res) => {
+      const result = res.data
+      if (result.code === 200) {
+        this.setState({
+          detailsPopup: result.data,
+        })
+      }
+    })
+  }
+  // 字典查询
+  handlelistDetail = (name, value) => {
+    getResponseDatas('get', this.listDetailUrl + value).then((res) => {
+      const result = res.data
+      if (result.code === 200) {
+        this.setState({ [name]: result.data })
+      }
+    })
+  }
+  // 查询高速下拉
+  handlelishway = () => {
+    getResponseDatas('get', this.hwayUrl).then((res) => {
+      const result = res.data
+      if (result.code === 200) {
+        this.setState({ hwayList: result.data })
+      }
+    })
+  }
+  handleSelect = (value, name) => {
+    this.eventQuery[name] = value
+  }
   render() {
     const {
-      eventsPopup, groupType, planList, groupStatus, controlPopup, detailsPopup, whethePopup, reservePopup, startValue, endValue, endOpen, SidePopLeft
+      eventsPopup, groupType, planList, hwayList, groupStatus, controlPopup, detailsPopup, whethePopup, reservePopup, startValue, endValue, endOpen, SidePopLeft
     } = this.state
     return (
       <div className={styles.MonitoringModule}>
@@ -244,7 +296,7 @@ class MonitoringModule extends React.Component {
           </p>
         </div>
         {/* 事件检测过滤设置弹窗 */}
-        {eventsPopup ?
+        {eventsPopup && hwayList ?
           <div className={styles.MaskBox}>
             <div className={styles.EventPopup}>
               <div className={styles.Title}>{eventsPopup.name}事件过滤设置<Icon className={styles.Close} onClick={() => { this.handleEventPopup('Event', false) }} type="close" /></div>
@@ -252,10 +304,13 @@ class MonitoringModule extends React.Component {
                 <div className={styles.ItemBox}>
                   <span className={styles.ItemName}>高&nbsp;速&nbsp;名&nbsp;称&nbsp;:</span>
                   <div className={styles.ItemInput}>
-                    <Select defaultValue="lucy" style={{ width: '100%' }}>
-                      <Option value="jack">京哈高速</Option>
-                      <Option value="lucy">浙江高速</Option>
-                      <Option value="Yiminghe">北京高速</Option>
+                    <Select defaultValue="" style={{ width: '100%' }} onChange={(e) => { this.handleSelect(e, 'hWayId') }}>
+                      <Option value="">请选择</Option>
+                      {
+                        hwayList.map((item) => {
+                          return <Option key={item.id} value={item.id}>{item.name}</Option>
+                        })
+                      }
                     </Select>
                   </div>
                 </div>
@@ -314,18 +369,24 @@ class MonitoringModule extends React.Component {
                 <div className={styles.ItemBox}>
                   <span className={styles.ItemName}>方&nbsp;案&nbsp;状&nbsp;态&nbsp;:</span>
                   <div className={styles.ItemInput}>
-                    <Radio.Group name="radiogroup" defaultValue={1}>
+                    <Radio.Group name="radiogroup" defaultValue={0} onChange={(e) => { this.handleradiog(e) }}>
+                      <Radio value={0}>全部</Radio>
+                      {
+                        controlPopup.map((item) => {
+                          return <Radio key={item.id} value={item.id}>{item.name}</Radio>
+                        })}
+                      {/* 
                       <Radio value={1}>待发布</Radio>
                       <Radio value={2}>请求发布</Radio>
                       <Radio value={3}>发布中</Radio>
                       <Radio value={4}>撤销</Radio>
                       <Radio value={5}>延时</Radio>
-                      <Radio value={6}>完成</Radio>
+                      <Radio value={6}>完成</Radio> */}
                     </Radio.Group>
                   </div>
                 </div>
-                <div className={styles.ItemFooter}>
-                  <span onClick={() => { this.handleEventPopup('Control', false) }}>确&nbsp;&nbsp;认</span>
+                <div className={styles.ItemFooter} style={{ bottom: '-15px' }}>
+                  <span onClick={this.handleplanList}>确&nbsp;&nbsp;认</span>
                   <span onClick={() => { this.handleEventPopup('Control', false) }}>返&nbsp;&nbsp;回</span>
                 </div>
               </div>
@@ -550,52 +611,52 @@ class MonitoringModule extends React.Component {
         {detailsPopup ?
           <div className={styles.Eventdetails}>
             <Collapse
-              defaultActiveKey={['1', '2', '3']}
+              defaultActiveKey={[0, 1, 2, 3]}
               expandIconPosition="right"
             >
               <Icon className={styles.Close} onClick={() => { this.handleEventPopup('Details', false) }} type="close" />
-              <Panel header="事件详情" key="1" extra={this.genExtra()}>
+              <Panel header="事件详情" key={0} extra={this.genExtra()}>
                 <div className={styles.Content}>
                   <div className={styles.Header}>
-                    <span>事件编号&nbsp;:&nbsp;&nbsp;10001</span>
-                    <span>事件类型&nbsp;:&nbsp;&nbsp;交通拥堵</span>
+                    <span>事件编号&nbsp;:&nbsp;&nbsp;{detailsPopup.eventId}</span>
+                    <span>事件类型&nbsp;:&nbsp;&nbsp;{detailsPopup.eventTypeName}</span>
                   </div>
                   <div className={styles.ItemBox}>
                     <div className={styles.HeadItem}>基本信息</div>
-                    <div className={styles.RowBox}>道路名称：G6告诉公路清河收费站</div>
+                    <div className={styles.RowBox}>道路名称&nbsp;:&nbsp;&nbsp;{detailsPopup.secName}</div>
                     <div className={styles.RowBox}>
-                      <p>方向&nbsp;:&nbsp;&nbsp;北向南</p>
-                      <p>车道&nbsp;:&nbsp;&nbsp;所有</p>
+                      <p>方向&nbsp;:&nbsp;&nbsp;{detailsPopup.directionName}</p>
+                      <p>车道&nbsp;:&nbsp;&nbsp;{detailsPopup.roadName}</p>
                     </div>
                     <div className={styles.RowBox}>
-                      <p>起始公里桩号&nbsp;:&nbsp;&nbsp;K100+100 </p>
-                      <p>结束公里桩号&nbsp;:&nbsp;&nbsp;K120+200</p>
+                      <p>起始公里桩号&nbsp;:&nbsp;&nbsp;{detailsPopup.pileNumber.split(' ')[0]}</p>
+                      <p>结束公里桩号&nbsp;:&nbsp;&nbsp;{detailsPopup.pileNumber.split(' ')[1]}</p>
                     </div>
-                    <div className={styles.RowBox}>数据来源&nbsp;:&nbsp;&nbsp;高德数据</div>
+                    <div className={styles.RowBox}>数据来源&nbsp;:&nbsp;&nbsp;{detailsPopup.dataSourceName}</div>
                   </div>
                   <div className={styles.ItemBox}>
                     <div className={styles.HeadItem}>当前路况</div>
                     <div className={styles.RowBox}>
-                      <p>拥堵级别&nbsp;:&nbsp;&nbsp;<span style={{ color: '#e90202' }}>严重拥堵</span></p>
-                      <p>平局车速&nbsp;:&nbsp;&nbsp;<span style={{ color: '#e90202' }}>20kmh</span></p>
+                      {/*  <p>拥堵级别&nbsp;:&nbsp;&nbsp;<span style={{ color: '#e90202' }}>严重拥堵</span></p> */}
+                      <p>平局车速&nbsp;:&nbsp;&nbsp;<span style={{ color: '#e90202' }}>{detailsPopup.avgSpeed}km/h</span></p>
                     </div>
                   </div>
                 </div>
               </Panel>
-              <Panel header="可变情报板" key="2">
-                {
-                  [1, 2, 3].map((item) => {
-                    return <p className={styles.PanelItem} key={item}>*****可变情报板：  *******高速    K20+  100</p>
-                  })
-                }
-              </Panel>
-              <Panel header="收费站" key="3">
-                {
-                  [4, 5].map((item) => {
-                    return <p className={styles.PanelItem} key={item}>*****收费站：  *******高速    K20+  100</p>
-                  })
-                }
-              </Panel>
+              {
+                detailsPopup.devices.map((item) => {
+                  return (
+                    <Panel header={item.codeName} key={item.dictCode}>
+                      {
+                        item.device && item.device.map((items, index) => {
+                          return <p className={styles.PanelItem} key={items}>{`${index + 1}. ${items.deviceName} ${items.directionName} ${item.codeName}`}</p>
+                        })
+                      }
+                      {item.device.length === 0 && <p className={styles.PanelItem} style={{ color: '#fff', textAlign: 'center', fontSize: '20px' }}>当前无数据!!</p>}
+                    </Panel>
+                  )
+                })
+              }
             </Collapse>
           </div> : null}
       </div>
