@@ -45,10 +45,16 @@ class GMap extends React.Component {
     const _this = this;
     const map = new AMap.Map('container', {
       resizeEnable: true, //是否监控地图容器尺寸变化
-      center: [119.9072280000, 32.4101830000], //初始化地图中心点
+      center: [120.098129, 32.191613], //初始化地图中心点
       mapStyle: "amap://styles/c3fa565f6171961e94b37c4cc2815ef8",
       zoom: 13
     });
+    //实时路况图层
+    var trafficLayer = new AMap.TileLayer.Traffic({
+      zIndex: 10
+    });
+
+    trafficLayer.setMap(map);
     //输入提示
     const autoOptions = {
       city: "泰州",

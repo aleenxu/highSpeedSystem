@@ -48,6 +48,7 @@ class MonitoringModule extends React.Component {
     this.groupTypeUrl = '/control/event/total/number/group/type' //  统计事件数量，根据事件状态分组
     this.groupStatusUrl = '/control/plan/total/number/group/status' // 统计方案数量，根据方案状态分组
     this.planListUrl = '/control/plan/list/' // {planStatus}'根据方案状态，查询方案集合，页面初始加载，查询所有，传0
+    this.detailUrl = '/control/event/get/detail/' // {eventId}/{eventType}查看事件详情'
   }
   componentDidMount = () => {
     // 查询左侧列表数据
@@ -196,7 +197,7 @@ class MonitoringModule extends React.Component {
   handlegroupStatus = () => {
     getResponseDatas('get', this.groupStatusUrl).then((res) => {
       const result = res.data
-      console.log(result,'====================7777')
+      console.log(result, '====================7777')
       if (result.code === 200) {
         this.setState({ groupStatus: result.data })
       }
