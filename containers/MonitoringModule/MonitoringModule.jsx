@@ -652,7 +652,7 @@ class MonitoringModule extends React.Component {
                           return <p className={styles.PanelItem} key={items}>{`${index + 1}. ${items.deviceName} ${items.directionName} ${item.codeName}`}</p>
                         })
                       }
-                      {item.device.length === 0 && <p className={styles.PanelItem} style={{ color: '#fff', textAlign: 'center', fontSize: '20px' }}>当前无数据!!</p>}
+                      {item.device && item.device.length === 0 && <p className={styles.PanelItem} style={{ color: '#fff', textAlign: 'center', fontSize: '20px' }}>当前无数据!!</p>}
                     </Panel>
                   )
                 })
