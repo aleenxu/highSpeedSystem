@@ -288,7 +288,7 @@ class ScrollList extends React.Component {
                   }
                   {data && data.map((item, index) => (
                     <div key={item.roadCode + item.locs} className={classNames(styles.listItem, 'listItem')} onClick={(e) => { this.handleEventPopup(e, 'Details', item) }}>
-                      <i style={{ background: item.controlStatusType ? 'green' : 'red', boxShadow: item.controlStatusType > 0 ? 'green 0px 0px 20px' : 'red 0px 0px 20px' }} />
+                      <i style={{ background: item.controlStatusType>0 ? 'green' : 'red', boxShadow: item.controlStatusType > 0 ? 'green 0px 0px 20px' : 'red 0px 0px 20px' }} />
                       <span>{item.roadCode}</span>
                       <span title={item.locs}>{item.locs}</span>
                       <span>{item.directionName}</span>
