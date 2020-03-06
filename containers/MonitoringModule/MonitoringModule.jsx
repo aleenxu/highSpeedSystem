@@ -240,7 +240,7 @@ class MonitoringModule extends React.Component {
       const result = res.data
       if (result.code === 200) {
         this.setState({
-          detailsPopup: result.data,
+          detailsPopup: { ...result.data, controlStatusType: item.controlStatusType },
         })
       }
     })
@@ -647,17 +647,20 @@ class MonitoringModule extends React.Component {
                 detailsPopup.devices.map((item) => {
                   return (
                     <Panel header={item.codeName} key={item.dictCode}>
-                      {
-                        item.device && item.device.map((items, index) => {
-                          return <p className={styles.PanelItem} key={items}>{`${index + 1}. ${items.deviceName} ${items.directionName} ${item.codeName}`}</p>
-                        })
-                      }
-                      {item.device && item.device.length === 0 && <p className={styles.PanelItem} style={{ color: '#fff', textAlign: 'center', fontSize: '20px' }}>当前无数据!!</p>}
+                      <div> {/* 添加滚动条 */}
+                        {
+                          item.device && item.device.map((items, index) => {
+                            return <p className={styles.PanelItem} key={items}>{`${index + 1}. ${items.deviceName} ${items.directionName} ${item.codeName}`}</p>
+                          })
+                        }
+                        {item.device && item.device.length === 0 && <p className={styles.PanelItemNone}>当前无数据!!</p>}
+                      </div>
                     </Panel>
                   )
                 })
               }
             </Collapse>
+            <div className={styles.Panelbutton}>{detailsPopup.controlStatusType > 0 ? '查看管控' : '发起管控'}</div>
           </div> : null}
       </div>
     )
