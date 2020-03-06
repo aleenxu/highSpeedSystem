@@ -3,6 +3,7 @@ import tollStationIcon from '../../imgs/tollStation_s.png'
 import fBoardIcon from '../../imgs/fBoard_s.png'
 import speedLimitIcon from '../../imgs/speedLimit_s.png'
 import turnBoardIcon from '../../imgs/turnBoard_s.png'
+import otherIcon from '../../imgs/boat.png'
 const pointArr = [
   [119.9296300000, 32.4319550000],
   [119.9471390000, 32.4151070000]
@@ -35,26 +36,47 @@ class GMap extends React.Component {
       justifyContent: 'center',
       alignItems: 'center',
       backgroundColor: '#1e375d',
+      dataAll: this.props.dataAll,
     }
     this.placeSearch = null;
   }
   componentDidMount = () => {
     this.loadingMap()
   }
+  componentWillReceiveProps = (nextProps) => {
+    if (this.props.dataAll !== nextProps.dataAll) {
+      this.setState({ dataAll: nextProps.dataAll })
+    }
+  }
   loadingMap = () => {
     const _this = this;
-    const map = new AMap.Map('container', {
+    window.map = new AMap.Map('container', {
       resizeEnable: true, //是否监控地图容器尺寸变化
-      center: [120.098129, 32.191613], //初始化地图中心点
+      center: [120.0105285600, 32.3521228100], //初始化地图中心点
       mapStyle: "amap://styles/c3fa565f6171961e94b37c4cc2815ef8",
-      zoom: 13
+      zoom: 11
     });
     //实时路况图层
     var trafficLayer = new AMap.TileLayer.Traffic({
       zIndex: 10
     });
-
-    trafficLayer.setMap(map);
+    window.leftModuleOne = new AMap.LayerGroup({
+      'autoRefresh': true,     //是否自动刷新，默认为false
+      'interval': 180,         //刷新间隔，默认180s
+    });
+    window.leftModuleTwo = new AMap.LayerGroup({
+      'autoRefresh': true,     //是否自动刷新，默认为false
+      'interval': 180,         //刷新间隔，默认180s
+    });
+    window.leftModuleThree = new AMap.LayerGroup({
+      'autoRefresh': true,     //是否自动刷新，默认为false
+      'interval': 180,         //刷新间隔，默认180s
+    });
+    window.leftModuleFour = new AMap.LayerGroup({
+      'autoRefresh': true,     //是否自动刷新，默认为false
+      'interval': 180,         //刷新间隔，默认180s
+    });
+    trafficLayer.setMap(window.map)
     //输入提示
     const autoOptions = {
       city: "泰州",
@@ -67,6 +89,11 @@ class GMap extends React.Component {
     AMap.event.addListener(auto, "select", this.searchKeyWords);//注册监听，当选中某条记录时会触发
     // 点的新建
     AMapUI.loadUI(['overlay/SimpleMarker', 'overlay/SimpleInfoWindow'], function (SimpleMarker, SimpleInfoWindow) {
+      if (_this.state.dataAll){
+        console.log(_this.state.dataAll,"所有的数据...")
+        // 左侧功能数据图标
+        _this.createPoint(pointArr, tollStationIcon, SimpleMarker, SimpleInfoWindow, map, true)
+      }
       // 图标一
       _this.createPoint(pointArr, tollStationIcon, SimpleMarker, SimpleInfoWindow, map)
       // 图标二
@@ -141,30 +168,65 @@ class GMap extends React.Component {
     pointArr : 点的数组 [[],[],[],[]]
     pointIcon: 图标路径
   */
-  createPoint = (pointArr, pointIcon, SimpleMarker, SimpleInfoWindow, map) => {
+  createPoint = (pointArr, pointIcon, SimpleMarker, SimpleInfoWindow, map, flag) => {
     const _this = this;
-    pointArr.map((item) => {
-      const marker = new SimpleMarker({
-        //自定义图标地址
-        iconStyle: pointIcon,
-        //设置基点偏移
-        offset: new AMap.Pixel(-10, -10),
-        map: map,
-        showPositionPoint: false,
-        position: item,
-        zIndex: 10
-      });
-
-
-      /* _this.openInfoWin(infoWindow,map,marker) */
-
-      //marker 点击时打开
-      marker.on('click', function () {
-        _this.openInfoWin(map, marker, SimpleInfoWindow)
-      });
-
-      /* _this.openInfoWin(infoWindow,map,marker) */
-    })
+    if (flag){
+      _this.state.dataAll.map((leftItem, leftIndex)=>{
+        if (leftItem.eventData.length > 0){
+          leftItem.eventData.map((item, index) => {
+            const marker = new SimpleMarker({
+              //自定义图标地址
+              iconStyle: otherIcon,
+              //设置基点偏移
+              offset: new AMap.Pixel(-10, -10),
+              showPositionPoint: false,
+              position: [item.latlng.split(",")[1],item.latlng.split(",")[0]],
+              zIndex: 10
+            });
+            switch(leftIndex){
+              case 0:
+                window.leftModuleOne.addLayer(marker) //把点添加到层组中
+                window.leftModuleOne.setMap(map) // 层组渲染到地图中
+                window.leftModuleOne.hide() // 隐藏当前的层组
+                break;
+              case 1:
+                window.leftModuleTwo.addLayer(marker) //把点添加到层组中
+                window.leftModuleTwo.setMap(map) // 层组渲染到地图中
+                window.leftModuleTwo.hide() // 隐藏当前的层组
+                break;
+              case 2:
+                window.leftModuleThree.addLayer(marker) //把点添加到层组中
+                window.leftModuleThree.setMap(map) // 层组渲染到地图中
+                window.leftModuleThree.hide() // 隐藏当前的层组
+                break;
+              case 3:
+                window.leftModuleFour.addLayer(marker) //把点添加到层组中
+                window.leftModuleFour.setMap(map) // 层组渲染到地图中
+                window.leftModuleFour.hide() // 隐藏当前的层组
+                break;
+            }
+            console.log(marker,"当前点信息")
+          }) 
+        }
+      })
+    } else {
+      pointArr.map((item) => {
+        const marker = new SimpleMarker({
+          //自定义图标地址
+          iconStyle: pointIcon,
+          //设置基点偏移
+          offset: new AMap.Pixel(-10, -10),
+          map: map,
+          showPositionPoint: false,
+          position: item,
+          zIndex: 10
+        });
+        //marker 点击时打开
+        marker.on('click', function () {
+          _this.openInfoWin(map, marker, SimpleInfoWindow)
+        });
+      })
+    }
   }
   openInfoWin = (map, marker, SimpleInfoWindow) => {
     var infoWindow = new SimpleInfoWindow({

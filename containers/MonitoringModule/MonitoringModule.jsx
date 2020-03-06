@@ -235,6 +235,7 @@ class MonitoringModule extends React.Component {
         const { eventType } = this.eventQuery
         if (eventType) {
           const { SidePopLeft } = this.state
+          window.dataAll = SidePopLeft
           SidePopLeft.forEach((item, index) => {
             if (item.eventType === eventType) {
               SidePopLeft[index].eventData = result.data
@@ -330,7 +331,7 @@ class MonitoringModule extends React.Component {
         <SystemMenu />
         <SidePop left="5px" groupType={groupType} SidePopLeft={SidePopLeft} handleEventPopup={this.handleEventPopup} />
         {!!detailsPopup || <SidePop SidplanList={planList} groupStatus={groupStatus} right="5px" handleEventPopup={this.handleEventPopup} />}
-        <GMap />
+        <GMap dataAll={SidePopLeft} />
         <div className={styles.searchBox}><Search id="tipinput" placeholder="请输入内容" enterButton /></div>
         <div className={styles.mapIconManage}>
           <span>设备显示</span><span>事件标注</span>
