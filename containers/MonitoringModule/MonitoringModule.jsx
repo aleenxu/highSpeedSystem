@@ -647,14 +647,6 @@ class MonitoringModule extends React.Component {
                 detailsPopup.devices.map((item) => {
                   return (
                     <Panel header={item.codeName} key={item.dictCode}>
-<<<<<<< HEAD
-                      {
-                        item.device && item.device.map((items, index) => {
-                          return <p className={styles.PanelItem} key={items}>{`${index + 1}. ${items.deviceName} ${items.directionName} ${item.codeName}`}</p>
-                        })
-                      }
-                      {item.device.length === 0 && <p className={styles.PanelItem} style={{ color: '#fff', textAlign: 'center', fontSize: '20px' }}>当前无数据!!</p>}
-=======
                       <div> {/* 添加滚动条 */}
                         {
                           item.device && item.device.map((items, index) => {
@@ -663,7 +655,6 @@ class MonitoringModule extends React.Component {
                         }
                         {item.device && item.device.length === 0 && <p className={styles.PanelItemNone}>当前无数据!!</p>}
                       </div>
->>>>>>> d716f9e2c490760f9cdf41f2ea2b7ed9bc8efe21
                     </Panel>
                   )
                 })
