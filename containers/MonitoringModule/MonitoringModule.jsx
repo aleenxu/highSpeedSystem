@@ -44,6 +44,7 @@ class MonitoringModule extends React.Component {
       checkedList: [],
       indeterminate: true,
       checkAll: false,
+      plainOptionList: null,
     }
     this.eventQuery = {
       eventType: '',
@@ -183,17 +184,24 @@ class MonitoringModule extends React.Component {
       }}
     />
   )
-  genExtraAdd = (dictCode) => (
+  genExtraAdd = (item) => (
     <Icon
       type="plus"
       onClick={(event) => {
         event.stopPropagation()
-        this.VIboardParameters.deviceTypeId = dictCode
+        this.VIboardParameters.deviceTypeId = item.dictCode
+        this.getdeviceList(item)
         this.handlelistDetail('roadNumber', 1)
         this.handleEventPopup('VIboard', true)
       }}
     />
   )
+  getdeviceList = (data) => {
+    this.deviceList = []
+    data.device.map((item) => {
+      this.deviceList.push(item.deviceId)
+    })
+  }
   handleInput = (e, name, type) => {
     if (type === 'eventsPopup') {
       this.eventQuery[name] = e.target.value
@@ -303,21 +311,29 @@ class MonitoringModule extends React.Component {
       const result = res.data
       console.log(result.data)
       if (result.code === 200) {
-        this.setState({ conditionList: result.data })
+        const plainOptionList = []
+        result.data.map((item) => {
+          if (!(this.deviceList.includes(item.deviceId))) {
+            plainOptionList.push(item.deviceId)
+          }
+        })
+        this.setState({ conditionList: result.data, plainOptionList })
       }
     })
   }
   getcheckedList = (checkedList) => {
+    const { plainOptionList } = this.state
     this.setState({
       checkedList,
-      indeterminate: !!checkedList.length && checkedList.length < plainOptions.length,
-      checkAll: checkedList.length === plainOptions.length,
+      indeterminate: !!checkedList.length && checkedList.length < plainOptionList.length,
+      checkAll: checkedList.length === plainOptionList.length,
     })
   }
 
   onCheckAllChange = (e) => {
+    const { plainOptionList } = this.state
     this.setState({
-      checkedList: e.target.checked ? plainOptions : [],
+      checkedList: e.target.checked ? plainOptionList : [],
       indeterminate: false,
       checkAll: e.target.checked,
     })
@@ -702,7 +718,7 @@ class MonitoringModule extends React.Component {
               {
                 detailsPopup.devices.map((item) => {
                   return (
-                    <Panel header={item.codeName} key={item.dictCode} extra={this.genExtraAdd(item.dictCode)}>
+                    <Panel header={item.codeName} key={item.dictCode} extra={this.genExtraAdd(item)}>
                       <div> {/* 添加滚动条 */}
                         {
                           item.device && item.device.map((items, index) => {
@@ -748,7 +764,7 @@ class MonitoringModule extends React.Component {
                     <Select defaultValue="" style={{ width: '100%' }} onChange={(e) => { this.handleSelect(e, 'roadDirection', 'VIboardPopup') }} >
                       <Option value="">请选择</Option>
                       {
-                        roadNumber&& roadNumber.map((item) => {
+                        roadNumber && roadNumber.map((item) => {
                           return <Option key={item.id} value={item.id}>{item.name}</Option>
                         })
                       }
@@ -801,7 +817,7 @@ class MonitoringModule extends React.Component {
                 >
                   {
                     conditionList.map((item) => {
-                      return <Checkbox key={item.deviceId} value={item.deviceId}>{item.deviceName + '-' + item.directionName}</Checkbox>
+                      return <Checkbox key={item.deviceId} disabled={this.deviceList.includes(item.deviceId)} value={item.deviceId}>{item.deviceName + '-' + item.directionName}</Checkbox>
                     })
                   }
 
