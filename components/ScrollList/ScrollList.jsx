@@ -1,7 +1,7 @@
 import React from 'react'
 import echarts from 'echarts'
 import ReactEcharts from 'echarts-for-react'
-import { Collapse, Icon, Progress, Checkbox } from 'antd';
+import { Collapse, Icon, Progress, Checkbox, message } from 'antd';
 import styles from './ScrollList.scss'
 import classNames from 'classnames'
 import $ from 'jquery'
@@ -11,8 +11,8 @@ class ScrollList extends React.Component {
     super(props)
     this.state = {
       listType: this.props.type, // 类型
-      dataAll: this.props.dataAll, // 总数据
       data: this.props.dataRes, // 数据
+      dataAll: this.props.dataAll, // 总数据
       listTit: this.props.Tit, // 模块标题
       listTitle: this.props.Title, // 标题名
       eachartData: this.props.eachartData,
@@ -69,6 +69,9 @@ class ScrollList extends React.Component {
     }
     if (this.props.dataRes !== nextProps.dataRes) {
       this.setState({ data: nextProps.dataRes })
+    }
+    if (this.props.dataAll !== nextProps.dataAll) {
+      this.setState({ dataAll: nextProps.dataAll })
     }
   }
   getOption = (data) => {
@@ -179,16 +182,20 @@ class ScrollList extends React.Component {
     const type = this.state.typeNow
     switch(type){
       case "1":
-        !this.state.one ? this.setState({one: true},()=>{console.log(this.state.one,"look1")}):this.setState({one: false},()=>{console.log(this.state.one,"look2")})
+        const dataLength = this.state.dataAll[0].eventData.length
+        !this.state.one ? this.setState({one: true},()=>{dataLength > 0 ? window.leftModuleOne.show() : message.info('暂无数据！')}):this.setState({one: false},()=>{window.leftModuleOne.hide()})
         break;
       case "2":
-        !this.state.two ? this.setState({two: true},()=>{console.log(this.state.two,"look1")}):this.setState({two: false},()=>{console.log(this.state.two,"look2")})
+        const dataLength1 = this.state.dataAll[1].eventData.length
+        !this.state.two ? this.setState({two: true},()=>{dataLength1 > 0 ? window.leftModuleTwo.show() : message.info('暂无数据！')}):this.setState({two: false},()=>{window.leftModuleTwo.hide()})
         break;
       case "3":
-        !this.state.three ? this.setState({three: true},()=>{console.log(this.state.three,"look1")}):this.setState({three: false},()=>{console.log(this.state.three,"look2")})
+        const dataLength2 = this.state.dataAll[2].eventData.length
+        !this.state.three ? this.setState({three: true},()=>{dataLength2 > 0 ? window.leftModuleThree.show() : message.info('暂无数据！')}):this.setState({three: false},()=>{window.leftModuleThree.hide()})
         break;
       case "4":
-        !this.state.four ? this.setState({four: true},()=>{console.log(this.state.four,"look1")}):this.setState({four: false},()=>{console.log(this.state.four,"look2")})
+        const dataLength3 = this.state.dataAll[3].eventData.length
+        !this.state.four ? this.setState({four: true},()=>{dataLength3 > 0 ? window.leftModuleFour.show() : message.info('暂无数据！')}):this.setState({four: false},()=>{window.leftModuleFour.hide()})
         break;
     }
     })

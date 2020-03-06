@@ -101,7 +101,7 @@ class SidePop extends React.Component {
                 type: item.eventType,
                 name: item.eventName,
               }
-              return <ScrollList type="3" key={item.eventName + item.eventLength} Tit={item.eventName + ' (' + item.eventLength + ')'} Title={listTit} dataRes={item.eventData} dataAll={SidePopLeft} handleEventPopup={this.handleEventPopup}></ScrollList>
+              return <ScrollList type="3" key={item.eventName + item.eventLength} Tit={item.eventName + ' (' + item.eventLength + ')'} Title={listTit} dataAll={SidePopLeft} dataRes={item.eventData} handleEventPopup={this.handleEventPopup}></ScrollList>
             })}
             {/* <ScrollList Tit="交通拥堵(1)" Title={listTitData} dataRes={listData} handleEventPopup={this.handleEventPopup}></ScrollList>
             <ScrollList Tit="道路施工(1)" Title={listTitData} dataRes={listData} handleEventPopup={this.handleEventPopup}></ScrollList>
