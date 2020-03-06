@@ -161,6 +161,14 @@ class MonitoringModule extends React.Component {
       }}
     />
   )
+  genExtraAdd = () => (
+    <Icon
+      type="plus"
+      onClick={(event) => {
+        event.stopPropagation()   
+      }}
+    />
+  )
   handleInput = (e, name) => {
     console.log(e, name);
     this.eventQuery[name] = e.target.value
@@ -638,7 +646,7 @@ class MonitoringModule extends React.Component {
                     <div className={styles.HeadItem}>当前路况</div>
                     <div className={styles.RowBox}>
                       {/*  <p>拥堵级别&nbsp;:&nbsp;&nbsp;<span style={{ color: '#e90202' }}>严重拥堵</span></p> */}
-                      <p>平局车速&nbsp;:&nbsp;&nbsp;<span style={{ color: '#e90202' }}>{detailsPopup.avgSpeed}km/h</span></p>
+                      <p>平局车速&nbsp;:&nbsp;&nbsp;<span style={{ color: '#e90202' }}>{detailsPopup.situation}km/h</span></p>
                     </div>
                   </div>
                 </div>
@@ -646,7 +654,7 @@ class MonitoringModule extends React.Component {
               {
                 detailsPopup.devices.map((item) => {
                   return (
-                    <Panel header={item.codeName} key={item.dictCode}>
+                    <Panel header={item.codeName} key={item.dictCode} extra={this.genExtraAdd()}>
                       <div> {/* 添加滚动条 */}
                         {
                           item.device && item.device.map((items, index) => {
