@@ -38,10 +38,25 @@ class MonitoringModule extends React.Component {
       groupStatus: null,
       planList: null,
       hwayList: null,
+      VIboardPopup: null,
+      roadNumber: null,
+      conditionList: null,
+      checkedList: [],
+      indeterminate: true,
+      checkAll: false,
     }
     this.eventQuery = {
       eventType: '',
       hWayId: '',
+      roadName: '',
+    }
+    this.VIboardParameters = {
+      deviceCode: '',
+      deviceLocation: '',
+      deviceName: '',
+      deviceTypeId: '',
+      roadCode: '',
+      roadDirection: '',
       roadName: '',
     }
     this.planStatus = 0
@@ -52,6 +67,7 @@ class MonitoringModule extends React.Component {
     this.detailUrl = '/control/event/get/detail/' // {eventId}/{eventType}查看事件详情'
     this.listDetailUrl = '/control/dict/code/list/detail/' // {codeType} 根据字典类型，获取字典详情相关信息'
     this.hwayUrl = '/control/road/list/hway' //  获取高速编号，用于下拉框'
+    this.conditionUrl = '/control/device/list/condition' // {deviceTypeId} // 条件查询设备回显'
   }
   componentDidMount = () => {
     // 查询左侧列表数据
@@ -59,11 +75,11 @@ class MonitoringModule extends React.Component {
     // 查询饼图数据
     this.handlegroupType()
     // 查询右侧柱状图
-    this.handlegroupStatus()
+    this.handleUrlAjax(this.groupStatusUrl, 'groupStatus')
     // 查询管控方案
     this.handleplanList()
     // 高速下拉
-    this.handlelishway()
+    this.handleUrlAjax(this.hwayUrl, 'hwayList')
   }
   onStartChange = (value) => {
     this.onPickerChange('startValue', value)
@@ -151,6 +167,12 @@ class MonitoringModule extends React.Component {
         whethePopup: boolean,
       })
     }
+    if (type === 'VIboard') {
+      this.setState({ VIboardPopup: boolean })
+    }
+    if (type === 'condition') {
+      this.setState({ conditionList: boolean })
+    }
   }
   genExtra = () => (
     <Icon
@@ -161,17 +183,32 @@ class MonitoringModule extends React.Component {
       }}
     />
   )
-  genExtraAdd = () => (
+  genExtraAdd = (dictCode) => (
     <Icon
       type="plus"
       onClick={(event) => {
-        event.stopPropagation()   
+        event.stopPropagation()
+        this.VIboardParameters.deviceTypeId = dictCode
+        this.handlelistDetail('roadNumber', 1)
+        this.handleEventPopup('VIboard', true)
       }}
     />
   )
-  handleInput = (e, name) => {
-    console.log(e, name);
-    this.eventQuery[name] = e.target.value
+  handleInput = (e, name, type) => {
+    if (type === 'eventsPopup') {
+      this.eventQuery[name] = e.target.value
+    }
+    if (type === 'VIboardPopup') {
+      this.VIboardParameters[name] = e.target.value
+    }
+  }
+  handleSelect = (value, name, type) => {
+    if (type === 'eventsPopup') {
+      this.eventQuery[name] = value
+    }
+    if (type === 'VIboardPopup') {
+      this.VIboardParameters[name] = value
+    }
   }
   handleradiog = (e, name) => {
     console.log(e, name, e.target.value);
@@ -180,8 +217,6 @@ class MonitoringModule extends React.Component {
     } else {
       this.planStatus = e.target.value
     }
-
-
   }
   handleCheckboxGroup = (value, name) => {
     console.log(value, name)
@@ -224,15 +259,6 @@ class MonitoringModule extends React.Component {
       }
     })
   }
-  // 获取右侧柱状图数据
-  handlegroupStatus = () => {
-    getResponseDatas('get', this.groupStatusUrl).then((res) => {
-      const result = res.data
-      if (result.code === 200) {
-        this.setState({ groupStatus: result.data })
-      }
-    })
-  }
   // 获取右侧管控方案列表
   handleplanList = () => {
     getResponseDatas('get', this.planListUrl + this.planStatus).then((res) => {
@@ -262,21 +288,42 @@ class MonitoringModule extends React.Component {
       }
     })
   }
-  // 查询高速下拉
-  handlelishway = () => {
-    getResponseDatas('get', this.hwayUrl).then((res) => {
+  handleUrlAjax = (url, name) => {
+    getResponseDatas('get', url).then((res) => {
       const result = res.data
       if (result.code === 200) {
-        this.setState({ hwayList: result.data })
+        this.setState({ [name]: result.data })
       }
     })
   }
-  handleSelect = (value, name) => {
-    this.eventQuery[name] = value
+  // 可变情报板查询
+  handleCondition = () => {
+    getResponseDatas('get', this.conditionUrl, this.VIboardParameters).then((res) => {
+      const result = res.data
+      console.log(result.data)
+      if (result.code === 200) {
+        this.setState({ conditionList: result.data })
+      }
+    })
+  }
+  getcheckedList = (checkedList) => {
+    this.setState({
+      checkedList,
+      indeterminate: !!checkedList.length && checkedList.length < plainOptions.length,
+      checkAll: checkedList.length === plainOptions.length,
+    })
+  }
+
+  onCheckAllChange = (e) => {
+    this.setState({
+      checkedList: e.target.checked ? plainOptions : [],
+      indeterminate: false,
+      checkAll: e.target.checked,
+    })
   }
   render() {
     const {
-      eventsPopup, groupType, planList, hwayList, groupStatus, controlPopup, detailsPopup, whethePopup, reservePopup, startValue, endValue, endOpen, SidePopLeft
+      eventsPopup, groupType, planList, roadNumber, conditionList, hwayList, VIboardPopup, groupStatus, controlPopup, detailsPopup, whethePopup, reservePopup, startValue, endValue, endOpen, SidePopLeft
     } = this.state
     return (
       <div className={styles.MonitoringModule}>
@@ -312,7 +359,7 @@ class MonitoringModule extends React.Component {
                 <div className={styles.ItemBox}>
                   <span className={styles.ItemName}>高&nbsp;速&nbsp;名&nbsp;称&nbsp;:</span>
                   <div className={styles.ItemInput}>
-                    <Select defaultValue="" style={{ width: '100%' }} onChange={(e) => { this.handleSelect(e, 'hWayId') }}>
+                    <Select defaultValue="" style={{ width: '100%' }} onChange={(e) => { this.handleSelect(e, 'hWayId', 'eventsPopup') }}>
                       <Option value="">请选择</Option>
                       {
                         hwayList.map((item) => {
@@ -325,7 +372,7 @@ class MonitoringModule extends React.Component {
                 <div className={styles.ItemBox}>
                   <span className={styles.ItemName}>道&nbsp;路&nbsp;名&nbsp;称&nbsp;:</span>
                   <div className={styles.ItemInput}>
-                    <Input onChange={(e) => { this.handleInput(e, 'roadName') }} />
+                    <Input onChange={(e) => { this.handleInput(e, 'roadName', 'eventsPopup') }} />
                   </div>
                 </div>
                 {/*  <div className={styles.ItemBox}>
@@ -654,11 +701,11 @@ class MonitoringModule extends React.Component {
               {
                 detailsPopup.devices.map((item) => {
                   return (
-                    <Panel header={item.codeName} key={item.dictCode} extra={this.genExtraAdd()}>
+                    <Panel header={item.codeName} key={item.dictCode} extra={this.genExtraAdd(item.dictCode)}>
                       <div> {/* 添加滚动条 */}
                         {
                           item.device && item.device.map((items, index) => {
-                            return <p className={styles.PanelItem} key={items}>{`${index + 1}. ${items.deviceName} ${items.directionName} ${item.codeName}`}</p>
+                            return <div className={styles.PanelBox}><p className={styles.PanelItem} key={items}>{`${index + 1}. ${items.deviceName} ${items.directionName} ${item.codeName}`}</p><Icon className={styles.MinusItem} type="minus" /></div>
                           })
                         }
                         {item.device && item.device.length === 0 && <p className={styles.PanelItemNone}>当前无数据!!</p>}
@@ -670,7 +717,102 @@ class MonitoringModule extends React.Component {
             </Collapse>
             <div className={styles.Panelbutton}>{detailsPopup.controlStatusType > 0 ? '查看管控' : '发起管控'}</div>
           </div> : null}
-      </div>
+        {VIboardPopup ?
+          <div className={styles.MaskBox}>
+            <div className={classNames(styles.EventPopup, styles.VIboardPopup)}>
+              <div className={styles.Title}>添加可变情报板<Icon className={styles.Close} onClick={() => { this.handleEventPopup('VIboard', false) }} type="close" /></div>
+              <div className={styles.Centent}>
+                <div className={styles.ItemBox}>
+                  <span className={styles.ItemName}>道&nbsp;路&nbsp;编&nbsp;号&nbsp;:</span>
+                  <div className={styles.ItemInput}>
+                    <Select defaultValue="" style={{ width: '100%' }} onChange={(e) => { this.handleSelect(e, 'roadCode', 'VIboardPopup') }}>
+                      <Option value="">请选择</Option>
+                      {
+                        hwayList && hwayList.map((item) => {
+                          return <Option key={item.id} value={item.id}>{item.name}</Option>
+                        })
+                      }
+                    </Select>
+                  </div>
+                </div>
+                <div className={styles.ItemBox}>
+                  <span className={styles.ItemName}>道&nbsp;路&nbsp;名&nbsp;称&nbsp;:</span>
+                  <div className={styles.ItemInput}>
+                    <Input onChange={(e) => { this.handleInput(e, 'roadName', 'VIboardPopup') }} />
+                  </div>
+                </div>
+                <div className={styles.ItemBox}>
+                  <span className={styles.ItemName}>道&nbsp;路&nbsp;方&nbsp;向&nbsp;:</span>
+                  <div className={styles.ItemInput}>
+                    <Select defaultValue="" style={{ width: '100%' }} onChange={(e) => { this.handleSelect(e, 'roadDirection', 'VIboardPopup') }} >
+                      <Option value="">请选择</Option>
+                      {
+                        roadNumber&& roadNumber.map((item) => {
+                          return <Option key={item.id} value={item.id}>{item.name}</Option>
+                        })
+                      }
+                    </Select>
+                  </div>
+                </div>
+                <div className={styles.ItemBox}>
+                  <span className={styles.ItemName}>情报板编号:</span>
+                  <div className={styles.ItemInput}>
+                    <Input onChange={(e) => { this.handleInput(e, 'deviceCode', 'VIboardPopup') }} />
+                  </div>
+                </div>
+                <div className={styles.ItemBox}>
+                  <span className={styles.ItemName}>情报板名称:</span>
+                  <div className={styles.ItemInput}>
+                    <Input onChange={(e) => { this.handleInput(e, 'deviceName', 'VIboardPopup') }} />
+                  </div>
+                </div>
+                <div className={styles.ItemBox}>
+                  <span className={styles.ItemName}>情报板位置:</span>
+                  <div className={styles.ItemInput}>
+                    <Input onChange={(e) => { this.handleInput(e, 'deviceLocation', 'VIboardPopup') }} />
+                  </div>
+                </div>
+                <div className={styles.ItemFooter} style={{ bottom: '-15px' }}>
+                  <span onClick={this.handleCondition}>查&nbsp;&nbsp;找</span>
+                  <span onClick={() => { this.handleEventPopup('VIboard', false) }}>返&nbsp;&nbsp;回</span>
+                </div>
+              </div>
+            </div>
+          </div> : null}
+        {conditionList ?
+          <div className={styles.MaskBox}>
+            <div className={classNames(styles.EventPopup, styles.VIboardPopup, styles.conditionPopup)}>
+              <div className={styles.Title}>添加可变情报板<Icon className={styles.Close} onClick={() => { this.handleEventPopup('condition', false) }} type="close" /></div>
+              <div className={styles.Centent}>
+                <div className="site-checkbox-all-wrapper">
+                  <Checkbox
+                    indeterminate={this.state.indeterminate}
+                    onChange={this.onCheckAllChange}
+                    checked={this.state.checkAll}
+                  >
+                    全选
+                  </Checkbox>
+                </div>
+                <br />
+                <Checkbox.Group
+                  value={this.state.checkedList}
+                  onChange={this.getcheckedList}
+                >
+                  {
+                    conditionList.map((item) => {
+                      return <Checkbox key={item.deviceId} value={item.deviceId}>{item.deviceName + '-' + item.directionName}</Checkbox>
+                    })
+                  }
+
+                </Checkbox.Group>
+                <div className={styles.ItemFooter} style={{ bottom: '-15px' }}>
+                  <span onClick={this.handleCondition}>确&nbsp;&nbsp;认</span>
+                  <span onClick={() => { this.handleEventPopup('condition', false) }}>返&nbsp;&nbsp;回</span>
+                </div>
+              </div>
+            </div>
+          </div> : null}
+      </div >
     )
   }
 }

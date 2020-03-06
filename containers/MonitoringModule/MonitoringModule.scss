@@ -428,23 +428,49 @@
       color: #26ff6d;
     }
   }
-  .PanelItem {
-    height: 45px;
-    line-height: 45px;
-    margin: 0;
-    text-indent: 22px;
-    color: #5a5f74;
-    border-bottom: 1px solid #696969;
-    cursor: pointer;
-    &:last-child {
-      border-bottom: 0;
-    }
-    &:hover{
-      color: #fff;
-      background: #2d81ad;
+  :global(.anticon-plus svg) {
+    color: #2d81ad;
+    font-size: 18px;
+    &:hover {
+      transition: all 0.5s;
+      transform: rotate(180deg);
+      color: #26ff6d;
+      font-size: 18px;
     }
   }
-  .PanelItemNone{
+  .PanelBox {
+    position: relative;
+    .PanelItem {
+      height: 45px;
+      line-height: 45px;
+      margin: 0;
+      text-indent: 22px;
+      color: #5a5f74;
+      border-bottom: 1px solid #696969;
+      cursor: pointer;
+      &:last-child {
+        border-bottom: 0;
+      }
+      &:hover {
+        color: #fff;
+        background: #2d81ad;
+      }
+    }
+    .MinusItem {
+      position: absolute;
+      right: 15px;
+      top: 13px;
+      cursor: pointer;
+      color: #2d81ad;
+      &:hover {
+        transition: all 0.5s;
+        transform: rotate(180deg);
+        color: #26ff6d;
+      }
+    }
+  }
+
+  .PanelItemNone {
     height: 45px;
     line-height: 45px;
     margin: 0;
@@ -476,5 +502,53 @@
     position: absolute;
     bottom: 3px;
     cursor: pointer;
+  }
+}
+.VIboardPopup {
+  height: 475px !important;
+  width: 421px !important;
+  background: url(../../imgs/popup_four.png) center center no-repeat !important;
+  background-size: 100% 100%;
+  left: 27% !important;
+  margin-top: -238px !important;
+  .Centent {
+    padding: 4px 22px !important;
+  }
+  .ItemBox {
+    margin-top: 26px !important;
+  }
+  .ItemFooter {
+    position: absolute;
+    bottom: 10px !important;
+  }
+}
+.conditionPopup {
+  left: 52% !important;
+  margin-top: -238px !important;
+  .Centent {
+    height: 330px !important;
+    min-height: 330px !important;
+    overflow-y: auto !important;
+  }
+  :global(.ant-checkbox-wrapper) {
+    color: #fff;
+    display: block;
+    margin: 8px 0 !important;
+  }
+  :global(.ant-checkbox-wrapper) {
+    color: #fff;
+  }
+  :global(.ant-checkbox-group-item) {
+    width: 88px !important;
+  }
+  :global(.ant-checkbox-checked .ant-checkbox-inner) {
+    background-color: #191c22;
+    border: 1px solid #959595;
+  }
+  :global(.ant-checkbox-inner) {
+    background-color: #191c22;
+  }
+  :global(.ant-checkbox-group .ant-checkbox + span) {
+    
   }
 }
