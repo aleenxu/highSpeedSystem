@@ -338,6 +338,30 @@ class MonitoringModule extends React.Component {
       checkAll: e.target.checked,
     })
   }
+  handledetailsPopupList = () => {
+    const { checkedList, detailsPopup, conditionList } = this.state
+    const { deviceTypeId } = this.VIboardParameters
+    conditionList.forEach((item) => {
+      checkedList.forEach((items) => {
+        if (item.deviceId === items) {
+          detailsPopup.devices.forEach((itemss, index) => {
+            if (itemss.dictCode === deviceTypeId) {
+              detailsPopup.devices[index].device.push(item)
+            }
+          })
+        }
+      })
+    })
+    this.setState({ detailsPopup, conditionList: null, VIboardPopup: null })
+  }
+  handleSubDetailsPopupList = (ind, index) => {
+    const { detailsPopup } = this.state
+    detailsPopup.devices[ind].device.splice(index, 1)
+    this.setState({ detailsPopup })
+  }
+  handleControl=()=>{
+    const { detailsPopup } = this.state
+  }
   render() {
     const {
       eventsPopup, groupType, planList, roadNumber, conditionList, hwayList, VIboardPopup, groupStatus, controlPopup, detailsPopup, whethePopup, reservePopup, startValue, endValue, endOpen, SidePopLeft
@@ -701,8 +725,8 @@ class MonitoringModule extends React.Component {
                       <p>车道&nbsp;:&nbsp;&nbsp;{detailsPopup.roadName}</p>
                     </div>
                     <div className={styles.RowBox}>
-                      <p>起始公里桩号&nbsp;:&nbsp;&nbsp;{detailsPopup.pileNumber.split(' ')[0]}</p>
-                      <p>结束公里桩号&nbsp;:&nbsp;&nbsp;{detailsPopup.pileNumber.split(' ')[1]}</p>
+                      <p>起始公里桩号&nbsp;:&nbsp;&nbsp;{detailsPopup.pileNum.split(' ')[0]}</p>
+                      <p>结束公里桩号&nbsp;:&nbsp;&nbsp;{detailsPopup.pileNum.split(' ')[1]}</p>
                     </div>
                     <div className={styles.RowBox}>数据来源&nbsp;:&nbsp;&nbsp;{detailsPopup.dataSourceName}</div>
                   </div>
@@ -716,13 +740,13 @@ class MonitoringModule extends React.Component {
                 </div>
               </Panel>
               {
-                detailsPopup.devices.map((item) => {
+                detailsPopup.devices.map((item, ind) => {
                   return (
                     <Panel header={item.codeName} key={item.dictCode} extra={this.genExtraAdd(item)}>
                       <div> {/* 添加滚动条 */}
                         {
                           item.device && item.device.map((items, index) => {
-                            return <div className={styles.PanelBox}><p className={styles.PanelItem} key={items}>{`${index + 1}. ${items.deviceName} ${items.directionName} ${item.codeName}`}</p><Icon className={styles.MinusItem} type="minus" /></div>
+                            return <div className={styles.PanelBox}><p className={styles.PanelItem} key={items}>{`${index + 1}. ${items.deviceName} ${items.directionName} ${item.codeName}`}</p><Icon onClick={() => { this.handleSubDetailsPopupList(ind, index) }} className={styles.MinusItem} type="minus" /></div>
                           })
                         }
                         {item.device && item.device.length === 0 && <p className={styles.PanelItemNone}>当前无数据!!</p>}
@@ -823,7 +847,7 @@ class MonitoringModule extends React.Component {
 
                 </Checkbox.Group>
                 <div className={styles.ItemFooter} style={{ bottom: '-15px' }}>
-                  <span onClick={this.handleCondition}>确&nbsp;&nbsp;认</span>
+                  <span onClick={this.handledetailsPopupList}>确&nbsp;&nbsp;认</span>
                   <span onClick={() => { this.handleEventPopup('condition', false) }}>返&nbsp;&nbsp;回</span>
                 </div>
               </div>
