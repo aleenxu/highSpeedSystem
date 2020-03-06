@@ -4,24 +4,25 @@ import ReactEcharts from 'echarts-for-react'
 import { Collapse, Icon, Progress, Checkbox } from 'antd';
 import styles from './ScrollList.scss'
 import classNames from 'classnames'
+import $ from 'jquery'
 const { Panel } = Collapse;
-
-const text = `
-  A dog is a type of domesticated animal.
-  Known for its loyalty and faithfulness,
-  it can be found as a welcome guest in many households across the world.
-`;
 class ScrollList extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
       listType: this.props.type, // 类型
+      dataAll: this.props.dataAll, // 总数据
       data: this.props.dataRes, // 数据
       listTit: this.props.Tit, // 模块标题
       listTitle: this.props.Title, // 标题名
       eachartData: this.props.eachartData,
       sideachart: null,
       ProgressData: this.props.ProgressData,
+      typeNow: 0, //选中的是哪个模块  1；2；3；4；
+      one: false,
+      two: false,
+      three: false,
+      four: false,
     }
     this.eachartLength = 0
     this.ProgressLength = 0
@@ -171,6 +172,28 @@ class ScrollList extends React.Component {
       }}
     />
   )
+  checkBoxClick = event => {
+    this.setState({
+      typeNow:$(event.currentTarget).attr('nowtype')
+    },() =>{
+    const type = this.state.typeNow
+    switch(type){
+      case "1":
+        !this.state.one ? this.setState({one: true},()=>{console.log(this.state.one,"look1")}):this.setState({one: false},()=>{console.log(this.state.one,"look2")})
+        break;
+      case "2":
+        !this.state.two ? this.setState({two: true},()=>{console.log(this.state.two,"look1")}):this.setState({two: false},()=>{console.log(this.state.two,"look2")})
+        break;
+      case "3":
+        !this.state.three ? this.setState({three: true},()=>{console.log(this.state.three,"look1")}):this.setState({three: false},()=>{console.log(this.state.three,"look2")})
+        break;
+      case "4":
+        !this.state.four ? this.setState({four: true},()=>{console.log(this.state.four,"look1")}):this.setState({four: false},()=>{console.log(this.state.four,"look2")})
+        break;
+    }
+    })
+  }
+  
   render() {
     const { listType, listTit, listTitle, ProgressData, data, eachartData, sideachart } = this.state
     return (
@@ -242,6 +265,7 @@ class ScrollList extends React.Component {
         }
         {listType === '3' &&
           <div>
+            <Checkbox.Group style={{position: "absolute",zIndex: 9,left: "12px",top: "12px"}} nowtype={listTitle.type} options ={[{ label: '', value: listTitle }]} onClick={this.checkBoxClick} />
             <Collapse
               onChange={this.callback}
               expandIconPosition="right"

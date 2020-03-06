@@ -186,6 +186,7 @@
 }
 
 .scrollBox {
+  position:relative;
   :global(.anticon-setting svg) {
     color: #2d81ad;
     &:hover {
