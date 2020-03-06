@@ -3,7 +3,10 @@ import tollStationIcon from '../../imgs/tollStation_s.png'
 import fBoardIcon from '../../imgs/fBoard_s.png'
 import speedLimitIcon from '../../imgs/speedLimit_s.png'
 import turnBoardIcon from '../../imgs/turnBoard_s.png'
-import otherIcon from '../../imgs/boat.png'
+import mapTrafficJam from '../../imgs/map_traffic_jam.png'
+import mapBuild from '../../imgs/map_build.png'
+import mapWeather from '../../imgs/map_weather.png'
+import mapAccidents from '../../imgs/map_accident.png'
 const pointArr = [
   [119.9296300000, 32.4319550000],
   [119.9471390000, 32.4151070000]
@@ -163,6 +166,19 @@ class GMap extends React.Component {
       return document.getElementById('my-infowin-tpl').innerHTML;
     });
   }
+  returnMapIcon = (index)=>{
+    switch(index){
+      case 0:
+        return mapTrafficJam
+      case 1:
+        return mapBuild
+      case 2:
+        return mapWeather
+      case 3:
+        return mapAccidents
+
+    }
+  }
   // 创建多个点
   /* 
     pointArr : 点的数组 [[],[],[],[]]
@@ -176,9 +192,9 @@ class GMap extends React.Component {
           leftItem.eventData.map((item, index) => {
             const marker = new SimpleMarker({
               //自定义图标地址
-              iconStyle: otherIcon,
+              iconStyle: _this.returnMapIcon(leftIndex),
               //设置基点偏移
-              offset: new AMap.Pixel(-10, -10),
+              offset: new AMap.Pixel(-88, -19),
               showPositionPoint: false,
               position: [item.latlng.split(",")[1],item.latlng.split(",")[0]],
               zIndex: 10

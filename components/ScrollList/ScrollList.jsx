@@ -5,6 +5,10 @@ import { Collapse, Icon, Progress, Checkbox, message } from 'antd';
 import styles from './ScrollList.scss'
 import classNames from 'classnames'
 import $ from 'jquery'
+import iconTrafficJam from '../../imgs/icon_traffic_jam.png'
+import iconBuild from '../../imgs/icon_build.png'
+import iconWeather from '../../imgs/icon_weather.png'
+import iconAccidents from '../../imgs/icon_accidents.png'
 const { Panel } = Collapse;
 class ScrollList extends React.Component {
   constructor(props) {
@@ -277,10 +281,18 @@ class ScrollList extends React.Component {
               onChange={this.callback}
               expandIconPosition="right"
             >
-              {/* <Icon type="menu-unfold" /> */}
-              {/*   <Checkbox.Group defaultValue={[1]} onChange={(e) => { this.handleCheckboxGroup(e, 'accidentCheck') }}>
-                <Checkbox value={1} />
-              </Checkbox.Group> */}
+              {listTitle.type === 1 &&
+                <img className={styles.iconImg} src={ iconTrafficJam } />
+              }
+              {listTitle.type === 2 &&
+                <img className={styles.iconImg} src={ iconBuild } />
+              }
+              {listTitle.type === 3 &&
+                <img className={styles.iconImg} src={ iconWeather } />
+              }
+              {listTitle.type === 4 &&
+                <img className={styles.iconImg} src={ iconAccidents } />
+              }
               <Panel header={listTit} key="2" extra={this.genExtra(listTitle, 'Event')}>
                 <div className={styles.listBox}>
                   {listTitle &&
