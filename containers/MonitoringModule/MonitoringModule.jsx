@@ -69,6 +69,7 @@ class MonitoringModule extends React.Component {
     this.listDetailUrl = '/control/dict/code/list/detail/' // {codeType} 根据字典类型，获取字典详情相关信息'
     this.hwayUrl = '/control/road/list/hway' //  获取高速编号，用于下拉框'
     this.conditionUrl = '/control/device/list/condition' // {deviceTypeId} // 条件查询设备回显'
+    this.controlUrl = '/control/plan/start/control' // 发起管控'
   }
   componentDidMount = () => {
     // 查询左侧列表数据
@@ -201,6 +202,8 @@ class MonitoringModule extends React.Component {
     data.device.map((item) => {
       this.deviceList.push(item.deviceId)
     })
+    console.log(this.deviceList, '==============111');
+
   }
   handleInput = (e, name, type) => {
     if (type === 'eventsPopup') {
@@ -317,6 +320,8 @@ class MonitoringModule extends React.Component {
             plainOptionList.push(item.deviceId)
           }
         })
+        console.log(plainOptionList, '==========33');
+
         this.setState({ conditionList: result.data, plainOptionList })
       }
     })
@@ -340,6 +345,9 @@ class MonitoringModule extends React.Component {
   }
   handledetailsPopupList = () => {
     const { checkedList, detailsPopup, conditionList } = this.state
+    this.deviceList = [...this.deviceList, ...checkedList]
+    console.log(this.deviceList, '============2222');
+
     const { deviceTypeId } = this.VIboardParameters
     conditionList.forEach((item) => {
       checkedList.forEach((items) => {
@@ -359,8 +367,14 @@ class MonitoringModule extends React.Component {
     detailsPopup.devices[ind].device.splice(index, 1)
     this.setState({ detailsPopup })
   }
-  handleControl=()=>{
+  handleControl = () => {
     const { detailsPopup } = this.state
+   /*  getResponseDatas('get', this.controlUrl).then((res) => {
+      const result = res.data
+      if (result.code === 200) {
+        
+      }
+    }) */
   }
   render() {
     const {
@@ -749,14 +763,14 @@ class MonitoringModule extends React.Component {
                             return <div className={styles.PanelBox}><p className={styles.PanelItem} key={items}>{`${index + 1}. ${items.deviceName} ${items.directionName} ${item.codeName}`}</p><Icon onClick={() => { this.handleSubDetailsPopupList(ind, index) }} className={styles.MinusItem} type="minus" /></div>
                           })
                         }
-                        {item.device && item.device.length === 0 && <p className={styles.PanelItemNone}>当前无数据!!</p>}
+                        {item.device && item.device.length === 0 && <p className={styles.PanelItemNone}>暂无数据!!</p>}
                       </div>
                     </Panel>
                   )
                 })
               }
             </Collapse>
-            <div className={styles.Panelbutton}>{detailsPopup.controlStatusType > 0 ? '查看管控' : '发起管控'}</div>
+            <div className={styles.Panelbutton}>{detailsPopup.controlStatusType > 0 ? <span>查看管控</span> : <span onClick={this.handleControl}>发起管控</span>}</div>
           </div> : null}
         {VIboardPopup ?
           <div className={styles.MaskBox}>
