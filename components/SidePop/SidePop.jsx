@@ -1,5 +1,10 @@
 import React from 'react'
 import ScrollList from '../ScrollList/ScrollList'
+import 'animate.css'
+import RCloseIcon from '../../imgs/icon_r_close.png'
+import ROpenIcon from '../../imgs/icon_r_open.png'
+import LCloseIcon from '../../imgs/icon_left_close.png'
+import LOpenIcon from '../../imgs/icon_left_open.png'
 
 class SidePop extends React.Component {
   constructor(props) {
@@ -11,6 +16,7 @@ class SidePop extends React.Component {
       groupType: this.props.groupType || '',
       groupStatus: this.props.groupStatus,
       SidplanList: this.props.SidplanList,
+      transition: '',
     }
     this.styles = {
       position: 'fixed',
@@ -27,7 +33,7 @@ class SidePop extends React.Component {
     }
   }
   componentDidMount = () => {
-
+    this.state.boxRight === 'unset' ? this.setState({transition:'bounceInLeft'}) : this.setState({transition:'bounceInRight'})
   }
   componentWillReceiveProps = (nextProps) => {
     if (this.props.SidePopLeft !== nextProps.SidePopLeft) {
@@ -86,7 +92,7 @@ class SidePop extends React.Component {
       state: '上报时间'
     } //标题数据
     return (
-      <div style={this.styles} >
+      <div style={this.styles} className={`animated ${this.state.transition}`}>
         {boxRight === 'unset' &&
           <div style={{ width: '100%' }}>
             {!!groupType && <ScrollList eachartData={groupType} type="1" dataRes="eacharts" handleEventPopup={this.handleEventPopup}></ScrollList>}
@@ -115,7 +121,15 @@ class SidePop extends React.Component {
             {SidplanList && <ScrollList type="4" Tit="管控方案" Title={listTit} dataRes={SidplanList} handleEventPopup={this.handleEventPopup}></ScrollList>}
           </div>
         }
-      </div >
+        {boxRight === 'unset' ? 
+          <div style={{position:'absolute', left:'5px', bottom:'5px'}}>
+            <img src={LCloseIcon} />
+          </div> : 
+          <div style={{position:'absolute', right:'5px', bottom:'5px'}}>
+            <img src={RCloseIcon} />
+          </div>
+        }
+      </div>
     )
   }
 }
