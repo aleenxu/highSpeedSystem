@@ -93,7 +93,6 @@ class GMap extends React.Component {
     // 点的新建
     AMapUI.loadUI(['overlay/SimpleMarker', 'overlay/SimpleInfoWindow'], function (SimpleMarker, SimpleInfoWindow) {
       if (_this.state.dataAll){
-        console.log(_this.state.dataAll,"所有的数据...")
         // 左侧功能数据图标
         _this.createPoint(pointArr, tollStationIcon, SimpleMarker, SimpleInfoWindow, map, true)
       }
@@ -190,13 +189,14 @@ class GMap extends React.Component {
       _this.state.dataAll.map((leftItem, leftIndex)=>{
         if (leftItem.eventData.length > 0){
           leftItem.eventData.map((item, index) => {
+            console.log(item.latlng[0],"哈哈哈哈..")
             const marker = new SimpleMarker({
               //自定义图标地址
               iconStyle: _this.returnMapIcon(leftIndex),
               //设置基点偏移
               offset: new AMap.Pixel(-88, -19),
               showPositionPoint: false,
-              position: [item.latlng.split(",")[1],item.latlng.split(",")[0]],
+              position: item.latlng[index],
               zIndex: 10
             });
             switch(leftIndex){
@@ -221,7 +221,6 @@ class GMap extends React.Component {
                 window.leftModuleFour.hide() // 隐藏当前的层组
                 break;
             }
-            console.log(marker,"当前点信息")
           }) 
         }
       })

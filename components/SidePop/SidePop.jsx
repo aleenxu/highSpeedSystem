@@ -45,7 +45,6 @@ class SidePop extends React.Component {
   }
   handleEventPopup = (type, boolean) => {
     const { handleEventPopup } = this.props
-    console.log(type, boolean, handleEventPopup)
     if (handleEventPopup) {
       handleEventPopup(type, boolean)
     }
