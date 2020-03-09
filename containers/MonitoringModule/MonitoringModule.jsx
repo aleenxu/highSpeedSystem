@@ -72,6 +72,7 @@ class MonitoringModule extends React.Component {
     this.hwayUrl = '/control/road/list/hway' //  获取高速编号，用于下拉框'
     this.conditionUrl = '/control/device/list/condition' // {deviceTypeId} // 条件查询设备回显'
     this.controlUrl = '/control/plan/start/control' // 发起管控'
+    this.getInfoUrl = '/control/plan/get/info/' // {eventType}/{eventId} 获取管控方案'
   }
   componentDidMount = () => {
     // 查询左侧列表数据
@@ -405,7 +406,15 @@ class MonitoringModule extends React.Component {
     })
   }
   handleViewControl = () => {
-    this.handleEventPopup('Reserve', true)
+    const { detailsPopup } = this.state
+    const { eventId, eventType } = detailsPopup
+    getResponseDatas('get', this.getInfoUrl + '/' + eventType + '/' + eventId).then((res) => {
+      const result = res.data
+      console.log(result)
+      if (result.code === 200) {
+        this.handleEventPopup('Reserve', true)
+      }
+    })
   }
   handleEventTag = (boolean) => {
     this.setState({
