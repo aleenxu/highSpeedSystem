@@ -146,6 +146,7 @@
     text-indent: 22px;
     font-size: 15px;
     position: relative;
+    color: #fff;
     .Close {
       position: absolute;
       right: 15px;
@@ -369,14 +370,11 @@
   .ReserveBox {
     background: url(../../imgs/popup_two.png) center center no-repeat;
     background-size: 100% 100%;
-    width: 430px;
-    /* height: 930px;
-    margin-top: -465px; */
-    left: 52%;
+    width: 461px;
+    left: 5px;
     height: 93.5%;
     top: 55px;
     margin-top: 0;
-    /*  overflow-y: auto; */
     .Content {
       height: calc(100% - 97px);
       min-height: calc(100% - 97px);
@@ -438,6 +436,10 @@
       font-size: 18px;
     }
   }
+  .ScrollItem {
+    max-height: 135px;
+    overflow-y: auto;
+  }
   .PanelBox {
     position: relative;
     .PanelItem {
@@ -446,7 +448,7 @@
       margin: 0;
       text-indent: 22px;
       color: #5a5f74;
-      border-bottom: 1px solid #696969;
+      /*  border-bottom: 1px solid #696969; */
       cursor: pointer;
       &:last-child {
         border-bottom: 0;
@@ -502,7 +504,7 @@
     position: absolute;
     bottom: 3px;
     cursor: pointer;
-    &:hover{
+    &:hover {
       color: #26ff6d;
     }
   }
@@ -562,4 +564,17 @@
   :global(.ant-checkbox-disabled + span) {
     color: #5a5f72;
   }
+}
+.EventTagging {
+  position: fixed;
+  top: 55px;
+  bottom: 5px;
+  left: 5px;
+  right: unset;
+  width: 24%;
+  display: flex;
+  background: url(../../imgs/popup_two.png) center center no-repeat;
+  background-size: 100% 100%;
+  z-index: 99;
+  overflow-y: auto;
 }

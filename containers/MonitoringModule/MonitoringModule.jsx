@@ -371,7 +371,7 @@ class MonitoringModule extends React.Component {
     const { detailsPopup } = this.state
     const { eventId, eventType, pileNum, roadSecId, situation, devices } = detailsPopup
     const deviceAry = []
-    devices.forEach((item, index) => {
+    devices.forEach((item) => {
       item.device.forEach((items) => {
         deviceAry.push({
           controlScope: items.controlScope ? items.controlScope : 0,
@@ -380,7 +380,6 @@ class MonitoringModule extends React.Component {
           pileNum: items.pileNum ? items.pileNum : 0,
         })
       })
-      /*  */
     })
     const data = {
       createId: 1,
@@ -391,14 +390,20 @@ class MonitoringModule extends React.Component {
       roadSecId,
       value: situation,
     }
-    console.log(data);
     getResponseDatas('post', this.controlUrl, data).then((res) => {
       const result = res.data
-      console.log(result.data);
       if (result.code === 200) {
+        this.handleEventList()
+        this.handlegroupType()
+        this.handleUrlAjax(this.groupStatusUrl, 'groupStatus')
+        this.handleplanList()
         this.handledetai()
+        this.handleEventPopup('Reserve', true)
       }
     })
+  }
+  handleViewControl = () => {
+    this.handleEventPopup('Reserve', true)
   }
   render() {
     const {
@@ -407,7 +412,7 @@ class MonitoringModule extends React.Component {
     return (
       <div className={styles.MonitoringModule}>
         <SystemMenu />
-        <SidePop left="5px" groupType={groupType} SidePopLeft={SidePopLeft} handleEventPopup={this.handleEventPopup} />
+        {!!reservePopup || <SidePop left="5px" groupType={groupType} SidePopLeft={SidePopLeft} handleEventPopup={this.handleEventPopup} />}
         {!!detailsPopup || <SidePop SidplanList={planList} groupStatus={groupStatus} right="5px" handleEventPopup={this.handleEventPopup} />}
         <GMap dataAll={SidePopLeft} />
         <div className={styles.searchBox}><Search id="tipinput" placeholder="请输入内容" enterButton /></div>
@@ -603,7 +608,7 @@ class MonitoringModule extends React.Component {
         {reservePopup ?
           <div className={styles.MaskBox}>
             <div className={classNames(styles.DetailsBox, styles.ReserveBox)}>
-              <div className={styles.Title}>管控预案查询<Icon className={styles.Close} onClick={() => { this.handleEventPopup('Reserve', false) }} type="close" /></div>
+              <div className={styles.Title}>管控方案详情<Icon className={styles.Close} onClick={() => { this.handleEventPopup('Reserve', false) }} type="close" /></div>
               <div className={styles.Content}>
                 <div className={styles.Header}>
                   <span>事件编号&nbsp;:&nbsp;&nbsp;10001</span>
@@ -749,7 +754,7 @@ class MonitoringModule extends React.Component {
               expandIconPosition="right"
             >
               <Icon className={styles.Close} onClick={() => { this.handleEventPopup('Details', false) }} type="close" />
-              <Panel header="事件详情" key={0} extra={this.genExtra()}>
+              <Panel header="事件详情" key={0}>
                 <div className={styles.Content}>
                   <div className={styles.Header}>
                     <span>事件编号&nbsp;:&nbsp;&nbsp;{detailsPopup.eventId}</span>
@@ -760,7 +765,7 @@ class MonitoringModule extends React.Component {
                     <div className={styles.RowBox}>道路名称&nbsp;:&nbsp;&nbsp;{detailsPopup.secName}</div>
                     <div className={styles.RowBox}>
                       <p>方向&nbsp;:&nbsp;&nbsp;{detailsPopup.directionName}</p>
-                      <p>车道&nbsp;:&nbsp;&nbsp;{detailsPopup.roadName}</p>
+                      <p>高速&nbsp;:&nbsp;&nbsp;{detailsPopup.roadName}</p>
                     </div>
                     <div className={styles.RowBox}>
                       <p>起始公里桩号&nbsp;:&nbsp;&nbsp;{detailsPopup.pileNum.split(' ')[0]}</p>
@@ -781,20 +786,20 @@ class MonitoringModule extends React.Component {
                 detailsPopup.devices.map((item, ind) => {
                   return (
                     <Panel header={item.codeName} key={item.dictCode} extra={this.genExtraAdd(item)}>
-                      <div> {/* 添加滚动条 */}
+                      <div className={styles.ScrollItem}> {/* 添加滚动条 */}
                         {
                           item.device && item.device.map((items, index) => {
                             return <div className={styles.PanelBox}><p className={styles.PanelItem} key={items}>{`${index + 1}. ${items.deviceName} ${items.directionName} ${item.codeName}`}</p><Icon onClick={() => { this.handleSubDetailsPopupList(ind, index) }} className={styles.MinusItem} type="minus" /></div>
                           })
                         }
-                        {item.device && item.device.length === 0 && <p className={styles.PanelItemNone}>暂无数据!!</p>}
+                        {item.device && item.device.length === 0 && <p className={styles.PanelItemNone}>暂无数据</p>}
                       </div>
                     </Panel>
                   )
                 })
               }
             </Collapse>
-            <div className={styles.Panelbutton}>{detailsPopup.controlStatusType > 0 ? <span>查看管控</span> : <span onClick={this.handleControl}>发起管控</span>}</div>
+            <div className={styles.Panelbutton}>{detailsPopup.controlStatusType > 0 ? <span onClick={this.handleViewControl}>查看管控</span> : <span onClick={this.handleControl}>发起管控</span>}</div>
           </div> : null}
         {VIboardPopup ?
           <div className={styles.MaskBox}>
@@ -891,7 +896,13 @@ class MonitoringModule extends React.Component {
               </div>
             </div>
           </div> : null}
-      </div >
+        {/* <div className={styles.EventTagging}>
+          <div className={styles.Title}>事件标注<Icon className={styles.Close} onClick={() => { this.handleEventPopup('Reserve', false) }} type="close" /></div>
+          <div className={styles.Centent}>
+
+          </div>
+        </div> */}
+      </div>
     )
   }
 }
