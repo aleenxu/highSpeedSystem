@@ -45,6 +45,7 @@ class MonitoringModule extends React.Component {
       indeterminate: true,
       checkAll: false,
       plainOptionList: null,
+      EventTagPopup: null,
     }
     this.eventQuery = {
       eventType: '',
@@ -405,19 +406,24 @@ class MonitoringModule extends React.Component {
   handleViewControl = () => {
     this.handleEventPopup('Reserve', true)
   }
+  handleEventTag = (boolean) => {
+    this.setState({
+      EventTagPopup: boolean
+    })
+  }
   render() {
     const {
-      eventsPopup, groupType, planList, roadNumber, conditionList, hwayList, VIboardPopup, groupStatus, controlPopup, detailsPopup, whethePopup, reservePopup, startValue, endValue, endOpen, SidePopLeft
+      eventsPopup, groupType, planList, EventTagPopup, roadNumber, conditionList, hwayList, VIboardPopup, groupStatus, controlPopup, detailsPopup, whethePopup, reservePopup, startValue, endValue, endOpen, SidePopLeft
     } = this.state
     return (
       <div className={styles.MonitoringModule}>
         <SystemMenu />
-        {!!reservePopup || <SidePop left="5px" groupType={groupType} SidePopLeft={SidePopLeft} handleEventPopup={this.handleEventPopup} />}
+        {(!!reservePopup || !!EventTagPopup) || <SidePop left="5px" groupType={groupType} SidePopLeft={SidePopLeft} handleEventPopup={this.handleEventPopup} />}
         {!!detailsPopup || <SidePop SidplanList={planList} groupStatus={groupStatus} right="5px" handleEventPopup={this.handleEventPopup} />}
         <GMap dataAll={SidePopLeft} />
         <div className={styles.searchBox}><Search id="tipinput" placeholder="请输入内容" enterButton /></div>
         <div className={styles.mapIconManage}>
-          <span>设备显示</span><span>事件标注</span>
+          <span>设备显示</span><span onClick={this.handleEventTag.bind(null, true)}>事件标注</span>
         </div>
         <div className={styles.roadState}>
           <p><h5>路况</h5></p>
@@ -799,7 +805,7 @@ class MonitoringModule extends React.Component {
                 })
               }
             </Collapse>
-            <div className={styles.Panelbutton}>{detailsPopup.controlStatusType > 0 ? <span onClick={this.handleViewControl}>查看管控</span> : <span onClick={this.handleControl}>发起管控</span>}</div>
+            <div className={styles.Panelbutton}>{detailsPopup.controlStatusType > 0 ? <span onClick={this.handleViewControl}>查看管控方案</span> : <span onClick={this.handleControl}>发起管控</span>}</div>
           </div> : null}
         {VIboardPopup ?
           <div className={styles.MaskBox}>
@@ -896,12 +902,98 @@ class MonitoringModule extends React.Component {
               </div>
             </div>
           </div> : null}
-        {/* <div className={styles.EventTagging}>
-          <div className={styles.Title}>事件标注<Icon className={styles.Close} onClick={() => { this.handleEventPopup('Reserve', false) }} type="close" /></div>
-          <div className={styles.Centent}>
-
-          </div>
-        </div> */}
+        {EventTagPopup ?
+          <div className={styles.EventTagging}>
+            <div className={styles.Title}>事件标注<Icon className={styles.Close} onClick={() => { this.handleEventTag(false) }} type="close" /></div>
+            <div className={styles.Centent}>
+              <div className={styles.ItemBox}>
+                <span className={styles.ItemName}>道路编号&nbsp;:</span>
+                <div className={styles.ItemInput}>
+                  20252222222000000000P
+                </div>
+              </div>
+              <div className={styles.ItemBox}>
+                <span className={styles.ItemName}>事件类型&nbsp;:</span>
+                <div className={styles.ItemInput}>
+                  <Select defaultValue="" style={{ width: '100%' }} onChange={(e) => { this.handleSelect(e, 'hWayId', 'eventsPopup') }}>
+                    <Option value="">请选择</Option>
+                  </Select>
+                </div>
+              </div>
+              <div className={styles.ItemBox}>
+                <span className={styles.ItemName}>道路编号&nbsp;:</span>
+                <div className={styles.ItemInput}>
+                  <Select defaultValue="" style={{ width: '100%' }} onChange={(e) => { this.handleSelect(e, 'hWayId', 'eventsPopup') }}>
+                    <Option value="">请选择</Option>
+                  </Select>
+                </div>
+              </div>
+              <div className={styles.ItemBox}>
+                <span className={styles.ItemName}>道路名称&nbsp;:</span>
+                <div className={styles.ItemInput}>
+                  <Select defaultValue="" style={{ width: '100%' }} onChange={(e) => { this.handleSelect(e, 'hWayId', 'eventsPopup') }}>
+                    <Option value="">请选择</Option>
+                  </Select>
+                </div>
+              </div>
+              <div className={styles.ItemBox}>
+                <span className={styles.ItemName}>道路方向&nbsp;:</span>
+                <div className={styles.ItemInput}>
+                  <Select defaultValue="" style={{ width: '100%' }} onChange={(e) => { this.handleSelect(e, 'hWayId', 'eventsPopup') }}>
+                    <Option value="">请选择</Option>
+                  </Select>
+                </div>
+              </div>
+              <div className={styles.ItemBox}>
+                <span className={styles.ItemName}>起始桩号&nbsp;:</span>
+                <div className={styles.ItemInput}>
+                  <Input onChange={(e) => { this.handleInput(e, 'roadName', 'eventsPopup') }} />
+                </div>
+              </div>
+              <div className={styles.ItemBox}>
+                <span className={styles.ItemName}>平均车速&nbsp;:</span>
+                <div className={styles.ItemInput}>
+                  <Input onChange={(e) => { this.handleInput(e, 'roadName', 'eventsPopup') }} />
+                </div>
+              </div>
+              <div className={styles.ItemBox}>
+                <span className={styles.ItemName}>拥堵道路长度&nbsp;:</span>
+                <div className={styles.ItemInput}>
+                  <Input onChange={(e) => { this.handleInput(e, 'roadName', 'eventsPopup') }} />
+                </div>
+              </div>
+              <div className={styles.ItemBox}>
+                <span className={styles.ItemName}>情报板&nbsp;:</span>
+                <div className={styles.ItemInput}>
+                  <div className={styles.AddItem}>
+                    <Icon type="plus" />
+                  </div>
+                  {
+                    [1, 2].map((item) => {
+                      return <div className={styles.AddItem}>{item}</div>
+                    })
+                  }
+                </div>
+              </div>
+              <div className={styles.ItemBox}>
+                <span className={styles.ItemName}>收费站&nbsp;:</span>
+                <div className={styles.ItemInput}>
+                  <div className={styles.AddItem}>
+                    <Icon type="plus" />
+                  </div>
+                  {
+                    [1, 2].map((item) => {
+                      return <div className={styles.AddItem}>{item}</div>
+                    })
+                  }
+                </div>
+              </div>
+            </div>
+            <div className={styles.ItemFooter} style={{ bottom: '-15px' }}>
+              <span onClick={this.handleEventTag}>保&nbsp;&nbsp;存</span>
+              <span onClick={() => { this.handleEventTag(false) }}>发起管控</span>
+            </div>
+          </div> : null}
       </div>
     )
   }
