@@ -189,7 +189,6 @@ class GMap extends React.Component {
       _this.state.dataAll.map((leftItem, leftIndex)=>{
         if (leftItem.eventData.length > 0){
           leftItem.eventData.map((item, index) => {
-            console.log(item.latlng[0],"哈哈哈哈..")
             const marker = new SimpleMarker({
               //自定义图标地址
               iconStyle: _this.returnMapIcon(leftIndex),

@@ -4,6 +4,7 @@ import GMap from '../../components/GMap/GMap'
 import SidePop from '../../components/SidePop/SidePop'
 import styles from './MonitoringModule.scss'
 import classNames from 'classnames'
+import 'animate.css'
 import getResponseDatas from '../../plugs/HttpData/getResponseData'
 import { Input, Checkbox, Radio, Icon, Switch, DatePicker, Collapse, Select } from 'antd'
 const { Panel } = Collapse
@@ -410,11 +411,11 @@ class MonitoringModule extends React.Component {
         <SidePop left="5px" groupType={groupType} SidePopLeft={SidePopLeft} handleEventPopup={this.handleEventPopup} />
         {!!detailsPopup || <SidePop SidplanList={planList} groupStatus={groupStatus} right="5px" handleEventPopup={this.handleEventPopup} />}
         <GMap dataAll={SidePopLeft} />
-        <div className={styles.searchBox}><Search id="tipinput" placeholder="请输入内容" enterButton /></div>
-        <div className={styles.mapIconManage}>
+        <div className={`${styles.searchBox} animated ${'bounceInDown'}`}><Search id="tipinput" placeholder="请输入内容" enterButton /></div>
+        <div className={`${styles.mapIconManage} animated ${'bounceInDown'}`}>
           <span>设备显示</span><span>事件标注</span>
         </div>
-        <div className={styles.roadState}>
+        <div className={`${styles.roadState} animated ${'bounceInUp'}`}>
           <p><h5>路况</h5></p>
           <p>
             <span>严重拥堵</span>
