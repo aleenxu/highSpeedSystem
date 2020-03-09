@@ -805,7 +805,7 @@ class MonitoringModule extends React.Component {
                 })
               }
             </Collapse>
-            <div className={styles.Panelbutton}>{detailsPopup.controlStatusType > 0 ? <span onClick={this.handleViewControl}>查看管控方案</span> : <span onClick={this.handleControl}>发起管控</span>}</div>
+            <div className={styles.Panelbutton}>{detailsPopup.controlStatusType > 0 ? <span onClick={this.handleViewControl}>查看管控方案</span> : <span onClick={this.handleControl}>发起管控方案</span>}</div>
           </div> : null}
         {VIboardPopup ?
           <div className={styles.MaskBox}>
