@@ -123,7 +123,7 @@ if (!httpENV) { // 如果是开发环境
         secure: false, // 设置后，可以接受运行在 HTTPS 上，可以使用无效证书的后端服务器
       },
     },
-    // port: 8888,
+    port: 8888,
     contentBase: './build',
     historyApiFallback: true,
     hot: true,
