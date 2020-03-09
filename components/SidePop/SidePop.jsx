@@ -3,6 +3,8 @@ import ScrollList from '../ScrollList/ScrollList'
 import 'animate.css'
 import RCloseIcon from '../../imgs/icon_r_close.png'
 import ROpenIcon from '../../imgs/icon_r_open.png'
+import LCloseIcon from '../../imgs/icon_left_close.png'
+import LOpenIcon from '../../imgs/icon_left_open.png'
 
 class SidePop extends React.Component {
   constructor(props) {
@@ -120,11 +122,11 @@ class SidePop extends React.Component {
           </div>
         }
         {boxRight === 'unset' ? 
-          <div style={{position:'absolute', left:'5px', bottom:'5px', fontSize:'16px', color:'yellow'}}>
-            <img src={RCloseIcon} />
+          <div style={{position:'absolute', left:'5px', bottom:'5px'}}>
+            <img src={LCloseIcon} />
           </div> : 
-          <div style={{position:'absolute', right:'5px', bottom:'5px', fontSize:'16px', color:'yellow'}}>
-            <img src={ROpenIcon} />
+          <div style={{position:'absolute', right:'5px', bottom:'5px'}}>
+            <img src={RCloseIcon} />
           </div>
         }
       </div>
