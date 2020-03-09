@@ -502,6 +502,9 @@
     position: absolute;
     bottom: 3px;
     cursor: pointer;
+    &:hover{
+      color: #26ff6d;
+    }
   }
 }
 .VIboardPopup {

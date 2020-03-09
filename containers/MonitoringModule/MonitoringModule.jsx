@@ -282,7 +282,7 @@ class MonitoringModule extends React.Component {
   }
   // 获取右侧事件详情
   handledetai = (item) => {
-    getResponseDatas('get', this.detailUrl + '/' + item.eventId + '/' + item.eventType).then((res) => {
+    getResponseDatas('get', this.detailUrl + item.eventId + '/' + item.eventType).then((res) => {
       const result = res.data
       if (result.code === 200) {
         this.setState({
@@ -369,12 +369,36 @@ class MonitoringModule extends React.Component {
   }
   handleControl = () => {
     const { detailsPopup } = this.state
-   /*  getResponseDatas('get', this.controlUrl).then((res) => {
+    const { eventId, eventType, pileNum, roadSecId, situation, devices } = detailsPopup
+    const deviceAry = []
+    devices.forEach((item, index) => {
+      item.device.forEach((items) => {
+        deviceAry.push({
+          controlScope: items.controlScope ? items.controlScope : 0,
+          deviceId: items.deviceId,
+          deviceTypeId: items.deviceTypeId,
+          pileNum: items.pileNum ? items.pileNum : 0,
+        })
+      })
+      /*  */
+    })
+    const data = {
+      createId: 1,
+      devices: deviceAry,
+      eventId,
+      eventTypeId: eventType,
+      pileNum,
+      roadSecId,
+      value: situation,
+    }
+    console.log(data);
+    getResponseDatas('post', this.controlUrl, data).then((res) => {
       const result = res.data
+      console.log(result.data);
       if (result.code === 200) {
-        
+        this.handledetai()
       }
-    }) */
+    })
   }
   render() {
     const {
