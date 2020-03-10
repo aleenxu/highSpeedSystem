@@ -364,6 +364,11 @@
             border: 1px solid #959595;
           }
         }
+        .InputBox{
+          width: 100%;
+          text-align: center;
+          margin: 10px 0;
+        }
       }
     }
   }
@@ -504,6 +509,11 @@
     position: absolute;
     bottom: 3px;
     cursor: pointer;
+    >span{
+      width: 100%;
+      height: 100%;
+      display: inline-block;
+    }
     &:hover {
       color: #26ff6d;
     }
