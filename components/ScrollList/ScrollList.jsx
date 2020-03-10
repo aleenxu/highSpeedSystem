@@ -138,6 +138,7 @@ class ScrollList extends React.Component {
         for (let i = 0; i < listItem.length; i++) {
           listItem[i].style.background = ''
         }
+        $('#deviceBox').attr('style', 'transition:all .5s;')
         e.currentTarget.style.background = '#74ccd3'
         window.listItemDom = e.currentTarget
       }
