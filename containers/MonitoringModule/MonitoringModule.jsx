@@ -411,6 +411,8 @@ class MonitoringModule extends React.Component {
     this.setState({
       EventTagPopup: boolean
     })
+    $('#searchBox').attr('style', 'transition:all .5s;')
+    $('#roadStateBox').attr('style', 'transition:all .5s;')
   }
   render() {
     const {
@@ -422,11 +424,11 @@ class MonitoringModule extends React.Component {
         {(!!reservePopup || !!EventTagPopup) || <SidePop left="5px" groupType={groupType} SidePopLeft={SidePopLeft} handleEventPopup={this.handleEventPopup} />}
         {!!detailsPopup || <SidePop SidplanList={planList} groupStatus={groupStatus} right="5px" handleEventPopup={this.handleEventPopup} />}
         <GMap dataAll={SidePopLeft} />
-        <div className={`${styles.searchBox} animated ${'bounceInDown'}`}><Search id="tipinput" placeholder="请输入内容" enterButton /></div>
-        <div className={`${styles.mapIconManage} animated ${'bounceInDown'}`}>
+        <div id="searchBox" className={`${styles.searchBox} animated ${'bounceInDown'}`}><Search id="tipinput" placeholder="请输入内容" enterButton /></div>
+        <div id="deviceBox" className={`${styles.mapIconManage} animated ${'bounceInDown'}`}>
           <span>设备显示</span><span onClick={this.handleEventTag.bind(null, true)}>事件标注</span>
         </div>
-        <div className={`${styles.roadState} animated ${'bounceInUp'}`}>
+        <div id="roadStateBox" className={`${styles.roadState} animated ${'bounceInUp'}`}>
           <p><h5>路况</h5></p>
           <p>
             <span>严重拥堵</span>

@@ -5,6 +5,7 @@ import RCloseIcon from '../../imgs/icon_r_close.png'
 import ROpenIcon from '../../imgs/icon_r_open.png'
 import LCloseIcon from '../../imgs/icon_left_close.png'
 import LOpenIcon from '../../imgs/icon_left_open.png'
+import $ from 'jquery'
 
 class SidePop extends React.Component {
   constructor(props) {
@@ -17,6 +18,8 @@ class SidePop extends React.Component {
       groupStatus: this.props.groupStatus,
       SidplanList: this.props.SidplanList,
       transition: '',
+      iconFlag: false,
+      iconFlagR: false,
     }
     this.styles = {
       position: 'fixed',
@@ -25,12 +28,59 @@ class SidePop extends React.Component {
       left: this.state.boxLeft,
       right: this.state.boxRight,
       width: '24%',
+      height: 'calc(100% - 60px)',
       display: 'flex',
       alignItems: 'flexStart',
       backgroundColor: 'rgba(20,21,24,.9)',
       zIndex: '99',
       overflowY: 'auto',
     }
+    this.stylesH = `position:fixed;
+      bottom:5px;
+      left: 5px;
+      width: 24%;
+      height:calc(100% - 60px);
+      display: flex;
+      background-color:rgba(20,21,24,.9);
+      z-index: 99;
+      overflow-y: auto;
+      transition:all .5s;`
+
+    this.stylesL = `
+      position: absolute;
+      bottom: 5px;
+      left: 5px;
+      width: 24px;
+      height: 24px;
+      display: flex;
+      background-color: rgba(20,21,24,.9);
+      z-index: 99;
+      overflow: hidden;
+      transition:all .5s;
+    `
+    this.stylesRH = `position:fixed;
+      bottom:5px;
+      right: 5px;
+      width: 24%;
+      height:calc(100% - 60px);
+      display: flex;
+      background-color:rgba(20,21,24,.9);
+      z-index: 99;
+      overflow-y: auto;
+      transition:all .5s;`
+
+    this.stylesR = `
+      position: absolute;
+      bottom: 5px;
+      right: 5px;
+      width: 24px;
+      height: 24px;
+      display: flex;
+      background-color: rgba(20,21,24,.9);
+      z-index: 99;
+      overflow: hidden;
+      transition:all .5s;
+    `
   }
   componentDidMount = () => {
     this.state.boxRight === 'unset' ? this.setState({transition:'bounceInLeft'}) : this.setState({transition:'bounceInRight'})
@@ -55,7 +105,55 @@ class SidePop extends React.Component {
       handleEventPopup(type, boolean)
     }
   }
-
+  // 左边栏的收起和展开
+  handleLeftClick = (e) => {
+    const _this = this;
+    const styleLeft = 'left:20px;transition:all .5s;'
+    if (!this.state.iconFlag){
+      $(e.target).parent().parent().attr('style', _this.stylesL)
+      $('#searchBox').attr('style',styleLeft)
+      $('#roadStateBox').attr('style',styleLeft)
+      $(e.target).attr('src', LOpenIcon)
+      $(e.target).attr('title', '展开')
+      this.setState({
+        iconFlag: true,
+      })
+    } else {
+      const styleLeftH = 'transition:all .5s;'
+      $(e.target).parent().parent().attr('style', _this.stylesH)
+      $('#searchBox').attr('style',styleLeftH)
+      $('#roadStateBox').attr('style',styleLeftH)
+      $(e.target).attr('src', LCloseIcon)
+      $(e.target).attr('title', '收起')
+      this.setState({
+        iconFlag: false,
+      })
+      
+    }
+  }
+  // 右边栏的收起和展开
+  handleRightClick = (e) => {
+    const styleR = 'right:5px;transition:all .5s;'
+    const _this = this;
+    if (!this.state.iconFlagR){
+      $(e.target).parent().parent().attr('style', _this.stylesR)
+      $('#deviceBox').attr('style',styleR)
+      $(e.target).attr('src', ROpenIcon)
+      $(e.target).attr('title', '收起')
+      this.setState({
+        iconFlagR: true,
+      })
+    } else {
+      const styleRH = 'transition:all .5s;'
+      $(e.target).parent().parent().attr('style', _this.stylesRH)
+      $('#deviceBox').attr('style',styleRH)
+      $(e.target).attr('src', RCloseIcon)
+      $(e.target).attr('title', '展开')
+      this.setState({
+        iconFlagR: false,
+      })
+    }
+  }
   render() {
     const { boxLeft, boxRight, SidplanList, SidePopLeft, groupType, groupStatus } = this.state
     const eachartsData = {} //eacharts数据
@@ -122,11 +220,11 @@ class SidePop extends React.Component {
           </div>
         }
         {boxRight === 'unset' ? 
-          <div style={{position:'absolute', left:'5px', bottom:'5px'}}>
-            <img src={LCloseIcon} />
+          <div style={{position: 'absolute', zIndex: '9999', left: '0', bottom: '0'}}>
+            <img style={{cursor:'pointer'}} title='收起' src={LCloseIcon} onClick={this.handleLeftClick} />
           </div> : 
-          <div style={{position:'absolute', right:'5px', bottom:'5px'}}>
-            <img src={RCloseIcon} />
+          <div style={{position: 'absolute', zIndex: '9999', right: '0', bottom: '0'}}>
+            <img style={{cursor:'pointer'}} title='收起' src={RCloseIcon} onClick={this.handleRightClick} />
           </div>
         }
       </div>
