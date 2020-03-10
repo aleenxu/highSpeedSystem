@@ -139,7 +139,7 @@ class SidePop extends React.Component {
       $(e.target).parent().parent().attr('style', _this.stylesR)
       $('#deviceBox').attr('style',styleR)
       $(e.target).attr('src', ROpenIcon)
-      $(e.target).attr('title', '收起')
+      $(e.target).attr('title', '展开')
       this.setState({
         iconFlagR: true,
       })
@@ -148,7 +148,7 @@ class SidePop extends React.Component {
       $(e.target).parent().parent().attr('style', _this.stylesRH)
       $('#deviceBox').attr('style',styleRH)
       $(e.target).attr('src', RCloseIcon)
-      $(e.target).attr('title', '展开')
+      $(e.target).attr('title', '收起')
       this.setState({
         iconFlagR: false,
       })
