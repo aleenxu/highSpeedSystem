@@ -44,7 +44,7 @@ class Intelligence extends React.Component {
                 <div className={styles.listTd} >高速公路</div>
                 <div className={styles.listTd} >桩号</div>
                 <div className={styles.listTd} >经纬度坐标</div>
-                <div className={styles.listTd} >放心</div>
+                <div className={styles.listTd} >方向</div>
                 <div className={styles.listTd} >IP地址</div>
                 <div className={styles.listTd} >端口号</div>
               </div>
