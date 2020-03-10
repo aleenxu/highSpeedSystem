@@ -128,8 +128,6 @@ class ScrollList extends React.Component {
 
   }
   handleEventPopup = (e, type, boolean) => {
-    console.log(type);
-
     if (type === 'Details') {
       const listItem = document.getElementsByClassName('listItem')
       if (e.currentTarget.style.background === '#74ccd3') {

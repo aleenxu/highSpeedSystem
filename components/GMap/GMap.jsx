@@ -7,20 +7,8 @@ import mapTrafficJam from '../../imgs/map_traffic_jam.png'
 import mapBuild from '../../imgs/map_build.png'
 import mapWeather from '../../imgs/map_weather.png'
 import mapAccidents from '../../imgs/map_accident.png'
-const pointArr = [
-  [119.9296300000, 32.4319550000],
-  [119.9471390000, 32.4151070000]
-]
-const pointArr1 = [
-  [119.9101460000, 32.4055810000]
-]
-const pointArr2 = [
-  [119.9234500000, 32.4029910000],
-  [119.9493710000, 32.3908160000]
-]
-const pointArr3 = [
-  [119.9041380000, 32.4097840000]
-]
+import getResponseDatas from '../../plugs/HttpData/getResponseData'
+const pointArr = []
 const lineData = [
   { "name": "起点 -> 终点", "path": [[119.9334060000, 32.4345900000], [119.9339210000, 32.4328910000], [119.9335780000, 32.4313020000], [119.9347800000, 32.4301430000], [119.9346080000, 32.4288390000]] },
   { "name": "起点 -> 终点", "path": [[119.9346080000, 32.4288390000], [119.9342650000, 32.4271000000], [119.9342650000, 32.4257960000], [119.9342650000, 32.4242020000], [119.9337500000, 32.4226080000], [119.9327200000, 32.4200000000]] },
@@ -29,6 +17,15 @@ const lineData = [
 class GMap extends React.Component {
   constructor(props) {
     super(props)
+    this.state = {
+      keyWords: '', // 查询的关键词
+      infoBoardJson: [], //情报版
+      infoFBoardJson: [], //F屏情报版
+      tollGateJson: [], //收费站
+      speedLimitJson: [], //限速版
+      roadLatlng: this.props.roadLatlng, // 路段的经纬度
+      
+    }
     this.styles = {
       position: 'fixed',
       top: '50px',
@@ -42,14 +39,46 @@ class GMap extends React.Component {
       dataAll: this.props.dataAll,
     }
     this.placeSearch = null;
+    this.mapPointUrl = '/control/device/list/device/to/map' // 查询设备集合（用于回显到地图）
   }
   componentDidMount = () => {
-    this.loadingMap()
+    this.loadPoint()
   }
   componentWillReceiveProps = (nextProps) => {
     if (this.props.dataAll !== nextProps.dataAll) {
       this.setState({ dataAll: nextProps.dataAll })
     }
+    if (this.props.roadLatlng !== nextProps.roadLatlng) {
+      this.setState({ roadLatlng: nextProps.roadLatlng })
+    }
+    console.log(this.props.dataAll,'啦啦啦')
+  }
+  loadPoint = () => {
+    getResponseDatas('get', this.mapPointUrl+'?searchKey=' + this.state.keyWords).then((res) => {
+      debugger
+      const jsonData = res.data
+      if (jsonData.code == 200 && jsonData.data.length > 0){
+        jsonData.data.map((item) => {
+          // 根据类型划分图标类型 1、可变情报板;2、可变限速板;3、收费站;4、F屏情报版;
+          switch(item.deviceTypeId){
+            case 1:
+              this.state.infoBoardJson.push(item)
+              break;
+            case 2:
+              this.state.speedLimitJson.push(item)
+              break;
+            case 3:
+              this.state.tollGateJson.push(item)
+              break;
+            case 4:
+              this.state.infoFBoardJson.push(item)
+              break;
+          }
+        })
+        this.loadingMap()
+      }
+      
+    })
   }
   loadingMap = () => {
     const _this = this;
@@ -96,14 +125,14 @@ class GMap extends React.Component {
         // 左侧功能数据图标
         _this.createPoint(pointArr, tollStationIcon, SimpleMarker, SimpleInfoWindow, map, true)
       }
-      // 图标一
-      _this.createPoint(pointArr, tollStationIcon, SimpleMarker, SimpleInfoWindow, map)
-      // 图标二
-      _this.createPoint(pointArr1, fBoardIcon, SimpleMarker, SimpleInfoWindow, map)
-      // 图标三
-      _this.createPoint(pointArr2, speedLimitIcon, SimpleMarker, SimpleInfoWindow, map)
-      // 图标四
-      _this.createPoint(pointArr3, turnBoardIcon, SimpleMarker, SimpleInfoWindow, map)
+      // 图标收费站
+      _this.createPoint(_this.state.tollGateJson, tollStationIcon, SimpleMarker, SimpleInfoWindow, map)
+      // 图标F屏情报版
+      _this.createPoint(_this.state.infoFBoardJson, fBoardIcon, SimpleMarker, SimpleInfoWindow, map)
+      // // 图标限速牌专用
+      _this.createPoint(_this.state.speedLimitJson, speedLimitIcon, SimpleMarker, SimpleInfoWindow, map)
+      // // 图标可变情报版
+      _this.createPoint(_this.state.infoBoardJson, turnBoardIcon, SimpleMarker, SimpleInfoWindow, map)
 
     })
     // 线的绘制
@@ -126,10 +155,10 @@ class GMap extends React.Component {
         getHoverTitle: function (pathData, pathIndex, pointIndex) {
           if (pointIndex >= 0) {
             //point 
-            return pathData.name + '，点:' + pointIndex + '/' + pathData.path.length;
+            // return  pointIndex + '/' + pathData.path.length;
           }
 
-          return pathData.name + '，坐标点数量' + pathData.path.length;
+          returnpathData.path.length;
         },
         renderOptions: {
           pathLineStyle: {
@@ -137,7 +166,7 @@ class GMap extends React.Component {
           },
           getPathStyle: function (pathItem, zoom) {
             var color = colors[pathItem.pathIndex],
-              lineWidth = 3;
+              lineWidth = 10;
             return {
               pathLineStyle: {
                 strokeStyle: color,
@@ -155,8 +184,11 @@ class GMap extends React.Component {
       });
 
       window.pathSimplifierIns = pathSimplifierIns;
-      var d = lineData;
-      pathSimplifierIns.setData(d);
+     /*  // var d = lineData;
+      var d = [
+        {"path":[["119.851293", "32.233071"],["119.857044", "32.236665"]]}
+      ]
+      pathSimplifierIns.setData(d); */
 
     });
     // 弹层的自定义
@@ -198,6 +230,15 @@ class GMap extends React.Component {
               position: item.latlng[index],
               zIndex: 10
             });
+            let roadLatlngData = {
+              "path": item.latlng
+            }
+            let lineDatas = []
+            lineDatas.push(roadLatlngData)
+            marker.on("click", () => {
+              console.log("绑定点击事件",lineDatas)
+              window.pathSimplifierIns.setData(lineDatas)
+            })
             switch(leftIndex){
               case 0:
                 window.leftModuleOne.addLayer(marker) //把点添加到层组中
@@ -224,7 +265,7 @@ class GMap extends React.Component {
         }
       })
     } else {
-      pointArr.map((item) => {
+      pointArr.length > 0 && pointArr.map((item) => {
         const marker = new SimpleMarker({
           //自定义图标地址
           iconStyle: pointIcon,
@@ -232,23 +273,22 @@ class GMap extends React.Component {
           offset: new AMap.Pixel(-10, -10),
           map: map,
           showPositionPoint: false,
-          position: item,
+          position: item.latlng,
           zIndex: 10
         });
         //marker 点击时打开
         marker.on('click', function () {
-          _this.openInfoWin(map, marker, SimpleInfoWindow)
+          _this.openInfoWin(map, marker, SimpleInfoWindow, item)
         });
       })
     }
   }
-  openInfoWin = (map, marker, SimpleInfoWindow) => {
+  openInfoWin = (map, marker, SimpleInfoWindow,showData) => {
     var infoWindow = new SimpleInfoWindow({
-      myCustomHeader: '我的header',
+      myCustomHeader: showData.deviceName+'信息：',
       myCustomFooter: '我的footer',
-      infoTitle: '<strong>这里是标题</strong>',
-      infoBody: '<p class="my-desc"><strong>这里是内容。</strong></p>',
-
+      infoTitle: '<div>这里是标题</div>',
+      infoBody: '<p class="my-desc"><strong>桩号：'+showData.pileNum+'</strong><strong>走向：'+showData.directionName+'</strong><strong>所属高速：'+showData.roadName+'</strong></p>',
       //基点指向marker的头部位置
       offset: new AMap.Pixel(0, -10)
     });

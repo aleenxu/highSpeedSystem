@@ -47,6 +47,7 @@ class MonitoringModule extends React.Component {
       checkAll: false,
       plainOptionList: null,
       EventTagPopup: null,
+      detailsLatlng: null, // 详情路段的经纬度
     }
     this.eventQuery = {
       eventType: '',
@@ -124,6 +125,7 @@ class MonitoringModule extends React.Component {
   }
   // 控制事件检测过滤设置弹窗
   handleEventPopup = (type, boolean) => {
+    let _this = this;
     console.log(type, boolean)
     if (type === 'Event') {
       if (boolean) {
@@ -148,6 +150,7 @@ class MonitoringModule extends React.Component {
       }
     }
     if (type === 'Details') {
+      console.log(type, boolean.latlng, '详情的经纬度')
       if (window.listItemDom && boolean === false) {
         window.listItemDom.style.background = ''
       }
@@ -158,9 +161,16 @@ class MonitoringModule extends React.Component {
           detailsPopup: false,
         })
       }
-      /* this.setState({
-        detailsPopup: boolean,
-      }) */
+      
+      this.setState({
+        detailsLatlng: boolean.latlng,
+      })
+      let roadLatlngData = {
+        "path": boolean.latlng
+      }
+      let lineDatas = []
+      lineDatas.push(roadLatlngData)
+      window.pathSimplifierIns.setData(lineDatas)
     }
     if (type === 'Reserve') {
       this.setState({
@@ -427,14 +437,14 @@ class MonitoringModule extends React.Component {
   }
   render() {
     const {
-      eventsPopup, groupType, planList, EventTagPopup, roadNumber, conditionList, hwayList, VIboardPopup, groupStatus, controlPopup, detailsPopup, whethePopup, reservePopup, startValue, endValue, endOpen, SidePopLeft
+      eventsPopup, groupType, planList, EventTagPopup, roadNumber, conditionList, hwayList, VIboardPopup, groupStatus, controlPopup, detailsPopup, whethePopup, reservePopup, startValue, endValue, endOpen, SidePopLeft, detailsLatlng
     } = this.state
     return (
       <div className={styles.MonitoringModule}>
         <SystemMenu />
         {(!!reservePopup || !!EventTagPopup) || <SidePop left="5px" groupType={groupType} SidePopLeft={SidePopLeft} handleEventPopup={this.handleEventPopup} />}
         {!!detailsPopup || <SidePop SidplanList={planList} groupStatus={groupStatus} right="5px" handleEventPopup={this.handleEventPopup} />}
-        <GMap dataAll={SidePopLeft} />
+        <GMap dataAll={SidePopLeft} roadLatlng={detailsLatlng} />
         <div id="searchBox" className={`${styles.searchBox} animated ${'bounceInDown'}`}><Search id="tipinput" placeholder="请输入内容" enterButton /></div>
         <div id="deviceBox" className={`${styles.mapIconManage} animated ${'bounceInDown'}`}>
           <span>设备显示</span><span onClick={this.handleEventTag.bind(null, true)}>事件标注</span>

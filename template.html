@@ -45,6 +45,18 @@
         background:none!important;
         border:none!important;
     }
+    .my-desc{
+        display:flex;
+        justify-content:center;
+        flex-wrap: wrap;
+        text-indent: 0;
+        padding:0 20px;
+        
+    }
+    .my-desc strong{
+        width:100%;
+        display: block;
+    }
     </style>
     <!-- 这里定义模板内容 -->
     <script id="my-infowin-tpl" type="text/template">
@@ -53,7 +65,7 @@
             <div class="amap-ui-smp-ifwn-content-body" style="width:300px;">
                 <h1><%= myCustomHeader %></h1>
                <!--  <h3 class="amap-ui-infowindow-title" style="width:100px;float:left"><%= infoTitle %></h3> -->
-                <div class="amap-ui-infowindow-body" style="width:200px;height:60px; float:right;background:#eee; ">
+                <div class="amap-ui-infowindow-body" style="width:200px;height:auto;padding:0 0 8px 0; float:right;background:#eee; ">
                     <%= infoBody %>
                 </div>
                 <div style="clear:both"></div>
