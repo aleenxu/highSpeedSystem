@@ -412,6 +412,8 @@ class MonitoringModule extends React.Component {
       const result = res.data
       console.log(result)
       if (result.code === 200) {
+        $('#searchBox').attr('style', 'transition:all .5s;')
+        $('#roadStateBox').attr('style', 'transition:all .5s;')
         this.setState({ reservePopup: result.data })
       }
     })
