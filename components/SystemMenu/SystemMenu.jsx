@@ -17,7 +17,7 @@ class SystemMenu extends React.Component {
     /* this.setState({
       current: e.key,
     }); */
-    const hashName = window.location.hash 
+    const hashName = window.location.hash
     if (hashName == "#/reserveplan") {
       this.setState({
         current: '#/reserveplan',
@@ -59,7 +59,7 @@ class SystemMenu extends React.Component {
         current: '#/monitoringmodule',
       });
     }
-    
+
   };
   componentDidMount = () => {
     this.handleClick()
@@ -105,6 +105,8 @@ class SystemMenu extends React.Component {
           }>
             <Menu.Item key="#/intelligence"><a href="#/intelligence">可变情报板</a></Menu.Item>
             <Menu.Item key="#/tollgate"><a href="#/tollgate">收费站</a></Menu.Item>
+            <Menu.Item key="#/3">限速牌</Menu.Item>
+            <Menu.Item key="#/4">F型情报板</Menu.Item>
           </SubMenu>
           <SubMenu key="#/systemmodule" title={
             <span className="submenu-title-wrapper">

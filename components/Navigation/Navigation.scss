@@ -1,0 +1,45 @@
+.MenuBox {
+  width: 305px;
+  height: 100%;
+  background: #12151a;
+  border: 1px solid #082b41;
+  position: absolute;
+  left: 5px;
+  :global(.ant-menu) {
+    background-color: transparent;
+    color: #fff;
+  }
+  :global(.ant-menu-inline) {
+    border-right: none;
+  }
+  :global(.ant-menu-submenu > .ant-menu) {
+    background-color: transparent !important;
+    border: none;
+  }
+  :global(.ant-menu-inline > .ant-menu-submenu > .ant-menu-submenu-title) {
+    height: 60px;
+    line-height: 60px;
+    background: #141e2a;
+  }
+  :global(.ant-menu-sub.ant-menu-inline > .ant-menu-item) {
+    height: 75px;
+    line-height: 75px;
+    background: #141e2a;
+    border-bottom: 1px solid #696969;
+    border-top: 1px solid #696969;
+  }
+  :global(.ant-menu-inline .ant-menu-item):not(:last-child) {
+    margin-bottom: 0;
+  }
+  :global(.ant-menu-inline .ant-menu-item) {
+    margin-bottom: 0;
+    margin-top: 0;
+  }
+  :global(.ant-menu-inline .ant-menu-submenu-title) {
+    margin-bottom: 0;
+    margin-top: 0;
+  }
+  :global(.ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected) {
+    background-color: #0e2a40 !important;
+  }
+}
