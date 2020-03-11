@@ -124,7 +124,7 @@ class MonitoringModule extends React.Component {
     this.setState({ endOpen: open })
   }
   // 控制事件检测过滤设置弹窗
-  handleEventPopup = (type, boolean) => {
+  handleEventPopup = (type, boolean, event) => {
     let _this = this;
     console.log(type, boolean)
     if (type === 'Event') {
@@ -181,6 +181,12 @@ class MonitoringModule extends React.Component {
       this.setState({
         whethePopup: boolean,
       })
+      const popLayer = $(event.currentTarget).parents('#popLayer');
+      popLayer.removeAttr('style')
+      // console.log($(event.currentTarget))
+      if (event && $(event.currentTarget).text() === '确  认') {
+        popLayer.attr('style', 'width:24%')
+      }
     }
     if (type === 'VIboard') {
       this.setState({ VIboardPopup: boolean })
@@ -644,7 +650,7 @@ class MonitoringModule extends React.Component {
           </div> : null} */}
         {/* 管控预案查询 */}
         {reservePopup ?
-          <div className={styles.MaskBox}>
+          <div id='popLayer' style={{width:'100%'}} className={styles.MaskBox}>
             <div className={classNames(styles.DetailsBox, styles.ReserveBox)}>
               <div className={styles.Title}>管控方案详情<Icon className={styles.Close} onClick={() => { this.handleEventPopup('Reserve', false) }} type="close" /></div>
               <div className={styles.Content}>
@@ -692,7 +698,7 @@ class MonitoringModule extends React.Component {
                     return (
                       items.dictCode === 1 ?
                         <div className={styles.ItemBox}>
-                          <div className={styles.HeadItem}>可变情报板管控预案设置<span className={styles.AddItem} onClick={() => { this.handleEventPopup('Whethe', true) }}><Icon type="plus" />添加</span></div>
+                          <div className={styles.HeadItem}>可变情报板管控预案设置<span className={styles.AddItem} onClick={(e) => { this.handleEventPopup('Whethe', true, e) }}><Icon type="plus" />添加</span></div>
                           <div className={styles.RowBox}>
                             {
                               items.device.map((item, index) => {
@@ -714,7 +720,7 @@ class MonitoringModule extends React.Component {
                 }
 
                 <div className={styles.ItemBox}>
-                  <div className={styles.HeadItem}>收费站出入口管控设置<span className={styles.AddItem} onClick={() => { this.handleEventPopup('Whethe', true) }}><Icon type="plus" />添加</span></div>
+                  <div className={styles.HeadItem}>收费站出入口管控设置<span className={styles.AddItem} onClick={(e) => { this.handleEventPopup('Whethe', true, e) }}><Icon type="plus" />添加</span></div>
                   <div className={styles.RowBox}>
                     <Icon type="close-circle" className={styles.CloneItem} />****地点**收费站入口&nbsp;:&nbsp;&nbsp;<p><Switch checkedChildren="开放" unCheckedChildren="关闭" /></p>
                   </div>
@@ -723,7 +729,7 @@ class MonitoringModule extends React.Component {
                   </div>
                 </div>
                 <div className={styles.ItemBox}>
-                  <div className={styles.HeadItem}>管控时段<span className={styles.AddItem} onClick={() => { this.handleEventPopup('Whethe', true) }}><Icon type="plus" />添加</span></div>
+                  <div className={styles.HeadItem}>管控时段<span className={styles.AddItem} onClick={(e) => { this.handleEventPopup('Whethe', true, e) }}><Icon type="plus" />添加</span></div>
                   <div className={styles.RowBox}>
                     起始时间&nbsp;:&nbsp;&nbsp;
                     <p className={styles.ItemInput}>
@@ -776,20 +782,30 @@ class MonitoringModule extends React.Component {
                 <span onClick={() => { this.handleEventPopup('Reserve', false) }}>返&nbsp;&nbsp;回</span>
               </div>
             </div>
+            {
+            whethePopup ?
+              <div className={classNames(styles.EventPopup, styles.WhethePopupr)}>
+                  <div className={styles.Title}>是否添加**地点**断面可变情报板至***管控预案?</div>
+                  <div className={styles.ItemFooter}>
+                    <span onClick={(e) => { this.handleEventPopup('Whethe', false, e) }}>确&nbsp;&nbsp;认</span>
+                    <span onClick={() => { this.handleEventPopup('Whethe', false) }}>返&nbsp;&nbsp;回</span>
+                  </div>
+                </div> : null
+          }
           </div> : null
         }
-        {
+        {/* {
           whethePopup ?
             <div className={styles.MaskBox}>
               <div className={classNames(styles.EventPopup, styles.WhethePopupr)}>
                 <div className={styles.Title}>是否添加**地点**断面可变情报板至***管控预案?</div>
                 <div className={styles.ItemFooter}>
-                  <span onClick={() => { this.handleEventPopup('Whethe', false) }}>确&nbsp;&nbsp;认</span>
+                  <span onClick={(e) => { this.handleEventPopup('Whethe', false, e) }}>确&nbsp;&nbsp;认</span>
                   <span onClick={() => { this.handleEventPopup('Whethe', false) }}>返&nbsp;&nbsp;回</span>
                 </div>
               </div>
             </div> : null
-        }
+        } */}
         {/*  <div className={styles.MaskBox}>
           <div className={classNames(styles.EventPopup, styles.WhethePopupr)}>
             <div className={styles.Title} style={{ textIndent: 0, textAlign: 'center' }}>延时&nbsp;:<div className={classNames(styles.ItemInput, styles.WhetheInput)}><Input defaultValue="120" style={{ color: '#26ff6d' }} /></div>分钟</div>
