@@ -51,8 +51,7 @@ class MonitoringModule extends React.Component {
     }
     this.eventQuery = {
       eventType: '',
-      hWayId: '',
-      roadName: '',
+      searchKey: '',
     }
     this.VIboardParameters = {
       deviceCode: '',
@@ -131,8 +130,7 @@ class MonitoringModule extends React.Component {
       if (boolean) {
         this.eventQuery = {
           eventType: boolean.type,
-          hWayId: '',
-          roadName: '',
+          searchKey:'',
         }
       }
       this.setState({
@@ -161,7 +159,7 @@ class MonitoringModule extends React.Component {
           detailsPopup: false,
         })
       }
-      
+
       this.setState({
         detailsLatlng: boolean.latlng,
       })
@@ -476,9 +474,9 @@ class MonitoringModule extends React.Component {
         {eventsPopup && hwayList ?
           <div className={styles.MaskBox}>
             <div className={styles.EventPopup}>
-              <div className={styles.Title}>{eventsPopup.name}事件过滤设置<Icon className={styles.Close} onClick={() => { this.handleEventPopup('Event', false) }} type="close" /></div>
+              <div className={styles.Title} style={{ lineHeight: '32px' }}>{eventsPopup.name}事件过滤设置<Icon className={styles.Close} style={{ top: '37%' }} onClick={() => { this.handleEventPopup('Event', false) }} type="close" /></div>
               <div className={styles.Centent}>
-                <div className={styles.ItemBox}>
+                {/* <div className={styles.ItemBox}>
                   <span className={styles.ItemName}>高&nbsp;速&nbsp;名&nbsp;称&nbsp;:</span>
                   <div className={styles.ItemInput}>
                     <Select defaultValue="" style={{ width: '100%' }} onChange={(e) => { this.handleSelect(e, 'hWayId', 'eventsPopup') }}>
@@ -490,11 +488,11 @@ class MonitoringModule extends React.Component {
                       }
                     </Select>
                   </div>
-                </div>
+                </div> */}
                 <div className={styles.ItemBox}>
-                  <span className={styles.ItemName}>道&nbsp;路&nbsp;名&nbsp;称&nbsp;:</span>
-                  <div className={styles.ItemInput}>
-                    <Input onChange={(e) => { this.handleInput(e, 'roadName', 'eventsPopup') }} />
+                  {/* <span className={styles.ItemName}>道&nbsp;路&nbsp;名&nbsp;称&nbsp;:</span> */}
+                  <div className={styles.ItemInput} style={{ width: '100%', marginLeft: '25px' }}>
+                    <Input onChange={(e) => { this.handleInput(e, 'searchKey', 'eventsPopup') }} />
                   </div>
                 </div>
                 {/*  <div className={styles.ItemBox}>
