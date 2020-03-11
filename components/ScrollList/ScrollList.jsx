@@ -130,14 +130,14 @@ class ScrollList extends React.Component {
   handleEventPopup = (e, type, boolean) => {
     if (type === 'Details') {
       const listItem = document.getElementsByClassName('listItem')
-      if (e.currentTarget.style.background === '#74ccd3') {
+      if (e.currentTarget.style.background === '#0d2645') {
         e.currentTarget.style.background = ''
       } else {
         for (let i = 0; i < listItem.length; i++) {
           listItem[i].style.background = ''
         }
         $('#deviceBox').attr('style', 'transition:all .5s;')
-        e.currentTarget.style.background = '#74ccd3'
+        e.currentTarget.style.background = '#0d2645'
         window.listItemDom = e.currentTarget
       }
     }
@@ -170,17 +170,17 @@ class ScrollList extends React.Component {
     return navtime
   }
   getColor = (index) => {
-    if (index === 0) {
+    if (index === 1) {
       return '#ed7e2f'
-    } else if (index === 1) {
-      return '#34bbff'
     } else if (index === 2) {
-      return '#f3ea29'
+      return '#34bbff'
     } else if (index === 3) {
-      return '#6e6e6e'
+      return '#f3ea29'
     } else if (index === 4) {
-      return '#f06c79'
+      return '#6e6e6e'
     } else if (index === 5) {
+      return '#f06c79'
+    } else if (index === 6) {
       return '#619540'
     }
 
@@ -271,9 +271,9 @@ class ScrollList extends React.Component {
                 <div style={{ marginLeft: '40px' }}>
                   <div className={styles.ProgressTotal}><em>管控方案发布管理</em>方案总数:{this.ProgressLength}</div>
                   {
-                    ProgressData && ProgressData.map((item, index) => {
+                    ProgressData && ProgressData.map((item) => {
                       return (
-                        <div className={styles.ProgressBox}><em>{item.name}</em><Progress strokeColor={this.getColor(index)} percent={item.count / this.ProgressLength * 100} format={percent => `${item.count}`} status="active" /></div>
+                        <div className={styles.ProgressBox}><em>{item.name}</em><Progress strokeColor={this.getColor(item.code)} percent={item.count / this.ProgressLength * 100} format={percent => `${item.count}`} status="active" /></div>
                       )
                     })
                   }
