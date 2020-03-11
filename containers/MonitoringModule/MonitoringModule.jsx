@@ -53,6 +53,7 @@ class MonitoringModule extends React.Component {
       eventType: '',
       searchKey: '',
     }
+    this.detailsPopupData = ''
     this.VIboardParameters = {
       deviceCode: '',
       deviceLocation: '',
@@ -173,6 +174,7 @@ class MonitoringModule extends React.Component {
     if (type === 'Reserve') {
       this.setState({
         reservePopup: boolean,
+        detailsPopup: this.detailsPopupData
       })
     }
     if (type === 'Whethe') {
@@ -205,14 +207,19 @@ class MonitoringModule extends React.Component {
     <Icon
       type="plus"
       onClick={(event) => {
-        event.stopPropagation()
-        this.VIboardParameters.deviceTypeId = item.dictCode
-        this.getdeviceList(item)
-        this.handlelistDetail('roadNumber', 1)
-        this.handleEventPopup('VIboard', true)
+        this.genExtraAddOnclick(e, item)
       }}
     />
   )
+  genExtraAddOnclick = (e, item) => {
+    console.log(item);
+    debugger
+    e.stopPropagation()
+    this.VIboardParameters.deviceTypeId = item.dictCode
+    this.getdeviceList(item)
+    this.handlelistDetail('roadNumber', 1)
+    this.handleEventPopup('VIboard', item.codeName)
+  }
   getdeviceList = (data) => {
     this.deviceList = []
     data.device.map((item) => {
@@ -336,8 +343,6 @@ class MonitoringModule extends React.Component {
             plainOptionList.push(item.deviceId)
           }
         })
-        console.log(plainOptionList, '==========33');
-
         this.setState({ conditionList: result.data, plainOptionList })
       }
     })
@@ -362,8 +367,6 @@ class MonitoringModule extends React.Component {
   handledetailsPopupList = () => {
     const { checkedList, detailsPopup, conditionList } = this.state
     this.deviceList = [...this.deviceList, ...checkedList]
-    console.log(this.deviceList, '============2222');
-
     const { deviceTypeId } = this.VIboardParameters
     conditionList.forEach((item) => {
       checkedList.forEach((items) => {
@@ -427,6 +430,7 @@ class MonitoringModule extends React.Component {
       if (result.code === 200) {
         $('#searchBox').attr('style', 'transition:all .5s;')
         $('#roadStateBox').attr('style', 'transition:all .5s;')
+        this.detailsPopupData = detailsPopup
         this.setState({ reservePopup: result.data, detailsPopup: null })
       }
     })
@@ -437,6 +441,10 @@ class MonitoringModule extends React.Component {
     })
     $('#searchBox').attr('style', 'transition:all .5s;')
     $('#roadStateBox').attr('style', 'transition:all .5s;')
+  }
+  // 管控发布
+  handleRelease = () => {
+    this.detailsPopupData = '' // 清空方案详情
   }
   render() {
     const {
@@ -695,7 +703,7 @@ class MonitoringModule extends React.Component {
                     return (
                       items.dictCode === 1 ?
                         <div className={styles.ItemBox}>
-                          <div className={styles.HeadItem}>可变情报板管控预案设置<span className={styles.AddItem} onClick={(e) => { this.handleEventPopup('Whethe', true, e) }}><Icon type="plus" />添加</span></div>
+                          <div className={styles.HeadItem}>可变情报板管控预案设置<span className={styles.AddItem} onClick={(e) => { this.genExtraAddOnclick(e, items) }}><Icon type="plus" />添加</span></div>
                           <div className={styles.RowBox}>
                             {
                               items.device.map((item, index) => {
@@ -711,7 +719,6 @@ class MonitoringModule extends React.Component {
                             }
                           </div>
                         </div> : null
-
                     )
                   })
                 }
@@ -726,7 +733,7 @@ class MonitoringModule extends React.Component {
                   </div>
                 </div>
                 <div className={styles.ItemBox}>
-                  <div className={styles.HeadItem}>管控时段<span className={styles.AddItem} onClick={(e) => { this.handleEventPopup('Whethe', true, e) }}><Icon type="plus" />添加</span></div>
+                  <div className={styles.HeadItem}>管控时段</div>
                   <div className={styles.RowBox}>
                     起始时间&nbsp;:&nbsp;&nbsp;
                     <p className={styles.ItemInput}>
@@ -775,7 +782,7 @@ class MonitoringModule extends React.Component {
                 </div>
               </div>
               <div className={styles.ItemFooter}>
-                <span onClick={() => { this.handleEventPopup('Reserve', false) }}>发&nbsp;&nbsp;布</span>
+                <span onClick={this.handleRelease}>发&nbsp;&nbsp;布</span>
                 <span onClick={() => { this.handleEventPopup('Reserve', false) }}>返&nbsp;&nbsp;回</span>
               </div>
             </div>
@@ -851,11 +858,11 @@ class MonitoringModule extends React.Component {
                 {
                   detailsPopup.devices.map((item, ind) => {
                     return (
-                      <Panel header={item.codeName} key={item.dictCode} extra={this.genExtraAdd(item)}>
+                      <Panel header={item.codeName} key={item.dictCode} extra={detailsPopup.controlStatusType > 0 ? null : this.genExtraAdd(item)}>
                         <div className={styles.ScrollItem}> {/* 添加滚动条 */}
                           {
                             item.device && item.device.map((items, index) => {
-                              return <div className={styles.PanelBox}><p className={styles.PanelItem} key={items}>{`${index + 1}. ${items.deviceName} ${items.directionName} ${item.codeName}`}</p><Icon onClick={() => { this.handleSubDetailsPopupList(ind, index) }} className={styles.MinusItem} type="minus" /></div>
+                              return <div className={styles.PanelBox}><p className={styles.PanelItem} key={items}>{`${index + 1}. ${items.deviceName} ${items.directionName} ${item.codeName}`}</p>{detailsPopup.controlStatusType > 0 || <Icon onClick={() => { this.handleSubDetailsPopupList(ind, index) }} className={styles.MinusItem} type="minus" />}</div>
                             })
                           }
                           {item.device && item.device.length === 0 && <p className={styles.PanelItemNone}>暂无数据</p>}
@@ -872,7 +879,7 @@ class MonitoringModule extends React.Component {
           VIboardPopup ?
             <div className={styles.MaskBox}>
               <div className={classNames(styles.EventPopup, styles.VIboardPopup)}>
-                <div className={styles.Title}>添加可变情报板<Icon className={styles.Close} onClick={() => { this.handleEventPopup('VIboard', false) }} type="close" /></div>
+                <div className={styles.Title}>添加{VIboardPopup}<Icon className={styles.Close} onClick={() => { this.handleEventPopup('VIboard', false) }} type="close" /></div>
                 <div className={styles.Centent}>
                   <div className={styles.ItemBox}>
                     <span className={styles.ItemName}>道&nbsp;路&nbsp;编&nbsp;号&nbsp;:</span>
