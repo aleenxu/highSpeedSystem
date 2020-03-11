@@ -234,7 +234,7 @@ class ScrollList extends React.Component {
               expandIconPosition="right"
             >
               <Icon type="pie-chart" />
-              <Panel style={{ marginLeft: '-40px' }} header="事件监视" key="1">
+              <Panel header="事件监视" key="1">
 
                 <div className={styles.eachartsBox}>
                   <div className={styles.leftEacharts}>
@@ -267,8 +267,8 @@ class ScrollList extends React.Component {
               expandIconPosition="right"
             >
               <Icon type="appstore" />
-              <Panel style={{ marginLeft: '-40px' }} header="管控方案管理" key="1">
-                <div style={{ marginLeft: '40px' }}>
+              <Panel header="管控方案管理" key="1">
+                <div>
                   <div className={styles.ProgressTotal}><em>管控方案发布管理</em>方案总数:{this.ProgressLength}</div>
                   {
                     ProgressData && ProgressData.map((item) => {
@@ -301,8 +301,8 @@ class ScrollList extends React.Component {
               {listTitle.type === 4 &&
                 <img className={styles.iconImg} src={iconAccidents} />
               }
-              <Panel header={listTit} key="2" extra={this.genExtra(listTitle, 'Event')}>
-                <div className={styles.listBox}>
+              <Panel style={{ paddingLeft: '40px' }} header={listTit} key="2" extra={this.genExtra(listTitle, 'Event')}>
+                <div style={{ marginLeft: '-40px' }} className={styles.listBox}>
                   {listTitle &&
                     <div className={styles.listItem}>
                       <i />
@@ -339,8 +339,8 @@ class ScrollList extends React.Component {
               {/*   <Checkbox.Group defaultValue={[1]} onChange={(e) => { this.handleCheckboxGroup(e, 'accidentCheck') }}>
                 <Checkbox value={1} />
               </Checkbox.Group> */}
-              <Panel style={{marginLeft:'-40px'}} header={listTit} key="2" extra={this.genExtra(listTitle, 'Control')}>
-                <div style={{marginLeft:'40px'}} className={styles.listBox}>
+              <Panel header={listTit} key="2" extra={this.genExtra(listTitle, 'Control')}>
+                <div className={styles.listBox}>
                   {listTitle &&
                     <div className={styles.listItem}>
                       <span className={styles.tit}>{listTitle.id}</span>
