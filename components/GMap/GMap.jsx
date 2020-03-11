@@ -51,11 +51,9 @@ class GMap extends React.Component {
     if (this.props.roadLatlng !== nextProps.roadLatlng) {
       this.setState({ roadLatlng: nextProps.roadLatlng })
     }
-    console.log(this.props.dataAll,'啦啦啦')
   }
   loadPoint = () => {
     getResponseDatas('get', this.mapPointUrl+'?searchKey=' + this.state.keyWords).then((res) => {
-      debugger
       const jsonData = res.data
       if (jsonData.code == 200 && jsonData.data.length > 0){
         jsonData.data.map((item) => {

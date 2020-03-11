@@ -68,19 +68,26 @@
     > p {
       width: 100%;
       display: flex;
-      justify-content: center;
+      justify-content: flex-start;
       align-items: center;
-      padding-bottom: 8px;
+      padding-bottom: 0px;
       flex-wrap: wrap;
       > h5 {
         width: 100%;
         color: #fff;
-        background: url(../../imgs/icon_status.png) no-repeat;
+        // background: url(../../imgs/icon_status.png) no-repeat;
         background-position: left center;
-        text-indent: 20px;
+        // text-indent: 20px;
       }
       > span {
-        padding: 1px 6px;
+        padding: 0 25px;
+        color: #fff;
+        display: flex;
+        font-size: 12px;
+      }
+      > span.redColor {
+        padding: 0 25px;
+        margin-bottom: 5px;
         color: #fff;
         display: flex;
         font-size: 12px;
@@ -98,18 +105,38 @@
         background: #26ff6d;
       }
     }
-    > p:last-child {
-      width: 180px;
-      padding-bottom: 0px;
+    > p.visibility{
+      width:100%;
+      padding:0;
+      margin-bottom:8px;
+      background:linear-gradient(left, #404040,#ffffff );
       display: flex;
-      justify-content: start;
+      justify-content: space-between;
+      align-items: center;
+      > s {
+        border-right:1px #000 solid;
+        color:#ffffff;
+        text-decoration: none;
+        font-size: 12px;
+        padding:0 10px;
+      }
+      > s:last-child {
+        border-right:none;
+      }
+    }
+    > p:last-child {
+      width: 284px;
+      padding: 10px 0 0;
+      display: flex;
+      justify-content: space-between;
       h5 {
         background: none;
       }
       > em {
-        width: 50%;
+        width: 38%;
         height: 26px;
         line-height: 22px;
+        magin:3px 0;
         font-size: 12px;
         color: #fff;
         display: inline-block;

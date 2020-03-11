@@ -451,12 +451,20 @@ class MonitoringModule extends React.Component {
         </div>
         <div id="roadStateBox" className={`${styles.roadState} animated ${'bounceInUp'}`}>
           <p><h5>路况</h5></p>
-          <p>
+          <p><span className={styles.redColor}>{'< 60km/h'}</span></p>
+          <p><h5>能见度</h5></p>
+          <p className={styles.visibility}>
+            <s>{'< 50'}</s>
+            <s>{'50 - 100'}</s>
+            <s>{'100 - 200'}</s>
+            <s>{'200 - 500'}</s>
+          </p>
+          {/* <p>
             <span>严重拥堵</span>
             <span>拥挤</span>
             <span>缓行</span>
             <span>畅通</span>
-          </p>
+          </p> */}
           <p>
             <em>收费站</em>
             <em>F屏情报板</em>
