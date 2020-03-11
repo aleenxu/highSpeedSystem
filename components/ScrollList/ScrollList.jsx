@@ -339,8 +339,8 @@ class ScrollList extends React.Component {
               {/*   <Checkbox.Group defaultValue={[1]} onChange={(e) => { this.handleCheckboxGroup(e, 'accidentCheck') }}>
                 <Checkbox value={1} />
               </Checkbox.Group> */}
-              <Panel style={{ marginLeft: '-40px' }} header={listTit} key="2" extra={this.genExtra(listTitle, 'Control')}>
-                <div className={styles.listBox}>
+              <Panel style={{marginLeft:'-40px'}} header={listTit} key="2" extra={this.genExtra(listTitle, 'Control')}>
+                <div style={{marginLeft:'40px'}} className={styles.listBox}>
                   {listTitle &&
                     <div className={styles.listItem}>
                       <span className={styles.tit}>{listTitle.id}</span>
