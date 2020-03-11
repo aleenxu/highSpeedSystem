@@ -130,7 +130,7 @@ class MonitoringModule extends React.Component {
       if (boolean) {
         this.eventQuery = {
           eventType: boolean.type,
-          searchKey:'',
+          searchKey: '',
         }
       }
       this.setState({
@@ -179,12 +179,11 @@ class MonitoringModule extends React.Component {
       this.setState({
         whethePopup: boolean,
       })
-      const popLayer = $(event.currentTarget).parents('#popLayer');
+      /* const popLayer = $(event.currentTarget).parents('#popLayer');
       popLayer.removeAttr('style')
-      // console.log($(event.currentTarget))
       if (event && $(event.currentTarget).text() === '确  认') {
         popLayer.attr('style', 'width:24%')
-      }
+      } */
     }
     if (type === 'VIboard') {
       this.setState({ VIboardPopup: boolean })
@@ -428,7 +427,7 @@ class MonitoringModule extends React.Component {
       if (result.code === 200) {
         $('#searchBox').attr('style', 'transition:all .5s;')
         $('#roadStateBox').attr('style', 'transition:all .5s;')
-        this.setState({ reservePopup: result.data })
+        this.setState({ reservePopup: result.data, detailsPopup: null })
       }
     })
   }
@@ -448,7 +447,7 @@ class MonitoringModule extends React.Component {
         <SystemMenu />
         {(!!reservePopup || !!EventTagPopup) || <SidePop left="5px" groupType={groupType} SidePopLeft={SidePopLeft} handleEventPopup={this.handleEventPopup} />}
         {!!detailsPopup || <SidePop SidplanList={planList} groupStatus={groupStatus} right="5px" handleEventPopup={this.handleEventPopup} />}
-        <GMap dataAll={SidePopLeft} roadLatlng={detailsLatlng}  handledetai={this.handledetai} />
+        <GMap dataAll={SidePopLeft} roadLatlng={detailsLatlng} handledetai={this.handledetai} />
         <div id="searchBox" className={`${styles.searchBox} animated ${'bounceInDown'}`}><Search id="tipinput" placeholder="请输入内容" enterButton /></div>
         <div id="deviceBox" className={`${styles.mapIconManage} animated ${'bounceInDown'}`}>
           <span>设备显示</span><span onClick={this.handleEventTag.bind(null, true)}>事件标注</span>
@@ -648,7 +647,7 @@ class MonitoringModule extends React.Component {
           </div> : null} */}
         {/* 管控预案查询 */}
         {reservePopup ?
-          <div id='popLayer' style={{width:'100%'}} className={styles.MaskBox}>
+          <div >
             <div className={classNames(styles.DetailsBox, styles.ReserveBox)}>
               <div className={styles.Title}>管控方案详情<Icon className={styles.Close} onClick={() => { this.handleEventPopup('Reserve', false) }} type="close" /></div>
               <div className={styles.Content}>
@@ -781,15 +780,15 @@ class MonitoringModule extends React.Component {
               </div>
             </div>
             {
-            whethePopup ?
-              <div className={classNames(styles.EventPopup, styles.WhethePopupr)}>
+              whethePopup ?
+                <div className={classNames(styles.EventPopup, styles.WhethePopupr)}>
                   <div className={styles.Title}>是否添加**地点**断面可变情报板至***管控预案?</div>
                   <div className={styles.ItemFooter}>
                     <span onClick={(e) => { this.handleEventPopup('Whethe', false, e) }}>确&nbsp;&nbsp;认</span>
                     <span onClick={() => { this.handleEventPopup('Whethe', false) }}>返&nbsp;&nbsp;回</span>
                   </div>
                 </div> : null
-          }
+            }
           </div> : null
         }
         {/* {
