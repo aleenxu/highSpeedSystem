@@ -52,6 +52,12 @@ class GMap extends React.Component {
       this.setState({ roadLatlng: nextProps.roadLatlng })
     }
   }
+  handledetai = (dataItem) => {
+    const { handledetai } = this.props
+    if (handledetai) {
+      handledetai(dataItem)
+    }
+  }
   loadPoint = () => {
     getResponseDatas('get', this.mapPointUrl+'?searchKey=' + this.state.keyWords).then((res) => {
       const jsonData = res.data
@@ -235,6 +241,7 @@ class GMap extends React.Component {
             lineDatas.push(roadLatlngData)
             marker.on("click", () => {
               console.log("绑定点击事件",lineDatas)
+              _this.handledetai(item)
               window.pathSimplifierIns.setData(lineDatas)
             })
             switch(leftIndex){
