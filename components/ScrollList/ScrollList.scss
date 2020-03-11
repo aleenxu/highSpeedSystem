@@ -2,10 +2,13 @@
 :global(.ant-collapse-icon-position-right > .ant-collapse-item > .ant-collapse-header) {
   background: rgba(19, 27, 37, 0.8);
   color: #fff;
-  padding-left: 70px;
+  padding-left: 30px;
 }
 :global(.ant-collapse > .ant-collapse-item:last-child) {
   border-radius: unset;
+}
+:global(.ant-collapse-item:last-child > .ant-collapse-content) {
+  overflow: initial!important;
 }
 :global(.ant-collapse) {
   background: unset;
