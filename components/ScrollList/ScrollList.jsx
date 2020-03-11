@@ -155,7 +155,7 @@ class ScrollList extends React.Component {
       const hours = parseInt((mss % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
       const minutes = parseInt((mss % (1000 * 60 * 60)) / (1000 * 60));
       const seconds = (mss % (1000 * 60)) / 1000;
-      return days + '天' + hours + "时" + minutes + "分" + seconds + '秒';
+      return days + '天' + hours + "时" + minutes + "分"
     }
   }
   getDate = (time) => {
@@ -284,8 +284,10 @@ class ScrollList extends React.Component {
         }
         {listType === '3' &&
           <div>
-            <Checkbox.Group style={{ position: "absolute", zIndex: 9, left: "12px", top: "12px", borderBottom: '1px #fff solid',
-    paddingBottom: '13px' }} nowtype={listTitle.type} options={[{ label: '', value: listTitle }]} onClick={this.checkBoxClick} />
+            <Checkbox.Group style={{
+              position: "absolute", zIndex: 9, left: "12px", top: "12px", borderBottom: '1px #fff solid',
+              paddingBottom: '13px'
+            }} nowtype={listTitle.type} options={[{ label: '', value: listTitle }]} onClick={this.checkBoxClick} />
             <Collapse
               onChange={this.callback}
               expandIconPosition="right"
@@ -311,7 +313,7 @@ class ScrollList extends React.Component {
                       <span className={styles.tit}>{listTitle.roadName}</span>
                       <span className={styles.tit}>{listTitle.upTime}</span>
                       <span className={styles.tit}>{listTitle.traffic}</span>
-                      <span>{listTitle.state}</span>
+                      <span className={styles.tit}>{listTitle.state}</span>
                     </div>
                   }
                   {data && data.map((item, index) => (
@@ -347,17 +349,19 @@ class ScrollList extends React.Component {
                       <span className={styles.tit}>{listTitle.id}</span>
                       <span className={styles.tit}>{listTitle.roadName}</span>
                       <span className={styles.tit}>{listTitle.upTime}</span>
+                      <span className={styles.tit}>{listTitle.time}</span>
                       <span className={styles.tit}>{listTitle.traffic}</span>
-                      <span>{listTitle.state}</span>
+                      <span className={styles.tit}>{listTitle.state}</span>
                     </div>
                   }
                   {data && data.map((item, index) => (
-                    <div key={item.eventId + item.roadName} className={classNames(styles.listItem, 'listItem')} >
-                      <span>{item.eventId}</span>
-                      <span title={item.roadName}>{item.roadName}</span>
-                      <span>{this.formatDuring(new Date(item.endTime).getTime() - new Date(item.startTime).getTime())}</span>
-                      <span>{this.formatDuring(new Date().getTime() - new Date(item.endTime).getTime())}</span>
-                      <span>{item.planStatusName}</span>
+                    <div key={item.eventId + item.roadName} className={classNames(styles.listItem, 'listItem')} onClick={(e) => { this.handleEventPopup(e, 'controldet', item) }} >
+                      <span>{item.roadName}</span>
+                      <span>{item.startPileNum}</span>
+                      <span>{item.directionName}</span>
+                      <span>{item.endTime ? this.formatDuring(new Date(item.endTime).getTime() - new Date(item.startTime).getTime()) : item.planStatusName}</span>
+                      <span>{item.endTime ? this.formatDuring(new Date(item.endTime).getTime() - new Date().getTime()) : item.planStatusName}</span>
+                      <span style={{ color: this.getColor(item.status) }}>{item.planStatusName}</span>
                     </div>
                   ))
                   }
