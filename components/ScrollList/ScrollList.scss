@@ -75,9 +75,9 @@
       width: 50px;
     }
     > i {
-      width: 18px;
+      width: 10px;
       display: inline-block;
-      height: 18px;
+      height: 10px;
       border-radius: 50%;
       position: relative;
       top: 50%;
@@ -212,19 +212,18 @@
       margin-right: 8px;
       &:nth-child(1) i {
         background: red;
-        box-shadow: red 0px 0px 20px;
+        box-shadow: inset 2px 2px 5px red;
       }
       &:nth-child(2) i {
         background: green;
-        box-shadow: green 0px 0px 20px;
+        box-shadow: inset green 2px 2px 5px red;
       }
       > i {
-        width: 18px;
+        width: 10px;
         display: inline-block;
-        height: 18px;
+        height: 10px;
         border-radius: 50%;
         margin-right: 8px;
-        vertical-align: sub;
       }
     }
   }
