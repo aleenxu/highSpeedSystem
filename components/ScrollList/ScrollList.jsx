@@ -166,8 +166,24 @@ class ScrollList extends React.Component {
     const hour = ('0' + (today.getHours())).slice(-2)
     const minutes = ('0' + (today.getMinutes())).slice(-2)
     const seconds = ('0' + (today.getSeconds())).slice(-2)
-    const navtime = year + '.' + month + '.' + day + '' + ' ' + hour + ':' + minutes + ':' + seconds
+    const navtime = day + '日' + hour + '时' + minutes + '分'
     return navtime
+  }
+  getColor = (index) => {
+    if (index === 0) {
+      return '#ed7e2f'
+    } else if (index === 1) {
+      return '#34bbff'
+    } else if (index === 2) {
+      return '#f3ea29'
+    } else if (index === 3) {
+      return '#6e6e6e'
+    } else if (index === 4) {
+      return '#f06c79'
+    } else if (index === 5) {
+      return '#619540'
+    }
+
   }
   genExtra = (data, name) => (
     <Icon
@@ -180,30 +196,30 @@ class ScrollList extends React.Component {
   )
   checkBoxClick = event => {
     this.setState({
-      typeNow:$(event.currentTarget).attr('nowtype')
-    },() =>{
-    const type = this.state.typeNow
-    switch(type){
-      case "1":
-        const dataLength = this.state.dataAll[0].eventData.length
-        !this.state.one ? this.setState({one: true},()=>{dataLength > 0 ? window.leftModuleOne.show() : message.info('暂无数据！')}):this.setState({one: false},()=>{window.leftModuleOne.hide()})
-        break;
-      case "2":
-        const dataLength1 = this.state.dataAll[1].eventData.length
-        !this.state.two ? this.setState({two: true},()=>{dataLength1 > 0 ? window.leftModuleTwo.show() : message.info('暂无数据！')}):this.setState({two: false},()=>{window.leftModuleTwo.hide()})
-        break;
-      case "3":
-        const dataLength2 = this.state.dataAll[2].eventData.length
-        !this.state.three ? this.setState({three: true},()=>{dataLength2 > 0 ? window.leftModuleThree.show() : message.info('暂无数据！')}):this.setState({three: false},()=>{window.leftModuleThree.hide()})
-        break;
-      case "4":
-        const dataLength3 = this.state.dataAll[3].eventData.length
-        !this.state.four ? this.setState({four: true},()=>{dataLength3 > 0 ? window.leftModuleFour.show() : message.info('暂无数据！')}):this.setState({four: false},()=>{window.leftModuleFour.hide()})
-        break;
-    }
+      typeNow: $(event.currentTarget).attr('nowtype')
+    }, () => {
+      const type = this.state.typeNow
+      switch (type) {
+        case "1":
+          const dataLength = this.state.dataAll[0].eventData.length
+          !this.state.one ? this.setState({ one: true }, () => { dataLength > 0 ? window.leftModuleOne.show() : message.info('暂无数据！') }) : this.setState({ one: false }, () => { window.leftModuleOne.hide() })
+          break;
+        case "2":
+          const dataLength1 = this.state.dataAll[1].eventData.length
+          !this.state.two ? this.setState({ two: true }, () => { dataLength1 > 0 ? window.leftModuleTwo.show() : message.info('暂无数据！') }) : this.setState({ two: false }, () => { window.leftModuleTwo.hide() })
+          break;
+        case "3":
+          const dataLength2 = this.state.dataAll[2].eventData.length
+          !this.state.three ? this.setState({ three: true }, () => { dataLength2 > 0 ? window.leftModuleThree.show() : message.info('暂无数据！') }) : this.setState({ three: false }, () => { window.leftModuleThree.hide() })
+          break;
+        case "4":
+          const dataLength3 = this.state.dataAll[3].eventData.length
+          !this.state.four ? this.setState({ four: true }, () => { dataLength3 > 0 ? window.leftModuleFour.show() : message.info('暂无数据！') }) : this.setState({ four: false }, () => { window.leftModuleFour.hide() })
+          break;
+      }
     })
   }
-  
+
   render() {
     const { listType, listTit, listTitle, ProgressData, data, eachartData, sideachart } = this.state
     return (
@@ -218,7 +234,7 @@ class ScrollList extends React.Component {
               expandIconPosition="right"
             >
               <Icon type="pie-chart" />
-              <Panel style={{marginLeft:'-40px'}} header="事件监视" key="1">
+              <Panel style={{ marginLeft: '-40px' }} header="事件监视" key="1">
 
                 <div className={styles.eachartsBox}>
                   <div className={styles.leftEacharts}>
@@ -251,23 +267,16 @@ class ScrollList extends React.Component {
               expandIconPosition="right"
             >
               <Icon type="appstore" />
-              <Panel style={{marginLeft:'-40px'}} header="管控方案管理" key="1">
-                <div style={{marginLeft:'40px'}}>
+              <Panel style={{ marginLeft: '-40px' }} header="管控方案管理" key="1">
+                <div style={{ marginLeft: '40px' }}>
                   <div className={styles.ProgressTotal}><em>管控方案发布管理</em>方案总数:{this.ProgressLength}</div>
                   {
-                    ProgressData && ProgressData.map((item) => {
+                    ProgressData && ProgressData.map((item, index) => {
                       return (
-                        <div className={styles.ProgressBox}><em>{item.name}</em><Progress strokeColor={`rgba(${Math.round(Math.random() * 255)},${Math.round(Math.random() * 255)},${Math.round(Math.random() * 255)}`} percent={item.count} format={percent => `${item.count}`} status="active" /></div>
+                        <div className={styles.ProgressBox}><em>{item.name}</em><Progress strokeColor={this.getColor(index)} percent={item.count / this.ProgressLength * 100} format={percent => `${item.count}`} status="active" /></div>
                       )
                     })
                   }
-                  {/* <div className={styles.ProgressTotal}><em>管控方案发布管理</em>方案总数：16</div>
-                  <div className={styles.ProgressBox}><em>待发布</em><Progress strokeColor="#ed7d30" showInfo="false" percent={18.75} format={percent => `${3}`} status="active" /></div>
-                  <div className={styles.ProgressBox}><em>请求发布</em><Progress strokeColor="#34baff" percent={25} format={percent => `${4}`} status="active" /></div>
-                  <div className={styles.ProgressBox}><em>已发布</em><Progress strokeColor="#f4ea2a" percent={12.5} format={percent => `${2}`} status="active" /></div>
-                  <div className={styles.ProgressBox}><em>撤销</em><Progress strokeColor="#6d6e6e" percent={6.25} format={percent => `${1}`} status="active" /></div>
-                  <div className={styles.ProgressBox}><em>延时</em><Progress strokeColor="#ef6c77" percent={6.25} format={percent => `${1}`} status="active" /></div>
-                  <div className={styles.ProgressBox}><em>完成</em><Progress strokeColor="#619540" percent={31.25} format={percent => `${5}`} status="active" /></div> */}
                 </div>
               </Panel>
             </Collapse>
@@ -275,22 +284,22 @@ class ScrollList extends React.Component {
         }
         {listType === '3' &&
           <div>
-            <Checkbox.Group style={{position: "absolute",zIndex: 9,left: "12px",top: "12px"}} nowtype={listTitle.type} options ={[{ label: '', value: listTitle }]} onClick={this.checkBoxClick} />
+            <Checkbox.Group style={{ position: "absolute", zIndex: 9, left: "12px", top: "12px" }} nowtype={listTitle.type} options={[{ label: '', value: listTitle }]} onClick={this.checkBoxClick} />
             <Collapse
               onChange={this.callback}
               expandIconPosition="right"
             >
               {listTitle.type === 1 &&
-                <img className={styles.iconImg} src={ iconTrafficJam } />
+                <img className={styles.iconImg} src={iconTrafficJam} />
               }
               {listTitle.type === 2 &&
-                <img className={styles.iconImg} src={ iconBuild } />
+                <img className={styles.iconImg} src={iconBuild} />
               }
               {listTitle.type === 3 &&
-                <img className={styles.iconImg} src={ iconWeather } />
+                <img className={styles.iconImg} src={iconWeather} />
               }
               {listTitle.type === 4 &&
-                <img className={styles.iconImg} src={ iconAccidents } />
+                <img className={styles.iconImg} src={iconAccidents} />
               }
               <Panel header={listTit} key="2" extra={this.genExtra(listTitle, 'Event')}>
                 <div className={styles.listBox}>
@@ -306,9 +315,9 @@ class ScrollList extends React.Component {
                   }
                   {data && data.map((item, index) => (
                     <div key={item.roadCode + item.locs} className={classNames(styles.listItem, 'listItem')} onClick={(e) => { this.handleEventPopup(e, 'Details', item) }}>
-                      <i style={{ background: item.controlStatusType>0 ? 'green' : 'red', boxShadow: item.controlStatusType > 0 ? 'green 0px 0px 20px' : 'red 0px 0px 20px' }} />
+                      <i style={{ background: item.controlStatusType > 0 ? 'green' : 'red', boxShadow: item.controlStatusType > 0 ? 'green 0px 0px 20px' : 'red 0px 0px 20px' }} />
                       <span>{item.roadCode}</span>
-                      <span title={item.locs}>{item.locs}</span>
+                      <span title={item.locs.split(' ')[0]}>{(item.locs).split(' ')[0]}</span>
                       <span>{item.directionName}</span>
                       <span>{item.situation}</span>
                       <span>{this.getDate(item.updateTime)}</span>
@@ -330,7 +339,7 @@ class ScrollList extends React.Component {
               {/*   <Checkbox.Group defaultValue={[1]} onChange={(e) => { this.handleCheckboxGroup(e, 'accidentCheck') }}>
                 <Checkbox value={1} />
               </Checkbox.Group> */}
-              <Panel style={{marginLeft:'-40px'}} header={listTit} key="2" extra={this.genExtra(listTitle, 'Control')}>
+              <Panel style={{ marginLeft: '-40px' }} header={listTit} key="2" extra={this.genExtra(listTitle, 'Control')}>
                 <div className={styles.listBox}>
                   {listTitle &&
                     <div className={styles.listItem}>
