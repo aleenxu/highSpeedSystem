@@ -218,7 +218,7 @@ class ScrollList extends React.Component {
               expandIconPosition="right"
             >
               <Icon type="pie-chart" />
-              <Panel header="事件监视" key="1">
+              <Panel style={{marginLeft:'-40px'}} header="事件监视" key="1">
 
                 <div className={styles.eachartsBox}>
                   <div className={styles.leftEacharts}>
@@ -251,8 +251,8 @@ class ScrollList extends React.Component {
               expandIconPosition="right"
             >
               <Icon type="appstore" />
-              <Panel header="管控方案管理" key="1">
-                <div>
+              <Panel style={{marginLeft:'-40px'}} header="管控方案管理" key="1">
+                <div style={{marginLeft:'40px'}}>
                   <div className={styles.ProgressTotal}><em>管控方案发布管理</em>方案总数:{this.ProgressLength}</div>
                   {
                     ProgressData && ProgressData.map((item) => {
@@ -330,7 +330,7 @@ class ScrollList extends React.Component {
               {/*   <Checkbox.Group defaultValue={[1]} onChange={(e) => { this.handleCheckboxGroup(e, 'accidentCheck') }}>
                 <Checkbox value={1} />
               </Checkbox.Group> */}
-              <Panel header={listTit} key="2" extra={this.genExtra(listTitle, 'Control')}>
+              <Panel style={{marginLeft:'-40px'}} header={listTit} key="2" extra={this.genExtra(listTitle, 'Control')}>
                 <div className={styles.listBox}>
                   {listTitle &&
                     <div className={styles.listItem}>
