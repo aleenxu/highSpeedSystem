@@ -6,10 +6,11 @@ import styles from './MonitoringModule.scss'
 import classNames from 'classnames'
 import 'animate.css'
 import getResponseDatas from '../../plugs/HttpData/getResponseData'
-import { Input, Checkbox, Radio, Icon, Switch, DatePicker, Collapse, Select } from 'antd'
+import { Input, Checkbox, Radio, Icon, Switch, DatePicker, Collapse, Select, Modal, message } from 'antd'
 const { Panel } = Collapse
 const { Search } = Input
 const { Option } = Select
+const { confirm } = Modal
 const options = [
   { label: '交通拥堵', value: '1' },
   { label: '道路施工', value: '2' },
@@ -386,38 +387,51 @@ class MonitoringModule extends React.Component {
     this.setState({ detailsPopup })
   }
   handleControl = () => {
-    const { detailsPopup } = this.state
-    const { eventId, eventType, pileNum, roadSecId, situation, devices } = detailsPopup
-    const deviceAry = []
-    devices.forEach((item) => {
-      item.device.forEach((items) => {
-        deviceAry.push({
-          controlScope: items.controlScope ? items.controlScope : 0,
-          deviceId: items.deviceId,
-          deviceTypeId: items.deviceTypeId,
-          pileNum: items.pileNum ? items.pileNum : 0,
-        })
-      })
-    })
-    const data = {
-      createId: 1,
-      devices: deviceAry,
-      eventId,
-      eventTypeId: eventType,
-      pileNum,
-      roadSecId,
-      value: situation,
-    }
-    getResponseDatas('post', this.controlUrl, data).then((res) => {
-      const result = res.data
-      if (result.code === 200) {
-        this.handleEventList()
-        this.handlegroupType()
-        this.handleUrlAjax(this.groupStatusUrl, 'groupStatus')
-        this.handleplanList()
-        this.handledetai()
-        this.handleEventPopup('Reserve', true)
-      }
+    const that = this
+    confirm({
+      title: '确认要发起管控方案?',
+      cancelText: '取消',
+      okText: '确认',
+      onOk() {
+        return new Promise((resolve) => {
+          const { detailsPopup } = that.state
+          const { eventId, eventType, pileNum, roadSecId, situation, devices } = detailsPopup
+          const deviceAry = []
+          devices.forEach((item) => {
+            item.device.forEach((items) => {
+              deviceAry.push({
+                controlScope: items.controlScope ? items.controlScope : 0,
+                deviceId: items.deviceId,
+                deviceTypeId: items.deviceTypeId,
+                pileNum: items.pileNum ? items.pileNum : 0,
+              })
+            })
+          })
+          const data = {
+            createId: 1,
+            devices: deviceAry,
+            eventId,
+            eventTypeId: eventType,
+            pileNum,
+            roadSecId,
+            value: situation,
+          }
+          getResponseDatas('post', that.controlUrl, data).then((res) => {
+            const result = res.data
+            if (result.code === 200) {
+              that.handledetai({ eventType, eventId })
+              resolve()
+              /* this.handleEventList()
+              this.handlegroupType()
+              this.handleUrlAjax(this.groupStatusUrl, 'groupStatus')
+              this.handleplanList()
+              this.handledetai()
+              this.handleEventPopup('Reserve', true) */
+            }
+          })
+        }).catch(() => message.error('网络错误!'))
+      },
+      onCancel() { },
     })
   }
   handleViewControl = (eventType, eventId) => {
