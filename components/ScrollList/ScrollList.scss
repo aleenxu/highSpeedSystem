@@ -29,6 +29,9 @@
   top: 16px;
   z-index: 99;
 }
+:global(.ant-checkbox-inner) {
+  background:transparent;
+}
 // 数据列表
 .iconImg{
   display: inline-block;
