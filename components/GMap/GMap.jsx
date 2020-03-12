@@ -240,7 +240,8 @@ class GMap extends React.Component {
             let lineDatas = []
             lineDatas.push(roadLatlngData)
             marker.on("click", () => {
-              console.log("绑定点击事件",lineDatas)
+              // console.log("绑定点击事件",lineDatas, item.latlng[index])
+              map.setZoomAndCenter(12, item.latlng[index]); //同时设置地图层级与中心点
               _this.handledetai(item)
               window.pathSimplifierIns.setData(lineDatas)
             })
@@ -283,6 +284,7 @@ class GMap extends React.Component {
         });
         //marker 点击时打开
         marker.on('click', function () {
+          map.setZoomAndCenter(12, item.latlng); //同时设置地图层级与中心点
           _this.openInfoWin(map, marker, SimpleInfoWindow, item)
         });
       })
