@@ -68,7 +68,7 @@ class ScrollList extends React.Component {
         nextProps.ProgressData.forEach((item) => {
           this.ProgressLength += item.count
         })
-      }
+      } 
       this.setState({ ProgressData: nextProps.ProgressData })
     }
     if (this.props.dataRes !== nextProps.dataRes) {
@@ -173,15 +173,15 @@ class ScrollList extends React.Component {
     if (index === 1) {
       return '#ed7e2f'
     } else if (index === 2) {
-      return '#34bbff'
+      return '#35baff'
     } else if (index === 3) {
       return '#f3ea29'
     } else if (index === 4) {
-      return '#6e6e6e'
-    } else if (index === 5) {
-      return '#f06c79'
-    } else if (index === 6) {
       return '#619540'
+    } else if (index === 5) {
+      return '#6d6f6e'
+    } else if (index === 6) {
+      return '#f06c79'
     }
 
   }
@@ -269,7 +269,7 @@ class ScrollList extends React.Component {
               <Icon type="appstore" />
               <Panel header="管控方案管理" key="1">
                 <div>
-                  <div className={styles.ProgressTotal}><em>管控方案发布管理</em>方案总数:{this.ProgressLength}</div>
+                  <div className={styles.ProgressTotal}><em>管控方案发布管理</em>方案总数&nbsp;:&nbsp;{this.ProgressLength}</div>
                   {
                     ProgressData && ProgressData.map((item) => {
                       return (

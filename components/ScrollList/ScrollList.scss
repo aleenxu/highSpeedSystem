@@ -106,7 +106,7 @@
   text-align: right;
   display: block;
   font-size: 12px;
-  color: #4a759c;
+  color: #5dc3f4;
   > em {
     display: flex;
     justify-self: start;
@@ -118,7 +118,7 @@
   padding: 2px;
   display: flex;
   justify-content: center;
-  color: #4a759c;
+  color: #4b759d;
   > em {
     width: 80px;
     text-align: right;
@@ -131,7 +131,10 @@
   }
 }
 :global(.ant-progress-text) {
-  color: #fff;
+  color: #5dc3f4;
+}
+:global(.ant-progress-inner){
+background-color: #132235;
 }
 // eacharts
 :global(.ant-collapse-content > .ant-collapse-content-box) {
