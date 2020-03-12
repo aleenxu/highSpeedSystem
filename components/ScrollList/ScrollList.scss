@@ -59,8 +59,10 @@
       line-height: 25px;
       color: #4a759c;
       border-right: 1px #4a759c solid;
-
       padding: 0 5px;
+    }
+    > span.tit:last-child {
+      border-right: unset;
     }
     > span.state {
       color: #ff0000;
