@@ -285,7 +285,7 @@ class ScrollList extends React.Component {
         {listType === '3' &&
           <div>
             <Checkbox.Group style={{
-              position: "absolute", zIndex: 9, left: "12px", top: "12px", borderBottom: '1px #fff solid',
+              position: "absolute", zIndex: 9, paddingLeft: "12px", top: "12px", borderBottom: '1px #fff solid',
               paddingBottom: '13px'
             }} nowtype={listTitle.type} options={[{ label: '', value: listTitle }]} onClick={this.checkBoxClick} />
             <Collapse
