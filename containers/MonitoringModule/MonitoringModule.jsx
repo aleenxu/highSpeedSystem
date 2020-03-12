@@ -127,7 +127,7 @@ class MonitoringModule extends React.Component {
   // 控制事件检测过滤设置弹窗
   handleEventPopup = (type, boolean, event) => {
     let _this = this;
-    console.log(type, boolean)
+    // console.log(type, boolean)
     if (type === 'Event') {
       if (boolean) {
         this.eventQuery = {
@@ -150,7 +150,7 @@ class MonitoringModule extends React.Component {
       }
     }
     if (type === 'Details') {
-      console.log(type, boolean.latlng, '详情的经纬度')
+      // console.log(type, boolean.latlng, '详情的经纬度')
       if (window.listItemDom && boolean === false) {
         window.listItemDom.style.background = ''
       }
@@ -245,7 +245,7 @@ class MonitoringModule extends React.Component {
     }
   }
   handleradiog = (e, name) => {
-    console.log(e, name, e.target.value);
+    // console.log(e, name, e.target.value);
     if (name === 'reportMinRange') {
       this.eventQuery[name] = e.target.value
     } else {
@@ -253,7 +253,7 @@ class MonitoringModule extends React.Component {
     }
   }
   handleCheckboxGroup = (value, name) => {
-    console.log(value, name)
+    // console.log(value, name)
     if (name === 'eventLevel') {
       this.eventQuery[name] = value
     } else {
@@ -264,7 +264,7 @@ class MonitoringModule extends React.Component {
   handleEventList = () => {
     getResponseDatas('get', this.eventListUrl, this.eventQuery).then((res) => {
       const result = res.data
-      console.log(result)
+      // console.log(result)
       if (result.code === 200) {
         const { eventType } = this.eventQuery
         if (eventType) {
@@ -276,7 +276,7 @@ class MonitoringModule extends React.Component {
               SidePopLeft[index].eventLength = result.data.length
             }
           })
-          console.log(SidePopLeft);
+          // console.log(SidePopLeft);
           this.setState({ eventsPopup: null, SidePopLeft })
         } else {
           this.setState({ eventsPopup: null, SidePopLeft: result.data })
@@ -288,7 +288,7 @@ class MonitoringModule extends React.Component {
   handlegroupType = () => {
     getResponseDatas('get', this.groupTypeUrl).then((res) => {
       const result = res.data
-      console.log(result)
+      // console.log(result)
       if (result.code === 200) {
         this.setState({ groupType: result.data })
       }
@@ -335,7 +335,7 @@ class MonitoringModule extends React.Component {
   handleCondition = () => {
     getResponseDatas('get', this.conditionUrl, this.VIboardParameters).then((res) => {
       const result = res.data
-      console.log(result.data)
+      // console.log(result.data)
       if (result.code === 200) {
         const plainOptionList = []
         result.data.map((item) => {
@@ -438,7 +438,7 @@ class MonitoringModule extends React.Component {
     const { detailsPopup } = this.state
     getResponseDatas('get', this.getInfoUrl + eventType + '/' + eventId).then((res) => {
       const result = res.data
-      console.log(result)
+      // console.log(result)
       if (result.code === 200) {
         $('#searchBox').attr('style', 'transition:all .5s;')
         $('#roadStateBox').attr('style', 'transition:all .5s;')
@@ -473,27 +473,27 @@ class MonitoringModule extends React.Component {
           <span>设备显示</span><span onClick={this.handleEventTag.bind(null, true)}>事件标注</span>
         </div>
         <div id="roadStateBox" className={`${styles.roadState} animated ${'bounceInUp'}`}>
-          <p><h5>路况</h5></p>
-          <p><span className={styles.redColor}>{'< 60km/h'}</span></p>
-          <p><h5>能见度</h5></p>
-          <p className={styles.visibility}>
+          <h5><p>路况</p></h5>
+          <h5><span className={styles.redColor}>{'< 60km/h'}</span></h5>
+          <h5><p>能见度</p></h5>
+          <h5 className={styles.visibility}>
             <s>{'< 50'}</s>
             <s>{'50 - 100'}</s>
             <s>{'100 - 200'}</s>
             <s>{'200 - 500'}</s>
-          </p>
+          </h5>
           {/* <p>
             <span>严重拥堵</span>
             <span>拥挤</span>
             <span>缓行</span>
             <span>畅通</span>
           </p> */}
-          <p>
+          <h5>
             <em>收费站</em>
             <em>F屏情报板</em>
             <em>限速牌专用</em>
             <em>可变情报板</em>
-          </p>
+          </h5>
         </div>
         {/* 事件检测过滤设置弹窗 */}
         {eventsPopup && hwayList ?

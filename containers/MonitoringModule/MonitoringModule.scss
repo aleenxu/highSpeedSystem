@@ -65,14 +65,14 @@
     background: rgba(0, 1, 6, 0.5);
     color: #fff;
 
-    > p {
+    > h5 {
       width: 100%;
       display: flex;
       justify-content: flex-start;
       align-items: center;
       padding-bottom: 0px;
       flex-wrap: wrap;
-      > h5 {
+      > p {
         width: 100%;
         color: #fff;
         // background: url(../../imgs/icon_status.png) no-repeat;
@@ -105,7 +105,7 @@
         background: #26ff6d;
       }
     }
-    > p.visibility {
+    > h5.visibility {
       width: 100%;
       padding: 0;
       margin-bottom: 8px;
@@ -124,12 +124,12 @@
         border-right: none;
       }
     }
-    > p:last-child {
+    > h5:last-child {
       width: 284px;
       padding: 10px 0 0;
       display: flex;
       justify-content: space-between;
-      h5 {
+      p {
         background: none;
       }
       > em {

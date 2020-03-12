@@ -226,16 +226,14 @@ class ScrollList extends React.Component {
       <div className={styles.scrollBox}>
         {listType === '1' &&
           <div>
-            {/*  <Icon type="setting" className={styles.setting} onClick={(e) => { this.handleEventPopup(e, 'Event', true) }} /> */}
             <div className={styles.settingTitle}><span><i />未管控</span><span><i />已管控</span></div>
+            <Icon style={{left:'10px', top:'15px', position: "absolute", zIndex: '999', color:'white'}} type="pie-chart" />
             <Collapse
               defaultActiveKey={['1']}
               onChange={this.callback}
               expandIconPosition="right"
             >
-              <Icon type="pie-chart" />
               <Panel header="事件监视" key="1">
-
                 <div className={styles.eachartsBox}>
                   <div className={styles.leftEacharts}>
                     {!!sideachart && <ReactEcharts option={sideachart} style={{ height: '100px', width: '100%' }} />}
@@ -260,13 +258,12 @@ class ScrollList extends React.Component {
         }
         {listType === '2' &&
           <div>
-            {/*  <Icon type="setting" className={styles.setting} onClick={(e) => { this.handleEventPopup(e, 'Control', true) }} /> */}
+            <Icon style={{left:'10px', top:'15px', position: "absolute", zIndex: '999', color:'white'}} type="appstore" />
             <Collapse
               defaultActiveKey={['1']}
               onChange={this.callback}
               expandIconPosition="right"
             >
-              <Icon type="appstore" />
               <Panel header="管控方案管理" key="1">
                 <div>
                   <div className={styles.ProgressTotal}><em>管控方案发布管理</em>方案总数&nbsp;:&nbsp;{this.ProgressLength}</div>
@@ -288,11 +285,7 @@ class ScrollList extends React.Component {
               position: "absolute", zIndex: 9, paddingLeft: "12px", top: "12px", borderBottom: '1px #fff solid',
               paddingBottom: '13px'
             }} nowtype={listTitle.type} options={[{ label: '', value: listTitle }]} onClick={this.checkBoxClick} />
-            <Collapse
-              onChange={this.callback}
-              expandIconPosition="right"
-            >
-              {listTitle.type === 1 &&
+            {listTitle.type === 1 &&
                 <img className={styles.iconImg} src={iconTrafficJam} />
               }
               {listTitle.type === 2 &&
@@ -304,6 +297,10 @@ class ScrollList extends React.Component {
               {listTitle.type === 4 &&
                 <img className={styles.iconImg} src={iconAccidents} />
               }
+            <Collapse
+              onChange={this.callback}
+              expandIconPosition="right"
+            >
               <Panel style={{ paddingLeft: '40px' }} header={listTit} key="2" extra={this.genExtra(listTitle, 'Event')}>
                 <div style={{ marginLeft: '-40px' }} className={styles.listBox}>
                   {listTitle &&
@@ -338,10 +335,6 @@ class ScrollList extends React.Component {
               onChange={this.callback}
               expandIconPosition="right"
             >
-              {/* <Icon type="menu-unfold" /> */}
-              {/*   <Checkbox.Group defaultValue={[1]} onChange={(e) => { this.handleCheckboxGroup(e, 'accidentCheck') }}>
-                <Checkbox value={1} />
-              </Checkbox.Group> */}
               <Panel header={listTit} key="2" extra={this.genExtra(listTitle, 'Control')}>
                 <div className={styles.listBox}>
                   {listTitle &&
