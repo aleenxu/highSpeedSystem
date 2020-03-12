@@ -355,6 +355,10 @@
         display: inline-block;
         line-height: 60px;
         font-size: 16px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        vertical-align: middle;
       }
     }
     .ItemBox {
@@ -447,7 +451,8 @@
   :global(.ant-collapse) {
     width: 100%;
     border: none !important;
-    padding-bottom: 45px;
+    max-height:calc(100% - 45px) ;
+    overflow-y: auto;
   }
   :global(.ant-collapse > .ant-collapse-item > .ant-collapse-header) {
     background: rgba(19, 27, 37, 0.8);
