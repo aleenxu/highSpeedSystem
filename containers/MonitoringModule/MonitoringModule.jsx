@@ -193,6 +193,9 @@ class MonitoringModule extends React.Component {
     if (type === 'condition') {
       this.setState({ conditionList: boolean })
     }
+    if (type === 'controldet') {
+      this.handleViewControl(boolean.eventTypeId, boolean.eventId)
+    }
   }
   genExtra = () => (
     <Icon
@@ -212,8 +215,6 @@ class MonitoringModule extends React.Component {
     />
   )
   genExtraAddOnclick = (e, item) => {
-    console.log(item);
-    debugger
     e.stopPropagation()
     this.VIboardParameters.deviceTypeId = item.dictCode
     this.getdeviceList(item)
@@ -225,8 +226,6 @@ class MonitoringModule extends React.Component {
     data.device.map((item) => {
       this.deviceList.push(item.deviceId)
     })
-    console.log(this.deviceList, '==============111');
-
   }
   handleInput = (e, name, type) => {
     if (type === 'eventsPopup') {
@@ -421,10 +420,9 @@ class MonitoringModule extends React.Component {
       }
     })
   }
-  handleViewControl = () => {
+  handleViewControl = (eventType, eventId) => {
     const { detailsPopup } = this.state
-    const { eventId, eventType } = detailsPopup
-    getResponseDatas('get', this.getInfoUrl + '/' + eventType + '/' + eventId).then((res) => {
+    getResponseDatas('get', this.getInfoUrl + eventType + '/' + eventId).then((res) => {
       const result = res.data
       console.log(result)
       if (result.code === 200) {
@@ -850,7 +848,12 @@ class MonitoringModule extends React.Component {
                       <div className={styles.HeadItem}>当前路况</div>
                       <div className={styles.RowBox}>
                         {/*  <p>拥堵级别&nbsp;:&nbsp;&nbsp;<span style={{ color: '#e90202' }}>严重拥堵</span></p> */}
-                        <p>平局车速&nbsp;:&nbsp;&nbsp;<span style={{ color: '#e90202' }}>{detailsPopup.situation}km/h</span></p>
+
+                        {
+                          detailsPopup.eventType == 3 ?
+                            <p>能见度&nbsp;:&nbsp;&nbsp;<span>{detailsPopup.situation}m</span></p> :
+                            <p>平局车速&nbsp;:&nbsp;&nbsp;<span>{detailsPopup.situation}km/h</span></p>
+                        }
                       </div>
                     </div>
                   </div>
@@ -872,7 +875,7 @@ class MonitoringModule extends React.Component {
                   })
                 }
               </Collapse>
-              <div className={styles.Panelbutton}>{detailsPopup.controlStatusType > 0 ? <span onClick={this.handleViewControl}>查看管控方案</span> : <span onClick={this.handleControl}>发起管控方案</span>}</div>
+              <div className={styles.Panelbutton}>{detailsPopup.controlStatusType > 0 ? <span onClick={() => { this.handleViewControl(detailsPopup.eventType, detailsPopup.eventId) }}>查看管控方案</span> : <span onClick={this.handleControl}>发起管控方案</span>}</div>
             </div> : null
         }
         {
