@@ -105,23 +105,23 @@
         background: #26ff6d;
       }
     }
-    > p.visibility{
-      width:100%;
-      padding:0;
-      margin-bottom:8px;
-      background:linear-gradient(left, #404040,#ffffff );
+    > p.visibility {
+      width: 100%;
+      padding: 0;
+      margin-bottom: 8px;
+      background: linear-gradient(left, #404040, #ffffff);
       display: flex;
       justify-content: space-between;
       align-items: center;
       > s {
-        border-right:1px #000 solid;
-        color:#ffffff;
+        border-right: 1px #000 solid;
+        color: #ffffff;
         text-decoration: none;
         font-size: 12px;
-        padding:0 10px;
+        padding: 0 10px;
       }
       > s:last-child {
-        border-right:none;
+        border-right: none;
       }
     }
     > p:last-child {
@@ -136,7 +136,7 @@
         width: 38%;
         height: 26px;
         line-height: 22px;
-        magin:3px 0;
+        magin: 3px 0;
         font-size: 12px;
         color: #fff;
         display: inline-block;
@@ -363,10 +363,11 @@
         width: 100%;
         height: 20px;
         line-height: 20px;
-        background: #0e151c;
+        background: #0e151d;
         display: inline-block;
         color: #4a759c;
         padding: 0px 22px;
+        margin: 5px 0;
         .AddItem {
           float: right;
           cursor: pointer;
@@ -392,7 +393,7 @@
             border: 1px solid #959595;
           }
         }
-        .InputBox{
+        .InputBox {
           width: 100%;
           text-align: center;
           margin: 10px 0;
@@ -445,6 +446,8 @@
   overflow-y: auto;
   :global(.ant-collapse) {
     width: 100%;
+    border: none !important;
+    padding-bottom: 45px;
   }
   :global(.ant-collapse > .ant-collapse-item > .ant-collapse-header) {
     background: rgba(19, 27, 37, 0.8);
@@ -461,12 +464,27 @@
   }
   :global(.anticon-plus svg) {
     color: #2d81ad;
-    font-size: 18px;
+    font-size: 17px;
+    margin-top: -9px;
     &:hover {
       transition: all 0.5s;
       transform: rotate(180deg);
       color: #26ff6d;
       font-size: 18px;
+    }
+  }
+  :global(.ant-collapse > .ant-collapse-item) {
+    border: none !important;
+  }
+  .PanelChs {
+    border: none !important;
+    :global(.ant-collapse-header) {
+      color: #446b92 !important;
+      height: 25px;
+      line-height: 0;
+    }
+    :global(.ant-collapse-content) {
+      border: none !important;
     }
   }
   .ScrollItem {
@@ -475,14 +493,19 @@
   }
   .PanelBox {
     position: relative;
+    margin-top: 20px;
+    &:last-child {
+      margin-bottom: 20px;
+    }
     .PanelItem {
-      height: 45px;
-      line-height: 45px;
+      height: 25px;
+      line-height: 25px;
       margin: 0;
       text-indent: 22px;
-      color: #5a5f74;
-      /*  border-bottom: 1px solid #696969; */
+      color: #646a82;
+      background: #0e151d;
       cursor: pointer;
+      margin: 0 13px !important;
       &:last-child {
         border-bottom: 0;
       }
@@ -494,7 +517,7 @@
     .MinusItem {
       position: absolute;
       right: 15px;
-      top: 13px;
+      top: 4px;
       cursor: pointer;
       color: #2d81ad;
       &:hover {
@@ -505,15 +528,6 @@
     }
   }
 
-  .PanelItemNone {
-    height: 45px;
-    line-height: 45px;
-    margin: 0;
-    text-align: center;
-    text-indent: 22px;
-    color: #fff;
-    font-size: 16px;
-  }
   .Close {
     position: absolute;
     top: 16px;
@@ -527,17 +541,18 @@
     }
   }
   .Panelbutton {
-    width: 100%;
-    height: 45px;
+    width: 160px;
+    height: 25px;
     text-align: center;
-    line-height: 45px;
-    background: #2d81ad;
+    line-height: 25px;
+    background: #143757;
     color: #fff;
-    font-size: 18px;
     position: absolute;
-    bottom: 3px;
+    bottom: 10px;
     cursor: pointer;
-    >span{
+    left: 50%;
+    margin-left: -80px;
+    > span {
       width: 100%;
       height: 100%;
       display: inline-block;
@@ -656,4 +671,13 @@
     bottom: 20px !important;
     color: #fff;
   }
+}
+.PanelItemNone {
+  height: 45px;
+  line-height: 45px;
+  margin: 0;
+  text-align: center;
+  text-indent: 22px;
+  color: #446b92;
+  font-size: 16px;
 }

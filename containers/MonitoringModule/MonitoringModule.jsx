@@ -209,7 +209,7 @@ class MonitoringModule extends React.Component {
   genExtraAdd = (item) => (
     <Icon
       type="plus"
-      onClick={(event) => {
+      onClick={(e) => {
         this.genExtraAddOnclick(e, item)
       }}
     />
@@ -659,7 +659,7 @@ class MonitoringModule extends React.Component {
               <div className={styles.Content}>
                 <div className={styles.Header}>
                   <span>方案编号&nbsp;:&nbsp;&nbsp;{reservePopup.eventId}P</span>
-                  <span>事件类型&nbsp;:&nbsp;&nbsp;{reservePopup.eventTypeName}</span>
+                  <span>事件类型&nbsp;:&nbsp;&nbsp;<sapn style={{ color: '#f31113' }}>{reservePopup.eventTypeName}</sapn></span>
                 </div>
                 <div className={styles.ItemBox}>
                   <div className={styles.HeadItem}>基本信息</div>
@@ -667,44 +667,23 @@ class MonitoringModule extends React.Component {
                   <div className={styles.RowBox}>道路名称&nbsp;:&nbsp;&nbsp;{reservePopup.roadName.split(' ')[1]}</div>
                   <div className={styles.RowBox}>
                     <p>行驶方向&nbsp;:&nbsp;&nbsp;{reservePopup.directionName}</p>
-                    <p>起始桩号&nbsp;:&nbsp;&nbsp;{reservePopup.pileNum}</p>
+                    <p>起始桩号&nbsp;:&nbsp;&nbsp;<span style={{ color: '#c67f03' }}>{reservePopup.pileNum}</span></p>
                   </div>
                   <div className={styles.RowBox}>
-                    <p>平均车速&nbsp;:&nbsp;&nbsp;{reservePopup.situation} </p>
-                    <p>拥堵路段长度&nbsp;:&nbsp;&nbsp;{reservePopup.eventLength}m</p>
+                    <p>平均车速&nbsp;:&nbsp;&nbsp;<sapn style={{ color: '#c67f03' }}>{reservePopup.situation}</sapn> </p>
+                    <p>拥堵路段长度&nbsp;:&nbsp;&nbsp;<sapn style={{ color: '#f31113' }}>{reservePopup.eventLength}m</sapn></p>
                   </div>
-                  <div className={styles.RowBox}>数据来源&nbsp;:&nbsp;&nbsp;{reservePopup.dataSourceName}</div>
+                  <div className={styles.RowBox}>数据来源&nbsp;:&nbsp;&nbsp;<sapn style={{ color: '#03af01' }}>{reservePopup.dataSourceName}</sapn></div>
                 </div>
-                {/* <div className={styles.ItemBox}>
-                  <div className={styles.HeadItem}>当前路况</div>
-                  <div className={styles.RowBox}>
-                    <p>拥堵级别&nbsp;:&nbsp;&nbsp;<span style={{ color: '#b90303' }}>严重拥堵</span></p>
-                    <p>平局车速&nbsp;:&nbsp;&nbsp;<span style={{ color: '#b90303' }}>20kmh</span></p>
-                  </div>
-                </div>
-                <div className={styles.ItemBox}>
-                  <div className={styles.HeadItem}>天气情况</div>
-                  <div className={styles.RowBox}>
-                    <p>天气&nbsp;:&nbsp;&nbsp;<span style={{ color: '#ff7e00' }}>大雾</span></p>
-                    <p>能见度&nbsp;:&nbsp;&nbsp;<span style={{ color: '#ff7e00' }}>小于50米</span></p>
-                  </div>
-                </div>
-                <div className={styles.ItemBox}>
-                  <div className={styles.HeadItem}>道路施工</div>
-                  <div className={styles.RowBox}>
-                    <p>事件等级&nbsp;:&nbsp;&nbsp;<span style={{ color: '#b90303' }}>重大</span></p>
-                  </div>
-                  <div className={styles.RowBox}>施工时间&nbsp;:&nbsp;&nbsp;2020-02-14  12:00:00   —  2020-02-15  12:00:00</div>
-                </div> */}
                 {
                   reservePopup.devices.map((items) => {
                     return (
                       items.dictCode === 1 ?
                         <div className={styles.ItemBox}>
-                          <div className={styles.HeadItem}>可变情报板管控预案设置<span className={styles.AddItem} onClick={(e) => { this.genExtraAddOnclick(e, items) }}><Icon type="plus" />添加</span></div>
+                          <div className={styles.HeadItem}>可变情报板管控预案设置<span className={styles.AddItem} onClick={(e) => { this.genExtraAddOnclick(e, items) }}><Icon type="plus" /></span></div>
                           <div className={styles.RowBox}>
                             {
-                              items.device.map((item, index) => {
+                              items.device && items.device.map((item, index) => {
                                 return (
                                   <div key={item.deviceId + item.deviceTypeId}>
                                     <div><Icon type="close-circle" className={styles.CloneItem} />{index + 1}.{item.deviceName + '-' + item.directionName + items.codeName}&nbsp;:</div>
@@ -715,21 +694,45 @@ class MonitoringModule extends React.Component {
                                 )
                               })
                             }
+                            {!!items.device.length || <div className={styles.PanelItemNone}>暂无数据</div>}
                           </div>
-                        </div> : null
+                        </div> : items.dictCode === 2 ?
+                          <div className={styles.ItemBox}>
+                            <div className={styles.HeadItem}>限速牌管控措施<span className={styles.AddItem} onClick={(e) => { this.genExtraAddOnclick(e, items) }}><Icon type="plus" /></span></div>
+                            {
+                              items.device && items.device.map((item) => {
+                                return (
+                                  <div>
+                                    <div className={styles.RowBox}>
+                                      **地点车道可变情报板&nbsp;:&nbsp;&nbsp;一车道限速&nbsp;:&nbsp;&nbsp; <span style={{ color: '#11e002' }}>100km/h</span>
+                                    </div>
+                                    <div className={styles.RowBox}>
+                                      <span style={{ width: '154px', display: 'inline-block' }} />
+                                      二车道限速&nbsp;:&nbsp;&nbsp;<span style={{ color: '#11e002' }}>80km/h</span>
+                                    </div>
+                                  </div>
+                                )
+                              })
+                            }
+                            {!!items.device.length || <div className={styles.PanelItemNone}>暂无数据</div>}
+                          </div> : items.dictCode === 3 ?
+                            <div className={styles.ItemBox}>
+                              <div className={styles.HeadItem}>收费站出入口管控设置<span className={styles.AddItem} onClick={(e) => { this.genExtraAddOnclick(e, items) }}><Icon type="plus" /></span></div>
+                              {
+                                items.device && items.device.map((item) => {
+                                  return (
+                                    <div className={styles.RowBox}>
+                                      <Icon type="close-circle" className={styles.CloneItem} />****地点**收费站:&nbsp;:&nbsp;&nbsp;入口&nbsp;:&nbsp;&nbsp;<p><Switch checkedChildren="开放" unCheckedChildren="关闭" />&nbsp;:&nbsp;&nbsp;出口&nbsp;&nbsp;&nbsp;<Switch checkedChildren="开放" unCheckedChildren="关闭" /></p>
+                                    </div>
+                                  )
+                                })
+                              }
+                              {!!items.device.length || <div className={styles.PanelItemNone}>暂无数据</div>}
+                            </div> : null
+
                     )
                   })
                 }
-
-                <div className={styles.ItemBox}>
-                  <div className={styles.HeadItem}>收费站出入口管控设置<span className={styles.AddItem} onClick={(e) => { this.handleEventPopup('Whethe', true, e) }}><Icon type="plus" />添加</span></div>
-                  <div className={styles.RowBox}>
-                    <Icon type="close-circle" className={styles.CloneItem} />****地点**收费站入口&nbsp;:&nbsp;&nbsp;<p><Switch checkedChildren="开放" unCheckedChildren="关闭" /></p>
-                  </div>
-                  <div className={styles.RowBox}>
-                    <Icon type="close-circle" className={styles.CloneItem} />****地点**收费站出口&nbsp;:&nbsp;&nbsp;<p><Switch checkedChildren="开放" unCheckedChildren="关闭" defaultChecked /></p>
-                  </div>
-                </div>
                 <div className={styles.ItemBox}>
                   <div className={styles.HeadItem}>管控时段</div>
                   <div className={styles.RowBox}>
@@ -771,10 +774,14 @@ class MonitoringModule extends React.Component {
                 <div className={styles.ItemBox}>
                   <div className={styles.HeadItem}>发布渠道
                     <div style={{ marginLeft: '10px' }} className={styles.ItemInput}>
-                      <Radio.Group defaultValue={1}>
+                      {/* <Radio.Group defaultValue={1}>
                         <Radio value={1}>高德</Radio>
                         <Radio value={2}>可变情报表</Radio>
-                      </Radio.Group>
+                      </Radio.Group> */}
+                      <Checkbox.Group >
+                        <Checkbox value={1} >发布渠道</Checkbox>
+                        <Checkbox value={2} >可变情报表</Checkbox>
+                      </Checkbox.Group>
                     </div>
                   </div>
                 </div>
@@ -829,43 +836,36 @@ class MonitoringModule extends React.Component {
                   <div className={styles.Content}>
                     <div className={styles.Header}>
                       <span>事件编号&nbsp;:&nbsp;&nbsp;{detailsPopup.eventId}</span>
-                      <span>事件类型&nbsp;:&nbsp;&nbsp;{detailsPopup.eventTypeName}</span>
+                      <span>事件类型&nbsp;:&nbsp;&nbsp;<span style={{ color: '#f31113' }}>{detailsPopup.eventTypeName}</span></span>
                     </div>
                     <div className={styles.ItemBox}>
                       <div className={styles.HeadItem}>基本信息</div>
-                      <div className={styles.RowBox}>道路名称&nbsp;:&nbsp;&nbsp;{detailsPopup.secName}</div>
+                      <div className={styles.RowBox}>道路编号&nbsp;:&nbsp;&nbsp;{detailsPopup.roadName.split(' ')[0]}</div>
+                      <div className={styles.RowBox}>道路名称&nbsp;:&nbsp;&nbsp;{detailsPopup.roadName.split(' ')[1]}</div>
                       <div className={styles.RowBox}>
-                        <p>方向&nbsp;:&nbsp;&nbsp;{detailsPopup.directionName}</p>
-                        <p>高速&nbsp;:&nbsp;&nbsp;{detailsPopup.roadName}</p>
+                        <p>行驶方向&nbsp;:&nbsp;&nbsp;{detailsPopup.directionName}</p>
+                        <p>起始桩号&nbsp;:&nbsp;&nbsp;<span style={{ color: '#c67f03' }}>{detailsPopup.pileNum.split(' ')[0]}</span></p>
                       </div>
                       <div className={styles.RowBox}>
-                        <p>起始公里桩号&nbsp;:&nbsp;&nbsp;{detailsPopup.pileNum.split(' ')[0]}</p>
-                        <p>结束公里桩号&nbsp;:&nbsp;&nbsp;{detailsPopup.pileNum.split(' ')[1]}</p>
-                      </div>
-                      <div className={styles.RowBox}>数据来源&nbsp;:&nbsp;&nbsp;{detailsPopup.dataSourceName}</div>
-                    </div>
-                    <div className={styles.ItemBox}>
-                      <div className={styles.HeadItem}>当前路况</div>
-                      <div className={styles.RowBox}>
-                        {/*  <p>拥堵级别&nbsp;:&nbsp;&nbsp;<span style={{ color: '#e90202' }}>严重拥堵</span></p> */}
-
                         {
                           detailsPopup.eventType == 3 ?
                             <p>能见度&nbsp;:&nbsp;&nbsp;<span>{detailsPopup.situation}m</span></p> :
-                            <p>平局车速&nbsp;:&nbsp;&nbsp;<span>{detailsPopup.situation}km/h</span></p>
+                            <p>平均车速&nbsp;:&nbsp;&nbsp;<span style={{ color: '#c67f03' }}>{detailsPopup.situation}km/h</span></p>
                         }
+                        <p>拥堵路段长度&nbsp;:&nbsp;&nbsp;<span style={{ color: '#f31113' }}>{detailsPopup.eventLength}m</span></p>
                       </div>
+                      <div className={styles.RowBox}>数据来源&nbsp;:&nbsp;&nbsp;<span style={{ color: '#03af01' }}>{detailsPopup.dataSourceName}</span></div>
                     </div>
                   </div>
                 </Panel>
                 {
                   detailsPopup.devices.map((item, ind) => {
                     return (
-                      <Panel header={item.codeName} key={item.dictCode} extra={detailsPopup.controlStatusType > 0 ? null : this.genExtraAdd(item)}>
-                        <div className={styles.ScrollItem}> {/* 添加滚动条 */}
+                      <Panel className={styles.PanelChs} header={item.codeName} key={item.dictCode} extra={detailsPopup.controlStatusType > 0 ? null : this.genExtraAdd(item)}>
+                        <div> {/* 添加滚动条 */}
                           {
                             item.device && item.device.map((items, index) => {
-                              return <div className={styles.PanelBox}><p className={styles.PanelItem} key={items}>{`${index + 1}. ${items.deviceName} ${items.directionName} ${item.codeName}`}</p>{detailsPopup.controlStatusType > 0 || <Icon onClick={() => { this.handleSubDetailsPopupList(ind, index) }} className={styles.MinusItem} type="minus" />}</div>
+                              return <div className={styles.PanelBox}><p className={styles.PanelItem} key={items}>{`${index + 1}. ${items.deviceName} ${items.directionName} ${item.codeName}`}</p>{detailsPopup.controlStatusType > 0 || <Icon onClick={() => { this.handleSubDetailsPopupList(ind, index) }} className={styles.MinusItem} type="close" />}</div>
                             })
                           }
                           {item.device && item.device.length === 0 && <p className={styles.PanelItemNone}>暂无数据</p>}
