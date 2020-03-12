@@ -663,14 +663,16 @@ class MonitoringModule extends React.Component {
                 </div>
                 <div className={styles.ItemBox}>
                   <div className={styles.HeadItem}>基本信息</div>
-                  <div className={styles.RowBox}>道路编号&nbsp;:&nbsp;&nbsp;{reservePopup.roadName.split(' ')[0]}</div>
-                  <div className={styles.RowBox}>道路名称&nbsp;:&nbsp;&nbsp;{reservePopup.roadName.split(' ')[1]}</div>
                   <div className={styles.RowBox}>
-                    <p>行驶方向&nbsp;:&nbsp;&nbsp;{reservePopup.directionName}</p>
-                    <p>起始桩号&nbsp;:&nbsp;&nbsp;<span style={{ color: '#c67f03' }}>{reservePopup.pileNum}</span></p>
+                    <p>道路编号&nbsp;:&nbsp;&nbsp;{reservePopup.roadName.split(' ')[0]}</p>
+                    <p>道路名称&nbsp;:&nbsp;&nbsp;{reservePopup.roadName.split(' ')[1]}</p>
                   </div>
                   <div className={styles.RowBox}>
-                    <p>平均车速&nbsp;:&nbsp;&nbsp;<sapn style={{ color: '#c67f03' }}>{reservePopup.situation}</sapn> </p>
+                    <p>行驶方向&nbsp;:&nbsp;&nbsp;{reservePopup.directionName}</p>
+                    <p>起始桩号&nbsp;:&nbsp;&nbsp;<span style={{ color: '#c67f03' }}>{reservePopup.pileNum.split(' ')[0]}</span></p>
+                  </div>
+                  <div className={styles.RowBox}>
+                    <p>平均车速&nbsp;:&nbsp;&nbsp;<sapn style={{ color: '#c67f03' }}>{reservePopup.situation}km/h</sapn> </p>
                     <p>拥堵路段长度&nbsp;:&nbsp;&nbsp;<sapn style={{ color: '#f31113' }}>{reservePopup.eventLength}m</sapn></p>
                   </div>
                   <div className={styles.RowBox}>数据来源&nbsp;:&nbsp;&nbsp;<sapn style={{ color: '#03af01' }}>{reservePopup.dataSourceName}</sapn></div>
