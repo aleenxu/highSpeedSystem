@@ -112,6 +112,23 @@ class GMap extends React.Component {
       'autoRefresh': true,     //是否自动刷新，默认为false
       'interval': 180,         //刷新间隔，默认180s
     });
+    // 设备地图层
+    window.deviceTollGate = new AMap.LayerGroup({ //收费站
+      'autoRefresh': true,     //是否自动刷新，默认为false
+      'interval': 180,         //刷新间隔，默认180s
+    });
+    window.deviceFInfoBoard = new AMap.LayerGroup({ //F情报版
+      'autoRefresh': true,     //是否自动刷新，默认为false
+      'interval': 180,         //刷新间隔，默认180s
+    });
+    window.deviceInfoBoard = new AMap.LayerGroup({ //情报版
+      'autoRefresh': true,     //是否自动刷新，默认为false
+      'interval': 180,         //刷新间隔，默认180s
+    });
+    window.deviceTurnBoard = new AMap.LayerGroup({ //可变情报版
+      'autoRefresh': true,     //是否自动刷新，默认为false
+      'interval': 180,         //刷新间隔，默认180s
+    });
     trafficLayer.setMap(window.map)
     //输入提示
     const autoOptions = {
@@ -127,16 +144,16 @@ class GMap extends React.Component {
     AMapUI.loadUI(['overlay/SimpleMarker', 'overlay/SimpleInfoWindow'], function (SimpleMarker, SimpleInfoWindow) {
       if (_this.state.dataAll){
         // 左侧功能数据图标
-        _this.createPoint(pointArr, tollStationIcon, SimpleMarker, SimpleInfoWindow, map, true)
+        _this.createPoint(pointArr, tollStationIcon, SimpleMarker, SimpleInfoWindow, map, "1")
       }
       // 图标收费站
-      _this.createPoint(_this.state.tollGateJson, tollStationIcon, SimpleMarker, SimpleInfoWindow, map)
+      _this.createPoint(_this.state.tollGateJson, tollStationIcon, SimpleMarker, SimpleInfoWindow, map, "2")
       // 图标F屏情报版
-      _this.createPoint(_this.state.infoFBoardJson, fBoardIcon, SimpleMarker, SimpleInfoWindow, map)
+      _this.createPoint(_this.state.infoFBoardJson, fBoardIcon, SimpleMarker, SimpleInfoWindow, map, "3")
       // // 图标限速牌专用
-      _this.createPoint(_this.state.speedLimitJson, speedLimitIcon, SimpleMarker, SimpleInfoWindow, map)
+      _this.createPoint(_this.state.speedLimitJson, speedLimitIcon, SimpleMarker, SimpleInfoWindow, map, "4")
       // // 图标可变情报版
-      _this.createPoint(_this.state.infoBoardJson, turnBoardIcon, SimpleMarker, SimpleInfoWindow, map)
+      _this.createPoint(_this.state.infoBoardJson, turnBoardIcon, SimpleMarker, SimpleInfoWindow, map, "5")
 
     })
     // 线的绘制
@@ -221,74 +238,152 @@ class GMap extends React.Component {
   */
   createPoint = (pointArr, pointIcon, SimpleMarker, SimpleInfoWindow, map, flag) => {
     const _this = this;
-    if (flag){
-      _this.state.dataAll.map((leftItem, leftIndex)=>{
-        if (leftItem.eventData.length > 0){
-          leftItem.eventData.map((item, index) => {
-            const marker = new SimpleMarker({
-              //自定义图标地址
-              iconStyle: _this.returnMapIcon(leftIndex),
-              //设置基点偏移
-              offset: new AMap.Pixel(-88, -19),
-              showPositionPoint: false,
-              position: item.latlng[index],
-              zIndex: 10
-            });
-            let roadLatlngData = {
-              "path": item.latlng
-            }
-            let lineDatas = []
-            lineDatas.push(roadLatlngData)
-            marker.on("click", () => {
-              // console.log("绑定点击事件",lineDatas, item.latlng[index])
-              map.setZoomAndCenter(12, item.latlng[index]); //同时设置地图层级与中心点
-              _this.handledetai(item)
-              window.pathSimplifierIns.setData(lineDatas)
-            })
-            switch(leftIndex){
-              case 0:
-                window.leftModuleOne.addLayer(marker) //把点添加到层组中
-                window.leftModuleOne.setMap(map) // 层组渲染到地图中
-                window.leftModuleOne.hide() // 隐藏当前的层组
-                break;
-              case 1:
-                window.leftModuleTwo.addLayer(marker) //把点添加到层组中
-                window.leftModuleTwo.setMap(map) // 层组渲染到地图中
-                window.leftModuleTwo.hide() // 隐藏当前的层组
-                break;
-              case 2:
-                window.leftModuleThree.addLayer(marker) //把点添加到层组中
-                window.leftModuleThree.setMap(map) // 层组渲染到地图中
-                window.leftModuleThree.hide() // 隐藏当前的层组
-                break;
-              case 3:
-                window.leftModuleFour.addLayer(marker) //把点添加到层组中
-                window.leftModuleFour.setMap(map) // 层组渲染到地图中
-                window.leftModuleFour.hide() // 隐藏当前的层组
-                break;
-            }
-          }) 
-        }
-      })
-    } else {
-      pointArr.length > 0 && pointArr.map((item) => {
-        const marker = new SimpleMarker({
-          //自定义图标地址
-          iconStyle: pointIcon,
-          //设置基点偏移
-          offset: new AMap.Pixel(-10, -10),
-          map: map,
-          showPositionPoint: false,
-          position: item.latlng,
-          zIndex: 10
-        });
-        //marker 点击时打开
-        marker.on('click', function () {
-          map.setZoomAndCenter(12, item.latlng); //同时设置地图层级与中心点
-          _this.openInfoWin(map, marker, SimpleInfoWindow, item)
-        });
-      })
+    switch(flag) {
+      case "1":
+        _this.state.dataAll.map((leftItem, leftIndex)=>{
+          if (leftItem.eventData.length > 0){
+            leftItem.eventData.map((item, index) => {
+              const marker = new SimpleMarker({
+                //自定义图标地址
+                iconStyle: _this.returnMapIcon(leftIndex),
+                //设置基点偏移
+                offset: new AMap.Pixel(-88, -19),
+                showPositionPoint: false,
+                position: item.latlng[index],
+                zIndex: 10
+              });
+              let roadLatlngData = {
+                "path": item.latlng
+              }
+              let lineDatas = []
+              lineDatas.push(roadLatlngData)
+              marker.on("click", () => {
+                // console.log("绑定点击事件",lineDatas, item.latlng[index])
+                map.setZoomAndCenter(12, item.latlng[index]); //同时设置地图层级与中心点
+                _this.handledetai(item)
+                window.pathSimplifierIns.setData(lineDatas)
+              })
+              switch(leftIndex){
+                case 0:
+                  window.leftModuleOne.addLayer(marker) //把点添加到层组中
+                  window.leftModuleOne.setMap(map) // 层组渲染到地图中
+                  window.leftModuleOne.hide() // 隐藏当前的层组
+                  break;
+                case 1:
+                  window.leftModuleTwo.addLayer(marker) //把点添加到层组中
+                  window.leftModuleTwo.setMap(map) // 层组渲染到地图中
+                  window.leftModuleTwo.hide() // 隐藏当前的层组
+                  break;
+                case 2:
+                  window.leftModuleThree.addLayer(marker) //把点添加到层组中
+                  window.leftModuleThree.setMap(map) // 层组渲染到地图中
+                  window.leftModuleThree.hide() // 隐藏当前的层组
+                  break;
+                case 3:
+                  window.leftModuleFour.addLayer(marker) //把点添加到层组中
+                  window.leftModuleFour.setMap(map) // 层组渲染到地图中
+                  window.leftModuleFour.hide() // 隐藏当前的层组
+                  break;
+              }
+            }) 
+          }
+        })
+        break;
+      case "2": 
+        pointArr.length > 0 && pointArr.map((item) => {
+          const marker2 = new SimpleMarker({
+            //自定义图标地址
+            iconStyle: tollStationIcon,
+            //设置基点偏移
+            offset: new AMap.Pixel(-10, -10),
+            map: map,
+            showPositionPoint: false,
+            position: item.latlng,
+            zIndex: 10
+          });
+          //marker 点击时打开
+          marker2.on('click', function () {
+            map.setZoomAndCenter(12, item.latlng); //同时设置地图层级与中心点
+            _this.openInfoWin(map, marker2, SimpleInfoWindow, item)
+          });
+          window.deviceTollGate.addLayer(marker2) //把点添加到层组中
+          window.deviceTollGate.setMap(map) // 层组渲染到地图中
+          // window.deviceTollGate.hide() // 隐藏当前的层组
+        })
+        break;
+      case "3":
+        pointArr.length > 0 && pointArr.map((item) => {
+          const marker3 = new SimpleMarker({
+            //自定义图标地址
+            iconStyle: fBoardIcon,
+            //设置基点偏移
+            offset: new AMap.Pixel(-10, -10),
+            map: map,
+            showPositionPoint: false,
+            position: item.latlng,
+            zIndex: 10
+          });
+          //marker 点击时打开
+          marker3.on('click', function () {
+            map.setZoomAndCenter(12, item.latlng); //同时设置地图层级与中心点
+            _this.openInfoWin(map, marker3, SimpleInfoWindow, item)
+          });
+          window.deviceFInfoBoard.addLayer(marker3) //把点添加到层组中
+          window.deviceFInfoBoard.setMap(map) // 层组渲染到地图中
+          // window.deviceFInfoBoard.hide() // 隐藏当前的层组
+        })
+        break;
+      case "4":
+        pointArr.length > 0 && pointArr.map((item) => {
+          const marker4 = new SimpleMarker({
+            //自定义图标地址
+            iconStyle: speedLimitIcon,
+            //设置基点偏移
+            offset: new AMap.Pixel(-10, -10),
+            map: map,
+            showPositionPoint: false,
+            position: item.latlng,
+            zIndex: 10
+          });
+          //marker 点击时打开
+          marker4.on('click', function () {
+            map.setZoomAndCenter(12, item.latlng); //同时设置地图层级与中心点
+            _this.openInfoWin(map, marker4, SimpleInfoWindow, item)
+          });
+          window.deviceInfoBoard.addLayer(marker4) //把点添加到层组中
+          window.deviceInfoBoard.setMap(map) // 层组渲染到地图中
+          // window.deviceInfoBoard.hide() // 隐藏当前的层组
+        })
+        break;
+      case "5":
+        pointArr.length > 0 && pointArr.map((item) => {
+          const marker5 = new SimpleMarker({
+            //自定义图标地址
+            iconStyle: turnBoardIcon,
+            //设置基点偏移
+            offset: new AMap.Pixel(-10, -10),
+            map: map,
+            showPositionPoint: false,
+            position: item.latlng,
+            zIndex: 10
+          });
+          //marker 点击时打开
+          marker5.on('click', function () {
+            map.setZoomAndCenter(12, item.latlng); //同时设置地图层级与中心点
+            _this.openInfoWin(map, marker5, SimpleInfoWindow, item)
+          });
+          window.deviceTurnBoard.addLayer(marker5) //把点添加到层组中
+          window.deviceTurnBoard.setMap(map) // 层组渲染到地图中
+          // window.deviceTurnBoard.hide() // 隐藏当前的层组
+          //deviceTurnBoard
+        })
+        break;
     }
+    /* if (flag === "1"){
+      
+    } else {
+      
+    } */
   }
   openInfoWin = (map, marker, SimpleInfoWindow,showData) => {
     var infoWindow = new SimpleInfoWindow({
