@@ -475,7 +475,7 @@ class MonitoringModule extends React.Component {
     const { detailsPopup } = this.state
     getResponseDatas('get', this.getInfoUrl + eventType + '/' + eventId).then((res) => {
       const result = res.data
-      console.log(result,"adfasdfadsf")
+      console.log(result, "adfasdfadsf")
       if (result.code === 200) {
         $('#searchBox').attr('style', 'transition:all .5s;')
         $('#roadStateBox').attr('style', 'transition:all .5s;')
@@ -496,12 +496,12 @@ class MonitoringModule extends React.Component {
           channel: '',
           controlDes: '',
           controllId: result.data.controllId,
-          endTime: '',
+          endTime: result.data.endTime ? this.getDate(result.data.endTime) : '',
           eventTypeId: result.data.eventTypeId,
           list,
-          startTime: this.getDate(),
+          startTime: result.data.startTime ? this.getDate(result.data.startTime) : this.getDate(),
         }
-        this.setState({ reservePopup: result.data, detailsPopup: null, startValue: this.getDate() })
+        this.setState({ reservePopup: result.data, detailsPopup: null, startValue: this.publishPlanVO.startTime, endValue: this.publishPlanVO.endTime })
       }
     })
   }
@@ -820,19 +820,15 @@ class MonitoringModule extends React.Component {
                 <div className={styles.ItemBox}>
                   <div className={styles.HeadItem}>事件描述</div>
                   <div className={styles.RowBox}>
-                    <div style={{ width: '100%' }} className={styles.ItemInput}><Input onChange={(e) => { this.handleInput(e, 'controlDes', 'publishPlanVO') }} disabled={reservePopup.status > 1 ? true : ''} placeholder="事件描述" /></div>
+                    <div style={{ width: '100%' }} className={styles.ItemInput}><Input defaultValue={reservePopup.controlDes} onChange={(e) => { this.handleInput(e, 'controlDes', 'publishPlanVO') }} disabled={reservePopup.status > 1 ? true : ''} placeholder="事件描述" /></div>
                   </div>
                 </div>
                 <div className={styles.ItemBox}>
                   <div className={styles.HeadItem}>发布渠道
                     <div style={{ marginLeft: '10px' }} className={styles.ItemInput}>
-                      {/* <Radio.Group defaultValue={1}>
-                        <Radio value={1}>高德</Radio>
-                        <Radio value={2}>可变情报表</Radio>
-                      </Radio.Group> */}
-                      <Checkbox.Group disabled={reservePopup.status > 1 ? true : ''} onChange={(e) => { this.handleCheckboxGroup(e, 'channel', 'publishPlanVO') }}>
-                        <Checkbox value={1} >发布渠道</Checkbox>
-                        <Checkbox value={2} >可变情报表</Checkbox>
+                      <Checkbox.Group defaultValue={reservePopup.channel}  onChange={(e) => { this.handleCheckboxGroup(e, 'channel', 'publishPlanVO') }}>
+                        <Checkbox value={'1'} >发布渠道</Checkbox>
+                        <Checkbox value={'2'} >可变情报表</Checkbox>
                       </Checkbox.Group>
                     </div>
                   </div>
