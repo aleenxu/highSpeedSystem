@@ -6,10 +6,11 @@ import styles from './MonitoringModule.scss'
 import classNames from 'classnames'
 import 'animate.css'
 import getResponseDatas from '../../plugs/HttpData/getResponseData'
-import { Input, Checkbox, Radio, Icon, Switch, DatePicker, Collapse, Select } from 'antd'
+import { Input, Checkbox, Radio, Icon, Switch, DatePicker, Collapse, Select, Modal, message } from 'antd'
 const { Panel } = Collapse
 const { Search } = Input
 const { Option } = Select
+const { confirm } = Modal
 const options = [
   { label: '交通拥堵', value: '1' },
   { label: '道路施工', value: '2' },
@@ -308,7 +309,7 @@ class MonitoringModule extends React.Component {
       const result = res.data
       if (result.code === 200) {
         this.setState({
-          detailsPopup: { ...result.data, controlStatusType: item.controlStatusType },
+          detailsPopup: result.data,
         })
       }
     })
@@ -386,38 +387,50 @@ class MonitoringModule extends React.Component {
     this.setState({ detailsPopup })
   }
   handleControl = () => {
-    const { detailsPopup } = this.state
-    const { eventId, eventType, pileNum, roadSecId, situation, devices } = detailsPopup
-    const deviceAry = []
-    devices.forEach((item) => {
-      item.device.forEach((items) => {
-        deviceAry.push({
-          controlScope: items.controlScope ? items.controlScope : 0,
-          deviceId: items.deviceId,
-          deviceTypeId: items.deviceTypeId,
-          pileNum: items.pileNum ? items.pileNum : 0,
-        })
-      })
-    })
-    const data = {
-      createId: 1,
-      devices: deviceAry,
-      eventId,
-      eventTypeId: eventType,
-      pileNum,
-      roadSecId,
-      value: situation,
-    }
-    getResponseDatas('post', this.controlUrl, data).then((res) => {
-      const result = res.data
-      if (result.code === 200) {
-        this.handleEventList()
-        this.handlegroupType()
-        this.handleUrlAjax(this.groupStatusUrl, 'groupStatus')
-        this.handleplanList()
-        this.handledetai()
-        this.handleEventPopup('Reserve', true)
-      }
+    const that = this
+    confirm({
+      title: '确认要发起管控方案?',
+      cancelText: '取消',
+      okText: '确认',
+      onOk() {
+        return new Promise((resolve) => {
+          const { detailsPopup } = that.state
+          const { eventId, eventType, pileNum, roadSecId, situation, devices } = detailsPopup
+          const deviceAry = []
+          devices.forEach((item) => {
+            item.device.forEach((items) => {
+              deviceAry.push({
+                controlScope: items.controlScope ? items.controlScope : 0,
+                deviceId: items.deviceId,
+                deviceTypeId: items.deviceTypeId,
+                pileNum: items.pileNum ? items.pileNum : 0,
+              })
+            })
+          })
+          const data = {
+            createId: 1,
+            devices: deviceAry,
+            eventId,
+            eventTypeId: eventType,
+            pileNum,
+            roadSecId,
+            value: situation,
+          }
+          getResponseDatas('post', that.controlUrl, data).then((res) => {
+            const result = res.data
+            if (result.code === 200) {
+              that.handledetai({ eventType, eventId })
+              resolve()
+              that.handleEventList()
+              that.handlegroupType()
+              that.handleUrlAjax(this.groupStatusUrl, 'groupStatus')
+              that.handleplanList()
+              that.handleEventPopup('Reserve', true)
+            }
+          })
+        }).catch(() => message.error('网络错误!'))
+      },
+      onCancel() { },
     })
   }
   handleViewControl = (eventType, eventId) => {
@@ -672,8 +685,12 @@ class MonitoringModule extends React.Component {
                     <p>起始桩号&nbsp;:&nbsp;&nbsp;<span style={{ color: '#c67f03' }}>{reservePopup.pileNum.split(' ')[0]}</span></p>
                   </div>
                   <div className={styles.RowBox}>
-                    <p>平均车速&nbsp;:&nbsp;&nbsp;<sapn style={{ color: '#c67f03' }}>{reservePopup.situation}km/h</sapn> </p>
-                    <p>拥堵路段长度&nbsp;:&nbsp;&nbsp;<sapn style={{ color: '#f31113' }}>{reservePopup.eventLength}m</sapn></p>
+                    {
+                      reservePopup.eventTypeId === 1 ? [<p>平均车速&nbsp;:&nbsp;&nbsp;<sapn style={{ color: '#c67f03' }}>{reservePopup.situation}km/h</sapn> </p>,
+                      <p>拥堵路段长度&nbsp;:&nbsp;&nbsp;<sapn style={{ color: '#f31113' }}>{reservePopup.eventLength}m</sapn></p>] :
+                        [<p>能见度&nbsp;:&nbsp;&nbsp;<sapn style={{ color: '#c67f03' }}>{reservePopup.situation}km/h</sapn> </p>,
+                        <p>影响道路长度&nbsp;:&nbsp;&nbsp;<sapn style={{ color: '#f31113' }}>{reservePopup.eventLength}m</sapn></p>]
+                    }
                   </div>
                   <div className={styles.RowBox}>数据来源&nbsp;:&nbsp;&nbsp;<sapn style={{ color: '#03af01' }}>{reservePopup.dataSourceName}</sapn></div>
                 </div>
@@ -854,7 +871,9 @@ class MonitoringModule extends React.Component {
                             <p>能见度&nbsp;:&nbsp;&nbsp;<span>{detailsPopup.situation}m</span></p> :
                             <p>平均车速&nbsp;:&nbsp;&nbsp;<span style={{ color: '#c67f03' }}>{detailsPopup.situation}km/h</span></p>
                         }
-                        <p>拥堵路段长度&nbsp;:&nbsp;&nbsp;<span style={{ color: '#f31113' }}>{detailsPopup.eventLength}m</span></p>
+                        {detailsPopup.eventType == 3 ?
+                          <p>拥堵路段长度&nbsp;:&nbsp;&nbsp;<span style={{ color: '#f31113' }}>{detailsPopup.eventLength}m</span></p> :
+                          <p>影响道路长度&nbsp;:&nbsp;&nbsp;<span style={{ color: '#f31113' }}>{detailsPopup.eventLength}m</span></p>}
                       </div>
                       <div className={styles.RowBox}>数据来源&nbsp;:&nbsp;&nbsp;<span style={{ color: '#03af01' }}>{detailsPopup.dataSourceName}</span></div>
                     </div>
@@ -948,7 +967,7 @@ class MonitoringModule extends React.Component {
           conditionList ?
             <div className={styles.MaskBox}>
               <div className={classNames(styles.EventPopup, styles.VIboardPopup, styles.conditionPopup)}>
-                <div className={styles.Title}>添加可变情报板<Icon className={styles.Close} onClick={() => { this.handleEventPopup('condition', false) }} type="close" /></div>
+                <div className={styles.Title}>添加{VIboardPopup}<Icon className={styles.Close} onClick={() => { this.handleEventPopup('condition', false) }} type="close" /></div>
                 <div className={styles.Centent}>
                   <div className="site-checkbox-all-wrapper">
                     <Checkbox
