@@ -1,7 +1,7 @@
 import React from 'react'
 import echarts from 'echarts'
 import ReactEcharts from 'echarts-for-react'
-import { Collapse, Icon, Progress, Checkbox, message } from 'antd';
+import { Collapse, Icon, Progress, Checkbox, message, Badge } from 'antd';
 import styles from './ScrollList.scss'
 import classNames from 'classnames'
 import $ from 'jquery'
@@ -30,6 +30,7 @@ class ScrollList extends React.Component {
     }
     this.eachartLength = 0
     this.ProgressLength = 0
+    this.examineLength = 0
   }
   componentDidMount = () => {
     const { eachartData, ProgressData } = this.props
@@ -46,6 +47,10 @@ class ScrollList extends React.Component {
       this.ProgressLength = 0
       ProgressData.forEach((item) => {
         this.ProgressLength += item.count
+        // 获取待审核数量
+        if (item.code === 2) {
+          this.examineLength = item.count
+        }
       })
     }
   }
@@ -67,8 +72,12 @@ class ScrollList extends React.Component {
         this.ProgressLength = 0
         nextProps.ProgressData.forEach((item) => {
           this.ProgressLength += item.count
+          // 获取待审核数量
+          if (item.code === 2) {
+            this.examineLength = item.count
+          }
         })
-      } 
+      }
       this.setState({ ProgressData: nextProps.ProgressData })
     }
     if (this.props.dataRes !== nextProps.dataRes) {
@@ -194,6 +203,17 @@ class ScrollList extends React.Component {
       }}
     />
   )
+  genExtraexamine = () => (
+    <Badge count={this.examineLength} title="待审核总数">
+      <Icon
+        type="solution"
+        onClick={(event) => {
+          event.stopPropagation()
+          this.handleEventPopup('', 'examine', true)
+        }}
+      />
+    </Badge>
+  )
   checkBoxClick = event => {
     this.setState({
       typeNow: $(event.currentTarget).attr('nowtype')
@@ -227,7 +247,7 @@ class ScrollList extends React.Component {
         {listType === '1' &&
           <div>
             <div className={styles.settingTitle}><span><i />未管控</span><span><i />已管控</span></div>
-            <Icon style={{left:'10px', top:'15px', position: "absolute", zIndex: '999', color:'white'}} type="pie-chart" />
+            <Icon style={{ left: '10px', top: '15px', position: "absolute", zIndex: '999', color: 'white' }} type="pie-chart" />
             <Collapse
               defaultActiveKey={['1']}
               onChange={this.callback}
@@ -258,13 +278,13 @@ class ScrollList extends React.Component {
         }
         {listType === '2' &&
           <div>
-            <Icon style={{left:'10px', top:'15px', position: "absolute", zIndex: '999', color:'white'}} type="appstore" />
+            <Icon style={{ left: '10px', top: '15px', position: "absolute", zIndex: '999', color: 'white' }} type="appstore" />
             <Collapse
               defaultActiveKey={['1']}
               onChange={this.callback}
               expandIconPosition="right"
             >
-              <Panel header="管控方案管理" key="1">
+              <Panel header="管控方案管理" key="1" extra={this.genExtraexamine()}>
                 <div>
                   <div className={styles.ProgressTotal}><em>管控方案发布管理</em>方案总数&nbsp;:&nbsp;{this.ProgressLength}</div>
                   {
@@ -286,17 +306,17 @@ class ScrollList extends React.Component {
               paddingBottom: '13px'
             }} nowtype={listTitle.type} options={[{ label: '', value: listTitle }]} onClick={this.checkBoxClick} />
             {listTitle.type === 1 &&
-                <img className={styles.iconImg} src={iconTrafficJam} />
-              }
-              {listTitle.type === 2 &&
-                <img className={styles.iconImg} src={iconBuild} />
-              }
-              {listTitle.type === 3 &&
-                <img className={styles.iconImg} src={iconWeather} />
-              }
-              {listTitle.type === 4 &&
-                <img className={styles.iconImg} src={iconAccidents} />
-              }
+              <img className={styles.iconImg} src={iconTrafficJam} />
+            }
+            {listTitle.type === 2 &&
+              <img className={styles.iconImg} src={iconBuild} />
+            }
+            {listTitle.type === 3 &&
+              <img className={styles.iconImg} src={iconWeather} />
+            }
+            {listTitle.type === 4 &&
+              <img className={styles.iconImg} src={iconAccidents} />
+            }
             <Collapse
               onChange={this.callback}
               expandIconPosition="right"

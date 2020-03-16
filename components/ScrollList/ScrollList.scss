@@ -8,7 +8,7 @@
   border-radius: unset;
 }
 :global(.ant-collapse-item:last-child > .ant-collapse-content) {
-  overflow: initial!important;
+  overflow: initial !important;
 }
 :global(.ant-collapse) {
   background: unset;
@@ -30,14 +30,14 @@
   z-index: 99;
 }
 :global(.ant-checkbox-inner) {
-  background:transparent;
+  background: transparent;
 }
 // 数据列表
-.iconImg{
+.iconImg {
   display: inline-block;
   position: absolute;
-  left:35px;
-  top:15px;
+  left: 35px;
+  top: 15px;
   z-index: 9;
 }
 .listBox {
@@ -138,8 +138,8 @@
 :global(.ant-progress-text) {
   color: #5dc3f4;
 }
-:global(.ant-progress-inner){
-background-color: #132235;
+:global(.ant-progress-inner) {
+  background-color: #132235;
 }
 // eacharts
 :global(.ant-collapse-content > .ant-collapse-content-box) {
@@ -204,7 +204,7 @@ background-color: #132235;
 }
 
 .scrollBox {
-  position:relative;
+  position: relative;
   :global(.anticon-setting svg) {
     color: #2d81ad;
     &:hover {
@@ -237,5 +237,16 @@ background-color: #132235;
         margin-right: 8px;
       }
     }
+  }
+  :global(.anticon-solution svg) {
+    width: 25px;
+    height: 25px;
+  }
+  :global(.ant-badge-count) {
+    min-width: 15px;
+    height: 15px;
+    padding: 0 4px;
+    font-size: 15px;
+    line-height: 15px;
   }
 }

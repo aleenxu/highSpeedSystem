@@ -425,11 +425,15 @@
   }
   .WhethePopupr {
     width: 420px;
-    height: 115px;
-    background: url(../../imgs/popup_three.png) center center no-repeat;
+    /* height: 115px; */
+    background: url(../../imgs/popupBg.png) center center no-repeat;
     background-size: 100% 100%;
     .Centent {
       height: auto;
+      text-align: center;
+    }
+    .Title {
+      line-height: 35px !important;
     }
   }
 }
@@ -451,7 +455,7 @@
   :global(.ant-collapse) {
     width: 100%;
     border: none !important;
-    max-height:calc(100% - 45px) ;
+    max-height: calc(100% - 45px);
     overflow-y: auto;
   }
   :global(.ant-collapse > .ant-collapse-item > .ant-collapse-header) {
@@ -685,4 +689,14 @@
   text-indent: 22px;
   color: #446b92;
   font-size: 16px;
+}
+.equipment {
+  position: fixed;
+  top: 90px;
+  right: 24%;
+  margin-right: 15px;
+  width: 18%;
+  height: 250px;
+  background-color: rgba(20, 21, 24, 0.9);
+  z-index: 999;
 }
