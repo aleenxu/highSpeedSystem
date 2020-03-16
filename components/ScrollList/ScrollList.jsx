@@ -33,6 +33,7 @@ class ScrollList extends React.Component {
     this.examineLength = 0
   }
   componentDidMount = () => {
+    console.log(this.state.data, "查看数据结构")
     const { eachartData, ProgressData } = this.props
     if (eachartData) {
       const data = []
@@ -87,6 +88,25 @@ class ScrollList extends React.Component {
       this.setState({ dataAll: nextProps.dataAll })
     }
   }
+  getLineCenterPoint = (latlng) => {
+    let newCenter = []
+    if (latlng.length > 0){
+      const startPoint = Math.abs(latlng[0][0] - latlng[latlng.length -1 ][0]) / 2
+      const endPoint = Math.abs(latlng[0][1] - latlng[latlng.length -1 ][1]) / 2
+      if (latlng[0][0] > latlng[latlng.length -1 ][0]) {
+        newCenter[0] = startPoint + Number(latlng[latlng.length -1 ][0])
+      } else {
+        newCenter[0] = startPoint + Number(latlng[0][0])
+      }
+      if (latlng[1][1] > latlng[latlng.length -1 ][1]) {
+        newCenter[1] = endPoint + Number(latlng[latlng.length -1 ][1])
+      } else {
+        newCenter[1] = endPoint + Number(latlng[0][1])
+      }
+    }
+    return newCenter
+  
+  }
   getOption = (data) => {
     const option = {
       series: [
@@ -137,6 +157,8 @@ class ScrollList extends React.Component {
 
   }
   handleEventPopup = (e, type, boolean) => {
+    // console.log($(e.target).parent().attr("latlng"), '当前')
+    window.centerPoint = $(e.target).parent().attr("latlng");
     if (type === 'Details') {
       const listItem = document.getElementsByClassName('listItem')
       if (e.currentTarget.style.background === '#0d2645') {
@@ -334,7 +356,7 @@ class ScrollList extends React.Component {
                     </div>
                   }
                   {data && data.map((item, index) => (
-                    <div key={item.roadCode + item.locs} className={classNames(styles.listItem, 'listItem')} onClick={(e) => { this.handleEventPopup(e, 'Details', item) }}>
+                    <div key={item.roadCode + item.locs} className={classNames(styles.listItem, 'listItem')} latlng={this.getLineCenterPoint(item.latlng)} onClick={(e) => { this.handleEventPopup(e, 'Details', item) }}>
                       <i style={{ background: item.controlStatusType > 0 ? 'green' : 'red', boxShadow: item.controlStatusType > 0 ? 'green 0px 0px 20px' : 'red 0px 0px 20px' }} />
                       <span>{item.roadCode}</span>
                       <span title={item.locs.split(' ')[0]}>{(item.locs).split(' ')[0]}</span>

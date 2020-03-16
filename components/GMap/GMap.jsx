@@ -14,6 +14,9 @@ const lineData = [
   { "name": "起点 -> 终点", "path": [[119.9346080000, 32.4288390000], [119.9342650000, 32.4271000000], [119.9342650000, 32.4257960000], [119.9342650000, 32.4242020000], [119.9337500000, 32.4226080000], [119.9327200000, 32.4200000000]] },
   { "name": "起点 -> 终点", "path": [[119.9327200000, 32.4200000000], [119.9330630000, 32.4171020000], [119.9344360000, 32.4147830000], [119.9349510000, 32.4131890000], [119.9361530000, 32.4113050000], [119.9358100000, 32.4085520000]] }
 ];
+window.centerPoint = null
+//监听drawRectangle事件可获取画好的覆盖物
+const overlays = []
 class GMap extends React.Component {
   constructor(props) {
     super(props)
@@ -24,6 +27,8 @@ class GMap extends React.Component {
       tollGateJson: [], //收费站
       speedLimitJson: [], //限速版
       roadLatlng: this.props.roadLatlng, // 路段的经纬度
+      detailsPopup: this.props.detailsPopup, // 右侧详情显示
+      centerPoint: null, // 地图中心点
       
     }
     this.styles = {
@@ -51,12 +56,38 @@ class GMap extends React.Component {
     if (this.props.roadLatlng !== nextProps.roadLatlng) {
       this.setState({ roadLatlng: nextProps.roadLatlng })
     }
+    if (this.props.detailsPopup !== nextProps.detailsPopup) {
+      this.setState({ detailsPopup: nextProps.detailsPopup },() => {
+        if (this.state.detailsPopup) {
+          // console.log("为true时进来")
+          this.drawRectangle()
+        } else {
+          // console.log("为false 时重载地图")
+          this.loadPoint()
+        }
+      })
+    }
+    if (window.centerPoint != this.state.centerPoint) {
+      this.setState({
+        centerPoint: window.centerPoint
+      }, () => {
+        window.map.setZoomAndCenter(12, [this.state.centerPoint.split(",")[0],this.state.centerPoint.split(",")[1]])
+      })
+    }
   }
   handledetai = (dataItem) => {
     const { handledetai } = this.props
     if (handledetai) {
       handledetai(dataItem)
     }
+  }
+  // 绘制地图框选
+  drawRectangle = () => {
+    window.mouseTool.rectangle({
+      fillColor: '#00b0ff',
+      strokeColor: '#80d8ff'
+      //同Polygon的Option设置
+    });
   }
   loadPoint = () => {
     getResponseDatas('get', this.mapPointUrl+'?searchKey=' + this.state.keyWords).then((res) => {
@@ -92,6 +123,7 @@ class GMap extends React.Component {
       mapStyle: "amap://styles/c3fa565f6171961e94b37c4cc2815ef8",
       zoom: 11
     });
+    window.mouseTool = new AMap.MouseTool(window.map)
     //实时路况图层
     var trafficLayer = new AMap.TileLayer.Traffic({
       zIndex: 10
@@ -173,14 +205,14 @@ class GMap extends React.Component {
         getPath: function (pathData, pathIndex) {
           return pathData.path;
         },
-        getHoverTitle: function (pathData, pathIndex, pointIndex) {
-          if (pointIndex >= 0) {
-            //point 
-            // return  pointIndex + '/' + pathData.path.length;
-          }
+        // getHoverTitle: function (pathData, pathIndex, pointIndex) {
+        //   if (pointIndex >= 0) {
+        //     //point 
+        //     // return  pointIndex + '/' + pathData.path.length;
+        //   }
 
-          returnpathData.path.length;
-        },
+        //   returnpathData.path.length;
+        // },
         renderOptions: {
           pathLineStyle: {
             dirArrowStyle: false

@@ -627,6 +627,14 @@
     color: #5a5f72;
   }
 }
+.devicePos {
+  left:50% !important;
+  transform: translate(-50%,0);
+  -webkit-transform: translate(-50%,0);
+  -moz-transform: translate(-50%,0);
+  -ms-transform: translate(-50%,0);
+  -o-transform: translate(-50%,0);
+}
 .EventTagging {
   position: fixed;
   top: 55px;

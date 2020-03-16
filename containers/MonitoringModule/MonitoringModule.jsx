@@ -24,6 +24,7 @@ const plainOptions = [
   { label: '三级', value: '3' },
   { label: '四级', value: '4' },
 ]
+window.newPoint = new Array() // 绘制地图记录的点
 class MonitoringModule extends React.Component {
   constructor(props) {
     super(props)
@@ -51,6 +52,7 @@ class MonitoringModule extends React.Component {
       plainOptionList: null,
       EventTagPopup: null,
       detailsLatlng: null, // 详情路段的经纬度
+      boxSelect: null, // 框选
     }
     this.eventQuery = {
       eventType: '',
@@ -90,6 +92,7 @@ class MonitoringModule extends React.Component {
     this.conditionUrl = '/control/device/list/condition' // {deviceTypeId} // 条件查询设备回显'
     this.controlUrl = '/control/plan/start/control' // 发起管控'
     this.getInfoUrl = '/control/plan/get/info/' // {eventType}/{eventId} 获取管控方案'
+    this.getDeviceAllUrl = '/control/device/get/in/area' // 获取指定区域内的设备
     this.publishUrl = '/control/plan/publish/control' // 发布管控方案'
     this.examineUrl = '/control/plan/examine/control/' // {operation}/{controllId} // 方案审核接口（通过，取消）'
     this.endTimeUrl = '/control/plan/update/end/time/' // {eventTypeId}/{eventId}/{controllId} 修改管控方案结束时间'
@@ -105,6 +108,7 @@ class MonitoringModule extends React.Component {
     this.handleplanList()
     // 高速下拉
     this.handleUrlAjax(this.hwayUrl, 'hwayList')
+
   }
   onStartChange = (value) => {
     this.onPickerChange('startValue', value)
@@ -176,6 +180,7 @@ class MonitoringModule extends React.Component {
     }
     if (type === 'Details') {
       // console.log(type, boolean.latlng, '详情的经纬度')
+      console.log(boolean, '单条数据')
       if (window.listItemDom && boolean === false) {
         window.listItemDom.style.background = ''
       }
@@ -331,6 +336,7 @@ class MonitoringModule extends React.Component {
       }
     })
   }
+
   // 获取右侧事件详情
   handledetai = (item) => {
     getResponseDatas('get', this.detailUrl + item.eventId + '/' + item.eventType).then((res) => {
@@ -338,7 +344,69 @@ class MonitoringModule extends React.Component {
       if (result.code === 200) {
         this.setState({
           detailsPopup: result.data,
+        }, () => {
+          $(".amap-maps").attr("style", "cursor:crosshair")
+          map.on("mousedown", function (e) {
+            // console.log(e, "down..")
+            window.newPoint = []
+            const newArr = []
+            newArr[0] = e.lnglat.lng
+            newArr[1] = e.lnglat.lat
+            newPoint.push(newArr)
+          })
+          map.on("mouseup", function (e) {
+            // console.log(e, "up..")
+            const newArr = []
+            newArr[0] = e.lnglat.lng
+            newArr[1] = e.lnglat.lat
+            newPoint.push(newArr)
+          })
+          mouseTool.on('draws', function (e) {
+            console.log(e)
+            overlays.push(e.obj);
+            pointArr.map((item, index) => {
+              if (index == pointArr.length) {
+                newPoint = []
+              }
+            })
+            // 
+          })
+          // window.draws()
+          console.log(mouseTool, "这个是啥？")
+          // this.drawRectangle('rectangle')
+          // window.mouseTool.rectangle({
+          //   fillColor: '#00b0ff',
+          //   strokeColor: '#80d8ff'
+          //   //同Polygon的Option设置
+          // })
+          // 框选设备
+          // this.getDevice()
         })
+      }
+    })
+  }
+  // 获取所有框选设备
+  getDevice = () => {
+    let params = {
+      "area": [
+        [119.731407, 32.290035],
+        [119.896202, 32.290035],
+        [119.896202, 32.143641],
+        [119.731407, 32.143641]
+      ],
+      "control": false,
+      "eventPileNum": "k38+818 k34+699",
+      "eventTypeId": 1,
+      "existsDevices": [
+        "1_00",
+        "1_123458"],
+      "value": 30
+    }
+    getResponseDatas('post', this.getDeviceAllUrl, params).then((res) => {
+      const result = res.data
+      // console.log(result)
+      if (result.code === 200) {
+        console.log(result.data, "框选设备")
       }
     })
   }
@@ -610,21 +678,21 @@ class MonitoringModule extends React.Component {
     getResponseDatas('put', this.endTimeUrl + eventTypeId + '/' + eventId + '/' + controllId, { endTime: endValueTime }).then((res) => {
       const result = res.data
       if (result.code === 200) {
-
-        message.success('取消发布成功')
+        message.success('延时发布成功')
+        this.setState({ reservePopup: null })
       }
     })
   }
   render() {
     const {
-      eventsPopup, groupType, planList, EventTagPopup, endValueTime, roadNumber, conditionList, hwayList, VIboardPopup, groupStatus, controlPopup, detailsPopup, whethePopup, reservePopup, startValue, endValue, endOpen, SidePopLeft, detailsLatlng
+      eventsPopup, groupType, planList, EventTagPopup, boxSelect, endValueTime, roadNumber, conditionList, hwayList, VIboardPopup, groupStatus, controlPopup, detailsPopup, whethePopup, reservePopup, startValue, endValue, endOpen, SidePopLeft, detailsLatlng
     } = this.state
     return (
       <div className={styles.MonitoringModule}>
         <SystemMenu />
         {(!!reservePopup || !!EventTagPopup) || <SidePop left="5px" groupType={groupType} SidePopLeft={SidePopLeft} handleEventPopup={this.handleEventPopup} />}
         {!!detailsPopup || <SidePop SidplanList={planList} groupStatus={groupStatus} right="5px" handleEventPopup={this.handleEventPopup} />}
-        <GMap dataAll={SidePopLeft} roadLatlng={detailsLatlng} handledetai={this.handledetai} />
+        <GMap dataAll={SidePopLeft} roadLatlng={detailsLatlng} handledetai={this.handledetai} detailsPopup={detailsPopup} />
         <div id="searchBox" className={`${styles.searchBox} animated ${'bounceInDown'}`}><Search id="tipinput" placeholder="请输入内容" enterButton /></div>
         <div id="deviceBox" className={`${styles.mapIconManage} animated ${'bounceInDown'}`}>
           <span>设备显示</span><span onClick={this.handleEventTag.bind(null, true)}>事件标注</span>
@@ -923,7 +991,7 @@ class MonitoringModule extends React.Component {
                   reservePopup.status > 1 ? <span onClick={() => { this.handlecancelRel(reservePopup.controllId, 'cancel') }}>取消发布</span> : <span onClick={this.handleRelease}>发&nbsp;&nbsp;布</span>
                 }
                 {
-                  reservePopup.status > 1 ? <span onClick={() => { this.handleEndValueTime(true) }}>延时发布</span> : null
+                  reservePopup.status === 3 ? <span onClick={() => { this.handleEndValueTime(true) }}>延时发布</span> : null
                 }
                 <span onClick={() => { this.handleEventPopup('Reserve', false) }}>返&nbsp;&nbsp;回</span>
               </div>
@@ -1091,6 +1159,41 @@ class MonitoringModule extends React.Component {
                   <div className={styles.ItemFooter} style={{ bottom: '-15px' }}>
                     <span onClick={this.handleCondition}>查&nbsp;&nbsp;找</span>
                     <span onClick={() => { this.handleEventPopup('VIboard', false) }}>返&nbsp;&nbsp;回</span>
+                  </div>
+                </div>
+              </div>
+            </div> : null
+        }
+        {
+          boxSelect ?
+            <div className={styles.MaskBox}>
+              <div className={classNames(styles.EventPopup, styles.VIboardPopup, styles.conditionPopup, styles.devicePos)}>
+                <div className={styles.Title}>添加硬件设备<Icon className={styles.Close} type="close" /></div>
+                <div className={styles.Centent}>
+                  <div className="site-checkbox-all-wrapper">
+                    {/*  <Checkbox
+                      indeterminate={this.state.indeterminate}
+                      onChange={this.onCheckAllChange}
+                      checked={this.state.checkAll}
+                    >
+                      全选
+                  </Checkbox> */}
+                  </div>
+                  <br />
+                  {/* <Checkbox.Group
+                    value={this.state.checkedList}
+                    onChange={this.getcheckedList}
+                  >
+                    {
+                      conditionList.map((item) => {
+                        return <Checkbox key={item.deviceId} disabled={this.deviceList.includes(item.deviceId)} value={item.deviceId}>{item.deviceName + '-' + item.directionName}</Checkbox>
+                      })
+                    }
+
+                  </Checkbox.Group> */}
+                  <div className={styles.ItemFooter} style={{ bottom: '-15px' }}>
+                    <span>确&nbsp;&nbsp;认</span>
+                    <span>返&nbsp;&nbsp;回</span>
                   </div>
                 </div>
               </div>
