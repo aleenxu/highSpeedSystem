@@ -16,7 +16,6 @@ const lineData = [
 ];
 window.centerPoint = null
 //监听drawRectangle事件可获取画好的覆盖物
-const overlays = []
 class GMap extends React.Component {
   constructor(props) {
     super(props)
@@ -28,6 +27,7 @@ class GMap extends React.Component {
       speedLimitJson: [], //限速版
       roadLatlng: this.props.roadLatlng, // 路段的经纬度
       detailsPopup: this.props.detailsPopup, // 右侧详情显示
+      boxSelect: this.props.boxSelect, // 框选弹层
       centerPoint: null, // 地图中心点
       
     }
@@ -55,6 +55,13 @@ class GMap extends React.Component {
     }
     if (this.props.roadLatlng !== nextProps.roadLatlng) {
       this.setState({ roadLatlng: nextProps.roadLatlng })
+    }
+    if (this.props.boxSelect !== nextProps.boxSelect) {
+      this.setState({ boxSelect: nextProps.boxSelect },() => {
+        if (!this.state.boxSelect) {
+          this.loadingMap()
+        }
+      })
     }
     if (this.props.detailsPopup !== nextProps.detailsPopup) {
       this.setState({ detailsPopup: nextProps.detailsPopup },() => {
@@ -123,6 +130,11 @@ class GMap extends React.Component {
       mapStyle: "amap://styles/c3fa565f6171961e94b37c4cc2815ef8",
       zoom: 11
     });
+    /* window.mouseToolLayer = new AMap.LayerGroup({
+      'autoRefresh': true,     //是否自动刷新，默认为false
+      'interval': 180,         //刷新间隔，默认180s
+    });
+    window.mouseToolLayer.setMap(map) // 层组渲染到地图中 */
     window.mouseTool = new AMap.MouseTool(window.map)
     //实时路况图层
     var trafficLayer = new AMap.TileLayer.Traffic({

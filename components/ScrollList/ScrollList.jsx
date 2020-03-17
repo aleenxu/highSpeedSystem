@@ -9,6 +9,7 @@ import iconTrafficJam from '../../imgs/icon_traffic_jam.png'
 import iconBuild from '../../imgs/icon_build.png'
 import iconWeather from '../../imgs/icon_weather.png'
 import iconAccidents from '../../imgs/icon_accidents.png'
+import iconTagging from '../../imgs/icon_tagging.png'
 const { Panel } = Collapse;
 class ScrollList extends React.Component {
   constructor(props) {
@@ -318,6 +319,9 @@ class ScrollList extends React.Component {
               }
               {listTitle.type === 4 &&
                 <img className={styles.iconImg} src={iconAccidents} />
+              }
+              {listTitle.type === 5 &&
+                <img className={styles.iconImg} src={iconTagging} />
               }
             <Collapse
               onChange={this.callback}

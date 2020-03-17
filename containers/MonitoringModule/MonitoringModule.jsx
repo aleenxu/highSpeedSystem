@@ -18,13 +18,14 @@ const options = [
   { label: '极端天气', value: '3' },
   { label: '交通事故', value: '4' },
 ]
+window.overlays = []
 const plainOptions = [
   { label: '一级', value: '1' },
   { label: '二级', value: '2' },
   { label: '三级', value: '3' },
   { label: '四级', value: '4' },
 ]
-window.newPoint = new Array() // 绘制地图记录的点
+window.newPoint = new Array(4).fill(null) // 绘制地图记录的点
 class MonitoringModule extends React.Component {
   constructor(props) {
     super(props)
@@ -52,6 +53,11 @@ class MonitoringModule extends React.Component {
       EventTagPopup: null,
       detailsLatlng: null, // 详情路段的经纬度
       boxSelect: null, // 框选
+      checkedListBox: [],
+      indeterminateBox: true,
+      checkAllBox: false,
+      oldDevicesList: null, // 框选前右侧详情原数据
+      boxSelectList: null, // 框选中的数据
     }
     this.eventQuery = {
       eventType: '',
@@ -149,6 +155,12 @@ class MonitoringModule extends React.Component {
   handleEventPopup = (type, boolean, event) => {
     let _this = this;
     // console.log(type, boolean)
+    if (type === 'boxSelect') {
+      this.setState({
+        boxSelect: false,
+        detailsPopup: false,
+      })
+    }
     if (type === 'Event') {
       if (boolean) {
         this.eventQuery = {
@@ -325,6 +337,7 @@ class MonitoringModule extends React.Component {
 
   // 获取右侧事件详情
   handledetai = (item) => {
+    const _this = this;
     getResponseDatas('get', this.detailUrl + item.eventId + '/' + item.eventType).then((res) => {
       const result = res.data
       if (result.code === 200) {
@@ -334,22 +347,25 @@ class MonitoringModule extends React.Component {
           $(".amap-maps").attr("style","cursor:crosshair")
           map.on("mousedown", function (e) {
             // console.log(e, "down..")
-            window.newPoint = []
+            window.newPoint = new Array(4).fill(null)
             const newArr = []
             newArr[0] = e.lnglat.lng
             newArr[1] = e.lnglat.lat
-            newPoint.push(newArr)
+            newPoint[0] = newArr
           })
           map.on("mouseup", function (e) {
-            // console.log(e, "up..")
+            console.log(this.deviceList, "up..")
             const newArr = []
             newArr[0] = e.lnglat.lng
             newArr[1] = e.lnglat.lat
-            newPoint.push(newArr)
+            newPoint[2] = newArr
+            newPoint[1] = [newPoint[2][0],newPoint[0][1]]
+            newPoint[3] = [newPoint[0][0],newPoint[2][1]]
+            _this.getDevice(_this.state.detailsPopup)
           })
           mouseTool.on('draws', function (e) {
             console.log(e)
-            overlays.push(e.obj);
+            window.overlays.push(e.obj);
             pointArr.map((item,index) => {
               if(index == pointArr.length){
                 newPoint = []
@@ -357,43 +373,62 @@ class MonitoringModule extends React.Component {
             })
             // 
           })
-          // window.draws()
-          console.log(mouseTool, "这个是啥？")
-          // this.drawRectangle('rectangle')
-          // window.mouseTool.rectangle({
-          //   fillColor: '#00b0ff',
-          //   strokeColor: '#80d8ff'
-          //   //同Polygon的Option设置
-          // })
-          // 框选设备
-          // this.getDevice()
+          // console.log(window.overlays, "矢量图")
         })
       }
     })
   }
   // 获取所有框选设备
-  getDevice = () => {
+  getDevice = (item) => {
+    const existsDevices = []
+    const listDevices = []
+    if (item.devices.length > 0) {
+      for (let i = 0, devicesArr = item.devices; i < devicesArr.length; i++) {
+        // console.log(devicesArr, "00001")
+        devicesArr[i].device.map((item) => {
+          existsDevices.push(item.appendId)
+          listDevices.push(item.deviceId)
+        })
+      }
+    }
     let params = {
-      "area": [
-        [119.731407,32.290035],
-          [119.896202,32.290035],
-          [119.896202,32.143641],
-    [119.731407,32.143641]
-      ],
+      "area": window.newPoint,
       "control": false,
-      "eventPileNum": "k38+818 k34+699",
-      "eventTypeId": 1,
-      "existsDevices": [
-        "1_00",
-    "1_123458"],
-      "value": 30
+      "eventPileNum": item.roadPileNum,
+      "eventTypeId": item.eventType,
+      "existsDevices": existsDevices
     }
     getResponseDatas('post', this.getDeviceAllUrl, params).then((res) => {
       const result = res.data
-      // console.log(result)
       if (result.code === 200) {
-        console.log(result.data, "框选设备")
+        const noDevices = []
+        result.data.map((item) => {
+          if (!(listDevices.includes(item.deviceId))) {
+            noDevices.push(item.deviceId)
+          }
+        })
+        if (result.data.length > 0) {
+          this.setState({ boxSelect: true, boxSelectList: result.data, oldDevicesList: noDevices })
+        } else {
+          message.info('没有选中相应的硬件设备！')
+        }
       }
+    })
+  }
+  getcheckedListBox = (checkedListBox) => {
+    const { oldDevicesList } = this.state
+    this.setState({
+      checkedListBox,
+      indeterminateBox: !!checkedListBox.length && checkedListBox.length < oldDevicesList.length,
+      checkAllBox: checkedListBox.length === oldDevicesList.length,
+    })
+  }
+  onCheckBoxSelect = (e) => {
+    const { oldDevicesList } = this.state
+    this.setState({
+      checkedListBox: e.target.checked ? oldDevicesList : [],
+      indeterminateBox: false,
+      checkAllBox: e.target.checked,
     })
   }
   // 字典查询
@@ -612,14 +647,14 @@ class MonitoringModule extends React.Component {
   }
   render() {
     const {
-      eventsPopup, groupType, planList, EventTagPopup, roadNumber, conditionList, boxSelect, hwayList, VIboardPopup, groupStatus, controlPopup, detailsPopup, whethePopup, reservePopup, startValue, endValue, endOpen, SidePopLeft, detailsLatlng
+      eventsPopup, groupType, planList, EventTagPopup, roadNumber, conditionList, boxSelect, oldDevicesList, boxSelectList, hwayList, VIboardPopup, groupStatus, controlPopup, detailsPopup, whethePopup, reservePopup, startValue, endValue, endOpen, SidePopLeft, detailsLatlng
     } = this.state
     return (
       <div className={styles.MonitoringModule}>
         <SystemMenu />
         {(!!reservePopup || !!EventTagPopup) || <SidePop left="5px" groupType={groupType} SidePopLeft={SidePopLeft} handleEventPopup={this.handleEventPopup} />}
         {!!detailsPopup || <SidePop SidplanList={planList} groupStatus={groupStatus} right="5px" handleEventPopup={this.handleEventPopup} />}
-        <GMap dataAll={SidePopLeft} roadLatlng={detailsLatlng} handledetai={this.handledetai} detailsPopup={detailsPopup} />
+        <GMap dataAll={SidePopLeft} roadLatlng={detailsLatlng} handledetai={this.handledetai} detailsPopup={detailsPopup} boxSelect={boxSelect} />
         <div id="searchBox" className={`${styles.searchBox} animated ${'bounceInDown'}`}><Search id="tipinput" placeholder="请输入内容" enterButton /></div>
         <div id="deviceBox" className={`${styles.mapIconManage} animated ${'bounceInDown'}`}>
           <span>设备显示</span><span onClick={this.handleEventTag.bind(null, true)}>事件标注</span>
@@ -1067,32 +1102,32 @@ class MonitoringModule extends React.Component {
           boxSelect ?
             <div className={styles.MaskBox}>
               <div className={classNames(styles.EventPopup, styles.VIboardPopup, styles.conditionPopup, styles.devicePos)}>
-                <div className={styles.Title}>添加硬件设备<Icon className={styles.Close} type="close" /></div>
+                <div className={styles.Title}>添加硬件设备<Icon className={styles.Close} type="close"  onClick={() => { this.handleEventPopup('boxSelect', false) }}/></div>
                 <div className={styles.Centent}>
                   <div className="site-checkbox-all-wrapper">
-                   {/*  <Checkbox
-                      indeterminate={this.state.indeterminate}
-                      onChange={this.onCheckAllChange}
-                      checked={this.state.checkAll}
+                    <Checkbox
+                      indeterminate={this.state.indeterminateBox}
+                      onChange={this.onCheckBoxSelect}
+                      checked={this.state.checkAllBox}
                     >
                       全选
-                  </Checkbox> */}
+                  </Checkbox>
                   </div>
                   <br />
-                  {/* <Checkbox.Group
-                    value={this.state.checkedList}
-                    onChange={this.getcheckedList}
+                  <Checkbox.Group
+                    value={this.state.checkedListBox}
+                    onChange={this.getcheckedListBox}
                   >
                     {
-                      conditionList.map((item) => {
-                        return <Checkbox key={item.deviceId} disabled={this.deviceList.includes(item.deviceId)} value={item.deviceId}>{item.deviceName + '-' + item.directionName}</Checkbox>
+                      boxSelectList.map((item) => {
+                        return <Checkbox key={item.deviceId} disabled={!oldDevicesList.includes(item.deviceId)} value={item.deviceId}>{item.deviceName + '-' + item.directionName}</Checkbox>
                       })
                     }
 
-                  </Checkbox.Group> */}
+                  </Checkbox.Group>
                   <div className={styles.ItemFooter} style={{ bottom: '-15px' }}>
-                    <span>确&nbsp;&nbsp;认</span>
-                    <span>返&nbsp;&nbsp;回</span>
+                    <span onClick={this.handledetailsPopupList}>确&nbsp;&nbsp;认</span>
+                    <span onClick={() => { this.handleEventPopup('boxSelect', false) }}>返&nbsp;&nbsp;回</span>
                   </div>
                 </div>
               </div>
