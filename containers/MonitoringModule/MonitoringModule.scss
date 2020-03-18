@@ -638,56 +638,62 @@
 .EventTagging {
   position: fixed;
   top: 55px;
-  bottom: 5px;
-  left: 5px;
-  right: unset;
-  width: 24%;
+  bottom: 10px;
+  left: 5%;
+  right: 5%;
+  width: 90%;
   display: flex;
-  background: url(../../imgs/popup_two.png) center center no-repeat;
-  background-size: 100% 100%;
   z-index: 99;
-  overflow-y: auto;
-  .Centent {
-    height: calc(100% - 97px);
-    min-height: calc(100% - 97px);
-    overflow-y: auto;
-    width: 100%;
+  overflow:hidden;
+  background:#919191;
+  .EventTaggingLeft{
+    width:24%;
+    justify-self: flex-start;
     position: absolute;
-    top: 50px;
-    padding: 22px 22px 0 22px;
-    color: #fff;
-    .ItemBox {
-      margin-top: 20px;
-      :global(.ant-select-arrow) {
-        color: #fff;
+    top:5px;
+      left:5px;
+      bottom:5px;
+      border:1px #163959 solid;
+    .Centent {
+      overflow-y: auto;
+      width: 100%;
+      background:rgba(16,16,16,.9);
+      padding: 0 22px 22px;
+      color: #fff;
+      .ItemBox {
+        margin-top: 20px;
+        :global(.ant-select-arrow) {
+          color: #fff;
+        }
+        .AddItem {
+          height: 30px;
+          line-height: 30px;
+          color: #fff;
+          background-color: #191c22;
+          border: 1px solid #959595;
+          border-radius: 0;
+          text-align: center;
+          cursor: pointer;
+          margin: 5px 0;
+        }
       }
-      .AddItem {
-        height: 30px;
-        line-height: 30px;
-        color: #fff;
-        background-color: #191c22;
-        border: 1px solid #959595;
-        border-radius: 0;
-        text-align: center;
-        cursor: pointer;
-        margin: 5px 0;
+      .ItemName {
+        width: 120px;
+        height: 100%;
+        display: inline-block;
+        line-height: 25px;
+        text-align: left;
+        text-indent: 10px;
+        vertical-align: top;
       }
     }
-    .ItemName {
-      width: 120px;
-      height: 100%;
-      display: inline-block;
-      line-height: 25px;
-      text-align: left;
-      text-indent: 10px;
-      vertical-align: top;
+    .ItemFooter {
+      position: absolute !important;
+      bottom: 20px !important;
+      color: #fff;
     }
   }
-  .ItemFooter {
-    position: absolute !important;
-    bottom: 20px !important;
-    color: #fff;
-  }
+  
 }
 .PanelItemNone {
   height: 45px;
