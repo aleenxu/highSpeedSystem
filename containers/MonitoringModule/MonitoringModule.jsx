@@ -1119,7 +1119,7 @@ class MonitoringModule extends React.Component {
                   detailsPopup.devices.map((item, ind) => {
                     return (
                       <Panel className={styles.PanelChs} header={item.codeName} key={item.dictCode} extra={detailsPopup.controlStatusType > 0 ? null : this.genExtraAdd(item, detailsPopup)}>
-                        <div> {/* 添加滚动条 */}
+                        <div>
                           {
                             item.device && item.device.map((items, index) => {
                               return <div className={styles.PanelBox}><p className={styles.PanelItem} key={items}>{`${index + 1}. ${items.deviceName} ${items.directionName} ${item.codeName}`}</p>{detailsPopup.controlStatusType > 0 || <Icon onClick={() => { this.handleSubDetailsPopupList(ind, index) }} className={styles.MinusItem} type="close" />}</div>
