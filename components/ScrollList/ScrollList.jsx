@@ -329,7 +329,6 @@ class ScrollList extends React.Component {
               paddingBottom: '13px'
             }} nowtype={listTitle.type} options={[{ label: '', value: listTitle }]} onClick={this.checkBoxClick} />
             {listTitle.type === 1 &&
-<<<<<<< HEAD
                 <img className={styles.iconImg} src={iconTrafficJam} />
               }
               {listTitle.type === 2 &&
@@ -344,19 +343,6 @@ class ScrollList extends React.Component {
               {listTitle.type === 5 &&
                 <img className={styles.iconImg} src={iconTagging} />
               }
-=======
-              <img className={styles.iconImg} src={iconTrafficJam} />
-            }
-            {listTitle.type === 2 &&
-              <img className={styles.iconImg} src={iconBuild} />
-            }
-            {listTitle.type === 3 &&
-              <img className={styles.iconImg} src={iconWeather} />
-            }
-            {listTitle.type === 4 &&
-              <img className={styles.iconImg} src={iconAccidents} />
-            }
->>>>>>> 95ba421dc8893f39e588114dd159f8e0694acb7a
             <Collapse
               onChange={this.callback}
               expandIconPosition="right"

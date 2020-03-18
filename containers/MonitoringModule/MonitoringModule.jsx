@@ -406,27 +406,11 @@ class MonitoringModule extends React.Component {
       }
     }
     let params = {
-<<<<<<< HEAD
       "area": window.newPoint,
       "control": false,
       "eventPileNum": item.roadPileNum,
       "eventTypeId": item.eventType,
       "existsDevices": existsDevices
-=======
-      "area": [
-        [119.731407, 32.290035],
-        [119.896202, 32.290035],
-        [119.896202, 32.143641],
-        [119.731407, 32.143641]
-      ],
-      "control": false,
-      "eventPileNum": "k38+818 k34+699",
-      "eventTypeId": 1,
-      "existsDevices": [
-        "1_00",
-        "1_123458"],
-      "value": 30
->>>>>>> 95ba421dc8893f39e588114dd159f8e0694acb7a
     }
     getResponseDatas('post', this.getDeviceAllUrl, params).then((res) => {
       const result = res.data
@@ -736,11 +720,7 @@ class MonitoringModule extends React.Component {
   }
   render() {
     const {
-<<<<<<< HEAD
       eventsPopup, groupType, planList, EventTagPopup, roadNumber, conditionList, boxSelect, oldDevicesList, boxSelectList, hwayList, VIboardPopup, groupStatus, controlPopup, detailsPopup, whethePopup, reservePopup, startValue, endValue, endOpen, SidePopLeft, detailsLatlng
-=======
-      eventsPopup, groupType, planList, EventTagPopup, boxSelect, endValueTime, roadNumber, conditionList, hwayList, VIboardPopup, groupStatus, controlPopup, detailsPopup, whethePopup, reservePopup, startValue, endValue, endOpen, SidePopLeft, detailsLatlng
->>>>>>> 95ba421dc8893f39e588114dd159f8e0694acb7a
     } = this.state
     return (
       <div className={styles.MonitoringModule}>
@@ -1226,17 +1206,10 @@ class MonitoringModule extends React.Component {
                 <div className={styles.Title}>添加硬件设备<Icon className={styles.Close} type="close"  onClick={() => { this.handleEventPopup('boxSelect', false) }}/></div>
                 <div className={styles.Centent}>
                   <div className="site-checkbox-all-wrapper">
-<<<<<<< HEAD
                     <Checkbox
                       indeterminate={this.state.indeterminateBox}
                       onChange={this.onCheckBoxSelect}
                       checked={this.state.checkAllBox}
-=======
-                    {/*  <Checkbox
-                      indeterminate={this.state.indeterminate}
-                      onChange={this.onCheckAllChange}
-                      checked={this.state.checkAll}
->>>>>>> 95ba421dc8893f39e588114dd159f8e0694acb7a
                     >
                       全选
                   </Checkbox>
