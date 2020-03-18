@@ -54,6 +54,7 @@ class MonitoringModule extends React.Component {
       detailsLatlng: null, // 详情路段的经纬度
       boxSelect: null, // 框选
       boxFlag: true, // 记录一次框选
+      flagClose: false, // 是否清除绘图
       checkedListBox: [],
       indeterminateBox: true,
       checkAllBox: false,
@@ -350,16 +351,14 @@ class MonitoringModule extends React.Component {
   // 获取右侧事件详情
   handledetai = (item) => {
     const _this = this;
-    // console.log(e,"look here")
+    console.log(item,"look here")
     getResponseDatas('get', this.detailUrl + item.eventId + '/' + item.eventType).then((res) => {
       const result = res.data
       if (result.code === 200) {
         this.setState({
           detailsPopup: result.data,
         }, () => {
-          console.log(window.overlays, "看看有不？")
           $(".amap-maps").attr("style", "cursor:crosshair")
-          window.drawRectangle()
           window.map.on("mousedown", function (e) {
             // console.log(e, "down..")
             window.newPoint = new Array(4).fill(null)
@@ -372,23 +371,31 @@ class MonitoringModule extends React.Component {
             })
           })
           window.map.on("mouseup", function (e) {
-            console.log(this.deviceList, "up..")
+            // console.log(this.deviceList, "up..")
             const newArr = []
             newArr[0] = e.lnglat.lng
             newArr[1] = e.lnglat.lat
             newPoint[2] = newArr
-            newPoint[1] = [newPoint[2][0],newPoint[0][1]]
-            newPoint[3] = [newPoint[0][0],newPoint[2][1]]
-            if (_this.state.boxFlag) {
-              debugger
-              _this.getDevice(_this.state.detailsPopup); 
+            newPoint[1] = [newPoint[2][0], newPoint[0][1]]
+            newPoint[3] = [newPoint[0][0], newPoint[2][1]]
+            if (!_this.state.detailsPopup.controlStatusType) {
+              window.drawRectangle()
               _this.setState({
-                boxFlag: false,
+                flagClose: true,
               })
+              if (_this.state.boxFlag) {
+                _this.getDevice(_this.state.detailsPopup);
+                _this.setState({
+                  boxFlag: false,
+                })
+              }
+            } else {
+              if (_this.state.flagClose) {
+                window.mouseTool.close(true) //关闭，并清除覆盖物
+                $(".amap-maps").attr("style", "")
+              }
             }
           })
-          
-          // console.log(window.overlays, "矢量图")
         })
       }
     })
@@ -447,6 +454,21 @@ class MonitoringModule extends React.Component {
       indeterminateBox: false,
       checkAllBox: e.target.checked,
     })
+  }
+  handleBoxSelectList = () => {
+    const { checkedListBox, detailsPopup, boxSelectList, oldDevicesList } = this.state
+    boxSelectList.forEach((item) => {
+      checkedListBox.forEach((items) => {
+        if (item.deviceId === items) {
+          detailsPopup.devices.forEach((itemss, index) => {
+            if (itemss.dictCode === item.deviceTypeId) {
+              detailsPopup.devices[index].device.push(item)
+            }
+          })
+        }
+      })
+    })
+    this.setState({ detailsPopup, boxSelectList: null, boxSelect: null })
   }
   // 字典查询
   handlelistDetail = (name, value) => {
@@ -722,14 +744,14 @@ class MonitoringModule extends React.Component {
   }
   render() {
     const {
-      eventsPopup, groupType, planList, EventTagPopup, roadNumber,endValueTime, conditionList, boxSelect, oldDevicesList, boxSelectList, hwayList, VIboardPopup, groupStatus, controlPopup, detailsPopup, whethePopup, reservePopup, startValue, endValue, endOpen, SidePopLeft, detailsLatlng
+      eventsPopup, groupType, planList, EventTagPopup, roadNumber, endValueTime, conditionList, boxSelect, flagClose, oldDevicesList, boxSelectList, hwayList, VIboardPopup, groupStatus, controlPopup, detailsPopup, whethePopup, reservePopup, startValue, endValue, endOpen, SidePopLeft, detailsLatlng
     } = this.state
     return (
       <div className={styles.MonitoringModule}>
         <SystemMenu />
         {(!!reservePopup || !!EventTagPopup) || <SidePop left="5px" groupType={groupType} SidePopLeft={SidePopLeft} handleEventPopup={this.handleEventPopup} />}
         {!!detailsPopup || <SidePop SidplanList={planList} groupStatus={groupStatus} right="5px" handleEventPopup={this.handleEventPopup} />}
-        <GMap dataAll={SidePopLeft} roadLatlng={detailsLatlng} handledetai={this.handledetai} detailsPopup={detailsPopup} boxSelect={boxSelect} />
+        <GMap dataAll={SidePopLeft} roadLatlng={detailsLatlng} handledetai={this.handledetai} detailsPopup={detailsPopup} boxSelect={boxSelect} flagClose={flagClose} />
         <div id="searchBox" className={`${styles.searchBox} animated ${'bounceInDown'}`}><Search id="tipinput" placeholder="请输入内容" enterButton /></div>
         <div id="deviceBox" className={`${styles.mapIconManage} animated ${'bounceInDown'}`}>
           <span>设备显示</span><span onClick={this.handleEventTag.bind(null, true)}>事件标注</span>
@@ -1205,7 +1227,7 @@ class MonitoringModule extends React.Component {
           boxSelect ?
             <div className={styles.MaskBox}>
               <div className={classNames(styles.EventPopup, styles.VIboardPopup, styles.conditionPopup, styles.devicePos)}>
-                <div className={styles.Title}>添加硬件设备<Icon className={styles.Close} type="close"  onClick={() => { this.handleEventPopup('boxSelect', false) }}/></div>
+                <div className={styles.Title}>添加硬件设备<Icon className={styles.Close} type="close" onClick={() => { this.handleEventPopup('boxSelect', false) }} /></div>
                 <div className={styles.Centent}>
                   <div className="site-checkbox-all-wrapper">
                     <Checkbox
@@ -1229,7 +1251,7 @@ class MonitoringModule extends React.Component {
 
                   </Checkbox.Group>
                   <div className={styles.ItemFooter} style={{ bottom: '-15px' }}>
-                    <span onClick={this.handledetailsPopupList}>确&nbsp;&nbsp;认</span>
+                    <span onClick={this.handleBoxSelectList}>确&nbsp;&nbsp;认</span>
                     <span onClick={() => { this.handleEventPopup('boxSelect', false) }}>返&nbsp;&nbsp;回</span>
                   </div>
                 </div>

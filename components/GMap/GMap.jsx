@@ -8,6 +8,7 @@ import mapBuild from '../../imgs/map_build.png'
 import mapWeather from '../../imgs/map_weather.png'
 import mapAccidents from '../../imgs/map_accident.png'
 import getResponseDatas from '../../plugs/HttpData/getResponseData'
+import $ from 'jquery'
 const pointArr = []
 window.centerPoint = null
 //监听drawRectangle事件可获取画好的覆盖物
@@ -23,8 +24,9 @@ class GMap extends React.Component {
       roadLatlng: this.props.roadLatlng, // 路段的经纬度
       detailsPopup: this.props.detailsPopup, // 右侧详情显示
       boxSelect: this.props.boxSelect, // 框选弹层
+      flagClose: this.props.flagClose, // 框选是否清除绘制
       centerPoint: null, // 地图中心点
-      
+
     }
     this.styles = {
       position: 'fixed',
@@ -52,7 +54,7 @@ class GMap extends React.Component {
       this.setState({ roadLatlng: nextProps.roadLatlng })
     }
     if (this.props.boxSelect !== nextProps.boxSelect) {
-      this.setState({ boxSelect: nextProps.boxSelect },() => {
+      this.setState({ boxSelect: nextProps.boxSelect }, () => {
         if (!this.state.boxSelect) {
           //this.loadingMap()
           map.remove(window.overlays)
@@ -61,10 +63,16 @@ class GMap extends React.Component {
       })
     }
     if (this.props.detailsPopup !== nextProps.detailsPopup) {
-      this.setState({ detailsPopup: nextProps.detailsPopup },() => {
+      this.setState({ detailsPopup: nextProps.detailsPopup }, () => {
         if (this.state.detailsPopup) {
-          // console.log("为true时进来")
-          window.drawRectangle()
+          if (!this.state.detailsPopup.controlStatusType) {
+            window.drawRectangle()
+          } else {
+            if (this.state.flagClose) {
+              window.mouseTool.close(true) //关闭，并清除覆盖物
+              $(".amap-maps").attr("style", "")
+            }
+          }
         } else {
           // console.log("为false 时重载地图")
           this.loadPoint()
@@ -77,7 +85,7 @@ class GMap extends React.Component {
       this.setState({
         centerPoint: window.centerPoint
       }, () => {
-        window.map.setZoomAndCenter(12, [this.state.centerPoint.split(",")[0],this.state.centerPoint.split(",")[1]])
+        window.map.setZoomAndCenter(12, [this.state.centerPoint.split(",")[0], this.state.centerPoint.split(",")[1]])
       })
     }
   }
@@ -88,12 +96,12 @@ class GMap extends React.Component {
     }
   }
   loadPoint = () => {
-    getResponseDatas('get', this.mapPointUrl+'?searchKey=' + this.state.keyWords).then((res) => {
+    getResponseDatas('get', this.mapPointUrl + '?searchKey=' + this.state.keyWords).then((res) => {
       const jsonData = res.data
-      if (jsonData.code == 200 && jsonData.data.length > 0){
+      if (jsonData.code == 200 && jsonData.data.length > 0) {
         jsonData.data.map((item) => {
           // 根据类型划分图标类型 1、可变情报板;2、可变限速板;3、收费站;4、F屏情报版;
-          switch(item.deviceTypeId){
+          switch (item.deviceTypeId) {
             case 1:
               this.state.infoBoardJson.push(item)
               break;
@@ -110,7 +118,7 @@ class GMap extends React.Component {
         })
         this.loadingMap()
       }
-      
+
     })
   }
   loadingMap = () => {
@@ -126,20 +134,21 @@ class GMap extends React.Component {
       'interval': 180,         //刷新间隔，默认180s
     });
     window.mouseToolLayer.setMap(map) // 层组渲染到地图中 */
-    var mouseTool = new AMap.MouseTool(map); 
+    window.map.on('mousemove')
+    window.mouseTool = new AMap.MouseTool(map);
     //监听draw事件可获取画好的覆盖物
     window.overlays = []
-    mouseTool.on('draw',function(e){
-        overlays.push(e.obj);
+    mouseTool.on('draw', function (e) {
+      overlays.push(e.obj);
     })
-    function draw(){
+    function draw() {
       mouseTool.rectangle({
-             fillColor:'#00b0ff',
-             strokeColor:'#80d8ff'
-             //同Polygon的Option设置
-           });
-   }
-   window.drawRectangle = draw
+        fillColor: '#00b0ff',
+        strokeColor: '#80d8ff'
+        //同Polygon的Option设置
+      });
+    }
+    window.drawRectangle = draw
     //实时路况图层
     var trafficLayer = new AMap.TileLayer.Traffic({
       zIndex: 10
@@ -190,7 +199,7 @@ class GMap extends React.Component {
     AMap.event.addListener(auto, "select", this.searchKeyWords);//注册监听，当选中某条记录时会触发
     // 点的新建
     AMapUI.loadUI(['overlay/SimpleMarker', 'overlay/SimpleInfoWindow'], function (SimpleMarker, SimpleInfoWindow) {
-      if (_this.state.dataAll){
+      if (_this.state.dataAll) {
         // 左侧功能数据图标
         _this.createPoint(pointArr, tollStationIcon, SimpleMarker, SimpleInfoWindow, map, "1")
       }
@@ -253,11 +262,11 @@ class GMap extends React.Component {
       });
 
       window.pathSimplifierIns = pathSimplifierIns;
-     /*  // var d = lineData;
-      var d = [
-        {"path":[["119.851293", "32.233071"],["119.857044", "32.236665"]]}
-      ]
-      pathSimplifierIns.setData(d); */
+      /*  // var d = lineData;
+       var d = [
+         {"path":[["119.851293", "32.233071"],["119.857044", "32.236665"]]}
+       ]
+       pathSimplifierIns.setData(d); */
 
     });
     // 弹层的自定义
@@ -266,8 +275,8 @@ class GMap extends React.Component {
       return document.getElementById('my-infowin-tpl').innerHTML;
     });
   }
-  returnMapIcon = (index)=>{
-    switch(index){
+  returnMapIcon = (index) => {
+    switch (index) {
       case 0:
         return mapTrafficJam
       case 1:
@@ -286,10 +295,10 @@ class GMap extends React.Component {
   */
   createPoint = (pointArr, pointIcon, SimpleMarker, SimpleInfoWindow, map, flag) => {
     const _this = this;
-    switch(flag) {
+    switch (flag) {
       case "1":
-        _this.state.dataAll.map((leftItem, leftIndex)=>{
-          if (leftItem.eventData.length > 0){
+        _this.state.dataAll.map((leftItem, leftIndex) => {
+          if (leftItem.eventData.length > 0) {
             leftItem.eventData.map((item, index) => {
               const marker = new SimpleMarker({
                 //自定义图标地址
@@ -311,7 +320,7 @@ class GMap extends React.Component {
                 _this.handledetai(item)
                 window.pathSimplifierIns.setData(lineDatas)
               })
-              switch(leftIndex){
+              switch (leftIndex) {
                 case 0:
                   window.leftModuleOne.addLayer(marker) //把点添加到层组中
                   window.leftModuleOne.setMap(map) // 层组渲染到地图中
@@ -333,11 +342,11 @@ class GMap extends React.Component {
                   window.leftModuleFour.hide() // 隐藏当前的层组
                   break;
               }
-            }) 
+            })
           }
         })
         break;
-      case "2": 
+      case "2":
         pointArr.length > 0 && pointArr.map((item) => {
           const marker2 = new SimpleMarker({
             //自定义图标地址
@@ -433,12 +442,12 @@ class GMap extends React.Component {
       
     } */
   }
-  openInfoWin = (map, marker, SimpleInfoWindow,showData) => {
+  openInfoWin = (map, marker, SimpleInfoWindow, showData) => {
     var infoWindow = new SimpleInfoWindow({
-      myCustomHeader: showData.deviceName+'信息：',
+      myCustomHeader: showData.deviceName + '信息：',
       myCustomFooter: '我的footer',
       infoTitle: '<div>这里是标题</div>',
-      infoBody: '<p class="my-desc"><strong>桩号：'+showData.pileNum+'</strong><strong>走向：'+showData.directionName+'</strong><strong>所属高速：'+showData.roadName+'</strong></p>',
+      infoBody: '<p class="my-desc"><strong>桩号：' + showData.pileNum + '</strong><strong>走向：' + showData.directionName + '</strong><strong>所属高速：' + showData.roadName + '</strong></p>',
       //基点指向marker的头部位置
       offset: new AMap.Pixel(0, -10)
     });
