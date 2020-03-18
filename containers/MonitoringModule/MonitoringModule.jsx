@@ -578,7 +578,7 @@ class MonitoringModule extends React.Component {
               message.success('发起管控方案成功！')
               that.handleEventList()
               that.handlegroupType()
-              that.handleUrlAjax(this.groupStatusUrl, 'groupStatus')
+              that.handleUrlAjax(that.groupStatusUrl, 'groupStatus')
               that.handleplanList()
               that.handleEventPopup('Reserve', true)
             }

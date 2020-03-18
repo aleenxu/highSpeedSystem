@@ -140,12 +140,14 @@ class Intelligence extends React.Component {
             </div>
           </div>
         </div>
-        {/* <div className={styles.MaskBox}>
+        <div className={styles.MaskBox}>
           <div className={styles.AddBox}>
             <div className={styles.Title}>新增<Icon className={styles.Close} type="close" /></div>
-            <div className={styles.Conten}></div>
+            <div className={styles.Conten}>
+              
+            </div>
           </div>
-        </div> */}
+        </div>
       </div>
     )
   }
