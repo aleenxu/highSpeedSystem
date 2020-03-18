@@ -74,7 +74,7 @@ class GMap extends React.Component {
         }
       })
     }
-    if (window.centerPoint != this.state.centerPoint) {
+    if (window.centerPoint && window.centerPoint != this.state.centerPoint) {
       this.setState({
         centerPoint: window.centerPoint
       }, () => {
