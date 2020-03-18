@@ -721,7 +721,7 @@ class MonitoringModule extends React.Component {
   }
   render() {
     const {
-      eventsPopup, groupType, planList, EventTagPopup, roadNumber, conditionList, boxSelect, oldDevicesList, boxSelectList, hwayList, VIboardPopup, groupStatus, controlPopup, detailsPopup, whethePopup, reservePopup, startValue, endValue, endOpen, SidePopLeft, detailsLatlng
+      eventsPopup, groupType, planList, EventTagPopup, roadNumber,endValueTime, conditionList, boxSelect, oldDevicesList, boxSelectList, hwayList, VIboardPopup, groupStatus, controlPopup, detailsPopup, whethePopup, reservePopup, startValue, endValue, endOpen, SidePopLeft, detailsLatlng
     } = this.state
     return (
       <div className={styles.MonitoringModule}>
@@ -1033,7 +1033,7 @@ class MonitoringModule extends React.Component {
               </div>
             </div>
             {
-              reservePopup && endValueTime ?
+              (reservePopup && endValueTime) ?
                 <div className={classNames(styles.EventPopup, styles.WhethePopupr)}>
                   <div className={styles.Title}>是否修改管控时段结束时间?</div>
                   <div className={styles.Centent}>
