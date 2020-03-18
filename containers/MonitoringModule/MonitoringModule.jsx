@@ -18,7 +18,6 @@ const options = [
   { label: '极端天气', value: '3' },
   { label: '交通事故', value: '4' },
 ]
-window.overlays = []
 const plainOptions = [
   { label: '一级', value: '1' },
   { label: '二级', value: '2' },
@@ -54,6 +53,7 @@ class MonitoringModule extends React.Component {
       EventTagPopup: null,
       detailsLatlng: null, // 详情路段的经纬度
       boxSelect: null, // 框选
+      boxFlag: true, // 记录一次框选
       checkedListBox: [],
       indeterminateBox: true,
       checkAllBox: false,
@@ -160,13 +160,12 @@ class MonitoringModule extends React.Component {
     this.setState({ endOpen: open })
   }
   // 控制事件检测过滤设置弹窗
-  handleEventPopup = (type, boolean, event) => {
+  handleEventPopup = (type, boolean) => {
     let _this = this;
     // console.log(type, boolean)
     if (type === 'boxSelect') {
       this.setState({
         boxSelect: false,
-        detailsPopup: false,
       })
     }
     if (type === 'Event') {
@@ -348,7 +347,6 @@ class MonitoringModule extends React.Component {
       }
     })
   }
-
   // 获取右侧事件详情
   handledetai = (item) => {
     const _this = this;
@@ -359,16 +357,21 @@ class MonitoringModule extends React.Component {
         this.setState({
           detailsPopup: result.data,
         }, () => {
+          console.log(window.overlays, "看看有不？")
           $(".amap-maps").attr("style", "cursor:crosshair")
-          map.on("mousedown", function (e) {
+          window.drawRectangle()
+          window.map.on("mousedown", function (e) {
             // console.log(e, "down..")
             window.newPoint = new Array(4).fill(null)
             const newArr = []
             newArr[0] = e.lnglat.lng
             newArr[1] = e.lnglat.lat
             newPoint[0] = newArr
+            _this.setState({
+              boxFlag: true,
+            })
           })
-          map.on("mouseup", function (e) {
+          window.map.on("mouseup", function (e) {
             console.log(this.deviceList, "up..")
             const newArr = []
             newArr[0] = e.lnglat.lng
@@ -376,18 +379,15 @@ class MonitoringModule extends React.Component {
             newPoint[2] = newArr
             newPoint[1] = [newPoint[2][0],newPoint[0][1]]
             newPoint[3] = [newPoint[0][0],newPoint[2][1]]
-            _this.getDevice(_this.state.detailsPopup)
+            if (_this.state.boxFlag) {
+              debugger
+              _this.getDevice(_this.state.detailsPopup); 
+              _this.setState({
+                boxFlag: false,
+              })
+            }
           })
-          mouseTool.on('draws', function (e) {
-            console.log(e)
-            window.overlays.push(e.obj);
-            pointArr.map((item,index) => {
-              if(index == pointArr.length){
-                newPoint = []
-              }
-            })
-            // 
-          })
+          
           // console.log(window.overlays, "矢量图")
         })
       }
@@ -397,7 +397,7 @@ class MonitoringModule extends React.Component {
   getDevice = (item) => {
     const existsDevices = []
     const listDevices = []
-    if (item.devices.length > 0) {
+    if (item && item.devices.length > 0) {
       for (let i = 0, devicesArr = item.devices; i < devicesArr.length; i++) {
         // console.log(devicesArr, "00001")
         devicesArr[i].device.map((item) => {
@@ -426,6 +426,8 @@ class MonitoringModule extends React.Component {
           this.setState({ boxSelect: true, boxSelectList: result.data, oldDevicesList: noDevices })
         } else {
           message.info('没有选中相应的硬件设备！')
+          map.remove(window.overlays)
+          window.overlays = []
         }
       }
     })
@@ -593,7 +595,6 @@ class MonitoringModule extends React.Component {
     const { detailsPopup } = this.state
     getResponseDatas('get', this.getInfoUrl + eventType + '/' + eventId).then((res) => {
       const result = res.data
-      console.log(result, "adfasdfadsf")
       if (result.code === 200) {
         $('#searchBox').attr('style', 'transition:all .5s;')
         $('#roadStateBox').attr('style', 'transition:all .5s;')

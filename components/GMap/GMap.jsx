@@ -9,11 +9,6 @@ import mapWeather from '../../imgs/map_weather.png'
 import mapAccidents from '../../imgs/map_accident.png'
 import getResponseDatas from '../../plugs/HttpData/getResponseData'
 const pointArr = []
-const lineData = [
-  { "name": "起点 -> 终点", "path": [[119.9334060000, 32.4345900000], [119.9339210000, 32.4328910000], [119.9335780000, 32.4313020000], [119.9347800000, 32.4301430000], [119.9346080000, 32.4288390000]] },
-  { "name": "起点 -> 终点", "path": [[119.9346080000, 32.4288390000], [119.9342650000, 32.4271000000], [119.9342650000, 32.4257960000], [119.9342650000, 32.4242020000], [119.9337500000, 32.4226080000], [119.9327200000, 32.4200000000]] },
-  { "name": "起点 -> 终点", "path": [[119.9327200000, 32.4200000000], [119.9330630000, 32.4171020000], [119.9344360000, 32.4147830000], [119.9349510000, 32.4131890000], [119.9361530000, 32.4113050000], [119.9358100000, 32.4085520000]] }
-];
 window.centerPoint = null
 //监听drawRectangle事件可获取画好的覆盖物
 class GMap extends React.Component {
@@ -59,7 +54,9 @@ class GMap extends React.Component {
     if (this.props.boxSelect !== nextProps.boxSelect) {
       this.setState({ boxSelect: nextProps.boxSelect },() => {
         if (!this.state.boxSelect) {
-          this.loadingMap()
+          //this.loadingMap()
+          map.remove(window.overlays)
+          window.overlays = []
         }
       })
     }
@@ -67,10 +64,12 @@ class GMap extends React.Component {
       this.setState({ detailsPopup: nextProps.detailsPopup },() => {
         if (this.state.detailsPopup) {
           // console.log("为true时进来")
-          this.drawRectangle()
+          window.drawRectangle()
         } else {
           // console.log("为false 时重载地图")
           this.loadPoint()
+          map.remove(window.overlays)
+          window.overlays = []
         }
       })
     }
@@ -87,14 +86,6 @@ class GMap extends React.Component {
     if (handledetai) {
       handledetai(dataItem)
     }
-  }
-  // 绘制地图框选
-  drawRectangle = () => {
-    window.mouseTool.rectangle({
-      fillColor: '#00b0ff',
-      strokeColor: '#80d8ff'
-      //同Polygon的Option设置
-    });
   }
   loadPoint = () => {
     getResponseDatas('get', this.mapPointUrl+'?searchKey=' + this.state.keyWords).then((res) => {
@@ -135,7 +126,20 @@ class GMap extends React.Component {
       'interval': 180,         //刷新间隔，默认180s
     });
     window.mouseToolLayer.setMap(map) // 层组渲染到地图中 */
-    window.mouseTool = new AMap.MouseTool(window.map)
+    var mouseTool = new AMap.MouseTool(map); 
+    //监听draw事件可获取画好的覆盖物
+    window.overlays = []
+    mouseTool.on('draw',function(e){
+        overlays.push(e.obj);
+    })
+    function draw(){
+      mouseTool.rectangle({
+             fillColor:'#00b0ff',
+             strokeColor:'#80d8ff'
+             //同Polygon的Option设置
+           });
+   }
+   window.drawRectangle = draw
     //实时路况图层
     var trafficLayer = new AMap.TileLayer.Traffic({
       zIndex: 10
