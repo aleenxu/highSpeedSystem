@@ -352,6 +352,7 @@ class MonitoringModule extends React.Component {
   // 获取右侧事件详情
   handledetai = (item) => {
     const _this = this;
+    // console.log(e,"look here")
     getResponseDatas('get', this.detailUrl + item.eventId + '/' + item.eventType).then((res) => {
       const result = res.data
       if (result.code === 200) {
