@@ -88,6 +88,18 @@ class MonitoringModule extends React.Component {
       list: [],
       startTime: '',
     }
+    this.mapStyles = {
+      position: 'absolute',
+      top: '0',
+      left: 0,
+      width: '100%',
+      height: '100%',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: '#1e375d',
+      border:'1px #163959 solid',
+    }
     this.planStatus = 0
     this.eventListUrl = '/control/event/list/events' // 根据条件查询所有事件
     this.groupTypeUrl = '/control/event/total/number/group/type' //  统计事件数量，根据事件状态分组
@@ -749,9 +761,9 @@ class MonitoringModule extends React.Component {
     return (
       <div className={styles.MonitoringModule}>
         <SystemMenu />
-        {(!!reservePopup || !!EventTagPopup) || <SidePop left="5px" groupType={groupType} SidePopLeft={SidePopLeft} handleEventPopup={this.handleEventPopup} />}
+        {!!reservePopup || <SidePop left="5px" groupType={groupType} SidePopLeft={SidePopLeft} handleEventPopup={this.handleEventPopup} />}
         {!!detailsPopup || <SidePop SidplanList={planList} groupStatus={groupStatus} right="5px" handleEventPopup={this.handleEventPopup} />}
-        <GMap dataAll={SidePopLeft} roadLatlng={detailsLatlng} handledetai={this.handledetai} detailsPopup={detailsPopup} boxSelect={boxSelect} flagClose={flagClose} />
+        <GMap mapID={'container'} dataAll={SidePopLeft} roadLatlng={detailsLatlng} handledetai={this.handledetai} detailsPopup={detailsPopup} boxSelect={boxSelect} flagClose={flagClose} EventTagPopup={EventTagPopup} />
         <div id="searchBox" className={`${styles.searchBox} animated ${'bounceInDown'}`}><Search id="tipinput" placeholder="请输入内容" enterButton /></div>
         <div id="deviceBox" className={`${styles.mapIconManage} animated ${'bounceInDown'}`}>
           <span>设备显示</span><span onClick={this.handleEventTag.bind(null, true)}>事件标注</span>
@@ -1295,15 +1307,21 @@ class MonitoringModule extends React.Component {
         }
         {
           EventTagPopup ?
+            <div className={styles.MaskBox}>
             <div className={styles.EventTagging}>
-              <div className={styles.Title}>事件标注<Icon className={styles.Close} onClick={() => { this.handleEventTag(false) }} type="close" /></div>
+              <GMap styles={this.mapStyles} mapID={'popMap'} dataAll={SidePopLeft} roadLatlng={detailsLatlng} handledetai={this.handledetai} detailsPopup={detailsPopup} boxSelect={boxSelect} flagClose={flagClose} />
+              <div className={styles.EventTaggingLeft}>
+                <div className={styles.Title} style={{background:'#132334'}}>事件标注<Icon className={styles.Close} onClick={() => { this.handleEventTag(false) }} type="close" /></div>
               <div className={styles.Centent}>
                 <div className={styles.ItemBox}>
-                  <span className={styles.ItemName}>道路编号&nbsp;:</span>
+                  <span className={styles.ItemName}>事件编号&nbsp;:</span>
                   <div className={styles.ItemInput}>
                     20252222222000000000P
                 </div>
                 </div>
+              </div>
+              <div className={styles.Title} style={{background:'#132334', lineHeight:'20px', height:'20px', fontSize:'12px'}}>事件标注</div>
+              <div className={styles.Centent}>
                 <div className={styles.ItemBox}>
                   <span className={styles.ItemName}>事件类型&nbsp;:</span>
                   <div className={styles.ItemInput}>
@@ -1385,7 +1403,36 @@ class MonitoringModule extends React.Component {
                 <span onClick={this.handleEventTag}>保&nbsp;&nbsp;存</span>
                 <span onClick={() => { this.handleEventTag(false) }}>发起管控</span>
               </div>
-            </div> : null
+              </div>
+              <div id="searchBox" style={{top:'5px'}} className={`${styles.searchBox} animated ${'bounceInDown'}`}><Search id="tipinput" placeholder="请输入内容" enterButton /></div>
+              <div id="deviceBox" style={{top:'5px', right:'0'}} className={`${styles.mapIconManage} animated ${'bounceInDown'}`}>
+                <span>设备显示</span>
+              </div>
+              <div id="roadStateBox" className={`${styles.roadState} animated ${'bounceInUp'}`}>
+                <h5><p>路况</p></h5>
+                <h5><span className={styles.redColor}>{'< 60km/h'}</span></h5>
+                <h5><p>能见度</p></h5>
+                <h5 className={styles.visibility}>
+                  <s>{'< 50'}</s>
+                  <s>{'50 - 100'}</s>
+                  <s>{'100 - 200'}</s>
+                  <s>{'200 - 500'}</s>
+                </h5>
+                {/* <p>
+                  <span>严重拥堵</span>
+                  <span>拥挤</span>
+                  <span>缓行</span>
+                  <span>畅通</span>
+                </p> */}
+                <h5>
+                  <em>收费站</em>
+                  <em>F屏情报板</em>
+                  <em>限速牌专用</em>
+                  <em>可变情报板</em>
+                </h5>
+              </div>
+            </div> 
+            </div>: null
         }
       </div >
     )

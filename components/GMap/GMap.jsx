@@ -26,7 +26,9 @@ class GMap extends React.Component {
       boxSelect: this.props.boxSelect, // 框选弹层
       flagClose: this.props.flagClose, // 框选是否清除绘制
       centerPoint: null, // 地图中心点
-
+      mapID: this.props.mapID, // 地图ID
+      styles: this.props.styles, // 地图样式
+      EventTagPopup: this.props.EventTagPopup, // 弹层地图后更新下原来地图
     }
     this.styles = {
       position: 'fixed',
@@ -49,6 +51,13 @@ class GMap extends React.Component {
   componentWillReceiveProps = (nextProps) => {
     if (this.props.dataAll !== nextProps.dataAll) {
       this.setState({ dataAll: nextProps.dataAll })
+    }
+    if (this.props.EventTagPopup !== nextProps.EventTagPopup) {
+      this.setState({ EventTagPopup: nextProps.EventTagPopup })
+      this.loadingMap()
+    }
+    if (this.props.styles !== nextProps.styles) {
+      this.props.styles = nextProps.styles
     }
     if (this.props.roadLatlng !== nextProps.roadLatlng) {
       this.setState({ roadLatlng: nextProps.roadLatlng })
@@ -123,7 +132,7 @@ class GMap extends React.Component {
   }
   loadingMap = () => {
     const _this = this;
-    window.map = new AMap.Map('container', {
+    window.map = new AMap.Map(_this.state.mapID, {
       resizeEnable: true, //是否监控地图容器尺寸变化
       center: [120.0105285600, 32.3521228100], //初始化地图中心点
       mapStyle: "amap://styles/c3fa565f6171961e94b37c4cc2815ef8",
@@ -458,8 +467,9 @@ class GMap extends React.Component {
     this.placeSearch.search(e.poi.name);  //关键字查询查询
   }
   render() {
+    const { mapID, styles } = this.state
     return (
-      <div id="container" style={this.styles}></div>
+      <div id={mapID} style={styles ? styles : this.styles}></div>
     )
   }
 }
