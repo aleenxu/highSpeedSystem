@@ -3,9 +3,15 @@ import SystemMenu from '../../../components/SystemMenu/SystemMenu'
 import Navigation from '../../../components/Navigation/Navigation'
 import getResponseDatas from '../../../plugs/HttpData/getResponseData'
 import styles from '../EquipmentModule.scss'
-import { Pagination, Input, message, Modal, Icon } from 'antd'
+import classNames from 'classNames'
+import { Pagination, Input, message, Modal, Icon, Form, Select, Button } from 'antd'
 
 const { confirm } = Modal
+const { Option } = Select
+const formItemLayout = {
+  labelCol: { span: 6 },
+  wrapperCol: { span: 14 },
+}
 /*         可变情报板 */
 class Intelligence extends React.Component {
   constructor(props) {
@@ -14,24 +20,95 @@ class Intelligence extends React.Component {
       listByPage: null,
       current: 1,
       directionList: [],
+      boardData: null,
+      hwayList: [],
+      vendorList: [],
+      deviceTypeList: null,
+      ControlStatus: { showContent: '', statusName: '' }
     }
     this.Parameters = {
       keyword: '',
       pageNo: 1,
     }
+    this.board = {
+      currentDisplay: '',
+      deviceId: '',
+      deviceIp: '',
+      deviceName: '',
+      deviceTypeId: '',
+      direction: '',
+      displayCode: '',
+      latlng: '',
+      online: '',
+      pileNum: '',
+      port: '',
+      roadName: '',
+      roadSecId: '',
+      rowId: '',
+      vendor: '',
+    }
     this.listByPageUrl = '/control/inforBoard/listByPage' // 分页查询设备
     this.listDetailUrl = '/control/dict/code/list/detail/' // {codeType} 根据字典类型，获取字典详情相关信息'
     this.deleteUrl = '/control/inforBoard/delete' //  删除情报板'
+    this.hwayUrl = '/control/road/list/hway' //  获取高速编号，用于下拉框'
+    this.updateUrl = '/control/inforBoard/update' // 修改情报板'
+    this.insertUrl = '/control/inforBoard/insert' // 新增情报板'
+    this.Status = '/control/inforBoard/getControlStatus' // 获取情报板状态'
   }
   componentDidMount = () => {
+    this.boardData = this.board
     this.handleListByPage()
     this.handlelistDetail('directionList', 1)
+    this.handlelistDetail('vendorList', 24)
+    this.handlelistDetail('deviceTypeList', 18)
+    this.handleUrlAjax('get', this.hwayUrl, 'hwayList')
   }
   handleListByPage = () => {
     getResponseDatas('get', this.listByPageUrl, this.Parameters).then((res) => {
       const result = res.data
       if (result.code === 200) {
         this.setState({ listByPage: result.data, current: Number(this.Parameters.pageNo) })
+      }
+    })
+  }
+  handleControlStatus = () => {
+    const { deviceId, deviceTypeId } = this.board
+    if (!deviceId) {
+      message.warning('请填写设备编号')
+      return
+    }
+    if (!deviceTypeId) {
+      message.warning('请选择设备类型')
+      return
+    }
+    getResponseDatas('post', this.Status, { deviceId, deviceTypeId }).then((res) => {
+      const result = res.data
+      if (result.code === 200) {
+        this.setState({ ControlStatus: result.data })
+      } else {
+        message.warning('无数据')
+      }
+    })
+  }
+  // 添加与编辑
+  handleListupdate = () => {
+    const url = this.board.rowId ? this.updateUrl : this.insertUrl
+    getResponseDatas('post', url, this.board).then((res) => {
+      const result = res.data
+      if (result.code === 200) {
+        this.board = this.boardData
+        this.setState({ boardData: null })
+        this.handleListByPage()
+      }
+      message.success(result.message)
+    })
+  }
+  // 通用呆板式接口请求
+  handleUrlAjax = (type, url, name, data) => {
+    getResponseDatas('get', url, data).then((res) => {
+      const result = res.data
+      if (result.code === 200) {
+        this.setState({ [name]: result.data })
       }
     })
   }
@@ -68,19 +145,32 @@ class Intelligence extends React.Component {
     this.Parameters.pageNo = pageNumber
     this.handleListByPage()
   }
-  handleInputChange = (e, name) => {
-    this.Parameters[name] = e.target.value
-  }
-  handledirection = (id) => {
-    const { directionList } = this.state
-    for (let i = 0; i < directionList.length; i++) {
-      if (directionList[i].id === id) {
-        return directionList[i].name
+
+  handledirection = (data, id) => {
+    for (let i = 0; i < data.length; i++) {
+      if (data[i].id === id) {
+        return data[i].name
       }
     }
   }
+  handleInput = (e, name, type) => {
+    this[type][name] = e.target.value
+  }
+  handleSelect = (value, name, type) => {
+    this[type][name] = value
+  }
+  // 查看当前方案详情
+  handleboardData = (data) => {
+    this.board = data
+    this.setState({ boardData: data })
+  }
+  handleAddData = () => {
+    console.log(this.board, this.boardData);
+    this.board = this.boardData
+    this.setState({ boardData: this.board })
+  }
   render() {
-    const { listByPage, current } = this.state
+    const { listByPage, current, boardData, directionList, hwayList, vendorList, deviceTypeList, ControlStatus } = this.state
     return (
       <div>
         <SystemMenu />
@@ -89,11 +179,11 @@ class Intelligence extends React.Component {
           <div className={styles.EqCentent}>
             <div className={styles.Operation}>
               <div className={styles.leftItem}>
-                <div><Input onChange={(e) => { this.handleInputChange(e, 'keyword') }} /></div>
-                <span className={styles.Button} onClick={this.handleListByPage}>搜&nbsp;&nbsp;索</span>
+                <div><Input onChange={(e) => { this.handleInput(e, 'keyword', 'Parameters') }} /></div>
+                <Button className={styles.Button} onClick={this.handleListByPage}>搜&nbsp;&nbsp;索</Button>
               </div>
               <div className={styles.rightItem}>
-                <span className={styles.Button}>新&nbsp;&nbsp;增</span>
+                <Button className={styles.Button} onClick={this.handleAddData}>新&nbsp;&nbsp;增</Button>
                 {/* <span className={styles.Button}>修&nbsp;&nbsp;改</span>
                 <span className={styles.Button}>删&nbsp;&nbsp;除</span> */}
               </div>
@@ -118,17 +208,17 @@ class Intelligence extends React.Component {
                     <div className={styles.listItems}>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.deviceId}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.deviceName}</span></div>
-                      <div className={styles.listTd} ><span className={styles.roadName}>{item.vendor}</span></div>
+                      <div className={styles.listTd} ><span className={styles.roadName}>{this.handledirection(vendorList, item.vendor)}</span></div>
                       {/* <div className={styles.listTd} ><span className={styles.roadName}>{item.pileNum}</span></div> */}
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.roadName}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.pileNum}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.latlng}</span></div>
-                      <div className={styles.listTd} ><span className={styles.roadName}>{this.handledirection(item.direction)}</span></div>
+                      <div className={styles.listTd} ><span className={styles.roadName}>{this.handledirection(directionList, item.direction)}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.deviceIp}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.port}</span></div>
                       <div className={styles.listTd} >
-                        <span className={styles.Button}>修&nbsp;&nbsp;改</span>
-                        <span className={styles.Button} onClick={() => { this.handleDelect(item.rowId) }}>删&nbsp;&nbsp;除</span>
+                        <Button className={styles.Button} onClick={() => { this.handleboardData(item) }}>修&nbsp;&nbsp;改</Button>
+                        <Button className={styles.Button} onClick={() => { this.handleDelect(item.rowId) }}>删&nbsp;&nbsp;除</Button>
                       </div>
                     </div>
                   )
@@ -140,14 +230,171 @@ class Intelligence extends React.Component {
             </div>
           </div>
         </div>
-        <div className={styles.MaskBox}>
-          <div className={styles.AddBox}>
-            <div className={styles.Title}>新增<Icon className={styles.Close} type="close" /></div>
-            <div className={styles.Conten}>
-              
+        {boardData ?
+          <div className={styles.MaskBox}>
+            <div className={styles.AddBox}>
+              <div className={styles.Title}>{boardData.rowId ? '编辑' : '新增'}<Icon onClick={() => { this.handleboardData(null) }} className={styles.Close} type="close" /></div>
+              <div className={styles.Conten}>
+                <Form
+                  name="validate_other"
+                  {...formItemLayout}
+                >
+                  <div className={styles.ItemLine}>
+                    <div className={styles.Item}>
+                      <Form.Item
+                        name="deviceId"
+                        label="设备编号"
+                      >
+                        <Input onChange={(e) => { this.handleInput(e, 'deviceId', 'board') }} defaultValue={boardData.deviceId} />
+                      </Form.Item>
+                    </div>
+                    <div className={styles.Item}>
+                      <Form.Item
+                        name="deviceName"
+                        label="设备名称"
+                      >
+                        <Input onChange={(e) => { this.handleInput(e, 'deviceName', 'board') }} defaultValue={boardData.deviceName} />
+                      </Form.Item>
+                    </div>
+                  </div>
+                  <div className={styles.ItemLine}>
+                    <div className={styles.Item}>
+                      <Form.Item
+                        name="vendor"
+                        label="设备厂家"
+                        hasFeedback
+                        rules={[{ required: true, message: 'Please select your country!' }]}
+                      >
+                        <Select onChange={(e) => { this.handleSelect(e, 'vendor', 'board') }} defaultValue={boardData.vendor}>
+                          {
+                            vendorList && vendorList.map((item) => {
+                              return <Option key={item.id} value={item.id}>{item.name}</Option>
+                            })
+                          }
+                        </Select>
+                      </Form.Item>
+                    </div>
+                    <div className={styles.Item}>
+                      <Form.Item
+                        name="deviceTypeId"
+                        label="设备类型"
+                        hasFeedback
+                        rules={[{ required: true, message: 'Please select your country!' }]}
+                      >
+                        <Select onChange={(e) => { this.handleSelect(e, 'deviceTypeId', 'board') }} defaultValue={boardData.deviceTypeId}>
+                          {
+                            deviceTypeList && deviceTypeList.map((item) => {
+                              return <Option key={item.id} value={item.id}>{item.name}</Option>
+                            })
+                          }
+                        </Select>
+                      </Form.Item>
+                    </div>
+                  </div>
+                  <div className={styles.ItemLine}>
+                    <div className={styles.Item}>
+                      <Form.Item
+                        name="roadName"
+                        label="高速公路"
+                        hasFeedback
+                        rules={[{ required: true, message: 'Please select your country!' }]}
+                      >
+                        <Select onChange={(e) => { this.handleSelect(e, 'roadName', 'board') }} defaultValue={boardData.roadName}>
+
+                          {
+                            hwayList && hwayList.map((item) => {
+                              return <Option key={item.id} value={item.id}>{item.name}</Option>
+                            })
+                          }
+                        </Select>
+                      </Form.Item>
+                    </div>
+                    <div className={styles.Item}>
+                      <Form.Item
+                        name="pileNum"
+                        label="桩&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;号"
+                      >
+                        <Input onChange={(e) => { this.handleInput(e, 'pileNum', 'board') }} defaultValue={boardData.pileNum} />
+                      </Form.Item>
+                    </div>
+                  </div>
+                  <div className={styles.ItemLine}>
+                    <div className={styles.Item}>
+                      <Form.Item
+                        name="direction"
+                        label="方&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;向"
+                        hasFeedback
+                        rules={[{ required: true, message: 'Please select your country!' }]}
+                      >
+                        <Select onChange={(e) => { this.handleSelect(e, 'direction', 'board') }} defaultValue={boardData.direction}>
+                          {
+                            directionList && directionList.map((item) => {
+                              return <Option value={item.id}>{item.name}</Option>
+                            })
+                          }
+                        </Select>
+                      </Form.Item>
+                    </div>
+                    <div className={styles.Item}>
+                      <Form.Item
+                        name="roadSecId"
+                        label="所属路段"
+                      >
+                        <Input onChange={(e) => { this.handleInput(e, 'roadSecId', 'board') }} defaultValue={boardData.roadSecId} />
+                      </Form.Item>
+                    </div>
+                  </div>
+                  <div className={styles.ItemLine}>
+                    <div className={styles.Item}>
+                      <Form.Item
+                        name="deviceIp"
+                        label="IP&nbsp;地&nbsp;址"
+                      >
+                        <Input onChange={(e) => { this.handleInput(e, 'deviceIp', 'board') }} defaultValue={boardData.deviceIp} />
+                      </Form.Item>
+                    </div>
+                    <div className={styles.Item}>
+                      <Form.Item
+                        name="port"
+                        label="端&nbsp;口&nbsp;号"
+                      >
+                        <Input onChange={(e) => { this.handleInput(e, 'port', 'board') }} defaultValue={boardData.port} />
+                      </Form.Item>
+                    </div>
+                  </div>
+                  <div className={styles.ItemLine}>
+                    <div className={styles.Item}>
+                      <Form.Item
+                        name="latlng"
+                        label="经&nbsp;纬&nbsp;度"
+                      >
+                        <Input onChange={(e) => { this.handleInput(e, 'latlng', 'board') }} defaultValue={boardData.latlng} />
+                      </Form.Item>
+                    </div>
+                  </div>
+                  <div className={classNames(styles.ItemLine, styles.ItemLineList)}>
+                    <div className={styles.Item}>
+                      <Button onClick={this.handleControlStatus} className={classNames(styles.Button, styles.ItemBt)}>状态查询</Button>
+                      <div className={styles.ItemGuan}>
+                        <Form.Item label="管控状态">
+                          <span className={styles.anttext}>{ControlStatus && ControlStatus.statusName}</span>
+                        </Form.Item>
+                      </div>
+                    </div>
+                    <div className={styles.Item}>
+                      <Form.Item label="当前显示内容">
+                        <span className={styles.anttext}>{ControlStatus && ControlStatus.showContent}</span>
+                      </Form.Item>
+                    </div>
+                  </div>
+                </Form>
+                <div className={styles.Footer}>
+                  <Button className={styles.Button} onClick={this.handleListupdate} type="primary" htmlType="submit">保&nbsp;&nbsp;存</Button>
+                  <Button className={styles.Button} onClick={() => { this.handleboardData(null) }}>返&nbsp;&nbsp;回</Button>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
+          </div> : null}
       </div>
     )
   }
