@@ -54,9 +54,8 @@
         }
         .loginInput {
           width: 100%;
-          display: flex;
-          justify-content: center;
-          align-items: center;
+          text-align: center;
+          margin-bottom: 35px;
           :global(.ant-input) {
             width: 320px;
             height: 45px;
@@ -70,12 +69,49 @@
           :global(.ant-input-affix-wrapper) {
             width: 320px;
           }
-          :global(input::-webkit-input-placeholder){
-              color:#178bc6;
+          :global(input::-webkit-input-placeholder) {
+            color: #178bc6;
           }
+          :global(.ant-input-suffix svg) {
+            color: #1489cc;
+          }
+
           .IconLogin {
             color: #1489cc;
             font-size: 20px;
+          }
+        }
+        .loginItem {
+          width: 100%;
+          :global(.ant-checkbox-checked .ant-checkbox-inner) {
+            background-color: transparent;
+            border: 1px solid #1489cc;
+          }
+          :global(.ant-checkbox-inner) {
+            background-color: transparent;
+            border: 1px solid #1489cc;
+          }
+          /*  :global(.ant-checkbox-checked .ant-checkbox-inner::after) {
+            border: 2px solid #1489cc;
+          } */
+          :global(.ant-checkbox-wrapper) {
+            color: #178bc6;
+            margin-left: 16.5%;
+          }
+        }
+        .loginBon {
+            width: 100%;
+            height: 34%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+          .ButtonItem {
+            width: 320px;
+            height: 50px;
+            background: #0168b7;
+            color: #1ad0ff;
+            border: none;
+            font-size: 21px;
           }
         }
       }

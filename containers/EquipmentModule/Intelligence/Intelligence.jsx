@@ -105,7 +105,7 @@ class Intelligence extends React.Component {
   }
   // 通用呆板式接口请求
   handleUrlAjax = (type, url, name, data) => {
-    getResponseDatas('get', url, data).then((res) => {
+    getResponseDatas(type, url, data).then((res) => {
       const result = res.data
       if (result.code === 200) {
         this.setState({ [name]: result.data })
@@ -180,7 +180,7 @@ class Intelligence extends React.Component {
             <div className={styles.Operation}>
               <div className={styles.leftItem}>
                 <div><Input onChange={(e) => { this.handleInput(e, 'keyword', 'Parameters') }} /></div>
-                <Button className={styles.Button} onClick={this.handleListByPage}>搜&nbsp;&nbsp;索</Button>
+                <Button className={styles.Button} onClick={() => { this.handlepage(1) }}>搜&nbsp;&nbsp;索</Button>
               </div>
               <div className={styles.rightItem}>
                 <Button className={styles.Button} onClick={this.handleAddData}>新&nbsp;&nbsp;增</Button>
