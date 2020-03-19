@@ -257,10 +257,6 @@
   .ItemInput {
     width: 100%;
     height: 100%;
-    justify-content: flex-start;
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
     // 修改input 框样式
     :global(.ant-input) {
       height: 25px;
@@ -444,6 +440,9 @@
           width: 100%;
           text-align: center;
           margin: 10px 0;
+          justify-content: flex-start;
+          display: flex;
+          flex-wrap: nowrap;
         }
       }
     }
@@ -772,6 +771,11 @@
         margin-top: 20px;
         :global(.ant-select-arrow) {
           color: #fff;
+        }
+        .ItemInput {
+          justify-content: flex-start;
+          display: flex;
+          flex-wrap: wrap;
         }
         .ItemInputText {
           width: 30%;
