@@ -89,7 +89,7 @@ reactDom.render(
       {/* //<Provider> */}
       <HashRouter basename="" history={BrowserHistory}>
         <Switch>
-          <Redirect exact from="/" to="/MonitoringModule" />
+          <Redirect exact from="/" to="/login" />
           <Route path="/" component={Parent} />
         </Switch>
       </HashRouter>
