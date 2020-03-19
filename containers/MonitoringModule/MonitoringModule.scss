@@ -11,6 +11,8 @@
     left: 24%;
     z-index: 9;
     margin-left: 15px;
+    display: flex;
+    justify-content: space-between;
     :global(.ant-input) {
       height: 28px;
       line-height: 28px;
@@ -23,6 +25,20 @@
     :global(.ant-input-search-button) {
       border: unset;
       height: 28px;
+    }
+    > s {
+      width:150px;
+      padding: 2px 30px;
+      border: 1px #838a9a solid;
+      font-size: 14px;
+      color: #fff;
+      cursor: pointer;
+      background: #153a61;
+      text-decoration: none;
+      margin-left:8px;
+      &:hover {
+        background: #1b4574;
+      }
     }
   }
   .mapIconManage {
@@ -219,10 +235,29 @@
       transform: rotate(180deg);
     }
   }
+  .panelBtnBox{
+    width:100%;
+    display:flex;
+    justify-content:space-around;
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translate(-50%,0);
+    -webkit-transform: translate(-50%,0);
+    -moz-transform: translate(-50%,0);
+    -ms-transform: translate(-50%,0);
+    -o-transform: translate(-50%,0);
+    .Panelbutton{
+      position: unset;
+      left:0;
+      margin: 0 5px;
+
+    }
+  }
   .ItemInput {
     width: 100%;
     height: 100%;
-    justify-content: space-between;
+    justify-content: flex-start;
     display: flex;
     align-items: center;
     flex-wrap: wrap;
@@ -349,14 +384,14 @@
     height: calc(100% - 140px);
     .Header {
       width: 100%;
-      height: 60px;
+      height: 40px;
       display: inline-block;
       padding: 0px 22px;
       span {
         width: 50%;
         height: 100%;
         display: inline-block;
-        line-height: 60px;
+        line-height: 40px;
         font-size: 16px;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -650,6 +685,9 @@
   overflow:hidden;
   background:#919191;
   .EventTaggingLeft{
+    :global(.ant-collapse){
+      border-bottom:none ;
+    }
     width:24%;
     justify-self: flex-start;
     position: absolute;
@@ -657,18 +695,58 @@
       left:5px;
       bottom:5px;
       border:1px #163959 solid;
+      background:rgba(16,16,16,.9);
+      padding-bottom:30px;
     .Centent {
       overflow-y: auto;
       width: 100%;
-      background:rgba(16,16,16,.9);
       padding: 0 22px 22px;
       color: #fff;
+      .PanelBox {
+        position: relative;
+        margin-top: 5px;
+        &:last-child {
+          margin-bottom: 5px;
+          border:none;
+        }
+        .PanelItem {
+          height: 25px;
+          line-height: 25px;
+          margin: 0;
+          text-indent: 22px;
+          color: #646a82;
+          background: #0e151d;
+          cursor: pointer;
+          margin: 0 8px !important;
+          &:last-child {
+            border-bottom: 0;
+          }
+          &:hover {
+            color: #fff;
+            background: #0d2645;
+          }
+        }
+        .MinusItem {
+          position: absolute;
+          right: 15px;
+          top: 4px;
+          cursor: pointer;
+          color: #2d81ad;
+          &:hover {
+            transition: all 0.5s;
+            transform: rotate(180deg);
+            color: #26ff6d;
+          }
+        }
+      }
       .PanelChs {
         border: none !important;
         :global(.ant-collapse-header) {
           color: #446b92 !important;
           height: 25px;
           line-height: 0;
+          margin:8px 0;
+          padding-left:8px;
         }
         :global(.ant-collapse-content) {
           border: none !important;
@@ -679,8 +757,15 @@
         :global(.ant-select-arrow) {
           color: #fff;
         }
+        .ItemInputText{
+          width: 30%;
+          display: inline;
+          :global(.ant-input) {
+            width:30%;
+          }
+        }
         .AddItem {
-          width:30%;
+          width:30.33%;
           height: 30px;
           line-height: 30px;
           color: #fff;
@@ -693,18 +778,17 @@
         }
       }
       .ItemName {
-        width: 120px;
         height: 100%;
         display: inline-block;
-        line-height: 25px;
+        line-height: 20px;
         text-align: left;
         text-indent: 10px;
-        vertical-align: top;
+        padding-right: 18px;
       }
     }
     .ItemFooter {
       position: absolute !important;
-      bottom: 20px !important;
+      bottom: -25px !important;
       color: #fff;
     }
   }
