@@ -164,6 +164,7 @@
     left: 0;
     top: 0;
     z-index: 999;
+     background: rgba(16, 16, 16, 0.9);
   }
   // 标题
   .Title {
@@ -265,10 +266,15 @@
     :global(.ant-select-selection) {
       background-color: #191c22;
       color: #ccc;
+      border-radius: 0;
+      border: 1px solid #959595;
     }
     :global(.ant-select-dropdown) {
       background-color: #191c22;
       color: #ccc;
+    }
+    :global(.ant-select-arrow svg) {
+      color: #fff;
     }
   }
   // 事件检测过滤设置弹窗
@@ -408,15 +414,26 @@
   .ReserveBox {
     background: url(../../imgs/popup_two.png) center center no-repeat;
     background-size: 100% 100%;
-    width: 24%;
-    left: 5px;
-    height: 93.5%;
-    top: 55px;
-    margin-top: 0;
+    width: 44%;
+    height: 88%;
+    margin: 0 auto;
+    top: 50%;
+    transform: translateY(-50%);
     .Content {
       height: calc(100% - 97px);
       min-height: calc(100% - 97px);
       overflow-y: auto;
+      .RowBox > p {
+        width: 33.33%;
+      }
+      :global(.ant-input) {
+        height: 32px;
+        line-height: 32px;
+        color: #fff;
+        background-color: #191c22;
+        border: 1px solid #959595;
+        border-radius: 0;
+      }
     }
     .ItemFooter {
       height: 47px;
@@ -628,12 +645,12 @@
   }
 }
 .devicePos {
-  left:50% !important;
-  transform: translate(-50%,0);
-  -webkit-transform: translate(-50%,0);
-  -moz-transform: translate(-50%,0);
-  -ms-transform: translate(-50%,0);
-  -o-transform: translate(-50%,0);
+  left: 50% !important;
+  transform: translate(-50%, 0);
+  -webkit-transform: translate(-50%, 0);
+  -moz-transform: translate(-50%, 0);
+  -ms-transform: translate(-50%, 0);
+  -o-transform: translate(-50%, 0);
 }
 .EventTagging {
   position: fixed;
@@ -644,20 +661,20 @@
   width: 90%;
   display: flex;
   z-index: 99;
-  overflow:hidden;
-  background:#919191;
-  .EventTaggingLeft{
-    width:24%;
+  overflow: hidden;
+  background: #919191;
+  .EventTaggingLeft {
+    width: 24%;
     justify-self: flex-start;
     position: absolute;
-    top:5px;
-      left:5px;
-      bottom:5px;
-      border:1px #163959 solid;
+    top: 5px;
+    left: 5px;
+    bottom: 5px;
+    border: 1px #163959 solid;
     .Centent {
       overflow-y: auto;
       width: 100%;
-      background:rgba(16,16,16,.9);
+      background: rgba(16, 16, 16, 0.9);
       padding: 0 22px 22px;
       color: #fff;
       .ItemBox {
@@ -693,7 +710,6 @@
       color: #fff;
     }
   }
-  
 }
 .PanelItemNone {
   height: 45px;
