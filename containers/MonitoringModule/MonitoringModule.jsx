@@ -768,10 +768,10 @@ class MonitoringModule extends React.Component {
         {!!detailsPopup || <SidePop SidplanList={planList} groupStatus={groupStatus} right="5px" handleEventPopup={this.handleEventPopup} />}
         <GMap mapID={'container'} dataAll={SidePopLeft} roadLatlng={detailsLatlng} handledetai={this.handledetai} detailsPopup={detailsPopup} boxSelect={boxSelect} flagClose={flagClose} EventTagPopup={EventTagPopup} />
         <div id="searchBox" className={`${styles.searchBox} animated ${'bounceInDown'}`}><Search id="tipinput" placeholder="请输入内容" enterButton />
-        <s>框选设备</s>
+        {/* <s>框选设备</s> */}
         </div>
         <div id="deviceBox" className={`${styles.mapIconManage} animated ${'bounceInDown'}`}>
-          <span>设备显示</span><span onClick={(e) => {this.handleEventTag(true, e)}}>事件标注</span>
+          <span>框选设备</span><span>设备显示</span><span onClick={(e) => {this.handleEventTag(true, e)}}>事件标注</span>
         </div>
         <div id="roadStateBox" className={`${styles.roadState} animated ${'bounceInUp'}`}>
           <h5><p>路况</p></h5>
@@ -1414,10 +1414,10 @@ class MonitoringModule extends React.Component {
                 </div>
                 <div id="searchBox" style={{ top: '5px' }} className={`${styles.searchBox} animated ${'bounceInDown'}`}>
                 <Search id="tipinput" placeholder="请输入内容" enterButton />
-                <s>框选设备</s>
+                {/* <s>框选设备</s> */}
                 </div>
                 <div id="deviceBox" style={{ top: '5px', right: '0' }} className={`${styles.mapIconManage} animated ${'bounceInDown'}`}>
-                  <span>设备显示</span>
+                  <span>框选设备</span><span>设备显示</span>
                 </div>
                 <div id="roadStateBox" className={`${styles.roadState} animated ${'bounceInUp'}`}>
                   <h5><p>路况</p></h5>
