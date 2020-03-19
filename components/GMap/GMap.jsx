@@ -75,12 +75,12 @@ class GMap extends React.Component {
       this.setState({ detailsPopup: nextProps.detailsPopup }, () => {
         if (this.state.detailsPopup) {
           if (!this.state.detailsPopup.controlStatusType) {
-            window.drawRectangle()
+            // window.drawRectangle()
           } else {
-            if (this.state.flagClose) {
+            
               window.mouseTool.close(true) //关闭，并清除覆盖物
               $(".amap-maps").attr("style", "")
-            }
+            
           }
         } else {
           // console.log("为false 时重载地图")
