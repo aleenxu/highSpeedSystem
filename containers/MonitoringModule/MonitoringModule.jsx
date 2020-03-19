@@ -33,7 +33,7 @@ class MonitoringModule extends React.Component {
       controlPopup: null, // 管控方案检测过滤设置
       detailsPopup: null,
       controlBtnFlag: null, // 管控按钮是否显示
-      controlBtnFlagText: '', // 显示的名字
+      controlBtnFlagText: '框选设备', // 显示的名字
       reservePopup: null,
       whethePopup: null,
       startValue: null,
@@ -44,7 +44,8 @@ class MonitoringModule extends React.Component {
       SidePopLeft: null,
       groupStatus: null,
       planList: null,
-      hwayList: null,
+      hwayList: null, // 高速下拉
+      directionList: null, // 方向下拉
       VIboardPopup: null,
       roadNumber: null,
       conditionList: null,
@@ -64,8 +65,8 @@ class MonitoringModule extends React.Component {
       oldDevicesList: null, // 框选前右侧详情原数据
       boxSelectList: null, // 框选中的数据
       MeasuresList: [], // 管控措施下拉
-      eventTypes:null, // 事件类型
-      controlTypes:null, // 管控类型
+      eventTypes: null, // 事件类型
+      controlTypes: null, // 管控类型
     }
     this.eventQuery = {
       eventType: '',
@@ -114,6 +115,7 @@ class MonitoringModule extends React.Component {
     this.detailUrl = '/control/event/get/detail/' // {eventId}/{eventType}查看事件详情'
     this.listDetailUrl = '/control/dict/code/list/detail/' // {codeType} 根据字典类型，获取字典详情相关信息'
     this.hwayUrl = '/control/road/list/hway' //  获取高速编号，用于下拉框'
+    this.directionUrl = '/control/road/list/hway/direction/' //获取高速和方向的级联下拉框，用于下拉框
     this.conditionUrl = '/control/device/list/condition' // {deviceTypeId} // 条件查询设备回显'
     this.controlUrl = '/control/plan/start/control' // 发起管控'
     this.getInfoUrl = '/control/plan/get/info/' // {eventType}/{eventId} 获取管控方案'
@@ -133,11 +135,12 @@ class MonitoringModule extends React.Component {
     this.handleplanList()
     // 高速下拉
     this.handleUrlAjax(this.hwayUrl, 'hwayList')
+    // 方向下拉
+    this.handleUrlAjax(this.directionUrl, 'directionList')
     // 字典事件类型
     this.handlelistDetail('eventTypes', 13)
     // 字典交通管控类型
     this.handlelistDetail('controlTypes', 22)
-    console.log(this.state.eventTypes, this.state.controlTypes, "666666666666666")
 
   }
   onStartChange = (value) => {
@@ -323,9 +326,18 @@ class MonitoringModule extends React.Component {
         }
       })
       console.log(value, name, type, data, this.publishPlanVO);
-
+      
+    } else if (type === 'hwayList' && name === 'roadId') {
+      this.state.directionList.forEach((item, index) => {
+        if (item.roadId === value) {
+          this.setState({
+            roadNumber: item.directions,
+          })
+        }
+      })
     } else {
       this[type][name] = value
+      console.log(this[type][name], "进来了吧")
     }
   }
   handleradiog = (e, name) => {
@@ -386,7 +398,7 @@ class MonitoringModule extends React.Component {
     const _this = this;
     const textFlag = $(event.target).text() === '框选设备'
     this.setState({
-      controlBtnFlagText: textFlag ? $(event.target).text("关闭框选") : $(event.target).text("框选设备"),
+      controlBtnFlagText: textFlag ? '关闭框选' : '框选设备',
     }, () => {
       if (textFlag) {
         $(".amap-maps").attr("style", "cursor:crosshair")
@@ -590,7 +602,10 @@ class MonitoringModule extends React.Component {
         }
       })
     })
-    this.setState({ detailsPopup, boxSelectList: null, boxSelect: null })
+    this.setState({ detailsPopup, boxSelectList: null, checkAllBox:null, controlBtnFlagText: '框选设备', boxSelect: null, flagClose: null, boxFlag: null},()=>{
+      $(".amap-maps").attr("style", "")
+      window.mouseTool.close(true) //关闭，并清除覆盖物
+    })
   }
   // 字典查询
   handlelistDetail = (name, value) => {
@@ -879,7 +894,7 @@ class MonitoringModule extends React.Component {
   render() {
     const {
       MeasuresList,eventsPopup, groupType, planList, EventTagPopup, EventTagPopupTit, roadNumber, endValueTime, conditionList, boxSelect, flagClose, oldDevicesList, 
-      boxSelectList, hwayList, VIboardPopup, groupStatus, controlPopup, controlBtnFlag, detailsPopup, whethePopup, reservePopup, startValue, endValue, endOpen, SidePopLeft, detailsLatlng
+      boxSelectList, hwayList, directionList, VIboardPopup, groupStatus, controlPopup, controlBtnFlag, controlBtnFlagText, detailsPopup, whethePopup, reservePopup, startValue, endValue, endOpen, SidePopLeft, detailsLatlng
     , controlTypes, eventTypes} = this.state
     return (
       <div className={styles.MonitoringModule}>
@@ -891,7 +906,7 @@ class MonitoringModule extends React.Component {
         {/* <s>框选设备</s> */}
         </div>
         <div id="deviceBox" className={`${styles.mapIconManage} animated ${'bounceInDown'}`}>
-          { controlBtnFlag ? <span onClick={(e) => {this.controlBtnClick(e)}}>框选设备</span> : null }<span>设备显示</span><span onClick={(e) => {this.handleEventTag(true, e)}}>事件标注</span>
+          { controlBtnFlag ? <span onClick={(e) => {this.controlBtnClick(e)}}>{controlBtnFlagText}</span> : null }<span>设备显示</span><span onClick={(e) => {this.handleEventTag(true, e)}}>事件标注</span>
         </div>
         <div id="roadStateBox" className={`${styles.roadState} animated ${'bounceInUp'}`}>
           <h5><p>路况</p></h5>
@@ -1467,15 +1482,28 @@ class MonitoringModule extends React.Component {
                   <div className={styles.Centent}>
                     <div className={styles.ItemBox}>
                       <div className={styles.ItemInput}>
-                        <Select defaultValue="" style={{ width: '40%' }} onChange={(e) => { this.handleSelect(e, 'hWayId', 'eventQuery') }}>
+                        <Select defaultValue="" style={{ width: '45%' }} onChange={(e) => { this.handleSelect(e, 'roadId', 'hwayList') }}>
                           <Option value="">请选择</Option>
+                          {
+                            hwayList && hwayList.map((item) => {
+                              return <Option key={item.id} value={item.name}>{item.name}</Option>
+                            })
+                          }
                         </Select>
-                        <Select defaultValue="" style={{ width: '30%', margin: '0 8px' }} onChange={(e) => { this.handleSelect(e, 'hWayId', 'eventQuery') }}>
+                        <Select defaultValue="" style={{ width: '45%', margin: '0 8px' }} onChange={(e) => { this.handleSelect(e, 'directionList', 'VIboardParameters') }} >
+                        <Option value="">请选择</Option>
+                        {
+                          roadNumber && roadNumber.map((item) => {
+                            return <Option key={item.directionId} value={item.directionId}>{item.directionName}</Option>
+                          })
+                        }
+                        </Select>
+                        <Select defaultValue="请选择" style={{ width: '45%', margin: '8px 0' }} onChange={(e) => { this.handleSelect(e, 'directionList', 'VIboardParameters') }} >
                           <Option value="">请选择</Option>
+                          <Option value="">里程桩</Option>
+                          <Option value="">收费站</Option>
                         </Select>
-                        <Select defaultValue="" style={{ width: '20%' }} onChange={(e) => { this.handleSelect(e, 'hWayId', 'eventQuery') }}>
-                          <Option value="">请选择</Option>
-                        </Select>
+                        <Input style={{width:'45%', height:'32px', margin:'8px'}} onChange={(e) => { this.handleInput(e, 'roadName', 'eventQuery') }} />
                       </div>
                     </div>
                   </div>
@@ -1546,7 +1574,7 @@ class MonitoringModule extends React.Component {
                 {/* <s>框选设备</s> */}
                 </div>
                 <div id="deviceBox" style={{ top: '5px', right: '0' }} className={`${styles.mapIconManage} animated ${'bounceInDown'}`}>
-                { controlBtnFlag ? <span onClick={(e) => {this.controlBtnClick(e)}}>框选设备</span> : null }<span>设备显示</span>
+                { controlBtnFlag ? <span onClick={(e) => {this.controlBtnClick(e)}}>{controlBtnFlagText}</span> : null }<span>设备显示</span>
                 </div>
                 <div id="roadStateBox" className={`${styles.roadState} animated ${'bounceInUp'}`}>
                   <h5><p>路况</p></h5>
