@@ -32,6 +32,8 @@ class MonitoringModule extends React.Component {
       eventsPopup: null, // 事件检测过滤设置弹窗数据
       controlPopup: null, // 管控方案检测过滤设置
       detailsPopup: null,
+      controlBtnFlag: null, // 管控按钮是否显示
+      controlBtnFlagText: '框选设备', // 显示的名字
       reservePopup: null,
       whethePopup: null,
       startValue: null,
@@ -42,7 +44,8 @@ class MonitoringModule extends React.Component {
       SidePopLeft: null,
       groupStatus: null,
       planList: null,
-      hwayList: null,
+      hwayList: null, // 高速下拉
+      directionList: null, // 方向下拉
       VIboardPopup: null,
       roadNumber: null,
       conditionList: null,
@@ -61,7 +64,9 @@ class MonitoringModule extends React.Component {
       checkAllBox: false,
       oldDevicesList: null, // 框选前右侧详情原数据
       boxSelectList: null, // 框选中的数据
-      MeasuresList: [],// 管控措施下拉
+      MeasuresList: [], // 管控措施下拉
+      eventTypes: null, // 事件类型
+      controlTypes: null, // 管控类型
     }
     this.eventQuery = {
       eventType: '',
@@ -110,6 +115,7 @@ class MonitoringModule extends React.Component {
     this.detailUrl = '/control/event/get/detail/' // {eventId}/{eventType}查看事件详情'
     this.listDetailUrl = '/control/dict/code/list/detail/' // {codeType} 根据字典类型，获取字典详情相关信息'
     this.hwayUrl = '/control/road/list/hway' //  获取高速编号，用于下拉框'
+    this.directionUrl = '/control/road/list/hway/direction/' //获取高速和方向的级联下拉框，用于下拉框
     this.conditionUrl = '/control/device/list/condition' // {deviceTypeId} // 条件查询设备回显'
     this.controlUrl = '/control/plan/start/control' // 发起管控'
     this.getInfoUrl = '/control/plan/get/info/' // {eventType}/{eventId} 获取管控方案'
@@ -129,6 +135,12 @@ class MonitoringModule extends React.Component {
     this.handleplanList()
     // 高速下拉
     this.handleUrlAjax(this.hwayUrl, 'hwayList')
+    // 方向下拉
+    this.handleUrlAjax(this.directionUrl, 'directionList')
+    // 字典事件类型
+    this.handlelistDetail('eventTypes', 13)
+    // 字典交通管控类型
+    this.handlelistDetail('controlTypes', 22)
 
   }
   onStartChange = (value) => {
@@ -215,6 +227,7 @@ class MonitoringModule extends React.Component {
       } else {
         this.setState({
           detailsPopup: false,
+          controlBtnFlag: null,
         })
       }
 
@@ -313,9 +326,18 @@ class MonitoringModule extends React.Component {
         }
       })
       console.log(value, name, type, data, this.publishPlanVO);
-
+      
+    } else if (type === 'hwayList' && name === 'roadId') {
+      this.state.directionList.forEach((item, index) => {
+        if (item.roadId === value) {
+          this.setState({
+            roadNumber: item.directions,
+          })
+        }
+      })
     } else {
       this[type][name] = value
+      console.log(this[type][name], "进来了吧")
     }
   }
   handleradiog = (e, name) => {
@@ -371,17 +393,20 @@ class MonitoringModule extends React.Component {
       }
     })
   }
-  // 获取右侧事件详情
-  handledetai = (item) => {
+  // 框选按钮点击
+  controlBtnClick = (event) => {
     const _this = this;
-    console.log(item, "look here")
-    getResponseDatas('get', this.detailUrl + item.eventId + '/' + item.eventType).then((res) => {
-      const result = res.data
-      if (result.code === 200) {
+    const textFlag = $(event.target).text() === '框选设备'
+    this.setState({
+      controlBtnFlagText: textFlag ? '关闭框选' : '框选设备',
+    }, () => {
+      if (textFlag) {
+        $(".amap-maps").attr("style", "cursor:crosshair")
+        window.drawRectangle()
         this.setState({
-          detailsPopup: result.data,
+          flagClose: true,
+          boxFlag: true,
         }, () => {
-          $(".amap-maps").attr("style", "cursor:crosshair")
           window.map.on("mousedown", function (e) {
             // console.log(e, "down..")
             window.newPoint = new Array(4).fill(null)
@@ -401,7 +426,13 @@ class MonitoringModule extends React.Component {
             newPoint[2] = newArr
             newPoint[1] = [newPoint[2][0], newPoint[0][1]]
             newPoint[3] = [newPoint[0][0], newPoint[2][1]]
-            if (!_this.state.detailsPopup.controlStatusType) {
+            if (_this.state.boxFlag && _this.state.flagClose) {
+              _this.getDevice(_this.state.detailsPopup);
+              _this.setState({
+                boxFlag: false,
+              })
+            }
+            /* if (!_this.state.detailsPopup.controlStatusType) {
               window.drawRectangle()
               _this.setState({
                 flagClose: true,
@@ -417,8 +448,87 @@ class MonitoringModule extends React.Component {
                 window.mouseTool.close(true) //关闭，并清除覆盖物
                 $(".amap-maps").attr("style", "")
               }
-            }
+            } */
           })
+        })
+        /* if (this.state.boxFlag && _this.state.flagClose) {
+          this.getDevice(this.state.detailsPopup);
+          this.setState({
+            boxFlag: false,
+          })
+        } */
+      } else {
+        this.setState({
+          flagClose: null,
+          boxFlag: null,
+        })
+        $(".amap-maps").attr("style", "")
+        window.mouseTool.close(true) //关闭，并清除覆盖物
+      }
+    })
+  }
+  // 获取右侧事件详情
+  handledetai = (item) => {
+    console.log(item, "look here")
+    getResponseDatas('get', this.detailUrl + item.eventId + '/' + item.eventType).then((res) => {
+      const result = res.data
+      if (result.code === 200) {
+        this.setState({
+          detailsPopup: result.data,
+        }, () => {
+          if (!this.state.detailsPopup.controlStatusType) { // 为0时未管控 显示框选按钮否则不显示
+            this.setState({
+              controlBtnFlag: true,
+            })
+          } else {
+            this.setState({
+              controlBtnFlag: null,
+            })
+          }
+          // $(".amap-maps").attr("style", "cursor:crosshair")
+          // window.map.on("mousedown", function (e) {
+          //   // console.log(e, "down..")
+          //   window.newPoint = new Array(4).fill(null)
+          //   const newArr = []
+          //   newArr[0] = e.lnglat.lng
+          //   newArr[1] = e.lnglat.lat
+          //   newPoint[0] = newArr
+          //   _this.setState({
+          //     boxFlag: true,
+          //   })
+          // })
+          // window.map.on("mouseup", function (e) {
+          //   // console.log(this.deviceList, "up..")
+          //   const newArr = []
+          //   newArr[0] = e.lnglat.lng
+          //   newArr[1] = e.lnglat.lat
+          //   newPoint[2] = newArr
+          //   newPoint[1] = [newPoint[2][0], newPoint[0][1]]
+          //   newPoint[3] = [newPoint[0][0], newPoint[2][1]]
+          //   if (_this.state.boxFlag && _this.state.flagClose) {
+          //     _this.getDevice(_this.state.detailsPopup);
+          //     _this.setState({
+          //       boxFlag: false,
+          //     })
+          //   }
+          //   /* if (!_this.state.detailsPopup.controlStatusType) {
+          //     window.drawRectangle()
+          //     _this.setState({
+          //       flagClose: true,
+          //     })
+          //     if (_this.state.boxFlag) {
+          //       _this.getDevice(_this.state.detailsPopup);
+          //       _this.setState({
+          //         boxFlag: false,
+          //       })
+          //     }
+          //   } else {
+          //     if (_this.state.flagClose) {
+          //       window.mouseTool.close(true) //关闭，并清除覆盖物
+          //       $(".amap-maps").attr("style", "")
+          //     }
+          //   } */
+          // })
         })
       }
     })
@@ -452,6 +562,7 @@ class MonitoringModule extends React.Component {
             noDevices.push(item.deviceId)
           }
         })
+        debugger
         if (result.data.length > 0) {
           this.setState({ boxSelect: true, boxSelectList: result.data, oldDevicesList: noDevices })
         } else {
@@ -491,7 +602,10 @@ class MonitoringModule extends React.Component {
         }
       })
     })
-    this.setState({ detailsPopup, boxSelectList: null, boxSelect: null })
+    this.setState({ detailsPopup, boxSelectList: null, checkAllBox:null, controlBtnFlagText: '框选设备', boxSelect: null, flagClose: null, boxFlag: null},()=>{
+      $(".amap-maps").attr("style", "")
+      window.mouseTool.close(true) //关闭，并清除覆盖物
+    })
   }
   // 字典查询
   handlelistDetail = (name, value) => {
@@ -673,6 +787,7 @@ class MonitoringModule extends React.Component {
     // console.log(, "当前")
     this.setState({
       EventTagPopup: boolean,
+      controlBtnFlag: true,
       EventTagPopupTit: e ? $(e.target).text() : '',
     })
     $('#searchBox').attr('style', 'transition:all .5s;')
@@ -778,8 +893,9 @@ class MonitoringModule extends React.Component {
   }
   render() {
     const {
-      MeasuresList,eventsPopup, groupType, planList, EventTagPopup, EventTagPopupTit, roadNumber, endValueTime, conditionList, boxSelect, flagClose, oldDevicesList, boxSelectList, hwayList, VIboardPopup, groupStatus, controlPopup, detailsPopup, whethePopup, reservePopup, startValue, endValue, endOpen, SidePopLeft, detailsLatlng
-    } = this.state
+      MeasuresList,eventsPopup, groupType, planList, EventTagPopup, EventTagPopupTit, roadNumber, endValueTime, conditionList, boxSelect, flagClose, oldDevicesList, 
+      boxSelectList, hwayList, directionList, VIboardPopup, groupStatus, controlPopup, controlBtnFlag, controlBtnFlagText, detailsPopup, whethePopup, reservePopup, startValue, endValue, endOpen, SidePopLeft, detailsLatlng
+    , controlTypes, eventTypes} = this.state
     return (
       <div className={styles.MonitoringModule}>
         <SystemMenu />
@@ -790,7 +906,7 @@ class MonitoringModule extends React.Component {
         {/* <s>框选设备</s> */}
         </div>
         <div id="deviceBox" className={`${styles.mapIconManage} animated ${'bounceInDown'}`}>
-          <span>框选设备</span><span>设备显示</span><span onClick={(e) => {this.handleEventTag(true, e)}}>事件标注</span>
+          { controlBtnFlag ? <span onClick={(e) => {this.controlBtnClick(e)}}>{controlBtnFlagText}</span> : null }<span>设备显示</span><span onClick={(e) => {this.handleEventTag(true, e)}}>事件标注</span>
         </div>
         <div id="roadStateBox" className={`${styles.roadState} animated ${'bounceInUp'}`}>
           <h5><p>路况</p></h5>
@@ -1351,7 +1467,7 @@ class MonitoringModule extends React.Component {
         }
         {
           EventTagPopup ?
-            <div className={styles.MaskBox}>
+            <div className={styles.MaskBox} style={{zIndex:'996'}}>
               <div className={styles.EventTagging}>
                 <GMap styles={this.mapStyles} mapID={'popMap'} dataAll={SidePopLeft} roadLatlng={detailsLatlng} handledetai={this.handledetai} detailsPopup={detailsPopup} boxSelect={boxSelect} flagClose={flagClose} />
                 <div className={styles.EventTaggingLeft}>
@@ -1366,15 +1482,28 @@ class MonitoringModule extends React.Component {
                   <div className={styles.Centent}>
                     <div className={styles.ItemBox}>
                       <div className={styles.ItemInput}>
-                        <Select defaultValue="" style={{ width: '40%' }} onChange={(e) => { this.handleSelect(e, 'hWayId', 'eventQuery') }}>
+                        <Select defaultValue="" style={{ width: '45%' }} onChange={(e) => { this.handleSelect(e, 'roadId', 'hwayList') }}>
                           <Option value="">请选择</Option>
+                          {
+                            hwayList && hwayList.map((item) => {
+                              return <Option key={item.id} value={item.name}>{item.name}</Option>
+                            })
+                          }
                         </Select>
-                        <Select defaultValue="" style={{ width: '30%', margin: '0 8px' }} onChange={(e) => { this.handleSelect(e, 'hWayId', 'eventQuery') }}>
+                        <Select defaultValue="" style={{ width: '45%', margin: '0 8px' }} onChange={(e) => { this.handleSelect(e, 'directionList', 'VIboardParameters') }} >
+                        <Option value="">请选择</Option>
+                        {
+                          roadNumber && roadNumber.map((item) => {
+                            return <Option key={item.directionId} value={item.directionId}>{item.directionName}</Option>
+                          })
+                        }
+                        </Select>
+                        <Select defaultValue="请选择" style={{ width: '45%', margin: '8px 0' }} onChange={(e) => { this.handleSelect(e, 'directionList', 'VIboardParameters') }} >
                           <Option value="">请选择</Option>
+                          <Option value="">里程桩</Option>
+                          <Option value="">收费站</Option>
                         </Select>
-                        <Select defaultValue="" style={{ width: '20%' }} onChange={(e) => { this.handleSelect(e, 'hWayId', 'eventQuery') }}>
-                          <Option value="">请选择</Option>
-                        </Select>
+                        <Input style={{width:'45%', height:'32px', margin:'8px'}} onChange={(e) => { this.handleInput(e, 'roadName', 'eventQuery') }} />
                       </div>
                     </div>
                   </div>
@@ -1383,8 +1512,8 @@ class MonitoringModule extends React.Component {
                     <div className={styles.ItemBox}>
                       <div className={styles.ItemInput}>
                         {
-                          [1, 2, 3, 4].map((item) => {
-                            return <div className={styles.AddItem}>{item}</div>
+                          eventTypes && eventTypes.map((item) => {
+                            return <div className={styles.AddItem} key={'eventTypes'+item.id}>{item.name}</div>
                           })
                         }
                       </div>
@@ -1404,8 +1533,8 @@ class MonitoringModule extends React.Component {
                     <div className={styles.ItemBox}>
                       <div className={styles.ItemInput}>
                         {
-                          [1, 2, 3, 4].map((item) => {
-                            return <div className={styles.AddItem}>{item}</div>
+                          controlTypes && controlTypes.map((item) => {
+                            return <div className={styles.AddItem} key={'controlTypes'+item.id}>{item.name}</div>
                           })
                         }
                       </div>
@@ -1445,7 +1574,7 @@ class MonitoringModule extends React.Component {
                 {/* <s>框选设备</s> */}
                 </div>
                 <div id="deviceBox" style={{ top: '5px', right: '0' }} className={`${styles.mapIconManage} animated ${'bounceInDown'}`}>
-                  <span>框选设备</span><span>设备显示</span>
+                { controlBtnFlag ? <span onClick={(e) => {this.controlBtnClick(e)}}>{controlBtnFlagText}</span> : null }<span>设备显示</span>
                 </div>
                 <div id="roadStateBox" className={`${styles.roadState} animated ${'bounceInUp'}`}>
                   <h5><p>路况</p></h5>
