@@ -61,6 +61,7 @@ class MonitoringModule extends React.Component {
       checkAllBox: false,
       oldDevicesList: null, // 框选前右侧详情原数据
       boxSelectList: null, // 框选中的数据
+      MeasuresList: [],// 管控措施下拉
     }
     this.eventQuery = {
       eventType: '',
@@ -303,10 +304,19 @@ class MonitoringModule extends React.Component {
     } else {
       this[type][name] = e.target.value
     }
-
   }
-  handleSelect = (value, name, type) => {
-    this[type][name] = value
+  handleSelect = (value, name, type, data) => {
+    if (type === 'publishPlanVO' && name === 'deviceControlType') {
+      this.publishPlanVO.list.forEach((item, index) => {
+        if (item.deviceId === data) {
+          this.publishPlanVO.list[index].deviceControlType = value
+        }
+      })
+      console.log(value, name, type, data, this.publishPlanVO);
+
+    } else {
+      this[type][name] = value
+    }
   }
   handleradiog = (e, name) => {
     if (name === 'reportMinRange') {
@@ -618,7 +628,7 @@ class MonitoringModule extends React.Component {
               that.handlegroupType()
               that.handleUrlAjax(that.groupStatusUrl, 'groupStatus')
               that.handleplanList()
-              that.handleEventPopup('Reserve', true)
+              /* that.handleEventPopup('Reserve', true) */
             }
           })
         }).catch(() => message.error('网络错误!'))
@@ -634,7 +644,6 @@ class MonitoringModule extends React.Component {
         $('#searchBox').attr('style', 'transition:all .5s;')
         $('#roadStateBox').attr('style', 'transition:all .5s;')
         this.detailsPopupData = detailsPopup
-        console.log(this.getDate());
         const list = []
         result.data.devices.forEach((item) => {
           item.device.forEach((items) => {
@@ -642,7 +651,7 @@ class MonitoringModule extends React.Component {
               content: items.displayContent,
               deviceId: items.deviceId,
               deviceTypeId: items.deviceTypeId,
-
+              deviceControlType: items.deviceControlType,
             })
           })
         })
@@ -655,7 +664,8 @@ class MonitoringModule extends React.Component {
           list,
           startTime: result.data.startTime ? this.getDate(result.data.startTime) : this.getDate(),
         }
-        this.setState({ reservePopup: result.data, detailsPopup: null, startValue: this.publishPlanVO.startTime, endValue: this.publishPlanVO.endTime })
+        this.handlelistDetail('MeasuresList', 22)
+        this.setState({ reservePopup: result.data, /* detailsPopup: null, */ startValue: this.publishPlanVO.startTime, endValue: this.publishPlanVO.endTime })
       }
     })
   }
@@ -679,6 +689,12 @@ class MonitoringModule extends React.Component {
     for (let i = 0; i < list.length; i++) {
       if (list[i].content == '') {
         message.warning('请填全显示内容')
+        return
+      }
+      console.log(list[i].deviceControlType);
+
+      if (list[i].deviceControlType == '') {
+        message.warning('请选择设备控制类型')
         return
       }
     }
@@ -716,6 +732,8 @@ class MonitoringModule extends React.Component {
     this.setState({ reservePopup })
   }
   handlecancelRel = (controllId, operation) => {
+    const { reservePopup } = this.state
+    const { eventTypeId, eventId } = reservePopup
     getResponseDatas('put', this.examineUrl + operation + '/' + controllId).then((res) => {
       const result = res.data
       if (result.code === 200) {
@@ -726,8 +744,9 @@ class MonitoringModule extends React.Component {
         this.handlegroupType()
         // 查询右侧柱状图
         this.handleUrlAjax(this.groupStatusUrl, 'groupStatus')
-        // 查询管控方案
+        // 查询管控方案is
         this.handleplanList()
+        this.handledetai({ eventType: eventTypeId, eventId })
         this.setState({ reservePopup: null })
         message.success('取消发布成功')
       }
@@ -759,12 +778,12 @@ class MonitoringModule extends React.Component {
   }
   render() {
     const {
-      eventsPopup, groupType, planList, EventTagPopup, EventTagPopupTit, roadNumber, endValueTime, conditionList, boxSelect, flagClose, oldDevicesList, boxSelectList, hwayList, VIboardPopup, groupStatus, controlPopup, detailsPopup, whethePopup, reservePopup, startValue, endValue, endOpen, SidePopLeft, detailsLatlng
+      MeasuresList,eventsPopup, groupType, planList, EventTagPopup, EventTagPopupTit, roadNumber, endValueTime, conditionList, boxSelect, flagClose, oldDevicesList, boxSelectList, hwayList, VIboardPopup, groupStatus, controlPopup, detailsPopup, whethePopup, reservePopup, startValue, endValue, endOpen, SidePopLeft, detailsLatlng
     } = this.state
     return (
       <div className={styles.MonitoringModule}>
         <SystemMenu />
-        {!!reservePopup || <SidePop left="5px" groupType={groupType} SidePopLeft={SidePopLeft} handleEventPopup={this.handleEventPopup} />}
+        {<SidePop left="5px" groupType={groupType} SidePopLeft={SidePopLeft} handleEventPopup={this.handleEventPopup} />}
         {!!detailsPopup || <SidePop SidplanList={planList} groupStatus={groupStatus} right="5px" handleEventPopup={this.handleEventPopup} />}
         <GMap mapID={'container'} dataAll={SidePopLeft} roadLatlng={detailsLatlng} handledetai={this.handledetai} detailsPopup={detailsPopup} boxSelect={boxSelect} flagClose={flagClose} EventTagPopup={EventTagPopup} />
         <div id="searchBox" className={`${styles.searchBox} animated ${'bounceInDown'}`}><Search id="tipinput" placeholder="请输入内容" enterButton />
@@ -924,7 +943,7 @@ class MonitoringModule extends React.Component {
           </div> : null} */}
         {/* 管控预案查询 */}
         {reservePopup ?
-          <div >
+          <div className={styles.MaskBox}>
             <div className={classNames(styles.DetailsBox, styles.ReserveBox)}>
               <div className={styles.Title}>管控方案详情<Icon className={styles.Close} onClick={() => { this.handleEventPopup('Reserve', false) }} type="close" /></div>
               <div className={styles.Content}>
@@ -935,14 +954,12 @@ class MonitoringModule extends React.Component {
                 <div className={styles.ItemBox}>
                   <div className={styles.HeadItem}>基本信息</div>
                   <div className={styles.RowBox}>
-                    <p>道路编号&nbsp;:&nbsp;&nbsp;{reservePopup.roadName.split(' ')[0]}</p>
-                    <p>道路名称&nbsp;:&nbsp;&nbsp;{reservePopup.roadName.split(' ')[1]}</p>
-                  </div>
-                  <div className={styles.RowBox}>
+                    <p>道路编号&nbsp;:&nbsp;&nbsp;{reservePopup.roadName && reservePopup.roadName.split(' ')[0]}</p>
+                    <p>道路名称&nbsp;:&nbsp;&nbsp;{reservePopup.roadName && reservePopup.roadName.split(' ')[1]}</p>
                     <p>行驶方向&nbsp;:&nbsp;&nbsp;{reservePopup.directionName}</p>
-                    <p>起始桩号&nbsp;:&nbsp;&nbsp;<span style={{ color: '#c67f03' }}>{reservePopup.pileNum.split(' ')[0]}</span></p>
                   </div>
                   <div className={styles.RowBox}>
+                    <p>起始桩号&nbsp;:&nbsp;&nbsp;<span style={{ color: '#c67f03' }}>{reservePopup.pileNumr && eservePopup.pileNum.split(' ')[0]}</span></p>
                     {
                       reservePopup.eventTypeId === 1 ? [<p>平均车速&nbsp;:&nbsp;&nbsp;<sapn style={{ color: '#c67f03' }}>{reservePopup.situation}km/h</sapn> </p>,
                       <p>拥堵路段长度&nbsp;:&nbsp;&nbsp;<sapn style={{ color: '#f31113' }}>{reservePopup.eventLength}m</sapn></p>] :
@@ -953,7 +970,7 @@ class MonitoringModule extends React.Component {
                   <div className={styles.RowBox}>数据来源&nbsp;:&nbsp;&nbsp;<sapn style={{ color: '#03af01' }}>{reservePopup.dataSourceName}</sapn></div>
                 </div>
                 {
-                  reservePopup.devices.map((items, indexs) => {
+                  reservePopup.devices && reservePopup.devices.map((items, indexs) => {
                     return (
                       items.dictCode === 1 ?
                         <div className={styles.ItemBox}>
@@ -963,9 +980,20 @@ class MonitoringModule extends React.Component {
                               items.device && items.device.map((item, index) => {
                                 return (
                                   <div key={item.deviceId + item.deviceTypeId}>
-                                    <div><Icon type="close-circle" className={styles.CloneItem} onClick={() => { this.handleCloseCircle(indexs, index, item.deviceId) }} />{index + 1}.{item.deviceName + '-' + item.directionName + items.codeName}&nbsp;:</div>
+                                    {/* <div><Icon type="close-circle" className={styles.CloneItem} onClick={() => { this.handleCloseCircle(indexs, index, item.deviceId) }} />{index + 1}.{item.deviceName + '-' + item.directionName + items.codeName}&nbsp;:</div> */}
                                     <div className={styles.InputBox}>
-                                      <div className={styles.ItemInput} style={{ width: 'calc(100% - 40px)' }}><Input style={{ textAlign: 'center', color: 'red' }} onChange={(e) => { this.handleInput(e, 'content', 'publishPlanVO', item.deviceId) }} disabled={reservePopup.status > 1 ? true : ''} defaultValue={item.displayContent} /></div>
+                                      <div className={styles.ItemInput} style={{ width: '30%' }}><Icon type="close-circle" className={styles.CloneItem} onClick={() => { this.handleCloseCircle(indexs, index, item.deviceId) }} />{index + 1}.{item.deviceName + '-' + item.directionName + items.codeName}&nbsp;:</div>
+                                      <div className={styles.ItemInput} style={{ width: '50%' }}><Input style={{ textAlign: 'center', color: 'red' }} onChange={(e) => { this.handleInput(e, 'content', 'publishPlanVO', item.deviceId) }} disabled={reservePopup.status > 1 ? true : ''} defaultValue={item.displayContent} /></div>
+                                      <div className={styles.ItemInput} style={{ width: '20%' }}>
+                                        <Select disabled={reservePopup.status > 1 ? true : ''} defaultValue={item.deviceControlType} style={{ width: '80%' }} onChange={(e) => { this.handleSelect(e, 'deviceControlType', 'publishPlanVO', item.deviceId) }}>
+                                          <Option value={0}>请选择</Option>
+                                          {
+                                            MeasuresList && MeasuresList.map((itemss) => {
+                                              return <Option key={itemss.id} value={itemss.id}>{itemss.name}</Option>
+                                            })
+                                          }
+                                        </Select>
+                                      </div>
                                     </div>
                                   </div>
                                 )

@@ -4,7 +4,7 @@ import SystemMenu from '../../../components/SystemMenu/SystemMenu'
 import Navigation from '../../../components/Navigation/Navigation'
 import styles from '../EquipmentModule.scss'
 import { Pagination, Input } from 'antd'
-/*         可变情报板 */
+/*         收费站 */
 class TollGate extends React.Component {
   constructor(props) {
     super(props)
