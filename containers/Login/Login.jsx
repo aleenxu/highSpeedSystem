@@ -10,19 +10,21 @@ class Login extends React.Component {
 		this.state = {
 		}
 
-		componentDidMount = () => {
+	}
+	componentDidMount = () => {
 
-		}
-
-
-
-		render() {
-			return (
-				<div className={styles.loginWrapper}>
-
-				</div>
-			)
-		}
 	}
 
-	export default Login
+
+
+
+	render() {
+		return (
+			<div className={styles.loginWrapper}>
+				<div className={styles.cententBox}></div>
+			</div>
+		)
+	}
+}
+
+export default Login

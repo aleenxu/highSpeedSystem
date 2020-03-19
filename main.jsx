@@ -62,7 +62,11 @@ const Institution = Loadable({
   loading: Loading,
   delay: 0,
 })
-
+const Login = Loadable({
+  loader: () => import('./containers/Login/Login'),
+  loading: Loading,
+  delay: 0,
+})
 const Parent = () => (
   <div>
     {/* <Route path="*" component={SystemMenu} /> */}
@@ -76,6 +80,7 @@ const Parent = () => (
     <Route exact path="/tollgate" component={TollGate} />
     <Route exact path="/user" component={User} />
     <Route exact path="/institution" component={Institution} />
+    <Route exact path="/login" component={Login} />
   </div>
 )
 reactDom.render(
