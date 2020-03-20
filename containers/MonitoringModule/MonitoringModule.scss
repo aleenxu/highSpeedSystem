@@ -702,9 +702,6 @@
   overflow: hidden;
   background: #919191;
   .EventTaggingLeft {
-    :global(.ant-collapse) {
-      border-bottom: none;
-    }
     width: 24%;
     justify-self: flex-start;
     position: absolute;
@@ -714,6 +711,10 @@
     border: 1px #163959 solid;
     background: rgba(16, 16, 16, 0.9);
     padding-bottom: 30px;
+    overflow-y: auto;
+    :global(.ant-collapse) {
+      border-bottom: none;
+    }
     .Centent {
       overflow-y: auto;
       width: 100%;
@@ -787,7 +788,7 @@
           }
         }
         .AddItem {
-          width: 30.33%;
+          width: 23%;
           height: 30px;
           line-height: 30px;
           color: #fff;
@@ -796,7 +797,10 @@
           border-radius: 0;
           text-align: center;
           cursor: pointer;
-          margin: 5px;
+          margin: 1%;
+        }
+        .currentSel{
+          background:#143757;
         }
       }
       .ItemName {
@@ -809,10 +813,17 @@
       }
     }
     .ItemFooter {
-      position: absolute !important;
-      bottom: -25px !important;
+      position: fixed !important;
+      width:auto;
+      bottom:-10px;
+      left:14.5%;
       color: #fff;
-    }
+      transform: translate(-25%, 0);
+      -webkit-transform: translate(-25%, 0);
+      -moz-transform: translate(-25%, 0);
+      -ms-transform: translate(-25%, 0);
+      -o-transform: translate(-25%, 0);
+}
   }
 }
 .PanelItemNone {

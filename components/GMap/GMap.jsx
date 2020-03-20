@@ -12,6 +12,7 @@ import $ from 'jquery'
 const pointArr = []
 window.centerPoint = null
 window.lineFlag = true
+window.linePoint = null
 //监听drawRectangle事件可获取画好的覆盖物
 class GMap extends React.Component {
   constructor(props) {
@@ -30,6 +31,7 @@ class GMap extends React.Component {
       mapID: this.props.mapID, // 地图ID
       styles: this.props.styles, // 地图样式
       EventTagPopup: this.props.EventTagPopup, // 弹层地图后更新下原来地图
+      linePoint: null,
     }
     this.styles = {
       position: 'fixed',
@@ -50,6 +52,9 @@ class GMap extends React.Component {
     this.loadPoint()
   }
   componentWillReceiveProps = (nextProps) => {
+    if (this.props.linePoint !== nextProps.linePoint) {
+      this.setState({ linePoint: nextProps.linePoint })
+    }
     if (this.props.dataAll !== nextProps.dataAll) {
       this.setState({ dataAll: nextProps.dataAll })
     }
@@ -109,6 +114,7 @@ class GMap extends React.Component {
     getResponseDatas('get', this.mapPointUrl + '?searchKey=' + this.state.keyWords).then((res) => {
       const jsonData = res.data
       if (jsonData.code == 200 && jsonData.data.length > 0) {
+        window.mapPointArr = jsonData.data
         jsonData.data.map((item) => {
           // 根据类型划分图标类型 1、可变情报板;2、可变限速板;3、收费站;4、F屏情报版;
           switch (item.deviceTypeId) {
@@ -128,7 +134,6 @@ class GMap extends React.Component {
         })
         this.loadingMap()
       }
-
     })
   }
   loadingMap = () => {
@@ -330,7 +335,6 @@ class GMap extends React.Component {
                 _this.handledetai(item)
                 window.pathSimplifierIns.setData(lineDatas)
               })
-              console.log("11111",item.latlng[index])
               switch (leftIndex) {
                 case 0:
                   window.leftModuleOne.addLayer(marker) //把点添加到层组中
@@ -433,7 +437,8 @@ class GMap extends React.Component {
             map: map,
             showPositionPoint: false,
             position: item.latlng,
-            zIndex: 10
+            zIndex: 10,
+            title: item.appendId,
           });
           //marker 点击时打开
           marker5.on('click', function () {

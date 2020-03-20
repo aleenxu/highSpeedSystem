@@ -34,7 +34,6 @@ class ScrollList extends React.Component {
     this.examineLength = 0
   }
   componentDidMount = () => {
-    console.log(this.state.data, "查看数据结构")
     const { eachartData, ProgressData } = this.props
     if (eachartData) {
       const data = []
