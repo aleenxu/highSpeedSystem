@@ -72,7 +72,7 @@ class MonitoringModule extends React.Component {
       eventType: '',
       searchKey: '',
     }
-    this.detailsPopupData = ''
+  /*   this.detailsPopupData = '' */
     this.VIboardParameters = {
       deviceCode: '',
       deviceLocation: '',
@@ -245,7 +245,7 @@ class MonitoringModule extends React.Component {
     if (type === 'Reserve') {
       this.setState({
         reservePopup: boolean,
-        detailsPopup: this.detailsPopupData,
+        /* detailsPopup: this.detailsPopupData, */
         endValue: null,
         startValue: null,
       })
@@ -716,7 +716,6 @@ class MonitoringModule extends React.Component {
     })
     if (deviceAry.length === 0) {
       message.warning('请添加设备')
-      resolve()
       return
     }
     const data = {
@@ -732,12 +731,12 @@ class MonitoringModule extends React.Component {
       const result = res.data
       if (result.code === 200) {
         that.handledetai({ eventType, eventId })
-        resolve()
         message.success('发起管控方案成功！')
         that.handleEventList()
         that.handlegroupType()
         that.handleUrlAjax(that.groupStatusUrl, 'groupStatus')
         that.handleplanList()
+        // 获取方案详情
         that.handleViewControl(eventType, eventId)
         /* that.handleEventPopup('Reserve', true) */
       }
@@ -750,7 +749,7 @@ class MonitoringModule extends React.Component {
       if (result.code === 200) {
         $('#searchBox').attr('style', 'transition:all .5s;')
         $('#roadStateBox').attr('style', 'transition:all .5s;')
-        this.detailsPopupData = detailsPopup
+        /* this.detailsPopupData = detailsPopup */
         const list = []
         result.data.devices.forEach((item) => {
           item.device.forEach((items) => {
@@ -814,7 +813,7 @@ class MonitoringModule extends React.Component {
     getResponseDatas('put', this.publishUrl, this.publishPlanVO).then((res) => {
       const result = res.data
       if (result.code === 200) {
-        this.detailsPopupData = '' // 清空方案详情
+        /* this.detailsPopupData = '' // 清空方案详情 */
         // 查询左侧列表数据
         this.handleEventList()
         // 查询饼图数据
@@ -845,7 +844,7 @@ class MonitoringModule extends React.Component {
     getResponseDatas('put', this.examineUrl + operation + '/' + controllId).then((res) => {
       const result = res.data
       if (result.code === 200) {
-        this.detailsPopupData = '' // 清空方案详情
+       /*  this.detailsPopupData = '' // 清空方案详情 */
         // 查询左侧列表数据
         this.handleEventList()
         // 查询饼图数据
@@ -1201,7 +1200,7 @@ class MonitoringModule extends React.Component {
               <div className={styles.ItemFooter}>
 
                 {
-                  reservePopup.status === 3 ? <span onClick={() => { this.handlecancelRel(reservePopup.controllId, 'cancel') }}>取消发布</span> : reservePopup.status === 1 ? <span onClick={this.handleRelease}>发&nbsp;&nbsp;布</span> : <span style={{ color: '#ccc' }}>发&nbsp;&nbsp;布</span>
+                  reservePopup.status === 3 ? <span onClick={() => { this.handlecancelRel(reservePopup.controllId, 'cancel') }}>取消发布</span> : reservePopup.status === 1 ? <span onClick={this.handleRelease}>发&nbsp;&nbsp;布</span> : <span style={{ background: '#999' }}>发&nbsp;&nbsp;布</span>
                 }
                 {
                   reservePopup.status === 3 ? <span onClick={() => { this.handleEndValueTime(true) }}>延时发布</span> : null
