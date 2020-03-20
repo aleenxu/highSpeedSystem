@@ -1278,7 +1278,7 @@ class MonitoringModule extends React.Component {
                       <span>事件编号&nbsp;:&nbsp;&nbsp;{detailsPopup.eventId}</span>
                     </div>
                     <div className={styles.Header}>
-                      <span>事件类型&nbsp;:&nbsp;&nbsp;<span style={{ color: '#f31113' }}>{detailsPopup.eventTypeName}</span></span>
+                      <span>事件类型&nbsp;:&nbsp;&nbsp;<em style={{ color: '#f31113', fontStyle:'normal' }}>{detailsPopup.eventTypeName}</em></span>
                     </div>
                     <div className={styles.ItemBox}>
                       <div className={styles.HeadItem}>基本信息</div>
