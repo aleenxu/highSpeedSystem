@@ -224,22 +224,23 @@ class MonitoringModule extends React.Component {
       }
       if (boolean) {
         this.handledetai(boolean)
+        // 根据事件类型绘制不同颜色的线
+        this.setState({
+          detailsLatlng: boolean.latlng,
+        })
+        boolean.eventType === 3 ? window.lineFlag = false : window.lineFlag = true
+        let roadLatlngData = {
+          "path": boolean.latlng
+        }
+        let lineDatas = []
+        lineDatas.push(roadLatlngData)
+        window.pathSimplifierIns.setData(lineDatas)
       } else {
         this.setState({
           detailsPopup: false,
           controlBtnFlag: null,
         })
       }
-
-      this.setState({
-        detailsLatlng: boolean.latlng,
-      })
-      let roadLatlngData = {
-        "path": boolean.latlng
-      }
-      let lineDatas = []
-      lineDatas.push(roadLatlngData)
-      window.pathSimplifierIns.setData(lineDatas)
     }
     if (type === 'Reserve') {
       this.setState({
@@ -469,7 +470,6 @@ class MonitoringModule extends React.Component {
   }
   // 获取右侧事件详情
   handledetai = (item) => {
-    console.log(item, "look here")
     getResponseDatas('get', this.detailUrl + item.eventId + '/' + item.eventType).then((res) => {
       const result = res.data
       if (result.code === 200) {
@@ -485,6 +485,8 @@ class MonitoringModule extends React.Component {
               controlBtnFlag: null,
             })
           }
+          debugger
+          console.log(this.state.detailsPopup,"look here")
           // $(".amap-maps").attr("style", "cursor:crosshair")
           // window.map.on("mousedown", function (e) {
           //   // console.log(e, "down..")
@@ -1278,7 +1280,7 @@ class MonitoringModule extends React.Component {
                       <span>事件编号&nbsp;:&nbsp;&nbsp;{detailsPopup.eventId}</span>
                     </div>
                     <div className={styles.Header}>
-                      <span>事件类型&nbsp;:&nbsp;&nbsp;<span style={{ color: '#f31113' }}>{detailsPopup.eventTypeName}</span></span>
+                      <span>事件类型&nbsp;:&nbsp;&nbsp;<em style={{ color: '#f31113', fontStyle:'normal' }}>{detailsPopup.eventTypeName}</em></span>
                     </div>
                     <div className={styles.ItemBox}>
                       <div className={styles.HeadItem}>基本信息</div>
@@ -1417,7 +1419,7 @@ class MonitoringModule extends React.Component {
                   >
                     {
                       boxSelectList.map((item) => {
-                        return <Checkbox key={item.deviceId} disabled={!oldDevicesList.includes(item.deviceId)} value={item.deviceId}>{item.deviceName + '-' + item.directionName}</Checkbox>
+                        return <Checkbox key={item.deviceId} disabled={(item.controlling || item.exists) ? true : false} value={item.deviceId}>{item.deviceName + '-' + item.directionName}</Checkbox>
                       })
                     }
 

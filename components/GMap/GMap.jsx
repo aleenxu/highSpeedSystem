@@ -11,6 +11,7 @@ import getResponseDatas from '../../plugs/HttpData/getResponseData'
 import $ from 'jquery'
 const pointArr = []
 window.centerPoint = null
+window.lineFlag = true
 //监听drawRectangle事件可获取画好的覆盖物
 class GMap extends React.Component {
   constructor(props) {
@@ -231,7 +232,7 @@ class GMap extends React.Component {
       }
 
       //just some colors
-      var colors = ["red", "yellow", "green"];
+      var colors = ["red", "gray"];
       var pathSimplifierIns = new PathSimplifier({
         zIndex: 100,
         autoSetFitView: false,
@@ -252,7 +253,7 @@ class GMap extends React.Component {
             dirArrowStyle: false
           },
           getPathStyle: function (pathItem, zoom) {
-            var color = colors[pathItem.pathIndex],
+            var color = window.lineFlag ? colors[0] : colors[1],
               lineWidth = 10;
             return {
               pathLineStyle: {
@@ -329,6 +330,7 @@ class GMap extends React.Component {
                 _this.handledetai(item)
                 window.pathSimplifierIns.setData(lineDatas)
               })
+              console.log("11111",item.latlng[index])
               switch (leftIndex) {
                 case 0:
                   window.leftModuleOne.addLayer(marker) //把点添加到层组中
