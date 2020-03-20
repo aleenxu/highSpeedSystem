@@ -2,11 +2,10 @@
 import React from 'react'
 import SystemMenu from '../../../components/SystemMenu/SystemMenu'
 import Navigation from '../../../components/Navigation/Navigation'
-import styles from '../../EquipmentModule/EquipmentModule.scss'
-import getResponseDatas from '../../../plugs/HttpData/getResponseData'
+import styles from '../EquipmentModule.scss'
 import { Pagination, Input } from 'antd'
-/*        预案库 */
-class ReservePlan extends React.Component {
+/*         F情报板 */
+class FIntelboard extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -39,16 +38,16 @@ class ReservePlan extends React.Component {
             </div>
             <div className={styles.ContetList}>
               <div className={styles.listItems}>
-                <div className={styles.listTd} >事件ID</div>
-                <div className={styles.listTd} >事件类型</div>
-                <div className={styles.listTd} >道路名称</div>
-                <div className={styles.listTd} >路段名称</div>
-                <div className={styles.listTd} >起点</div>
-                <div className={styles.listTd} >终点</div>
-                <div className={styles.listTd} >上报开始时间</div>
-                <div className={styles.listTd} >持续时间</div>
-                <div className={styles.listTd} >是否管控</div>
-                <div className={styles.listTd} >操作</div>
+                <div className={styles.listTd} >设备编号</div>
+                <div className={styles.listTd} >设备名称</div>
+                <div className={styles.listTd} >设备厂商</div>
+                <div className={styles.listTd} >型号</div>
+                <div className={styles.listTd} >高速公路</div>
+                <div className={styles.listTd} >桩号</div>
+                <div className={styles.listTd} >经纬度坐标</div>
+                <div className={styles.listTd} >放心</div>
+                <div className={styles.listTd} >IP地址</div>
+                <div className={styles.listTd} >端口号</div>
               </div>
               {/* {
                 [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((item) => {
@@ -80,4 +79,4 @@ class ReservePlan extends React.Component {
   }
 }
 
-export default ReservePlan
+export default FIntelboard

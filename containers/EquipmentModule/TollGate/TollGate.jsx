@@ -49,7 +49,7 @@ class TollGate extends React.Component {
                 <div className={styles.listTd} >IP地址</div>
                 <div className={styles.listTd} >端口号</div>
               </div>
-              {
+              {/* {
                 [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((item) => {
                   return (
                     <div className={styles.listItems}>
@@ -66,7 +66,8 @@ class TollGate extends React.Component {
                     </div>
                   )
                 })
-              }
+              } */}
+              <div className={styles.noData}>当前查询无数据</div>
             </div>
             <div className={styles.Footer}>
               <div className={styles.page}><span className={styles.count}>当前共{150}条，每页显示10条</span><Pagination showQuickJumper defaultCurrent={2} total={500} onChange={this.handlepage} /></div>

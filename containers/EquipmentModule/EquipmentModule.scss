@@ -247,5 +247,35 @@
         background: #0b0e13;
       }
     }
+    .treeData {
+      :global(.ant-tree li .ant-tree-node-content-wrapper) {
+        color: #fff;
+      }
+      :global(.ant-tree li .ant-tree-node-content-wrapper:hover) {
+        background-color: transparent !important;
+      }
+      :global(.ant-form-item-label > label) {
+        color: #687085;
+      }
+      :global(.ant-tree-switcher svg) {
+        color: #fff;
+      }
+      :global(.ant-tree-checkbox-inner) {
+        background-color: #191c22;
+        border: 1px solid #959595;
+      }
+      :global(.ant-tree) {
+        max-height: 201px;
+        overflow-y: auto;
+      }
+    }
   }
+}
+.noData {
+  font-size: 30px;
+  color: #687085;
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  margin-left: -105px;
 }

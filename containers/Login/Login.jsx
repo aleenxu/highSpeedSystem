@@ -48,7 +48,7 @@ class Login extends React.Component {
   handleLogin = () => {
     const { loginName, passWord } = this.loginParams
     console.log(loginName, passWord);
-    
+
     if (loginName !== '' && passWord !== '') {
       getResponseDatas('post', this.loginUrl, this.getFormData(this.loginParams)).then((res) => {
         const { code, data, msg } = res.data
@@ -74,11 +74,11 @@ class Login extends React.Component {
           <div className={styles.loginBox}>
             <h1 className={styles.title}>智慧高速管控系统</h1>
             <div className={styles.login}>
-              <div className={styles.loginTitle}>用户登陆</div>
+              <div className={styles.loginTitle}>用户登录</div>
               <div className={styles.loginInput}><Input onChange={(e) => { this.handleUserName(e, 'loginName') }} placeholder="请输入用户名" prefix={<Icon className={styles.IconLogin} type="user" />} /></div>
               <div className={styles.loginInput}><Input.Password onChange={(e) => { this.handleUserName(e, 'password') }} placeholder="请输入用户密码" prefix={<Icon className={styles.IconLogin} type="lock" />} /></div>
               <div className={styles.loginItem}><Checkbox onChange={this.handleCheckbox}>记住密码</Checkbox></div>
-              <div className={styles.loginBon}><Button onClick={this.handleLogin} className={styles.ButtonItem}>登&nbsp;&nbsp;陆</Button></div>
+              <div className={styles.loginBon}><Button onClick={this.handleLogin} className={styles.ButtonItem}>登&nbsp;&nbsp;录</Button></div>
             </div>
           </div>
         </div>
