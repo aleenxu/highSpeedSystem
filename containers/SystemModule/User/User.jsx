@@ -134,29 +134,6 @@ class User extends React.Component {
       onCancel() { },
     })
   }
-  handleDataLists = (id) => {
-    if (id) {
-      getResponseDatas('post', this.userUrl, this.getFormData({ type: 'id', value: id })).then((res) => {
-        const result = res.data
-        if (result.code === 0) {
-          if (Object.keys(result.data).length) {
-            console.log(this.dataList);
-            this.dataList = result.data
-            this.dataList.deptIds = [result.data.deptId]
-            this.dataList.roleIds = [result.data.roleId]
-            this.setState({ boardData: result.data })
-          } else {
-            message.error('查无数据！')
-          }
-        } else {
-          message.error('网络异常，请稍后再试!')
-        }
-      })
-    } else {
-      this.dataList = this.dataListData
-      this.setState({ boardData: null })
-    }
-  }
   getAddUserList = () => {
     console.log(this.dataList);
     const url = this.dataList.id ? this.updateUrl : this.saveUrl
@@ -198,6 +175,29 @@ class User extends React.Component {
   getAddUser = () => {
     const boardData = this.dataListData
     this.setState({ boardData })
+  }
+  handleDataLists = (id) => {
+    if (id) {
+      getResponseDatas('post', this.userUrl, this.getFormData({ type: 'id', value: id })).then((res) => {
+        const result = res.data
+        if (result.code === 0) {
+          if (Object.keys(result.data).length) {
+            console.log(this.dataList);
+            this.dataList = result.data
+            this.dataList.deptIds = [result.data.deptId]
+            this.dataList.roleIds = [result.data.roleId]
+            this.setState({ boardData: result.data })
+          } else {
+            message.error('查无数据！')
+          }
+        } else {
+          message.error('网络异常，请稍后再试!')
+        }
+      })
+    } else {
+      this.dataList = this.dataListData
+      this.setState({ boardData: null })
+    }
   }
   handlepage = (pageNumber) => {
     this.sysUser.pageNo = pageNumber

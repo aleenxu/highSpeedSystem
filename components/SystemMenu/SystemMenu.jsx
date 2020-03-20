@@ -54,6 +54,14 @@ class SystemMenu extends React.Component {
       this.setState({
         current: '#/institution',
       });
+    } else if (hashName == "#/rolemana") {
+      this.setState({
+        current: '#/rolemana',
+      });
+    } else if (hashName == "#/journal") {
+      this.setState({
+        current: '#/journal',
+      });
     } else {
       this.setState({
         current: '#/monitoringmodule',
@@ -115,6 +123,7 @@ class SystemMenu extends React.Component {
           }>
             <Menu.Item key="#/user"><a href="#/user">用户管理</a></Menu.Item>
             <Menu.Item key="#/institution"><a href="#/institution">组织机构管理</a></Menu.Item>
+            <Menu.Item key="#/rolemana"><a href="#/rolemana">日志管理</a></Menu.Item>
           </SubMenu>
         </Menu>
       </div>

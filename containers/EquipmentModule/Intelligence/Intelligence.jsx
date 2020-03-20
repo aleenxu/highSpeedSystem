@@ -26,6 +26,9 @@ class Intelligence extends React.Component {
       deviceTypeList: null,
       ControlStatus: { showContent: '', statusName: '' },
       hwayDirection: null,
+      directions: null,
+      roadSecIddata: null,
+      roadSecIdItem: null,
     }
     this.Parameters = {
       keyword: '',
@@ -56,6 +59,7 @@ class Intelligence extends React.Component {
     this.insertUrl = '/control/inforBoard/insert' // 新增情报板'
     this.Status = '/control/inforBoard/getControlStatus' // 获取情报板状态'
     this.directionUrl = '/control/road/list/hway/direction' //  获取高速和方向的级联下拉框，用于下拉框'
+    this.secUrl = '/control/road/list/sec' // 根据公路名和方向获取路段'
   }
   componentDidMount = () => {
     this.boardData = this.board
@@ -63,7 +67,6 @@ class Intelligence extends React.Component {
     this.handlelistDetail('directionList', 1)
     this.handlelistDetail('vendorList', 24)
     this.handlelistDetail('deviceTypeList', 18)
-    /* this.handleUrlAjax('get', this.hwayUrl, 'hwayList') */
     // 获取级联方向下拉
     this.handlehwayDirection()
   }
@@ -102,6 +105,24 @@ class Intelligence extends React.Component {
       }
     })
   }
+  // 获取路干
+  handlelistSec = (name) => {
+    const { direction, roadName } = this.board
+    getResponseDatas('get', this.secUrl, { direction, roadName }).then((res) => {
+      const result = res.data
+      if (result.code === 200) {
+        if (name) {
+          console.log(result.data.length > 0 ? result.data[0].roadSecId : null);
+
+          this.board.roadSecId = result.data.length > 0 ? result.data[0].roadSecId : null
+          this.setState({ roadSecIdItem: result.data.length > 0 ? result.data[0].roadSecId : null })
+        }
+        this.setState({ roadSecIddata: result.data })
+      } else {
+        message.warning('暂无无数据')
+      }
+    })
+  }
   // 添加与编辑
   handleListupdate = () => {
     const url = this.board.rowId ? this.updateUrl : this.insertUrl
@@ -109,7 +130,7 @@ class Intelligence extends React.Component {
       const result = res.data
       if (result.code === 200) {
         this.board = this.boardData
-        this.setState({ boardData: null })
+        this.setState({ boardData: null, directions: null, roadSecIddata: null })
         this.handleListByPage()
       }
       message.success(result.message)
@@ -170,19 +191,49 @@ class Intelligence extends React.Component {
   }
   handleSelect = (value, name, type) => {
     this[type][name] = value
+    if (name === 'roadName' && type === 'board') {
+      this.handlehwaySelect(value, name)
+    }
+    if (name === 'direction' && type === 'board') {
+      this.setState({ directions: value })
+      this.handlelistSec(name)
+    }
+    if (name === 'roadSecId' && type === 'board') {
+      this.setState({ roadSecIdItem: value })
+    }
+  }
+  handlehwaySelect = (value, name) => {
+    const { hwayList } = this.state
+    hwayList.forEach((item) => {
+      if (item.roadId === value) {
+        if (name) {
+          this.board.direction = item.directions[0].directionId
+          this.handlelistSec(name)
+          this.setState({ directions: item.directions[0].directionId })
+        }
+        this.setState({ hwayDirection: item.directions })
+      }
+    })
   }
   // 查看当前方案详情
   handleboardData = (data) => {
     this.board = data
-    this.setState({ boardData: data })
+    this.setState({ boardData: data, directions: data ? data.direction : null, roadSecIdItem: data ? data.roadSecId : null }, () => {
+      if (data) {
+        // 获取方向下拉
+        this.handlehwaySelect(data.roadName)
+        // 获取路干下拉
+        this.handlelistSec()
+      }
+    })
   }
   handleAddData = () => {
     console.log(this.board, this.boardData);
     this.board = this.boardData
-    this.setState({ boardData: this.board })
+    this.setState({ boardData: this.board, hwayDirection: null, roadSecIddata: null })
   }
   render() {
-    const { listByPage, current, boardData, directionList, hwayList, vendorList, deviceTypeList, ControlStatus, hwayDirection } = this.state
+    const { listByPage, current, boardData, directionList, roadSecIddata, roadSecIdItem, directions, hwayList, vendorList, deviceTypeList, ControlStatus, hwayDirection } = this.state
     return (
       <div>
         <SystemMenu />
@@ -338,7 +389,7 @@ class Intelligence extends React.Component {
                         hasFeedback
                         rules={[{ required: true, message: 'Please select your country!' }]}
                       >
-                        <Select onChange={(e) => { this.handleSelect(e, 'direction', 'board') }} defaultValue={boardData.direction}>
+                        <Select onChange={(e) => { this.handleSelect(e, 'direction', 'board') }} value={directions}>
                           {
                             hwayDirection && hwayDirection.map((item) => {
                               return <Option value={item.directionId}>{item.directionName}</Option>
@@ -352,7 +403,14 @@ class Intelligence extends React.Component {
                         name="roadSecId"
                         label="所属路段"
                       >
-                        <Input onChange={(e) => { this.handleInput(e, 'roadSecId', 'board') }} defaultValue={boardData.roadSecId} />
+                        <Select onChange={(e) => { this.handleSelect(e, 'roadSecId', 'board') }} value={roadSecIdItem}>
+                          {
+                            roadSecIddata && roadSecIddata.map((item) => {
+                              return <Option value={item.roadSecId}>{item.secName}</Option>
+                            })
+                          }
+                        </Select>
+                        {/* <Input onChange={(e) => { this.handleInput(e, 'roadSecId', 'board') }} value={roadSecIddata} /> */}
                       </Form.Item>
                     </div>
                   </div>

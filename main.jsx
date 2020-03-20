@@ -67,6 +67,16 @@ const Login = Loadable({
   loading: Loading,
   delay: 0,
 })
+const Rolemana = Loadable({
+  loader: () => import('./containers/SystemModule/Rolemana/Rolemana'),
+  loading: Loading,
+  delay: 0,
+})
+const Journal = Loadable({
+  loader: () => import('./containers/SystemModule/Journal/Journal'),
+  loading: Loading,
+  delay: 0,
+})
 const Parent = () => (
   <div>
     {/* <Route path="*" component={SystemMenu} /> */}
@@ -80,6 +90,8 @@ const Parent = () => (
     <Route exact path="/tollgate" component={TollGate} />
     <Route exact path="/user" component={User} />
     <Route exact path="/institution" component={Institution} />
+    <Route exact path="/rolemana" component={Rolemana} />
+    <Route exact path="/journal" component={Journal} />
     <Route exact path="/login" component={Login} />
   </div>
 )

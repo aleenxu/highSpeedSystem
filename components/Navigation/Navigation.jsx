@@ -16,7 +16,9 @@ class Navigation extends React.Component {
     ]
     this.systemMana = [ // 系统管理目录
       { hash: '#/user', name: '用户管理' },
-
+      { hash: '#/institution', name: '组织机构管理' },
+      { hash: '#/rolemana', name: '角色管理' },
+      { hash: '#/journal', name: '日志管理' },
     ]
     this.CatalogList = [this.Equipment, this.systemMana]
   }

@@ -1,35 +1,42 @@
+
 import React from 'react'
 import SystemMenu from '../../../components/SystemMenu/SystemMenu'
 import Navigation from '../../../components/Navigation/Navigation'
 import styles from '../../EquipmentModule/EquipmentModule.scss'
 import getResponseDatas from '../../../plugs/HttpData/getResponseData'
-import { Pagination, Input, message, Modal, Icon, Form, Select, Button } from 'antd'
-
+import classNames from 'classNames'
+import { Pagination, Icon, Select, Button, Input, message, Tree, Modal, Form } from 'antd'
+/*  角色管理 */
 const { confirm } = Modal
 const { Option } = Select
+const { TreeNode } = Tree
 const formItemLayout = {
   labelCol: { span: 6 },
   wrapperCol: { span: 14 },
 }
-/* 组织方案管理 */
-class Institution extends React.Component {
+class Rolemana extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
       listDatas: null,
       showGroupMsg: false,
-      listItems: null,
-      parentGroup: null,
+      totalCount: 1,
+      expandedKeys: [],
+      autoExpandParent: true,
+      checkedKeys: [],
+      selectedKeys: [],
+      treeData: null,
       userLimit: null,
       current: 1,
     }
-    this.deptListUrl = '/control/sys/dept/listPage'
-    this.addListUrl = '/control/sys/dept/save'
-    this.updateUrl = '/control/sys/dept/update'
-    this.deleteUrl = '/control/sys/dept/delete'
-    this.listUrl = '/control/sys/dept/list'
+    this.deptListUrl = '/control/sys/role/listPage'
+    this.addListUrl = '/control/sys/role/save'
+    this.updateUrl = '/control/sys/role/update'
+    this.deleteUrl = '/control/sys/role/delete'
+    this.sysMenuUrl = '/control/sys/menu/list'
+    this.listTrueUrl = '/control/sys/menu/listTrue' // 获取树结构
     this.deleteParams = {
-      deptIds: []
+      roleIds: [],
     }
     this.listParams = {
       keyword: '',
@@ -37,17 +44,15 @@ class Institution extends React.Component {
     }
     this.defaultparams = {
       id: '',
-      deptCode: '',
-      deptName: '',
-      leaderName: '',
-      parentId: '',
+      menuIds: '',
+      name: '',
       remark: '',
-      sort: '',
     }
   }
   componentDidMount = () => {
+    this.getSystemMenu()
     this.getDeptList()
-    this.getparentGroup()
+    this.onlistTrue()
     // 获取用户权限
     const limitArr = JSON.parse(localStorage.getItem('userLimit'))
     const userLimit = []
@@ -56,23 +61,72 @@ class Institution extends React.Component {
     })
     this.setState({ userLimit })
   }
+  onlistTrue = () => {
+    getResponseDatas('post', this.listTrueUrl).then((res) => {
+      const { code, data } = res.data
+      if (code === 0) {
+        this.setState({ treeData: data })
+      }
+    })
+  }
+  handlePagination = (pageNumber) => {
+    console.log('Page: ', pageNumber)
+    this.listParams.pageNo = pageNumber
+    this.getDeptList()
+  }
+  onExpand = (expandedKeys) => {
+    console.log('onExpand', expandedKeys)
+    this.setState({
+      expandedKeys,
+      autoExpandParent: false,
+    })
+  }
+
+  onCheck = (checkedKeys, e) => {
+    console.log('onCheck', checkedKeys, e)
+    this.defaultparams.menuIds = checkedKeys.checked
+    /*  this.defaultparams.menuIds = [...e.halfCheckedKeys, ...checkedKeys] */
+    this.setState({ checkedKeys: checkedKeys.checked })
+  }
+
+  onSelect = (selectedKeys, info) => {
+    console.log('onSelect', info)
+    this.setState({ selectedKeys })
+  }
+  getSystemMenu = () => {
+    getResponseDatas('post', this.sysMenuUrl).then((res) => {
+      const { code, data } = res.data
+      if (code === 0) {
+        const menuIdArr = []
+        data.forEach((item) => {
+          menuIdArr.push(item.id)
+        })
+        this.defaultparams.menuIds = menuIdArr
+      }
+    })
+  }
+  renderTreeNodes = (data) =>
+    data.map((item) => {
+      if (item.children) {
+        return (
+          <TreeNode title={item.name} key={item.id} dataRef={item}>
+            {this.renderTreeNodes(item.children)}
+          </TreeNode>
+        )
+      }
+      return <TreeNode key={item.id} {...item} />
+    })
   getDeptList = () => {
     getResponseDatas('post', this.deptListUrl, this.getFormData(this.listParams)).then((res) => {
       const { code, data } = res.data
       if (code === 0) {
-        this.setState({
-          listDatas: data,
-          current: Number(this.listParams.pageNo)
+        const listdata = data.list.filter((item) => {
+          return item.isDelete == 0
         })
-      }
-    })
-  }
-  getparentGroup = () => {
-    getResponseDatas('post', this.listUrl).then((res) => {
-      const { code, data } = res.data
-      if (code === 0) {
         this.setState({
-          parentGroup: data,
+          listDatas: listdata,
+          totalCount: data.totalCount,
+          current: Number(this.listParams.pageNo)
         })
       }
     })
@@ -94,26 +148,39 @@ class Institution extends React.Component {
     })
   }
   handleCloseGroupMsg = () => {
+    this.state.checkedKeys = []
+    this.defaultparams = {
+      id: '',
+      menuIds: '',
+      name: '',
+      remark: '',
+    }
     this.setState({ showGroupMsg: false })
   }
   handleEditItems = (id) => {
     this.isAdd = false
-    const listItem = (this.state.listDatas.list.filter(item => item.id === id))[0]
+    let menuId = []
+    const listItem = (this.state.listDatas.filter(item => item.id === id))[0]
+    console.log(listItem)
+    if (listItem.menuId) {
+      menuId = listItem.menuId.split(',')
+    }
     this.setState({
       listItems: listItem,
       showGroupMsg: true,
+      checkedKeys: menuId,
     })
     Object.keys(this.defaultparams).map((item) => {
-      this.defaultparams[item] = listItem[item]
+      if (item === 'menuIds') {
+        this.defaultparams[item] = listItem.menuId
+      } else {
+        this.defaultparams[item] = listItem[item]
+      }
     })
   }
   handleGroupMsgChange = (e, itemname) => {
-    let value = typeof (e) === 'object' ? e.target.value : e
-    if (itemname === 'deptCode') {
-      value = value.replace(/[^\-?\d.]/g, '')
-    }
+    const value = typeof (e) === 'object' ? e.target.value : e
     this.defaultparams[itemname] = value
-    console.log(this.defaultparams)
   }
   handleAddEdit = () => {
     if (this.isAdd) {
@@ -122,7 +189,14 @@ class Institution extends React.Component {
         if (code === 0) {
           this.listParams.keyword = ''
           this.listParams.pageNo = 1
-          message.success('操作成功！')
+          this.state.checkedKeys = []
+          this.defaultparams = {
+            id: '',
+            menuIds: '',
+            name: '',
+            remark: '',
+          }
+          message.info('添加成功!')
           this.getDeptList()
         } else {
           message.info(msg)
@@ -134,6 +208,14 @@ class Institution extends React.Component {
         if (code === 0) {
           this.listParams.keyword = ''
           this.listParams.pageNo = 1
+          this.state.checkedKeys = []
+          this.defaultparams = {
+            id: '',
+            menuIds: '',
+            name: '',
+            remark: '',
+          }
+          message.info('修改成功!')
           this.getDeptList()
         } else {
           message.info(msg)
@@ -144,9 +226,9 @@ class Institution extends React.Component {
   }
   handleDeleteItem = (id) => {
     const that = this
-    this.deleteParams.deptIds.push(id)
+    this.deleteParams.roleIds.push(id)
     confirm({
-      title: '确认要删除当前组织?',
+      title: '确认要删除当前角色权限?',
       cancelText: '取消',
       okText: '确认',
       onOk() {
@@ -168,6 +250,9 @@ class Institution extends React.Component {
       onCancel() { },
     })
   }
+  handleInputChange = (e) => {
+    this.listParams.keyword = e.target.value
+  }
   handleChangePage = (page) => {
     this.listParams.pageNo = page
     this.getDeptList()
@@ -176,12 +261,9 @@ class Institution extends React.Component {
     const { value } = e.target
     this.listParams.keyword = value
   }
-  handlePagination = (pageNumber) => {
-    this.listParams.pageNo = pageNumber
-    this.getDeptList()
-  }
+
   render() {
-    const { listItems, listDatas, showGroupMsg, parentGroup, userLimit, current } = this.state
+    const { listDatas, showGroupMsg, treeData, listItems, totalCount, userLimit, current } = this.state
     return (
       <div>
         <SystemMenu />
@@ -190,7 +272,7 @@ class Institution extends React.Component {
           <div className={styles.EqCentent}>
             <div className={styles.Operation}>
               <div className={styles.leftItem}>
-                <div><Input onChange={this.handleKeywordChange} /></div>
+                <div> <Input onChange={(e) => { this.handleInputChange(e, 'keyword') }} /></div>
                 <span className={styles.Button} onClick={() => { this.handlePagination('1') }}>搜&nbsp;&nbsp;索</span>
               </div>
               <div className={styles.rightItem}>
@@ -199,24 +281,20 @@ class Institution extends React.Component {
             </div>
             <div className={styles.ContetList}>
               <div className={styles.listItems}>
-                <div className={styles.listTd} >序号</div>
-                <div className={styles.listTd} >组织编号</div>
-                <div className={styles.listTd} >组织名称</div>
-                <div className={styles.listTd} >描述</div>
-                <div className={styles.listTd} >上级组织</div>
-                <div className={styles.listTd} >组织负责人</div>
+                <div className={styles.listTd} >角色编号</div>
+                <div className={styles.listTd} >角色名称</div>
+                <div className={styles.listTd} >角色描述</div>
+                <div className={styles.listTd} >创建时间</div>
                 <div className={styles.listTd} >操作</div>
               </div>
               {
-                listDatas && listDatas.list.map((item, index) => {
+                listDatas && listDatas.map((item) => {
                   return (
-                    <div className={styles.listItems} key={item.id + index}>
-                      <div className={styles.listTd} ><span className={styles.roadName}>{item['sort']}</span></div>
-                      <div className={styles.listTd} ><span className={styles.roadName}>{item.deptCode}</span></div>
-                      <div className={styles.listTd} ><span className={styles.roadName}>{item.deptName}</span></div>
+                    <div className={styles.listItems}>
+                      <div className={styles.listTd} ><span className={styles.roadName}>{item.id}</span></div>
+                      <div className={styles.listTd} ><span className={styles.roadName}>{item.name}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.remark}</span></div>
-                      <div className={styles.listTd} ><span className={styles.roadName}>{item.parentName}</span></div>
-                      <div className={styles.listTd} ><span className={styles.roadName}>{item.leaderName}</span></div>
+                      <div className={styles.listTd} ><span className={styles.roadName}>{item.createTime}</span></div>
                       <div className={styles.listTd} >
                         <Button className={styles.Button} onClick={() => { this.handleEditItems(item.id) }}>修&nbsp;&nbsp;改</Button>
                         <Button className={styles.Button} onClick={() => { this.handleDeleteItem(item.id) }}>删&nbsp;&nbsp;除</Button>
@@ -227,84 +305,62 @@ class Institution extends React.Component {
               }
             </div>
             <div className={styles.Footer}>
-              <div className={styles.page}><span className={styles.count}>当前共{listDatas && listDatas.totalCount}条，每页显示10条</span><Pagination showQuickJumper current={current} total={listDatas && listDatas.totalCount} onChange={this.handlePagination} /></div>
+              <div className={styles.page}><span className={styles.count}>当前共{totalCount}条，每页显示10条</span><Pagination showQuickJumper current={current} total={totalCount} onChange={this.handlePagination} /></div>
             </div>
           </div>
           {
             showGroupMsg ?
               <div className={styles.MaskBox}>
-                <div className={styles.AddBox} style={{ height: '330px' }}>
+                <div className={styles.AddBox} style={{ width: '550px', height: '510px' }}>
                   <div className={styles.Title}>{listItems ? '编辑' : '新增'}<Icon onClick={this.handleCloseGroupMsg} className={styles.Close} type="close" /></div>
-                  <div className={styles.Conten}>
+                  <div className={classNames(styles.Conten, styles.treeData)}>
                     <Form
                       name="validate_other"
                       {...formItemLayout}
                     >
                       <div className={styles.ItemLine}>
-                        <div className={styles.Item}>
+                        <div className={styles.Item} style={{ width: '100%' }}>
                           <Form.Item
-                            name="deptCode"
-                            label="组织编号"
+                            name="name"
+                            label="角色名称"
                           >
-                            <Input defaultValue={listItems && listItems.deptCode} onChange={(e) => { this.handleGroupMsgChange(e, 'deptCode') }} />
-                          </Form.Item>
-                        </div>
-                        <div className={styles.Item}>
-                          <Form.Item
-                            name="deptName"
-                            label="组织名称"
-                          >
-                            <Input defaultValue={listItems && listItems.deptName} onChange={(e) => { this.handleGroupMsgChange(e, 'deptName') }} />
+                            <Input defaultValue={listItems && listItems.name} onChange={(e) => { this.handleGroupMsgChange(e, 'name') }} />
                           </Form.Item>
                         </div>
                       </div>
                       <div className={styles.ItemLine}>
-                        <div className={styles.Item}>
-                          <Form.Item
-                            name="leaderName"
-                            label="负责人"
-                          >
-                            <Input defaultValue={listItems && listItems.leaderName} onChange={(e) => { this.handleGroupMsgChange(e, 'leaderName') }} />
-                          </Form.Item>
-                        </div>
-                        <div className={styles.Item}>
-                          <Form.Item
-                            name="parentId"
-                            label="父组织"
-                            hasFeedback
-                            rules={[{ required: true, message: 'Please select your country!' }]}
-                          >
-                            <Select defaultValue={listItems ? listItems.parentId : 0} onChange={(e) => { this.handleGroupMsgChange(e, 'parentId') }}>
-                              <Option value={0} key={0}>请选择所属用父组织</Option>
-                              {
-                                !!parentGroup && parentGroup.map((item) => {
-                                  return (
-                                    <Option value={item.id} key={item.id}>{item.deptName}</Option>
-                                  )
-                                })
-                              }
-                            </Select>
-                          </Form.Item>
-                        </div>
-                      </div>
-                      <div className={styles.ItemLine}>
-                        <div className={styles.Item}>
+                        <div className={styles.Item} style={{ width: '100%' }}>
                           <Form.Item
                             name="remark"
-                            label="备注"
+                            label="角色描述"
                           >
                             <Input defaultValue={listItems && listItems.remark} onChange={(e) => { this.handleGroupMsgChange(e, 'remark') }} />
                           </Form.Item>
                         </div>
-                        <div className={styles.Item}>
-                          <Form.Item
-                            name="sort"
-                            label="序号"
-                          >
-                            <Input defaultValue={listItems && listItems.sort} onChange={(e) => { this.handleGroupMsgChange(e, 'sort') }} />
-                          </Form.Item>
-                        </div>
                       </div>
+                      <div className={styles.ItemTree}>
+                        <Form.Item
+                          name="menuIds"
+                          label="角色权限"
+                        >
+                          {treeData ?
+                            <Tree
+                              checkable
+                              checkStrictly
+                              onExpand={this.onExpand}
+                              expandedKeys={this.state.expandedKeys}
+                              autoExpandParent={this.state.autoExpandParent}
+                              onCheck={this.onCheck}
+                              checkedKeys={this.state.checkedKeys}
+                              onSelect={this.onSelect}
+                              selectedKeys={this.state.selectedKeys}
+                              defaultExpandAll={true}
+                            >
+                              {this.renderTreeNodes(treeData)}
+                            </Tree> : null}
+                        </Form.Item>
+                      </div>
+
                     </Form>
                     <div className={styles.Footer}>
                       <Button className={styles.Button} onClick={this.handleAddEdit} type="primary" htmlType="submit">保&nbsp;&nbsp;存</Button>
@@ -320,4 +376,4 @@ class Institution extends React.Component {
   }
 }
 
-export default Institution
+export default Rolemana
