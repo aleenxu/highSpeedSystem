@@ -24,7 +24,8 @@ class Intelligence extends React.Component {
       hwayList: [],
       vendorList: [],
       deviceTypeList: null,
-      ControlStatus: { showContent: '', statusName: '' }
+      ControlStatus: { showContent: '', statusName: '' },
+      hwayDirection: null,
     }
     this.Parameters = {
       keyword: '',
@@ -54,6 +55,7 @@ class Intelligence extends React.Component {
     this.updateUrl = '/control/inforBoard/update' // 修改情报板'
     this.insertUrl = '/control/inforBoard/insert' // 新增情报板'
     this.Status = '/control/inforBoard/getControlStatus' // 获取情报板状态'
+    this.directionUrl = '/control/road/list/hway/direction' //  获取高速和方向的级联下拉框，用于下拉框'
   }
   componentDidMount = () => {
     this.boardData = this.board
@@ -61,13 +63,23 @@ class Intelligence extends React.Component {
     this.handlelistDetail('directionList', 1)
     this.handlelistDetail('vendorList', 24)
     this.handlelistDetail('deviceTypeList', 18)
-    this.handleUrlAjax('get', this.hwayUrl, 'hwayList')
+    /* this.handleUrlAjax('get', this.hwayUrl, 'hwayList') */
+    // 获取级联方向下拉
+    this.handlehwayDirection()
   }
   handleListByPage = () => {
     getResponseDatas('get', this.listByPageUrl, this.Parameters).then((res) => {
       const result = res.data
       if (result.code === 200) {
         this.setState({ listByPage: result.data, current: Number(this.Parameters.pageNo) })
+      }
+    })
+  }
+  handlehwayDirection = () => {
+    getResponseDatas('get', this.directionUrl).then((res) => {
+      const result = res.data
+      if (result.code === 200) {
+        this.setState({ hwayList: result.data })
       }
     })
   }
@@ -170,7 +182,7 @@ class Intelligence extends React.Component {
     this.setState({ boardData: this.board })
   }
   render() {
-    const { listByPage, current, boardData, directionList, hwayList, vendorList, deviceTypeList, ControlStatus } = this.state
+    const { listByPage, current, boardData, directionList, hwayList, vendorList, deviceTypeList, ControlStatus, hwayDirection } = this.state
     return (
       <div>
         <SystemMenu />
@@ -303,7 +315,7 @@ class Intelligence extends React.Component {
 
                           {
                             hwayList && hwayList.map((item) => {
-                              return <Option key={item.id} value={item.id}>{item.name}</Option>
+                              return <Option value={item.roadId}>{item.roadName}</Option>
                             })
                           }
                         </Select>
@@ -328,8 +340,8 @@ class Intelligence extends React.Component {
                       >
                         <Select onChange={(e) => { this.handleSelect(e, 'direction', 'board') }} defaultValue={boardData.direction}>
                           {
-                            directionList && directionList.map((item) => {
-                              return <Option value={item.id}>{item.name}</Option>
+                            hwayDirection && hwayDirection.map((item) => {
+                              return <Option value={item.directionId}>{item.directionName}</Option>
                             })
                           }
                         </Select>
