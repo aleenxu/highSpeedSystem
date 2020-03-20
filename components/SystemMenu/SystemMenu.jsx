@@ -111,9 +111,10 @@ class SystemMenu extends React.Component {
             <Menu.Item key="#/basics"><a href="#/basics">历史管控方案</a></Menu.Item>
           </SubMenu>
           <Menu.Item key="#/simulationmodule">
-            <a href="#/simulationmodule">
+            {/* <a href="#/simulationmodule">
               仿真优化
-            </a>
+            </a> */}
+            <a>仿真优化</a>
           </Menu.Item>
           <SubMenu key="#/statisticsmodule" title={
             <span className="submenu-title-wrapper">

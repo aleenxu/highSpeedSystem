@@ -701,55 +701,46 @@ class MonitoringModule extends React.Component {
   }
   handleControl = () => {
     const that = this
-    confirm({
-      title: '确认要发起管控方案?',
-      cancelText: '取消',
-      okText: '确认',
-      onOk() {
-        return new Promise((resolve) => {
-          const { detailsPopup } = that.state
-          const { eventId, eventType, pileNum, roadSecId, situation, devices } = detailsPopup
-          const deviceAry = []
-          devices.forEach((item) => {
-            item.device.forEach((items) => {
-              deviceAry.push({
-                controlScope: items.controlScope ? items.controlScope : 0,
-                deviceId: items.deviceId,
-                deviceTypeId: items.deviceTypeId,
-                pileNum: items.pileNum ? items.pileNum : 0,
-              })
-            })
-          })
-          if (deviceAry.length === 0) {
-            message.warning('请添加设备')
-            resolve()
-            return
-          }
-          const data = {
-            createId: 1,
-            devices: deviceAry,
-            eventId,
-            eventTypeId: eventType,
-            pileNum,
-            roadSecId,
-            value: situation,
-          }
-          getResponseDatas('post', that.controlUrl, data).then((res) => {
-            const result = res.data
-            if (result.code === 200) {
-              that.handledetai({ eventType, eventId })
-              resolve()
-              message.success('发起管控方案成功！')
-              that.handleEventList()
-              that.handlegroupType()
-              that.handleUrlAjax(that.groupStatusUrl, 'groupStatus')
-              that.handleplanList()
-              /* that.handleEventPopup('Reserve', true) */
-            }
-          })
-        }).catch(() => message.error('网络错误!'))
-      },
-      onCancel() { },
+    const { detailsPopup } = that.state
+    const { eventId, eventType, pileNum, roadSecId, situation, devices } = detailsPopup
+    const deviceAry = []
+    devices.forEach((item) => {
+      item.device.forEach((items) => {
+        deviceAry.push({
+          controlScope: items.controlScope ? items.controlScope : 0,
+          deviceId: items.deviceId,
+          deviceTypeId: items.deviceTypeId,
+          pileNum: items.pileNum ? items.pileNum : 0,
+        })
+      })
+    })
+    if (deviceAry.length === 0) {
+      message.warning('请添加设备')
+      resolve()
+      return
+    }
+    const data = {
+      createId: 1,
+      devices: deviceAry,
+      eventId,
+      eventTypeId: eventType,
+      pileNum,
+      roadSecId,
+      value: situation,
+    }
+    getResponseDatas('post', that.controlUrl, data).then((res) => {
+      const result = res.data
+      if (result.code === 200) {
+        that.handledetai({ eventType, eventId })
+        resolve()
+        message.success('发起管控方案成功！')
+        that.handleEventList()
+        that.handlegroupType()
+        that.handleUrlAjax(that.groupStatusUrl, 'groupStatus')
+        that.handleplanList()
+        that.handleViewControl(eventType, eventId)
+        /* that.handleEventPopup('Reserve', true) */
+      }
     })
   }
   handleViewControl = (eventType, eventId) => {
@@ -1210,7 +1201,7 @@ class MonitoringModule extends React.Component {
               <div className={styles.ItemFooter}>
 
                 {
-                  reservePopup.status > 1 ? <span onClick={() => { this.handlecancelRel(reservePopup.controllId, 'cancel') }}>取消发布</span> : <span onClick={this.handleRelease}>发&nbsp;&nbsp;布</span>
+                  reservePopup.status === 3 ? <span onClick={() => { this.handlecancelRel(reservePopup.controllId, 'cancel') }}>取消发布</span> : reservePopup.status === 1 ? <span onClick={this.handleRelease}>发&nbsp;&nbsp;布</span> : <span style={{ color: '#ccc' }}>发&nbsp;&nbsp;布</span>
                 }
                 {
                   reservePopup.status === 3 ? <span onClick={() => { this.handleEndValueTime(true) }}>延时发布</span> : null
