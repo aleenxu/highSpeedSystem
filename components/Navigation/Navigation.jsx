@@ -22,12 +22,12 @@ class Navigation extends React.Component {
       { hash: '#/rolemana', name: '角色管理' },
       { hash: '#/journal', name: '日志管理' },
     ]
-    this.Control = [
+    this.Control = [ // 管控业务目录
       { hash: '#/reserveplan', name: '预案库' },
       { hash: '#/historical', name: '历史事件' },
       { hash: '#/basics', name: '历史管控方案' },
     ]
-    this.Statistics = [
+    this.Statistics = [ // 统计分析目录
       { hash: '#/traffic', name: '事件统计' },
       { hash: '#/plan', name: '管控统计' },
       { hash: '#/analysis', name: '路况分析' },

@@ -140,7 +140,7 @@ class ScrollList extends React.Component {
               color: function (params) {
                 //自定义颜色
                 var colorList = [
-                  '#74ccd3', '#2762a5', '#5cff6b', '#2777a5', '#74ccd3',
+                  '#ed7e2f', '#35baff', '#f3ea29', '#619540', '#f06c79',
                 ];
                 return colorList[params.dataIndex]
               }
