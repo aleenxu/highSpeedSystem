@@ -5,8 +5,8 @@ import Navigation from '../../../components/Navigation/Navigation'
 import styles from '../../EquipmentModule/EquipmentModule.scss'
 import getResponseDatas from '../../../plugs/HttpData/getResponseData'
 import { Pagination, Input } from 'antd'
-/*        事件统计 */
-class Traffic extends React.Component {
+/*        路况分析 */
+class Analysis extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -46,4 +46,4 @@ class Traffic extends React.Component {
   }
 }
 
-export default Traffic
+export default Analysis

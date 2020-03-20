@@ -225,6 +225,9 @@ class Institution extends React.Component {
                   )
                 })
               }
+              {
+                !!listDatas && listDatas.list.length === 0 ? <div className={styles.noData}>当前查询无数据</div> : null
+              }
             </div>
             <div className={styles.Footer}>
               <div className={styles.page}><span className={styles.count}>当前共{listDatas && listDatas.totalCount}条，每页显示10条</span><Pagination showQuickJumper current={current} total={listDatas && listDatas.totalCount} onChange={this.handlePagination} /></div>

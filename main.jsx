@@ -77,6 +77,26 @@ const Journal = Loadable({
   loading: Loading,
   delay: 0,
 })
+const SpeedLimit = Loadable({
+  loader: () => import('./containers/EquipmentModule/SpeedLimit/SpeedLimit'),
+  loading: Loading,
+  delay: 0,
+})
+const FIntelboard = Loadable({
+  loader: () => import('./containers/EquipmentModule/FIntelboard/FIntelboard'),
+  loading: Loading,
+  delay: 0,
+})
+const Historical = Loadable({
+  loader: () => import('./containers/ControlModule/Historical/Historical'),
+  loading: Loading,
+  delay: 0,
+})
+const Analysis = Loadable({
+  loader: () => import('./containers/StatisticsModule/Analysis/Analysis'),
+  loading: Loading,
+  delay: 0,
+})
 const Parent = () => (
   <div>
     {/* <Route path="*" component={SystemMenu} /> */}
@@ -92,6 +112,10 @@ const Parent = () => (
     <Route exact path="/institution" component={Institution} />
     <Route exact path="/rolemana" component={Rolemana} />
     <Route exact path="/journal" component={Journal} />
+    <Route exact path="/speedLimit" component={SpeedLimit} />
+    <Route exact path="/fIntelboard" component={FIntelboard} />
+    <Route exact path="/historical" component={Historical} />
+    <Route exact path="/analysis" component={Analysis} />
     <Route exact path="/login" component={Login} />
   </div>
 )

@@ -303,6 +303,9 @@ class Rolemana extends React.Component {
                   )
                 })
               }
+              {
+                !!listDatas && listDatas.length === 0 ? <div className={styles.noData}>当前查询无数据</div> : null
+              }
             </div>
             <div className={styles.Footer}>
               <div className={styles.page}><span className={styles.count}>当前共{totalCount}条，每页显示10条</span><Pagination showQuickJumper current={current} total={totalCount} onChange={this.handlePagination} /></div>

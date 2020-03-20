@@ -22,6 +22,10 @@ class SystemMenu extends React.Component {
       this.setState({
         current: '#/reserveplan',
       });
+    } else if (hashName == "#/historical") {
+      this.setState({
+        current: '#/historical',
+      });
     } else if (hashName == "#/basics") {
       this.setState({
         current: '#/basics',
@@ -29,6 +33,10 @@ class SystemMenu extends React.Component {
     } else if (hashName == "#/traffic") {
       this.setState({
         current: '#/traffic',
+      });
+    } else if (hashName == "#/analysis") {
+      this.setState({
+        current: '#/analysis',
       });
     } else if (hashName == "#/simulationmodule") {
       this.setState({
@@ -41,6 +49,14 @@ class SystemMenu extends React.Component {
     } else if (hashName == "#/intelligence") {
       this.setState({
         current: '#/intelligence',
+      });
+    } else if (hashName == "#/speedLimit") {
+      this.setState({
+        current: '#/speedLimit',
+      });
+    } else if (hashName == "#/fIntelboard") {
+      this.setState({
+        current: '#/fIntelboard',
       });
     } else if (hashName == "#/tollgate") {
       this.setState({
@@ -90,8 +106,9 @@ class SystemMenu extends React.Component {
               管控业务
             </span>
           }>
-            <Menu.Item key="#/reserveplan"><a href="#/reserveplan">预案库管理</a></Menu.Item>
-            <Menu.Item key="#/basics"><a href="#/basics">管控基础数据管理</a></Menu.Item>
+            <Menu.Item key="#/reserveplan"><a href="#/reserveplan">预案库</a></Menu.Item>
+            <Menu.Item key="#/historical"><a href="#/historical">历史事件</a></Menu.Item>
+            <Menu.Item key="#/basics"><a href="#/basics">历史管控方案</a></Menu.Item>
           </SubMenu>
           <Menu.Item key="#/simulationmodule">
             <a href="#/simulationmodule">
@@ -103,8 +120,9 @@ class SystemMenu extends React.Component {
               统计分析
             </span>
           }>
-            <Menu.Item key="#/traffic"><a href="#/traffic">交通事件统计</a></Menu.Item>
-            <Menu.Item key="#/plan"><a href="#/plan">管控方案统计</a></Menu.Item>
+            <Menu.Item key="#/traffic"><a href="#/traffic">事件统计</a></Menu.Item>
+            <Menu.Item key="#/plan"><a href="#/plan">管控统计</a></Menu.Item>
+            <Menu.Item key="#/analysis"><a href="#/analysis">路况分析</a></Menu.Item>
           </SubMenu>
           <SubMenu key="#/equipmentmodule" title={
             <span className="submenu-title-wrapper">
@@ -113,8 +131,8 @@ class SystemMenu extends React.Component {
           }>
             <Menu.Item key="#/intelligence"><a href="#/intelligence">可变情报板</a></Menu.Item>
             <Menu.Item key="#/tollgate"><a href="#/tollgate">收费站</a></Menu.Item>
-            <Menu.Item key="#/3">限速牌</Menu.Item>
-            <Menu.Item key="#/4">F型情报板</Menu.Item>
+            <Menu.Item key="#/speedLimit"><a href="#/speedLimit">限速牌</a></Menu.Item>
+            <Menu.Item key="#/fIntelboard"><a href="#/fIntelboard">F型情报板</a></Menu.Item>
           </SubMenu>
           <SubMenu key="#/systemmodule" title={
             <span className="submenu-title-wrapper">
@@ -123,7 +141,8 @@ class SystemMenu extends React.Component {
           }>
             <Menu.Item key="#/user"><a href="#/user">用户管理</a></Menu.Item>
             <Menu.Item key="#/institution"><a href="#/institution">组织机构管理</a></Menu.Item>
-            <Menu.Item key="#/rolemana"><a href="#/rolemana">日志管理</a></Menu.Item>
+            <Menu.Item key="#/rolemana"><a href="#/rolemana">角色管理</a></Menu.Item>
+            <Menu.Item key="#/journal"><a href="#/journal">日志管理</a></Menu.Item>
           </SubMenu>
         </Menu>
       </div>

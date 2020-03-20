@@ -12,7 +12,9 @@ class Navigation extends React.Component {
     }
     this.Equipment = [  // 设备运维目录
       { hash: '#/intelligence', name: '可变情报板' },
-      { hash: '#/tollgate', name: '收费站' }
+      { hash: '#/tollgate', name: '收费站' },
+      { hash: '#/speedLimit', name: '限速牌' },
+      { hash: '#/fIntelboard', name: 'F型情报板' },
     ]
     this.systemMana = [ // 系统管理目录
       { hash: '#/user', name: '用户管理' },
@@ -20,11 +22,20 @@ class Navigation extends React.Component {
       { hash: '#/rolemana', name: '角色管理' },
       { hash: '#/journal', name: '日志管理' },
     ]
-    this.CatalogList = [this.Equipment, this.systemMana]
+    this.Control = [
+      { hash: '#/reserveplan', name: '预案库' },
+      { hash: '#/historical', name: '历史事件' },
+      { hash: '#/basics', name: '历史管控方案' },
+    ]
+    this.Statistics = [
+      { hash: '#/traffic', name: '事件统计' },
+      { hash: '#/plan', name: '管控统计' },
+      { hash: '#/analysis', name: '路况分析' },
+    ]
+    this.CatalogList = [this.Equipment, this.systemMana, this.Control, this.Statistics]
   }
 
   componentDidMount = () => {
-    console.log(window.location.hash, this.props.CatalogList);
     this.CatalogList.forEach((items) => {
       items.forEach((item) => {
         if (item.hash === window.location.hash) {

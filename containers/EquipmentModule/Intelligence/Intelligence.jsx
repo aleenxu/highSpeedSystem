@@ -287,6 +287,9 @@ class Intelligence extends React.Component {
                   )
                 })
               }
+              {
+                !!listByPage && listByPage.data.length === 0 ? <div className={styles.noData}>当前查询无数据</div> : null
+              }
             </div>
             <div className={styles.Footer}>
               <div className={styles.page}><span className={styles.count}>当前共{listByPage && listByPage.total}条，每页显示10条</span><Pagination showQuickJumper current={current} total={listByPage && listByPage.total} onChange={this.handlepage} /></div>

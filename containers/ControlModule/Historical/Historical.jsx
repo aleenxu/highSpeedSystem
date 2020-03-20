@@ -5,8 +5,8 @@ import Navigation from '../../../components/Navigation/Navigation'
 import styles from '../../EquipmentModule/EquipmentModule.scss'
 import getResponseDatas from '../../../plugs/HttpData/getResponseData'
 import { Pagination, Input } from 'antd'
-/*        预案库 */
-class ReservePlan extends React.Component {
+/*        历史方案 */
+class Historical extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -80,4 +80,4 @@ class ReservePlan extends React.Component {
   }
 }
 
-export default ReservePlan
+export default Historical
