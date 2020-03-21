@@ -32,7 +32,6 @@ class GMap extends React.Component {
       styles: this.props.styles, // 地图样式
       EventTagPopup: this.props.EventTagPopup, // 弹层地图后更新下原来地图
       linePoint: null,
-      updatePoint: this.props.updatePoint, // 更新的点
     }
     this.styles = {
       position: 'fixed',
@@ -48,6 +47,7 @@ class GMap extends React.Component {
     }
     this.placeSearch = null;
     this.mapPointUrl = '/control/device/list/device/to/map' // 查询设备集合（用于回显到地图）
+    this.markers = [] // 点集合
   }
   componentDidMount = () => {
     this.loadPoint()
@@ -55,12 +55,6 @@ class GMap extends React.Component {
   componentWillReceiveProps = (nextProps) => {
     if (this.props.linePoint !== nextProps.linePoint) {
       this.setState({ linePoint: nextProps.linePoint })
-    }
-    if (this.props.updatePoint !== nextProps.updatePoint) {
-      this.setState({ updatePoint: nextProps.updatePoint }, () => {
-        debugger
-        this.openInfoWin(window.map,this.props.updatePoint)
-      })
     }
     if (this.props.dataAll !== nextProps.dataAll) {
       this.setState({ dataAll: nextProps.dataAll })
@@ -90,10 +84,8 @@ class GMap extends React.Component {
           if (!this.state.detailsPopup.controlStatusType) {
             // window.drawRectangle()
           } else {
-            
-              window.mouseTool.close(true) //关闭，并清除覆盖物
-              $(".amap-maps").attr("style", "")
-            
+            window.mouseTool.close(true) //关闭，并清除覆盖物
+            $(".amap-maps").attr("style", "")
           }
         } else {
           // console.log("为false 时重载地图")
@@ -220,21 +212,18 @@ class GMap extends React.Component {
     });  //构造地点查询类
     AMap.event.addListener(auto, "select", this.searchKeyWords);//注册监听，当选中某条记录时会触发
     // 点的新建
-    AMapUI.loadUI(['overlay/SimpleMarker', 'overlay/SimpleInfoWindow'], function (SimpleMarker, SimpleInfoWindow) {
-      if (_this.state.dataAll) {
-        // 左侧功能数据图标
-        _this.createPoint(pointArr, tollStationIcon, SimpleMarker, SimpleInfoWindow, map, "1")
-      }
+    if (this.state.dataAll) {
+      // 左侧功能数据图标
+      this.toggleAmapMarkers(pointArr, tollStationIcon, "1")
+    }
       // 图标收费站
-      _this.createPoint(_this.state.tollGateJson, tollStationIcon, SimpleMarker, SimpleInfoWindow, map, "2")
+      this.toggleAmapMarkers(this.state.tollGateJson, tollStationIcon, "2")
       // 图标F屏情报版
-      _this.createPoint(_this.state.infoFBoardJson, fBoardIcon, SimpleMarker, SimpleInfoWindow, map, "3")
+      this.toggleAmapMarkers(this.state.infoFBoardJson, fBoardIcon, "3")
       // // 图标限速牌专用
-      _this.createPoint(_this.state.speedLimitJson, speedLimitIcon, SimpleMarker, SimpleInfoWindow, map, "4")
+      this.toggleAmapMarkers(this.state.speedLimitJson, speedLimitIcon, "4")
       // // 图标可变情报版
-      _this.createPoint(_this.state.infoBoardJson, turnBoardIcon, SimpleMarker, SimpleInfoWindow, map, "5")
-
-    })
+      this.toggleAmapMarkers(this.state.infoBoardJson, turnBoardIcon, "5")
     // 线的绘制
     AMapUI.load(['ui/misc/PathSimplifier', 'lib/$'], function (PathSimplifier, $) {
 
@@ -252,14 +241,6 @@ class GMap extends React.Component {
         getPath: function (pathData, pathIndex) {
           return pathData.path;
         },
-        // getHoverTitle: function (pathData, pathIndex, pointIndex) {
-        //   if (pointIndex >= 0) {
-        //     //point 
-        //     // return  pointIndex + '/' + pathData.path.length;
-        //   }
-
-        //   returnpathData.path.length;
-        // },
         renderOptions: {
           pathLineStyle: {
             dirArrowStyle: false
@@ -282,14 +263,7 @@ class GMap extends React.Component {
           }
         }
       });
-
       window.pathSimplifierIns = pathSimplifierIns;
-      /*  // var d = lineData;
-       var d = [
-         {"path":[["119.851293", "32.233071"],["119.857044", "32.236665"]]}
-       ]
-       pathSimplifierIns.setData(d); */
-
     });
     // 弹层的自定义
     //覆盖默认的dom结构
@@ -315,181 +289,94 @@ class GMap extends React.Component {
     pointArr : 点的数组 [[],[],[],[]]
     pointIcon: 图标路径
   */
-  createPoint = (pointArr, pointIcon, SimpleMarker, SimpleInfoWindow, map, flag) => {
-    const _this = this;
-    switch (flag) {
-      case "1":
-        _this.state.dataAll.map((leftItem, leftIndex) => {
-          if (leftItem.eventData.length > 0) {
-            leftItem.eventData.map((item, index) => {
-              const marker = new SimpleMarker({
-                //自定义图标地址
-                iconStyle: _this.returnMapIcon(leftIndex),
-                //设置基点偏移
-                offset: new AMap.Pixel(-88, -19),
-                showPositionPoint: false,
-                position: item.latlng[index],
-                zIndex: 10
-              });
-              let roadLatlngData = {
-                "path": item.latlng
-              }
-              let lineDatas = []
-              lineDatas.push(roadLatlngData)
-              marker.on("click", () => {
-                // console.log("绑定点击事件",lineDatas, item.latlng[index])
-                map.setZoomAndCenter(12, item.latlng[index]); //同时设置地图层级与中心点
-                _this.handledetai(item)
-                window.pathSimplifierIns.setData(lineDatas)
-              })
-              switch (leftIndex) {
-                case 0:
-                  window.leftModuleOne.addLayer(marker) //把点添加到层组中
-                  window.leftModuleOne.setMap(map) // 层组渲染到地图中
-                  window.leftModuleOne.hide() // 隐藏当前的层组
-                  break;
-                case 1:
-                  window.leftModuleTwo.addLayer(marker) //把点添加到层组中
-                  window.leftModuleTwo.setMap(map) // 层组渲染到地图中
-                  window.leftModuleTwo.hide() // 隐藏当前的层组
-                  break;
-                case 2:
-                  window.leftModuleThree.addLayer(marker) //把点添加到层组中
-                  window.leftModuleThree.setMap(map) // 层组渲染到地图中
-                  window.leftModuleThree.hide() // 隐藏当前的层组
-                  break;
-                case 3:
-                  window.leftModuleFour.addLayer(marker) //把点添加到层组中
-                  window.leftModuleFour.setMap(map) // 层组渲染到地图中
-                  window.leftModuleFour.hide() // 隐藏当前的层组
-                  break;
-              }
+  //高德批量添加点
+  toggleAmapMarkers = (positions, imgIcon, flag) => {
+    debugger
+    const map = window.map
+    if (map) {
+      let marker;
+      for (let i = 0; i < positions.length; i++) {
+        marker = new AMap.Marker({
+          position: new AMap.LngLat(positions[i].latlng[0], positions[i].latlng[1]),
+          offset: new AMap.Pixel(-10, -10),
+          icon: imgIcon,
+        });
+        // this.markers.push(marker)
+        /* if (flag === '1') {
+
+        } */
+        switch (flag) {
+          case "1":
+            let roadLatlngData = {
+              "path": positions[i].latlng,
+            }
+            let lineDatas = []
+            lineDatas.push(roadLatlngData)
+            this.markers.push(marker)
+            marker.on('click', (event) => {
+              this.openInfo(positions[i])
+              map.setZoomAndCenter(12, positions[i].latlng); //同时设置地图层级与中心点
+              _this.handledetai(positions[i])
+              window.pathSimplifierIns.setData(lineDatas)
             })
-          }
-        })
-        break;
-      case "2":
-        pointArr.length > 0 && pointArr.map((item) => {
-          const marker2 = new SimpleMarker({
-            //自定义图标地址
-            iconStyle: tollStationIcon,
-            //设置基点偏移
-            offset: new AMap.Pixel(-10, -10),
-            map: map,
-            showPositionPoint: false,
-            position: item.latlng,
-            zIndex: 10
-          });
-          //marker 点击时打开
-          marker2.on('click', function () {
-            map.setZoomAndCenter(12, item.latlng); //同时设置地图层级与中心点
-            _this.openInfoWin(map, item, SimpleInfoWindow, item)
-          });
-          window.deviceTollGate.addLayer(marker2) //把点添加到层组中
-          window.deviceTollGate.setMap(map) // 层组渲染到地图中
-          // window.deviceTollGate.hide() // 隐藏当前的层组
-        })
-        break;
-      case "3":
-        pointArr.length > 0 && pointArr.map((item) => {
-          const marker3 = new SimpleMarker({
-            //自定义图标地址
-            iconStyle: fBoardIcon,
-            //设置基点偏移
-            offset: new AMap.Pixel(-10, -10),
-            map: map,
-            showPositionPoint: false,
-            position: item.latlng,
-            zIndex: 10
-          });
-          //marker 点击时打开
-          marker3.on('click', function () {
-            map.setZoomAndCenter(12, item.latlng); //同时设置地图层级与中心点
-            _this.openInfoWin(map, item, SimpleInfoWindow, item)
-          });
-          window.deviceFInfoBoard.addLayer(marker3) //把点添加到层组中
-          window.deviceFInfoBoard.setMap(map) // 层组渲染到地图中
-          // window.deviceFInfoBoard.hide() // 隐藏当前的层组
-        })
-        break;
-      case "4":
-        pointArr.length > 0 && pointArr.map((item) => {
-          const marker4 = new SimpleMarker({
-            //自定义图标地址
-            iconStyle: speedLimitIcon,
-            //设置基点偏移
-            offset: new AMap.Pixel(-10, -10),
-            map: map,
-            showPositionPoint: false,
-            position: item.latlng,
-            zIndex: 10
-          });
-          //marker 点击时打开
-          marker4.on('click', function () {
-            map.setZoomAndCenter(12, item.latlng); //同时设置地图层级与中心点
-            _this.openInfoWin(map, item, SimpleInfoWindow, item)
-          });
-          window.deviceInfoBoard.addLayer(marker4) //把点添加到层组中
-          window.deviceInfoBoard.setMap(map) // 层组渲染到地图中
-          // window.deviceInfoBoard.hide() // 隐藏当前的层组
-        })
-        break;
-      case "5":
-        pointArr.length > 0 && pointArr.map((item) => {
-          const marker5 = new SimpleMarker({
-            //自定义图标地址
-            iconStyle: turnBoardIcon,
-            //设置基点偏移
-            offset: new AMap.Pixel(-10, -10),
-            map: map,
-            showPositionPoint: false,
-            position: item.latlng,
-            zIndex: 10,
-          });
-          //marker 点击时打开
-          marker5.on('click', function () {
-            map.setZoomAndCenter(12, item.latlng); //同时设置地图层级与中心点
-            _this.openInfoWin(map, item, SimpleInfoWindow, item)
-          });
-          window.deviceTurnBoard.addLayer(marker5) //把点添加到层组中
-          window.deviceTurnBoard.setMap(map) // 层组渲染到地图中
-          // window.deviceTurnBoard.hide() // 隐藏当前的层组
-          //deviceTurnBoard
-        })
-        break;
+            
+                  // switch (leftIndex) {
+                  //   case 0:
+                  //     window.leftModuleOne.addLayer(marker) //把点添加到层组中
+                  //     window.leftModuleOne.setMap(map) // 层组渲染到地图中
+                  //     window.leftModuleOne.hide() // 隐藏当前的层组
+                  //     break;
+                  //   case 1:
+                  //     window.leftModuleTwo.addLayer(marker) //把点添加到层组中
+                  //     window.leftModuleTwo.setMap(map) // 层组渲染到地图中
+                  //     window.leftModuleTwo.hide() // 隐藏当前的层组
+                  //     break;
+                  //   case 2:
+                  //     window.leftModuleThree.addLayer(marker) //把点添加到层组中
+                  //     window.leftModuleThree.setMap(map) // 层组渲染到地图中
+                  //     window.leftModuleThree.hide() // 隐藏当前的层组
+                  //     break;
+                  //   case 3:
+                  //     window.leftModuleFour.addLayer(marker) //把点添加到层组中
+                  //     window.leftModuleFour.setMap(map) // 层组渲染到地图中
+                  //     window.leftModuleFour.hide() // 隐藏当前的层组
+                  //     break;
+                  // }
+            break;
+          case "2": case "3": case "4": case "5":
+              //marker 点击时打开
+              this.markers.push(marker)
+              marker.on('click', (event) => {
+                map.setZoomAndCenter(12, positions[i].latlng); //同时设置地图层级与中心点
+                this.openInfo(positions[i])
+              })
+              // window.deviceTollGate.addLayer(marker) //把点添加到层组中
+              // window.deviceTollGate.setMap(map) // 层组渲染到地图中
+              // window.deviceTollGate.hide() // 隐藏当前的层组
+            break;
+        }
+      }
+      map.add(this.markers)
     }
-    /* if (flag === "1"){
-      
-    } else {
-      
-    } */
   }
-/*   openInfoWin = (map, marker, SimpleInfoWindow, showData) => {
-    var infoWindow = new SimpleInfoWindow({
-      myCustomHeader: showData.deviceName + '信息：',
-      myCustomFooter: '我的footer',
-      infoTitle: '<div>这里是标题</div>',
-      infoBody: '<p class="my-desc"><strong>桩号：' + showData.pileNum + '</strong><strong>走向：' + showData.directionName + '</strong><strong>所属高速：' + showData.roadName + '</strong></p>',
-      //基点指向marker的头部位置
-      offset: new AMap.Pixel(0, -10)
+  //在指定位置打开信息窗体
+  openInfo = (marker) => {
+    debugger
+    var info = [];
+    info.push(`<div class='content_box' style="position:absolute;z-index:999999999;left:50%;top:50%">`);
+    info.push(`<div class='content_box_title'><h4>故障点位信息</h4>`);
+    info.push(`<p class='input-item'>路口名称：<span>1</span></p>`);
+    info.push(`<p class='input-item'>主箱状态：<span>2</span></p>`);
+    info.push(`<p class='input-item'>供电状态：<span>3</span></p>`);
+    info.push(`<p class='input-item'>门禁状态：<span>4</span></p>`);
+    info.push(`<p class='input-item'>通讯状态：<span>5</span></p>`);
+    info.push(`<p class='input-item'><span>设备管理</span></p></div></div>`);
+    const infoWindow = new AMap.InfoWindow({
+      content: info.join("")  //使用默认信息窗体框样式，显示信息内容
     });
-    infoWindow.open(map, marker.getPosition());
-  } */
-    //在指定位置打开信息窗体
-    openInfoWin = (map, dataItem) => {
-      debugger
-      var info = [];
-      info.push(`<div class='content_box'>`);
-      info.push(`<div class='content_box_title'><h4>设备信息</h4>`);
-      info.push(`<p class='input-item'>设备名称：<span>`+dataItem.deviceName+`</span></p>`);
-      info.push(`<p class='input-item'>桩号:<span>`+dataItem.pileNum+`</span></p>`);
-      info.push(`<p class='input-item'>走向：<span>`+dataItem.directionName+`</span></p>`);
-      info.push(`<p class='input-item'>所属高速：<span>`+dataItem.roadName+`</span></p></div></div>`);
-      const infoWindow = new AMap.InfoWindow({
-        content: info.join("")  //使用默认信息窗体框样式，显示信息内容
-      });
-      infoWindow.open(map, dataItem.latlng);
-    }
+
+    infoWindow.open(this.map, ["119.960645", "32.357108"]);
+  }
   searchKeyWords = e => {
     this.placeSearch.setCity(e.poi.adcode);
     this.placeSearch.search(e.poi.name);  //关键字查询查询
