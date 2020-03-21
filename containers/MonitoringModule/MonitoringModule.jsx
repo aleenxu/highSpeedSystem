@@ -86,7 +86,7 @@ class MonitoringModule extends React.Component {
       eventType: '',
       searchKey: '',
     }
-  /*   this.detailsPopupData = '' */
+    /*   this.detailsPopupData = '' */
     this.VIboardParameters = {
       deviceCode: '',
       deviceLocation: '',
@@ -343,7 +343,7 @@ class MonitoringModule extends React.Component {
         if (item.deviceId === data) {
           this.publishPlanVO.list[index].deviceControlType = value
         }
-      })      
+      })
     } else if (type === 'hwayList' && name === 'roadId') {
       this.state.directionList.forEach((item, index) => {
         if (item.roadId === value) {
@@ -381,7 +381,7 @@ class MonitoringModule extends React.Component {
         /* $($('.amap-marker-content')).map((i,item) =>{
           if ($(item).attr('title') === name) {
             $($(item)[0]).trigger('click')
-            console.log(item,"aaaaaaaa")
+            console.log(item, "aaaaaaaa")
           }
         }) */
       } else {
@@ -665,7 +665,7 @@ class MonitoringModule extends React.Component {
               }
             })
           }
-          
+
         }
       })
     })
@@ -681,13 +681,13 @@ class MonitoringModule extends React.Component {
       if (result.code === 200) {
         debugger
         this.setState({ [name]: result.data }, () => {
-          if ( name === 'deviceTypes' ) {
+          if (name === 'deviceTypes') {
             // console.log(this.state.deviceTypes, 'What?')
             this.state.deviceTypes.map((item) => {
               item.device = []
             })
             this.setState({
-              oldDeviceTypes:this.state.deviceTypes,
+              oldDeviceTypes: this.state.deviceTypes,
             })
             // console.log(this.state.deviceTypes, 'resoult!')
           }
@@ -942,7 +942,7 @@ class MonitoringModule extends React.Component {
     getResponseDatas('put', this.examineUrl + operation + '/' + controllId).then((res) => {
       const result = res.data
       if (result.code === 200) {
-       /*  this.detailsPopupData = '' // 清空方案详情 */
+        /*  this.detailsPopupData = '' // 清空方案详情 */
         // 查询左侧列表数据
         this.handleEventList()
         // 查询饼图数据
@@ -1180,7 +1180,7 @@ class MonitoringModule extends React.Component {
                     return (
                       items.dictCode === 1 ?
                         <div className={styles.ItemBox}>
-                          <div className={styles.HeadItem}>可变情报板管控预案设置{/* <span className={styles.AddItem} onClick={(e) => { this.genExtraAddOnclick(e, items, reservePopup) }}><Icon type="plus" /></span> */}</div>
+                          <div className={styles.HeadItem}>{items.codeName}{/* <span className={styles.AddItem} onClick={(e) => { this.genExtraAddOnclick(e, items, reservePopup) }}><Icon type="plus" /></span> */}</div>
                           <div className={styles.RowBox}>
                             {
                               items.device && items.device.map((item, index) => {
@@ -1209,7 +1209,7 @@ class MonitoringModule extends React.Component {
                           </div>
                         </div> : items.dictCode === 2 ?
                           <div className={styles.ItemBox}>
-                            <div className={styles.HeadItem}>限速牌管控措施{/* <span className={styles.AddItem} onClick={(e) => { this.genExtraAddOnclick(e, items, reservePopup) }}><Icon type="plus" /></span> */}</div>
+                            <div className={styles.HeadItem}>{items.codeName}{/* <span className={styles.AddItem} onClick={(e) => { this.genExtraAddOnclick(e, items, reservePopup) }}><Icon type="plus" /></span> */}</div>
                             {
                               items.device && items.device.map((item) => {
                                 return (
@@ -1228,7 +1228,7 @@ class MonitoringModule extends React.Component {
                             {!!items.device.length || <div className={styles.PanelItemNone}>暂无数据</div>}
                           </div> : items.dictCode === 3 ?
                             <div className={styles.ItemBox}>
-                              <div className={styles.HeadItem}>收费站出入口管控设置{/* <span className={styles.AddItem} onClick={(e) => { this.genExtraAddOnclick(e, items, reservePopup) }}><Icon type="plus" /></span> */}</div>
+                              <div className={styles.HeadItem}>{items.codeName}{/* <span className={styles.AddItem} onClick={(e) => { this.genExtraAddOnclick(e, items, reservePopup) }}><Icon type="plus" /></span> */}</div>
                               {
                                 items.device && items.device.map((item) => {
                                   return (
@@ -1239,7 +1239,20 @@ class MonitoringModule extends React.Component {
                                 })
                               }
                               {!!items.device.length || <div className={styles.PanelItemNone}>暂无数据</div>}
-                            </div> : null
+                            </div> : items.dictCode === 4 ?
+                              <div className={styles.ItemBox}>
+                                <div className={styles.HeadItem}>{items.codeName}{/* <span className={styles.AddItem} onClick={(e) => { this.genExtraAddOnclick(e, items, reservePopup) }}><Icon type="plus" /></span> */}</div>
+                                {
+                                  items.device && items.device.map((item) => {
+                                    return (
+                                      <div className={styles.RowBox}>
+                                        <Icon type="close-circle" className={styles.CloneItem} />****地点**收费站:&nbsp;:&nbsp;&nbsp;入口&nbsp;:&nbsp;&nbsp;<p><Switch checkedChildren="开放" unCheckedChildren="关闭" />&nbsp;:&nbsp;&nbsp;出口&nbsp;&nbsp;&nbsp;<Switch checkedChildren="开放" unCheckedChildren="关闭" /></p>
+                                      </div>
+                                    )
+                                  })
+                                }
+                                {!!items.device.length || <div className={styles.PanelItemNone}>暂无数据</div>}
+                              </div> : null
 
                     )
                   })
@@ -1571,8 +1584,8 @@ class MonitoringModule extends React.Component {
                     </div>
                   </div> : null
                   }
-                  
-                  <div className={styles.Title} style={{ background: '#132334', lineHeight: '20px', height: '20px', marginTop:'10px', fontSize: '12px' }}>选择道路</div>
+
+                  <div className={styles.Title} style={{ background: '#132334', lineHeight: '20px', height: '20px', marginTop: '10px', fontSize: '12px' }}>选择道路</div>
                   <div className={styles.Centent}>
                     <div className={styles.ItemBox}>
                       <div className={styles.ItemInput}>
@@ -1652,33 +1665,33 @@ class MonitoringModule extends React.Component {
                     >
                       {
                         EventTagPopupTit === '事件标注' ?
-                        deviceTypes.map((item, ind) => {
-                          return (
-                            <Panel className={styles.PanelChs} header={item.name} key={item.Id}>
-                            <div>
-                              {
-                                item.device && item.device.map((items, index) => {
-                                  return <div className={styles.PanelBox}><p className={styles.PanelItem} key={items}>{`${index + 1}. ${items.deviceName} ${items.directionName} ${item.codeName}`}</p>{detailsPopup.controlStatusType > 0 || <Icon onClick={() => { this.handleSubDetailsPopupList(ind, index) }} className={styles.MinusItem} type="close" />}</div>
-                                })
-                              }
-                              {item.device && item.device.length === 0 && <p className={styles.PanelItemNone}>暂无数据</p>}
-                            </div>
-                            </Panel>
-                          )
-                        }) : deviceTypes.devices.map((item, ind) => {
-                          return (
-                            <Panel className={styles.PanelChs} header={item.codeName} key={item.Id}>
-                            <div>
-                              {
-                                item.device && item.device.map((items, index) => {
-                                  return <div className={styles.PanelBox}><p className={styles.PanelItem} key={items}>{`${index + 1}. ${items.deviceName} ${items.directionName} ${item.codeName}`}</p>{detailsPopup.controlStatusType > 0 || <Icon onClick={() => { this.handleSubDetailsPopupList(ind, index) }} className={styles.MinusItem} type="close" />}</div>
-                                })
-                              }
-                              {item.device && item.device.length === 0 && <p className={styles.PanelItemNone}>暂无数据</p>}
-                            </div>
-                            </Panel>
-                          )
-                        })
+                          deviceTypes.map((item, ind) => {
+                            return (
+                              <Panel className={styles.PanelChs} header={item.name} key={item.Id}>
+                                <div>
+                                  {
+                                    item.device && item.device.map((items, index) => {
+                                      return <div className={styles.PanelBox}><p className={styles.PanelItem} key={items}>{`${index + 1}. ${items.deviceName} ${items.directionName} ${item.codeName}`}</p>{detailsPopup.controlStatusType > 0 || <Icon onClick={() => { this.handleSubDetailsPopupList(ind, index) }} className={styles.MinusItem} type="close" />}</div>
+                                    })
+                                  }
+                                  {item.device && item.device.length === 0 && <p className={styles.PanelItemNone}>暂无数据</p>}
+                                </div>
+                              </Panel>
+                            )
+                          }) : deviceTypes.devices.map((item, ind) => {
+                            return (
+                              <Panel className={styles.PanelChs} header={item.codeName} key={item.Id}>
+                                <div>
+                                  {
+                                    item.device && item.device.map((items, index) => {
+                                      return <div className={styles.PanelBox}><p className={styles.PanelItem} key={items}>{`${index + 1}. ${items.deviceName} ${items.directionName} ${item.codeName}`}</p>{detailsPopup.controlStatusType > 0 || <Icon onClick={() => { this.handleSubDetailsPopupList(ind, index) }} className={styles.MinusItem} type="close" />}</div>
+                                    })
+                                  }
+                                  {item.device && item.device.length === 0 && <p className={styles.PanelItemNone}>暂无数据</p>}
+                                </div>
+                              </Panel>
+                            )
+                          })
                       }
                     </Collapse>
                   </div>
