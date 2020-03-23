@@ -361,8 +361,22 @@ class MonitoringModule extends React.Component {
         })
       } else if (value instanceof Array) {
         window.map.setZoomAndCenter(13, value)
+        debugger
         this.setState({
-          updatePoint: data,
+          updatePoint: {
+            content: '',
+            deviceId: '',
+            deviceName: '',
+            deviceTypeId: null,
+            directionName: '',
+            latlng: [],
+            pileNum: '',
+            roadName:'',
+          },
+        }, () => {
+          this.setState({
+            updatePoint: data,
+          })
         })
         /* $($('.amap-marker-content')).map((i,item) =>{
           if ($(item).attr('title') === name) {

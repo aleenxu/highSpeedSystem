@@ -59,7 +59,7 @@ class GMap extends React.Component {
     if (this.props.updatePoint !== nextProps.updatePoint) {
       this.setState({ updatePoint: nextProps.updatePoint }, () => {
         debugger
-        this.openInfoWin(window.map,this.props.updatePoint)
+        this.openInfoWin(window.map, this.state.updatePoint)
       })
     }
     if (this.props.dataAll !== nextProps.dataAll) {
