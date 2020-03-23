@@ -50,7 +50,7 @@ class User extends React.Component {
     this.updateUrl = '/control/sys/user/update'
   }
   componentDidMount = () => {
-    this.dataListData = this.dataList
+    this.dataListData = JSON.parse(JSON.stringify(this.dataList))
     this.getSystemList()
     this.getSystemdep()
   }
@@ -173,7 +173,8 @@ class User extends React.Component {
     })
   }
   getAddUser = () => {
-    const boardData = this.dataListData
+    const boardData = JSON.parse(JSON.stringify(this.dataListData))
+    this.boardData = boardData
     this.setState({ boardData })
   }
   handleDataLists = (id) => {
