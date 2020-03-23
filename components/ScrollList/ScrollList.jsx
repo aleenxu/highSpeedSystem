@@ -90,22 +90,22 @@ class ScrollList extends React.Component {
   }
   getLineCenterPoint = (latlng) => {
     let newCenter = []
-    if (latlng.length > 0){
-      const startPoint = Math.abs(latlng[0][0] - latlng[latlng.length -1 ][0]) / 2
-      const endPoint = Math.abs(latlng[0][1] - latlng[latlng.length -1 ][1]) / 2
-      if (latlng[0][0] > latlng[latlng.length -1 ][0]) {
-        newCenter[0] = startPoint + Number(latlng[latlng.length -1 ][0])
+    if (latlng.length > 0) {
+      const startPoint = Math.abs(latlng[0][0] - latlng[latlng.length - 1][0]) / 2
+      const endPoint = Math.abs(latlng[0][1] - latlng[latlng.length - 1][1]) / 2
+      if (latlng[0][0] > latlng[latlng.length - 1][0]) {
+        newCenter[0] = startPoint + Number(latlng[latlng.length - 1][0])
       } else {
         newCenter[0] = startPoint + Number(latlng[0][0])
       }
-      if (latlng[1][1] > latlng[latlng.length -1 ][1]) {
-        newCenter[1] = endPoint + Number(latlng[latlng.length -1 ][1])
+      if (latlng[1][1] > latlng[latlng.length - 1][1]) {
+        newCenter[1] = endPoint + Number(latlng[latlng.length - 1][1])
       } else {
         newCenter[1] = endPoint + Number(latlng[0][1])
       }
     }
     return newCenter
-  
+
   }
   getOption = (data) => {
     const option = {
@@ -328,20 +328,20 @@ class ScrollList extends React.Component {
               paddingBottom: '13px'
             }} nowtype={listTitle.type} options={[{ label: '', value: listTitle }]} onClick={this.checkBoxClick} />
             {listTitle.type === 1 &&
-                <img className={styles.iconImg} src={iconTrafficJam} />
-              }
-              {listTitle.type === 2 &&
-                <img className={styles.iconImg} src={iconBuild} />
-              }
-              {listTitle.type === 3 &&
-                <img className={styles.iconImg} src={iconWeather} />
-              }
-              {listTitle.type === 4 &&
-                <img className={styles.iconImg} src={iconAccidents} />
-              }
-              {listTitle.type === 5 &&
-                <img className={styles.iconImg} src={iconTagging} />
-              }
+              <img className={styles.iconImg} src={iconTrafficJam} />
+            }
+            {listTitle.type === 2 &&
+              <img className={styles.iconImg} src={iconBuild} />
+            }
+            {listTitle.type === 3 &&
+              <img className={styles.iconImg} src={iconWeather} />
+            }
+            {listTitle.type === 4 &&
+              <img className={styles.iconImg} src={iconAccidents} />
+            }
+            {listTitle.type === 5 &&
+              <img className={styles.iconImg} src={iconTagging} />
+            }
             <Collapse
               onChange={this.callback}
               expandIconPosition="right"
@@ -362,7 +362,7 @@ class ScrollList extends React.Component {
                     <div key={item.roadCode + item.locs} className={classNames(styles.listItem, 'listItem')} latlng={this.getLineCenterPoint(item.latlng)} onClick={(e) => { this.handleEventPopup(e, 'Details', item) }}>
                       <i style={{ background: item.controlStatusType > 0 ? 'green' : 'red', boxShadow: item.controlStatusType > 0 ? 'green 0px 0px 20px' : 'red 0px 0px 20px' }} />
                       <span>{item.roadCode}</span>
-                      <span title={item.locs.split(' ')[0]}>{(item.locs).split(' ')[0]}</span>
+                      <span title={item.locs && item.locs.split(' ')[0]}>{item.locs && item.locs.split(' ')[0]}</span>
                       <span>{item.directionName}</span>
                       <span>{item.situation}</span>
                       <span>{this.getDate(item.updateTime)}</span>

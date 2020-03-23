@@ -48,6 +48,57 @@
         float: right;
         line-height: 60px;
       }
+      .OperationItem {
+        min-width: 170px;
+        height: 100%;
+        line-height: 60px;
+        display: inline-block;
+        margin-right: 20px;
+        // 下拉框
+        :global(.ant-select-selection) {
+          background-color: #191c22;
+          color: #ccc;
+          border-radius: 0;
+          border: 1px solid #959595;
+        }
+        :global(.ant-select-dropdown) {
+          background-color: #191c22;
+          color: #ccc;
+        }
+        :global(.ant-select-arrow svg) {
+          color: #fff;
+        }
+
+        :global(.ant-input) {
+          background-color: #191c22;
+          color: #ccc;
+          border-radius: 0;
+          border: 1px solid #959595;
+        }
+        :global(.ant-calendar-picker-clear) {
+          background-color: #191c22;
+          color: #fff;
+        }
+        :gloabl(.ant-calendar-picker-icon) {
+          color: #fff;
+        }
+        .Button {
+          width: 80px;
+          height: 25px;
+          display: inline-block;
+          background: #1a416a;
+          border: 1px solid #969495;
+          margin: 0 5px;
+          color: #fff;
+          text-align: center;
+          line-height: 25px;
+          border-radius: 0;
+          cursor: pointer;
+          &:hover {
+            background: #0b0e13;
+          }
+        }
+      }
     }
     .ContetList {
       width: 100%;

@@ -913,7 +913,7 @@ class MonitoringModule extends React.Component {
       const result = res.data
       if (result.code === 200) {
         that.handledetai({ eventType, eventId })
-        message.success('发起管控方案成功！')
+      /*   message.success('发起管控方案成功！') */
         that.handleEventList()
         that.handlegroupType()
         that.handleUrlAjax(that.groupStatusUrl, 'groupStatus')
@@ -1422,10 +1422,10 @@ class MonitoringModule extends React.Component {
               <div className={styles.ItemFooter}>
 
                 {
-                  reservePopup.status === 3 ? <span onClick={() => { this.handlecancelRel(reservePopup.controllId, 'cancel') }}>取消发布</span> : reservePopup.status === 1 ? <span onClick={this.handleRelease}>发&nbsp;&nbsp;布</span> : <span style={{ background: '#999' }}>发&nbsp;&nbsp;布</span>
+                  reservePopup.status === 3 ? <span onClick={() => { this.handlecancelRel(reservePopup.controllId, 'cancel') }}>撤&nbsp;&nbsp;销</span> : reservePopup.status === 1 ? <span onClick={this.handleRelease}>发&nbsp;&nbsp;布</span> : <span style={{ background: '#999' }}>发&nbsp;&nbsp;布</span>
                 }
                 {
-                  reservePopup.status === 3 ? <span onClick={() => { this.handleEndValueTime(true) }}>延时发布</span> : null
+                  reservePopup.status === 3 ? <span onClick={() => { this.handleEndValueTime(true) }}>延&nbsp;&nbsp;时</span> : null
                 }
                 <span onClick={() => { this.handleEventPopup('Reserve', false) }}>返&nbsp;&nbsp;回</span>
               </div>
