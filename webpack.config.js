@@ -32,7 +32,7 @@ const webpackConfig = {
       {
         test: /\.svg$/,
         loader: 'svg-sprite-loader',
-        include: path.resolve(__dirname, 'svgImgs'), // //只处理指定svg的文件
+        include: path.resolve(__dirname, 'imgs'), // //只处理指定svg的文件
         options: {
           symbolId: '[name]',
         },
@@ -40,7 +40,7 @@ const webpackConfig = {
       { test: /\.(eot|woff|woff2|ttf|svg|otf)([?]?.*)$/, use: 'file-loader' },
       {
         test: /\.js|jsx$/,
-        exclude: [/node_module/, /svgImgs/],
+        exclude: [/node_module/, /imgs/],
         loader: 'babel-loader',
         query: {
           presets: ['es2015', 'react', 'stage-0'],
