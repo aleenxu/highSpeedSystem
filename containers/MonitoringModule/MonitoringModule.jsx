@@ -190,20 +190,20 @@ class MonitoringModule extends React.Component {
   }
   onStartChange = (value) => {
     this.onPickerChange('startValue', value)
-    this.publishPlanVO.startTime = this.getDate(value._d)
+    this.publishPlanVO.startTime = value ? this.getDate(value._d) : ''
   }
   onEndChange = (value) => {
     this.onPickerChange('endValue', value)
-    this.publishPlanVO.endTime = this.getDate(value._d)
+    this.publishPlanVO.endTime = value ? this.getDate(value._d) : ''
   }
   onEndChangeTime = (value) => {
     this.setState({
-      endValueTime: this.getDate(value._d),
+      endValueTime: value ? this.getDate(value._d) : '',
     })
   }
   onPickerChange = (field, value) => {
     this.setState({
-      [field]: this.getDate(value._d),
+      [field]: value ? this.getDate(value._d) : '',
     })
   }
   disabledStartDate = (startValue) => {
@@ -407,7 +407,7 @@ class MonitoringModule extends React.Component {
             directionName: '',
             latlng: [],
             pileNum: '',
-            roadName:'',
+            roadName: '',
           },
         }, () => {
           this.setState({
@@ -453,11 +453,11 @@ class MonitoringModule extends React.Component {
   }
   // 获取全部交通管控类型
   getDeviceEventList = (flag) => {
-    const params ={
+    const params = {
       controlTypes: this.state.deviceString.join()
     }
     debugger
-    getResponseDatas('get', this.deviceUrl, params ).then((res) => {
+    getResponseDatas('get', this.deviceUrl, params).then((res) => {
       const result = res.data
       // console.log(result)
       debugger
@@ -472,7 +472,7 @@ class MonitoringModule extends React.Component {
             controlTypes: result.data.controlTypes,
             deviceTypes: result.data.deviceTypes,
           }, () => {
-            const arrId =[]
+            const arrId = []
             this.state.controlTypes.map((item) => {
               arrId.push(item.controlTypeId)
             })
@@ -481,10 +481,10 @@ class MonitoringModule extends React.Component {
             })
           })
         }
-        
+
       }
     })
-    
+
   }
   // 获取左侧列表数据
   handleEventList = () => {
@@ -824,7 +824,7 @@ class MonitoringModule extends React.Component {
       detailsPopup.devices[ind].device.splice(index, 1)
       this.setState({ detailsPopup })
     }
-    
+
   }
   handleMarkControl = (titFlag) => {
     debugger
@@ -991,34 +991,34 @@ class MonitoringModule extends React.Component {
     const { detailsPopup } = that.state
     const { eventId, eventType, pileNum, roadSecId, situation, devices } = detailsPopup
     const deviceAry = []
-      devices.forEach((item) => {
-        item.device.forEach((items) => {
-          deviceAry.push({
-            controlScope: items.controlScope ? items.controlScope : 0,
-            deviceId: items.deviceId,
-            deviceTypeId: items.deviceTypeId,
-            pileNum: items.pileNum ? items.pileNum : 0,
-          })
+    devices.forEach((item) => {
+      item.device.forEach((items) => {
+        deviceAry.push({
+          controlScope: items.controlScope ? items.controlScope : 0,
+          deviceId: items.deviceId,
+          deviceTypeId: items.deviceTypeId,
+          pileNum: items.pileNum ? items.pileNum : 0,
         })
       })
-      if (deviceAry.length === 0) {
-        message.warning('请添加设备')
-        return
-      }
-      const data = {
-        createId: 1,
-        devices: deviceAry,
-        eventId,
-        eventTypeId: eventType,
-        pileNum,
-        roadSecId,
-        value: situation,
-      }
+    })
+    if (deviceAry.length === 0) {
+      message.warning('请添加设备')
+      return
+    }
+    const data = {
+      createId: 1,
+      devices: deviceAry,
+      eventId,
+      eventTypeId: eventType,
+      pileNum,
+      roadSecId,
+      value: situation,
+    }
     getResponseDatas('post', that.controlUrl, data).then((res) => {
       const result = res.data
       if (result.code === 200) {
         that.handledetai({ eventType, eventId })
-      /*   message.success('发起管控方案成功！') */
+        /*   message.success('发起管控方案成功！') */
         that.handleEventList()
         that.handlegroupType()
         that.handleUrlAjax(that.groupStatusUrl, 'groupStatus')
@@ -1066,7 +1066,7 @@ class MonitoringModule extends React.Component {
     })
   }
   handleEventTag = (boolean, e) => {
-    if (boolean && $(e.target).text() === '修改管控方案' ) {
+    if (boolean && $(e.target).text() === '修改管控方案') {
       this.controlDatas = this.state.detailsPopup
       this.controlDatas.startPileNum = this.controlDatas.pileNum.split(' ')[0]
       this.controlDatas.endPileNum = this.controlDatas.pileNum.split(' ')[1]
@@ -1212,7 +1212,7 @@ class MonitoringModule extends React.Component {
     const {
       MeasuresList, eventsPopup, groupType, planList, EventTagPopup, EventTagPopupTit, roadNumber, endValueTime, conditionList, boxSelect, flagClose, oldDevicesList,
       boxSelectList, hwayList, directionList, VIboardPopup, groupStatus, controlPopup, controlBtnFlag, controlBtnFlagText, detailsPopup, whethePopup, reservePopup, startValue, endValue, endOpen, SidePopLeft, detailsLatlng
-    , controlTypes, eventTypes, deviceTypes, updatePoint } = this.state
+      , controlTypes, eventTypes, deviceTypes, updatePoint } = this.state
     return (
       <div className={styles.MonitoringModule}>
         <SystemMenu />
@@ -1642,7 +1642,7 @@ class MonitoringModule extends React.Component {
                         <div>
                           {
                             item.device && item.device.map((items, index) => {
-                              return <div className={styles.PanelBox}><p className={styles.PanelItem} key={items} onClick={() => {this.handleSelect(items.latlng, items.appendId, 'Click', items)}}>{`${index + 1}. ${items.deviceName} ${items.directionName} ${item.codeName}`}</p>{detailsPopup.controlStatusType > 0 || <Icon onClick={() => { this.handleSubDetailsPopupList(ind, index) }} className={styles.MinusItem} type="close" />}</div>
+                              return <div className={styles.PanelBox}><p className={styles.PanelItem} key={items} onClick={() => { this.handleSelect(items.latlng, items.appendId, 'Click', items) }}>{`${index + 1}. ${items.deviceName} ${items.directionName} ${item.codeName}`}</p>{detailsPopup.controlStatusType > 0 || <Icon onClick={() => { this.handleSubDetailsPopupList(ind, index) }} className={styles.MinusItem} type="close" />}</div>
                             })
                           }
                           {item.device && item.device.length === 0 && <p className={styles.PanelItemNone}>暂无数据</p>}
@@ -1807,12 +1807,12 @@ class MonitoringModule extends React.Component {
                   <div className={styles.Title} style={{ background: '#132334' }}>{EventTagPopupTit}<Icon className={styles.Close} onClick={() => { this.handleEventTag(false) }} type="close" /></div>
                   {
                     EventTagPopupTit !== '事件标注' ?
-                    <div className={styles.Centent}>
-                    <div className={styles.ItemBox}>
-                      <span className={styles.ItemName}>事件编号:</span>
-                      <div className={styles.ItemInput} style={{ display: 'inline' }}>{this.controlDatas.eventId}</div>
-                    </div>
-                  </div> : null
+                      <div className={styles.Centent}>
+                        <div className={styles.ItemBox}>
+                          <span className={styles.ItemName}>事件编号:</span>
+                          <div className={styles.ItemInput} style={{ display: 'inline' }}>{this.controlDatas.eventId}</div>
+                        </div>
+                      </div> : null
                   }
 
                   <div className={styles.Title} style={{ background: '#132334', lineHeight: '20px', height: '20px', marginTop: '10px', fontSize: '12px' }}>选择道路</div>
@@ -1828,19 +1828,19 @@ class MonitoringModule extends React.Component {
                           }
                         </Select>
                         <Select defaultValue={this.controlDatas.directionName} style={{ width: '48%', margin: '0 1%' }} onChange={(e) => { this.handleSelect(e, 'directionId', 'controlDatas') }} >
-                        <Option value="">请选择</Option>
-                        {
-                          roadNumber && roadNumber.map((item) => {
-                            return <Option key={item.directionId} value={item.directionId}>{item.directionName}</Option>
-                          })
-                        }
+                          <Option value="">请选择</Option>
+                          {
+                            roadNumber && roadNumber.map((item) => {
+                              return <Option key={item.directionId} value={item.directionId}>{item.directionName}</Option>
+                            })
+                          }
                         </Select>
                         <Select defaultValue={"1"} style={{ width: '36%', margin: '8px 1%' }} disabled={true} onChange={(e) => { this.handleSelect(e, 'locationMode', 'controlDatas') }} >
                           <Option value="0">收费站</Option>
                           <Option value="1">里程桩</Option>
                         </Select>
-                        <Input id="startInt" style={{width:'29%', height:'32px', margin:'8px 1%'}} defaultValue={this.controlDatas.startPileNum} onChange={(e) => { this.handleInput(e, 'startPileNum', 'controlDatas') }} />
-                        <Input id='endInt' style={{width:'29%', height:'32px', margin:'8px 1%'}} defaultValue={this.controlDatas.endPileNum} onChange={(e) => { this.handleInput(e, 'endPileNum', 'controlDatas') }} />
+                        <Input id="startInt" style={{ width: '29%', height: '32px', margin: '8px 1%' }} defaultValue={this.controlDatas.startPileNum} onChange={(e) => { this.handleInput(e, 'startPileNum', 'controlDatas') }} />
+                        <Input id='endInt' style={{ width: '29%', height: '32px', margin: '8px 1%' }} defaultValue={this.controlDatas.endPileNum} onChange={(e) => { this.handleInput(e, 'endPileNum', 'controlDatas') }} />
                       </div>
                     </div>
                   </div>
@@ -1859,21 +1859,21 @@ class MonitoringModule extends React.Component {
                   <div className={styles.Title} style={{ background: '#132334', lineHeight: '20px', height: '20px', fontSize: '12px' }}>当前车速</div>
                   {
                     this.state.eventType === 3 ? <div className={styles.Centent}>
-                    <div className={styles.ItemBox}>
-                      <span className={styles.ItemName}>能见度&nbsp;:</span>
-                      <div className={classNames(styles.ItemInput, styles.ItemInputText)}>
-                        <Input value={this.controlDatas.situation} onChange={(e) => { this.handleInput(e, 'situation', 'controlDatas') }} /> m
+                      <div className={styles.ItemBox}>
+                        <span className={styles.ItemName}>能见度&nbsp;:</span>
+                        <div className={classNames(styles.ItemInput, styles.ItemInputText)}>
+                          <Input value={this.controlDatas.situation} onChange={(e) => { this.handleInput(e, 'situation', 'controlDatas') }} /> m
                       </div>
-                    </div>
-                  </div> :
-                  <div className={styles.Centent}>
-                    <div className={styles.ItemBox}>
-                      <span className={styles.ItemName}>平均车速&nbsp;:</span>
-                      <div className={classNames(styles.ItemInput, styles.ItemInputText)}>
-                        <Input value={this.controlDatas.situation} onChange={(e) => { this.handleInput(e, 'situation', 'controlDatas') }} /> km/h
                       </div>
-                    </div>
-                  </div>
+                    </div> :
+                      <div className={styles.Centent}>
+                        <div className={styles.ItemBox}>
+                          <span className={styles.ItemName}>平均车速&nbsp;:</span>
+                          <div className={classNames(styles.ItemInput, styles.ItemInputText)}>
+                            <Input value={this.controlDatas.situation} onChange={(e) => { this.handleInput(e, 'situation', 'controlDatas') }} /> km/h
+                      </div>
+                        </div>
+                      </div>
                   }
                   <div className={styles.Title} style={{ background: '#132334', lineHeight: '20px', height: '20px', fontSize: '12px' }}>选择交通管控类型</div>
                   <div className={styles.Centent}>
@@ -1881,7 +1881,7 @@ class MonitoringModule extends React.Component {
                       <div className={styles.ItemInput}>
                         {
                           controlTypes && controlTypes.map((item) => {
-                            return <div className={classNames(styles.AddItem, (this.state.deviceString.indexOf(item.controlTypeId) > -1 ? styles.currentSel : null))} key={'controlTypes' + item.controlTypeId} onClick={() =>{this.updateControlTypes(item.controlTypeId)}}>{item.controlTypeName}</div>
+                            return <div className={classNames(styles.AddItem, (this.state.deviceString.indexOf(item.controlTypeId) > -1 ? styles.currentSel : null))} key={'controlTypes' + item.controlTypeId} onClick={() => { this.updateControlTypes(item.controlTypeId) }}>{item.controlTypeName}</div>
                           })
                         }
                       </div>
@@ -1895,7 +1895,7 @@ class MonitoringModule extends React.Component {
                     >
                       {
                         EventTagPopupTit === '事件标注' ?
-                        deviceTypes && deviceTypes.map((item, ind) => {
+                          deviceTypes && deviceTypes.map((item, ind) => {
                             return (
                               <Panel className={styles.PanelChs} header={item.codeName} key={item.dictCode}>
                                 <div>
@@ -1963,7 +1963,7 @@ class MonitoringModule extends React.Component {
               </div>
             </div> : null
         }
-      </div >
+      </div>
     )
   }
 }

@@ -89,18 +89,6 @@ class Traffic extends React.Component {
         console.log(result.data)
         const dataX = []
         const dataY = []
-       /*  result.data = [
-          { key: '111', value: 202 },
-          { key: '58511', value: 120 },
-          { key: '18611', value: 200 },
-          { key: '11681', value: 270 },
-          { key: '11681', value: 250 },
-          { key: '11681', value: 5720 },
-          { key: '18611', value: 2500 },
-          { key: '11681', value: 2750 },
-          { key: '11681', value: 250 },
-          { key: '11681', value: 7520 },
-        ] */
         result.data.forEach((item) => {
           dataX.push(item.key)
           dataY.push(item.value)

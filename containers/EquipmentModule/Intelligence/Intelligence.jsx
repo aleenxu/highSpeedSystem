@@ -247,8 +247,6 @@ class Intelligence extends React.Component {
               </div>
               <div className={styles.rightItem}>
                 <Button className={styles.Button} onClick={this.handleAddData}>新&nbsp;&nbsp;增</Button>
-                {/* <span className={styles.Button}>修&nbsp;&nbsp;改</span>
-                <span className={styles.Button}>删&nbsp;&nbsp;除</span> */}
               </div>
             </div>
             <div className={styles.ContetList}>

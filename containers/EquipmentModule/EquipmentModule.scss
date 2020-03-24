@@ -8,7 +8,7 @@
     height: 100%;
     right: 10px;
     .Button {
-      width: 80px;
+      min-width: 80px;
       height: 25px;
       display: inline-block;
       background: #1a416a;
@@ -83,7 +83,7 @@
           color: #fff;
         }
         .Button {
-          width: 80px;
+          min-width: 80px;
           height: 25px;
           display: inline-block;
           background: #1a416a;
@@ -121,6 +121,9 @@
           justify-content: center;
           align-items: center;
           overflow: hidden;
+          &:last-child {
+            flex: 1.2;
+          }
           .roadName {
             max-width: 100%;
             display: inline-block;
@@ -190,11 +193,12 @@
   align-items: center;
   justify-content: center;
   .AddBox {
-    width: 892px;
-    height: 532px;
+    width: 840px;
+    /* height: 532px; */
     background: #101113;
     color: #fff;
     border: 1px solid #173653;
+    padding-bottom: 25px;
     .Title {
       width: 100%;
       height: 50px;
@@ -276,6 +280,66 @@
         }
       }
     }
+    .Header {
+      width: 100%;
+      height: 30px;
+      display: inline-block;
+      padding: 0px 22px;
+      span {
+        width: 50%;
+        height: 100%;
+        display: inline-block;
+        line-height: 27px;
+        font-size: 12px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        vertical-align: middle;
+      }
+    }
+    .ItemBox {
+      width: 100%;
+      .HeadItem {
+        width: 100%;
+        height: 22px;
+        line-height: 22px;
+        background: #0e151d;
+        display: inline-block;
+        color: #4a759c;
+        padding: 0px 22px;
+        margin: 5px 0;
+        .AddItem {
+          float: right;
+          cursor: pointer;
+          &:hover {
+            color: #26ff6d;
+          }
+        }
+      }
+      .RowBox {
+        width: 100%;
+        margin: 6px 0;
+        padding: 0px 22px;
+        color: #6d738d;
+        > p {
+          width: 33.33%;
+          display: inline-block;
+        }
+      }
+    }
+    .guanBox {
+      width: 100%;
+      height: 50px;
+      line-height: 30px;
+      padding-top: 10px;
+      border-top: 1px solid #686a69;
+      .Button {
+        margin: 0 22px;
+      }
+      .guanTitle {
+        padding-left: 22px;
+      }
+    }
     .Footer {
       width: 100%;
       height: 110px;
@@ -283,7 +347,7 @@
       text-align: center;
     }
     .Button {
-      width: 80px;
+      min-width: 80px;
       height: 25px;
       display: inline-block;
       background: #1a416a;
@@ -296,6 +360,39 @@
       border-radius: 0;
       &:hover {
         background: #0b0e13;
+      }
+    }
+    .listBoxHead{
+      background: #0e151d;
+    }
+    .listBoxBody{
+      max-height: 310px;
+      overflow-y: auto;
+    }
+    .listItems {
+      display: flex;
+      padding: 0 25px;
+      height: 22px;
+      margin: 10px 0;
+      color: #fff;
+      .listTd {
+        flex: 1;
+        display: flex;
+        height: 100%;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+        &:last-child {
+          flex: 1.2;
+        }
+        .roadName {
+          max-width: 100%;
+          display: inline-block;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          word-break: break-all;
+        }
       }
     }
     .treeData {
