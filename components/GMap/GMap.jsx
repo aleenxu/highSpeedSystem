@@ -3,6 +3,7 @@ import tollStationIcon from '../../imgs/tollStation_s.png'
 import fBoardIcon from '../../imgs/fBoard_s.png'
 import speedLimitIcon from '../../imgs/speedLimit_s.png'
 import turnBoardIcon from '../../imgs/turnBoard_s.png'
+// import { ReactComponent as turnBoardIcon } from '../../imgs/turnBoard_s.svg'
 import mapTrafficJam from '../../imgs/map_traffic_jam.png'
 import mapBuild from '../../imgs/map_build.png'
 import mapWeather from '../../imgs/map_weather.png'
@@ -208,6 +209,14 @@ class GMap extends React.Component {
       'autoRefresh': true,     //是否自动刷新，默认为false
       'interval': 180,         //刷新间隔，默认180s
     });
+    window.deviceTurnBoard = new AMap.LayerGroup({ //可变情报版
+      'autoRefresh': true,     //是否自动刷新，默认为false
+      'interval': 180,         //刷新间隔，默认180s
+    });
+    window.lineLayers = new AMap.LayerGroup({ //绘制线的层
+      'autoRefresh': true,     
+      'interval': 180,        
+    });
     trafficLayer.setMap(window.map)
     //输入提示
     const autoOptions = {
@@ -236,66 +245,90 @@ class GMap extends React.Component {
 
     })
     // 线的绘制
-    AMapUI.load(['ui/misc/PathSimplifier', 'lib/$'], function (PathSimplifier, $) {
+    window.drawLine = this.drawLine
+    // AMapUI.load(['ui/misc/PathSimplifier', 'lib/$'], function (PathSimplifier, $) {
 
-      if (!PathSimplifier.supportCanvas) {
-        alert('当前环境不支持 Canvas！');
-        return;
-      }
+    //   if (!PathSimplifier.supportCanvas) {
+    //     alert('当前环境不支持 Canvas！');
+    //     return;
+    //   }
 
-      //just some colors
-      var colors = ["red", "gray"];
-      var pathSimplifierIns = new PathSimplifier({
-        zIndex: 100,
-        autoSetFitView: false,
-        map: map, //所属的地图实例
-        getPath: function (pathData, pathIndex) {
-          return pathData.path;
-        },
-        // getHoverTitle: function (pathData, pathIndex, pointIndex) {
-        //   if (pointIndex >= 0) {
-        //     //point 
-        //     // return  pointIndex + '/' + pathData.path.length;
-        //   }
+    //   //just some colors
+    //   var colors = ["red", "gray"];
+    //   var pathSimplifierIns = new PathSimplifier({
+    //     zIndex: 100,
+    //     autoSetFitView: false,
+    //     map: map, //所属的地图实例
+    //     getPath: function (pathData, pathIndex) {
+    //       return pathData.path;
+    //     },
+    //     // getHoverTitle: function (pathData, pathIndex, pointIndex) {
+    //     //   if (pointIndex >= 0) {
+    //     //     //point 
+    //     //     // return  pointIndex + '/' + pathData.path.length;
+    //     //   }
 
-        //   returnpathData.path.length;
-        // },
-        renderOptions: {
-          pathLineStyle: {
-            dirArrowStyle: false
-          },
-          getPathStyle: function (pathItem, zoom) {
-            var color = window.lineFlag ? colors[0] : colors[1],
-              lineWidth = window.lineFlag ? 10 : 15;
-            return {
-              pathLineStyle: {
-                strokeStyle: color,
-                lineWidth: lineWidth
-              },
-              pathLineSelectedStyle: {
-                lineWidth: lineWidth + 2
-              },
-              pathNavigatorStyle: {
-                fillStyle: color
-              }
-            }
-          }
-        }
-      });
+    //     //   returnpathData.path.length;
+    //     // },
+    //     renderOptions: {
+    //       pathLineStyle: {
+    //         dirArrowStyle: false
+    //       },
+    //       getPathStyle: function (pathItem, zoom) {
+    //         var color = window.lineFlag ? colors[0] : colors[1],
+    //           lineWidth = window.lineFlag ? 10 : 15;
+    //         return {
+    //           pathLineStyle: {
+    //             strokeStyle: color,
+    //             lineWidth: lineWidth
+    //           },
+    //           pathLineSelectedStyle: {
+    //             lineWidth: lineWidth + 2
+    //           },
+    //           pathNavigatorStyle: {
+    //             fillStyle: color
+    //           }
+    //         }
+    //       }
+    //     }
+    //   });
 
-      window.pathSimplifierIns = pathSimplifierIns;
-      /*  // var d = lineData;
-       var d = [
-         {"path":[["119.851293", "32.233071"],["119.857044", "32.236665"]]}
-       ]
-       pathSimplifierIns.setData(d); */
+    //   window.pathSimplifierIns = pathSimplifierIns;
+    //   /*  // var d = lineData;
+    //    var d = [
+    //      {"path":[["119.851293", "32.233071"],["119.857044", "32.236665"]]}
+    //    ]
+    //    pathSimplifierIns.setData(d); */
 
-    });
+    // });
     // 弹层的自定义
     //覆盖默认的dom结构
     AMapUI.defineTpl("ui/overlay/SimpleInfoWindow/tpl/container.html", [], function () {
       return document.getElementById('my-infowin-tpl').innerHTML;
     });
+  }
+  drawLine = (path, type) => {
+    window.lineLayers.hide()
+    window.lineLayers.bx = []
+    window.lineLayers.show();
+    const polyline = new AMap.Polyline({
+      path: path,
+      isOutline: true,
+      outlineColor: !type ? '#98989a' : 'red',
+      borderWeight: !type ? 15 : 8,
+      strokeColor: !type ? '#98989a' : 'red', 
+      strokeOpacity: !type ? .6 : .9,
+      strokeWeight: 0,
+      // 折线样式还支持 'dashed
+      strokeStyle: "solid",
+      // strokeStyle是dashed时有效
+      strokeDasharray: [10, 5],
+      lineJoin: 'round',
+      lineCap: 'round',
+      zIndex: 50,
+    })
+    window.lineLayers.addLayer(polyline)
+    window.lineLayers.setMap(map)
   }
   returnMapIcon = (index) => {
     switch (index) {
