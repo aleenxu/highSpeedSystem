@@ -1013,12 +1013,12 @@ class MonitoringModule extends React.Component {
         }, () => {
           if(that.state.lineLatlngArr){
             const latlngArr = JSON.parse(JSON.stringify(that.state.lineLatlngArr))
-            const a = that.controlDatas.eventType === 3 ? false : true
-            window.drawLine(latlngArr, a)
+            const colorFlag = that.controlDatas.eventType === 3 ? false : true
+            window.drawLine(latlngArr, colorFlag)
           }
         })
       } else {
-        message.info(result.data.message)
+        message.info(result.message)
       }
     })
   }
