@@ -74,7 +74,7 @@ class MonitoringModule extends React.Component {
       eventType: 1, // 事件类型
       deviceString: [], // 交通设施参数
       importantId: '',
-      lineLatlngArr: [],
+      lineLatlngArr: null,
     }
     // 修改管控时的参数
     this.controlDatas = {
@@ -186,7 +186,7 @@ class MonitoringModule extends React.Component {
     // 获取全部交通设施
     this.getDeviceEventList()
     // 事件标注里的修改 高速、方向、桩号的起始和结束
-    this.handSecUrl()
+    // this.handSecUrl()
   }
   onStartChange = (value) => {
     this.onPickerChange('startValue', value)
@@ -396,6 +396,7 @@ class MonitoringModule extends React.Component {
         this.setState({
           eventType: value,
         }, () => {
+          this.controlDatas.eventType = value
           const typeNum = this.state.eventType - 1
           this.controlDatas.eventTypeName = this.state.eventTypes[typeNum].name
         })
@@ -540,20 +541,22 @@ class MonitoringModule extends React.Component {
       controlBtnFlagText: textFlag ? '关闭框选' : '框选设备',
     }, () => {
       if (textFlag) {
-        if (this.controlDatas.startPileNum === '') {
-          message.info('数据不能为空,请输入数据!')
-          $('#startInt').focus()
-          this.setState({
-            controlBtnFlagText: '框选设备',
-          })
-          return
-        } else if (this.controlDatas.endPileNum === '') {
-          $('#endInt').focus()
-          message.info('数据不能为空,请输入数据!')
-          this.setState({
-            controlBtnFlagText: '框选设备',
-          })
-          return
+        if (this.state.EventTagPopupTit !== '标题') {
+          if (this.controlDatas.startPileNum === '') {
+            message.info('数据不能为空,请输入数据!')
+            $('#startInt').focus()
+            this.setState({
+              controlBtnFlagText: '框选设备',
+            })
+            return
+          } else if (this.controlDatas.endPileNum === '') {
+            $('#endInt').focus()
+            message.info('数据不能为空,请输入数据!')
+            this.setState({
+              controlBtnFlagText: '框选设备',
+            })
+            return
+          }
         }
         $(".amap-maps").attr("style", "cursor:crosshair")
         window.drawRectangle()
@@ -581,14 +584,14 @@ class MonitoringModule extends React.Component {
             newPoint[1] = [newPoint[2][0], newPoint[0][1]]
             newPoint[3] = [newPoint[0][0], newPoint[2][1]]
             if (_this.state.boxFlag && _this.state.flagClose) {
-              if (_this.state.EventTagPopupTit === '事件标注') {
+              if (_this.state.EventTagPopupTit === '事件标注' || _this.state.EventTagPopupTit === '标题') {
                 console.log("标注的框选")
                 const params = {
                   devices: _this.state.deviceTypes,
                   roadPileNum: _this.controlDatas.startPileNum + ' ' + _this.controlDatas.endPileNum,
                   eventType: _this.state.eventType,
                 }
-                _this.getDevice(params);
+                _this.state.controlBtnFlagText === '关闭框选' ? _this.getDevice(params) : null
               } else if (_this.state.EventTagPopupTit === '修改管控方案') {
                 console.log("修改的框选")
                 _this.getDevice(_this.state.detailsPopup);
@@ -620,10 +623,18 @@ class MonitoringModule extends React.Component {
           if (!this.state.detailsPopup.controlStatusType) { // 为0时未管控 显示框选按钮否则不显示
             this.setState({
               controlBtnFlag: true,
+              controlBtnFlagText: '框选设备',
+            }, () => {
+              $(".amap-maps").attr("style", "")
+              window.mouseTool.close(true) //关闭，并清除覆盖物
             })
           } else {
             this.setState({
               controlBtnFlag: null,
+              controlBtnFlagText: '框选设备',
+            }, () => {
+              $(".amap-maps").attr("style", "")
+              window.mouseTool.close(true) //关闭，并清除覆盖物
             })
           }
           console.log(this.state.detailsPopup, "look here")
@@ -848,7 +859,7 @@ class MonitoringModule extends React.Component {
       statusName: "待发布"
     }
     if (titFlag === '事件标注') {
-      if (!this.controlDatas.roadId) {
+      if (!this.controlDatas.roadName) {
         message.info('请选择高速！')
         return
       }
@@ -967,7 +978,8 @@ class MonitoringModule extends React.Component {
   }
   handSecUrl = () => {
     const that = this
-    if (!this.controlDatas.roadId) {
+    debugger
+    if (!this.controlDatas.roadName) {
       message.info('请选择高速！')
       return
     }
@@ -996,14 +1008,17 @@ class MonitoringModule extends React.Component {
       const result = res.data
       if (result.code === 200) {
         that.setState({
-          importantId: result.roadSecId,
-          lineLatlngArr: result.latlng,
+          importantId: result.data.roadSecId,
+          lineLatlngArr: result.data.latlng,
         }, () => {
-          if(this.state.lineLatlngArr){
-            const latlngArr = JSON.parse(JSON.stringify(this.state.lineLatlngArr))
-            window.drawLine(latlngArr, window.lineFlag)
+          if(that.state.lineLatlngArr){
+            const latlngArr = JSON.parse(JSON.stringify(that.state.lineLatlngArr))
+            const a = that.controlDatas.eventType === 3 ? false : true
+            window.drawLine(latlngArr, a)
           }
         })
+      } else {
+        message.info(result.data.message)
       }
     })
   }
@@ -1095,6 +1110,7 @@ class MonitoringModule extends React.Component {
       this.setState({
         deviceTypes: this.state.detailsPopup.devices,
         eventType: this.state.detailsPopup.eventType,
+        controlBtnFlagText: '框选设备',
       })
     } else {
       this.controlDatas = {
@@ -1126,7 +1142,7 @@ class MonitoringModule extends React.Component {
         },3000)
       }
       // 加载ID、和经纬度
-      this.handSecUrl()
+      boolean ? this.handSecUrl() : null
     })
     $('#searchBox').attr('style', 'transition:all .5s;')
     $('#roadStateBox').attr('style', 'transition:all .5s;')
@@ -1883,7 +1899,7 @@ class MonitoringModule extends React.Component {
                       <div className={styles.ItemBox}>
                         <span className={styles.ItemName}>能见度&nbsp;:</span>
                         <div className={classNames(styles.ItemInput, styles.ItemInputText)}>
-                          <Input defaultValue={this.controlDatas.situation} onChange={(e) => { this.handleInput(e, 'situation', 'controlDatas') }} /> m
+                          <Input type='number' defaultValue={this.controlDatas.situation} onChange={(e) => { this.handleInput(e, 'situation', 'controlDatas') }} /> m
                       </div>
                       </div>
                     </div> :
@@ -1891,7 +1907,7 @@ class MonitoringModule extends React.Component {
                         <div className={styles.ItemBox}>
                           <span className={styles.ItemName}>平均车速&nbsp;:</span>
                           <div className={classNames(styles.ItemInput, styles.ItemInputText)}>
-                            <Input defaultValue={this.controlDatas.situation} onChange={(e) => { this.handleInput(e, 'situation', 'controlDatas') }} /> km/h
+                            <Input type='number' defaultValue={this.controlDatas.situation} onChange={(e) => { this.handleInput(e, 'situation', 'controlDatas') }} /> km/h
                       </div>
                         </div>
                       </div>

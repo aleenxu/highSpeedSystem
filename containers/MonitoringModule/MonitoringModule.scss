@@ -1,4 +1,11 @@
 .MonitoringModule {
+  
+::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+}
   position: fixed;
   left: 0;
   right: 0;
