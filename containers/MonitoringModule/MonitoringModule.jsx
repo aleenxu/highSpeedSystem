@@ -365,6 +365,9 @@ class MonitoringModule extends React.Component {
           this.publishPlanVO.list[index].content = e.target.value
         }
       })
+    } else if(name === 'endPileNum' || name === 'startPileNum') {
+      this[type][name] = e.target.value
+      this.handSecUrl()
     } else {
       this[type][name] = e.target.value
     }
@@ -964,6 +967,24 @@ class MonitoringModule extends React.Component {
   }
   handSecUrl = () => {
     const that = this
+    if (!this.controlDatas.roadId) {
+      message.info('请选择高速！')
+      return
+    }
+    if (!this.controlDatas.directionId) {
+      message.info('请选择方向！')
+      return
+    }
+    if (!this.controlDatas.startPileNum) {
+      message.info('请输入起始桩号！')
+      $('#startInt').focus()
+      return
+    }
+    if (!this.controlDatas.endPileNum) {
+      message.info('请输入结束桩号！')
+      $('#endInt').focus()
+      return
+    }
     const params = {
       direction: this.controlDatas.directionId,
       roadId: this.controlDatas.roadName,
@@ -1862,7 +1883,7 @@ class MonitoringModule extends React.Component {
                       <div className={styles.ItemBox}>
                         <span className={styles.ItemName}>能见度&nbsp;:</span>
                         <div className={classNames(styles.ItemInput, styles.ItemInputText)}>
-                          <Input value={this.controlDatas.situation} onChange={(e) => { this.handleInput(e, 'situation', 'controlDatas') }} /> m
+                          <Input defaultValue={this.controlDatas.situation} onChange={(e) => { this.handleInput(e, 'situation', 'controlDatas') }} /> m
                       </div>
                       </div>
                     </div> :
@@ -1870,7 +1891,7 @@ class MonitoringModule extends React.Component {
                         <div className={styles.ItemBox}>
                           <span className={styles.ItemName}>平均车速&nbsp;:</span>
                           <div className={classNames(styles.ItemInput, styles.ItemInputText)}>
-                            <Input value={this.controlDatas.situation} onChange={(e) => { this.handleInput(e, 'situation', 'controlDatas') }} /> km/h
+                            <Input defaultValue={this.controlDatas.situation} onChange={(e) => { this.handleInput(e, 'situation', 'controlDatas') }} /> km/h
                       </div>
                         </div>
                       </div>
