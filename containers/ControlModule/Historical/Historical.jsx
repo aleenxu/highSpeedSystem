@@ -54,7 +54,17 @@ class Historical extends React.Component {
       [field]: value,
     })
   }
-
+  formatDuring = (mss) => {
+    if (mss <= 0) {
+      return '已超时'
+    } else {
+      var days = parseInt(mss / (1000 * 60 * 60 * 24));
+      const hours = parseInt((mss % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = parseInt((mss % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = (mss % (1000 * 60)) / 1000;
+      return days + '天' + hours + "时" + minutes + "分"
+    }
+  }
   getDate = (data) => {
     const today = new Date(data)
     const year = today.getFullYear()
@@ -225,8 +235,8 @@ class Historical extends React.Component {
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.secName}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.pileNum && item.pileNum.split(' ')[0]}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.pileNum && item.pileNum.split(' ')[1]}</span></div>
-                      <div className={styles.listTd} ><span className={styles.roadName}>{this.getDate(item.startTime)}</span></div>
-                      <div className={styles.listTd} ><span className={styles.roadName}>{this.getDate(item.updateTime)}</span></div>
+                      <div className={styles.listTd} ><span className={styles.roadName}>{item.startTime?this.getDate(item.startTime):'-'}</span></div>
+                      <div className={styles.listTd} ><span className={styles.roadName}>{item.startTime && item.updateTime ? this.formatDuring(new Date(item.updateTime).getTime() - new Date(item.startTime).getTime()) : '-'}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.controllId ? '是' : '否'}</span></div>
                       <div className={styles.listTd} >
                         <Button className={styles.Button} onClick={() => { this.handlehistory(item, false) }}>事件详情</Button>

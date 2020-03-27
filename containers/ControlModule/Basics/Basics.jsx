@@ -68,6 +68,17 @@ class Historical extends React.Component {
     const navmse = hour + ':' + minutes + ':' + seconds
     return (navtime + navmse)
   }
+  formatDuring = (mss) => {
+    if (mss <= 0) {
+      return '-'
+    } else {
+      var days = parseInt(mss / (1000 * 60 * 60 * 24));
+      const hours = parseInt((mss % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = parseInt((mss % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = (mss % (1000 * 60)) / 1000;
+      return days + '天' + hours + "时" + minutes + "分"
+    }
+  }
   //  管控详情
   handlehistory = (data) => {
     const { eventId, eventTypeId } = data
@@ -91,10 +102,12 @@ class Historical extends React.Component {
   // 添加至预案库
   handlecontrol = (data) => {
     const { eventId, eventTypeId } = data
-    getResponseDatas('get', this.controlUrl + eventTypeId + '/' + eventId).then((res) => {
+    getResponseDatas('put', this.controlUrl + eventTypeId + '/' + eventId).then((res) => {
       const result = res.data
       if (result.code === 200) {
-
+        message.success(result.message)
+      }else{
+        message.error(result.message)
       }
     })
   }
@@ -225,13 +238,13 @@ class Historical extends React.Component {
                     <div className={styles.listItems}>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.eventId}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.eventTypeName}</span></div>
+                      <div className={styles.listTd} ><span className={styles.roadName}>{item.controlTypeName}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.roadName}</span></div>
-                      <div className={styles.listTd} ><span className={styles.roadName}>{item.roadName}</span></div>
-                      <div className={styles.listTd} ><span className={styles.roadName}>{this.getDate(item.updateTime)}</span></div>
-                      <div className={styles.listTd} ><span className={styles.roadName}>{item.pileName && item.pileName.split(' ')[0]}</span></div>
-                      <div className={styles.listTd} ><span className={styles.roadName}>{item.pileName && item.pileName.split(' ')[1]}</span></div>
+                      <div className={styles.listTd} ><span className={styles.roadName}>{item.secName}</span></div>
+                      <div className={styles.listTd} ><span className={styles.roadName}>{item.pileNum && item.pileNum.split(' ')[0]}</span></div>
+                      <div className={styles.listTd} ><span className={styles.roadName}>{item.pileNum && item.pileNum.split(' ')[1]}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.publishTime ? this.getDate(item.publishTime) : '-'}</span></div>
-                      <div className={styles.listTd} ><span className={styles.roadName}>{item.endTime || '-'}</span></div>
+                      <div className={styles.listTd} ><span className={styles.roadName}>{item.publishTime && item.endTime ? this.formatDuring(new Date(item.endTime).getTime() - new Date(item.publishTime).getTime()) : '-'}</span></div>
                       <div className={styles.listTd} style={{ flex: 1.8 }}>
                         <Button className={styles.Button} onClick={() => { this.handlehistory(item) }}>管控详情</Button>
                         <Button className={styles.Button} onClick={() => { this.handlecontrol(item) }}>添加至预案库</Button>
@@ -277,8 +290,8 @@ class Historical extends React.Component {
                   <div className={styles.RowBox}>数据来源&nbsp;:&nbsp;&nbsp;<sapn style={{ color: '#03af01' }}>{reservePopup.dataSourceName}</sapn></div>
                 </div>
 
-                {operationData
-                  ? <div>
+                {operationData ?
+                  <div>
                     <div className={styles.guanBox}>
                       <Button className={styles.Button}>管控方案评估</Button>
                     </div>
