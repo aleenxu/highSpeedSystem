@@ -37,7 +37,7 @@ class GMap extends React.Component {
     }
     this.styles = {
       position: 'fixed',
-      top: '50px',
+      top: '52px',
       left: 0,
       width: '100%',
       height: '100%',
