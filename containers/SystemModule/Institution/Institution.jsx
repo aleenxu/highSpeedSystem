@@ -11,7 +11,7 @@ const formItemLayout = {
   labelCol: { span: 6 },
   wrapperCol: { span: 14 },
 }
-/* 组织方案管理 */
+/* 部门方案管理 */
 class Institution extends React.Component {
   constructor(props) {
     super(props)
@@ -20,7 +20,7 @@ class Institution extends React.Component {
       showGroupMsg: false,
       listItems: null,
       parentGroup: null,
-      userLimit: null,
+      userLimit: [],
       current: 1,
     }
     this.deptListUrl = '/control/sys/dept/listPage'
@@ -146,7 +146,7 @@ class Institution extends React.Component {
     const that = this
     this.deleteParams.deptIds.push(id)
     confirm({
-      title: '确认要删除当前组织?',
+      title: '确认要删除当前部门?',
       cancelText: '取消',
       okText: '确认',
       onOk() {
@@ -194,18 +194,18 @@ class Institution extends React.Component {
                 <span className={styles.Button} onClick={() => { this.handlePagination('1') }}>搜&nbsp;&nbsp;索</span>
               </div>
               <div className={styles.rightItem}>
-                <span className={styles.Button} onClick={this.handleAddGroup} >新&nbsp;&nbsp;增</span>
+                {userLimit.includes(28) && <span className={styles.Button} onClick={this.handleAddGroup} >新&nbsp;&nbsp;增</span>}
               </div>
             </div>
             <div className={styles.ContetList}>
               <div className={styles.listItems}>
                 <div className={styles.listTd} >序号</div>
-                <div className={styles.listTd} >组织编号</div>
-                <div className={styles.listTd} >组织名称</div>
+                <div className={styles.listTd} >部门编号</div>
+                <div className={styles.listTd} >部门名称</div>
                 <div className={styles.listTd} >描述</div>
-                <div className={styles.listTd} >上级组织</div>
-                <div className={styles.listTd} >组织负责人</div>
-                <div className={styles.listTd} >操作</div>
+                <div className={styles.listTd} >上级部门</div>
+                <div className={styles.listTd} >部门负责人</div>
+                {userLimit.includes(30) || userLimit.includes(29) ? <div className={styles.listTd} >操作</div> : null}
               </div>
               {
                 listDatas && listDatas.list.map((item, index) => {
@@ -217,10 +217,11 @@ class Institution extends React.Component {
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.remark}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.parentName}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.leaderName}</span></div>
-                      <div className={styles.listTd} >
-                        <Button className={styles.Button} onClick={() => { this.handleEditItems(item.id) }}>修&nbsp;&nbsp;改</Button>
-                        <Button className={styles.Button} onClick={() => { this.handleDeleteItem(item.id) }}>删&nbsp;&nbsp;除</Button>
-                      </div>
+                      {userLimit.includes(30) || userLimit.includes(29) ?
+                        <div className={styles.listTd} >
+                          {userLimit.includes(30) && <Button className={styles.Button} onClick={() => { this.handleEditItems(item.id) }}>修&nbsp;&nbsp;改</Button>}
+                          {userLimit.includes(29) && <Button className={styles.Button} onClick={() => { this.handleDeleteItem(item.id) }}>删&nbsp;&nbsp;除</Button>}
+                        </div> : null}
                     </div>
                   )
                 })
@@ -247,7 +248,7 @@ class Institution extends React.Component {
                         <div className={styles.Item}>
                           <Form.Item
                             name="deptCode"
-                            label="组织编号"
+                            label="部门编号"
                           >
                             <Input defaultValue={listItems && listItems.deptCode} onChange={(e) => { this.handleGroupMsgChange(e, 'deptCode') }} />
                           </Form.Item>
@@ -255,7 +256,7 @@ class Institution extends React.Component {
                         <div className={styles.Item}>
                           <Form.Item
                             name="deptName"
-                            label="组织名称"
+                            label="部门名称"
                           >
                             <Input defaultValue={listItems && listItems.deptName} onChange={(e) => { this.handleGroupMsgChange(e, 'deptName') }} />
                           </Form.Item>
@@ -273,12 +274,12 @@ class Institution extends React.Component {
                         <div className={styles.Item}>
                           <Form.Item
                             name="parentId"
-                            label="父组织"
+                            label="父部门"
                             hasFeedback
                             rules={[{ required: true, message: 'Please select your country!' }]}
                           >
                             <Select defaultValue={listItems ? listItems.parentId : 0} onChange={(e) => { this.handleGroupMsgChange(e, 'parentId') }}>
-                              <Option value={0} key={0}>请选择所属用父组织</Option>
+                              <Option value={0} key={0}>请选择所属用父部门</Option>
                               {
                                 !!parentGroup && parentGroup.map((item) => {
                                   return (

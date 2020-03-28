@@ -26,7 +26,7 @@ class Rolemana extends React.Component {
       checkedKeys: [],
       selectedKeys: [],
       treeData: null,
-      userLimit: null,
+      userLimit: [],
       current: 1,
     }
     this.deptListUrl = '/control/sys/role/listPage'
@@ -50,9 +50,6 @@ class Rolemana extends React.Component {
     }
   }
   componentDidMount = () => {
-    this.getSystemMenu()
-    this.getDeptList()
-    this.onlistTrue()
     // 获取用户权限
     const limitArr = JSON.parse(localStorage.getItem('userLimit'))
     const userLimit = []
@@ -60,6 +57,9 @@ class Rolemana extends React.Component {
       userLimit.push(item.id)
     })
     this.setState({ userLimit })
+    this.getSystemMenu()
+    this.getDeptList()
+    this.onlistTrue()
   }
   onlistTrue = () => {
     getResponseDatas('post', this.listTrueUrl).then((res) => {
@@ -276,7 +276,7 @@ class Rolemana extends React.Component {
                 <span className={styles.Button} onClick={() => { this.handlePagination('1') }}>搜&nbsp;&nbsp;索</span>
               </div>
               <div className={styles.rightItem}>
-                <span className={styles.Button} onClick={this.handleAddGroup} >新&nbsp;&nbsp;增</span>
+                {userLimit.includes(19) && <span className={styles.Button} onClick={this.handleAddGroup} >新&nbsp;&nbsp;增</span>}
               </div>
             </div>
             <div className={styles.ContetList}>
@@ -285,7 +285,7 @@ class Rolemana extends React.Component {
                 <div className={styles.listTd} >角色名称</div>
                 <div className={styles.listTd} >角色描述</div>
                 <div className={styles.listTd} >创建时间</div>
-                <div className={styles.listTd} >操作</div>
+                {userLimit.includes(20) || userLimit.includes(21) ? <div className={styles.listTd} >操作</div> : null}
               </div>
               {
                 listDatas && listDatas.map((item) => {
@@ -295,10 +295,11 @@ class Rolemana extends React.Component {
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.name}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.remark}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.createTime}</span></div>
-                      <div className={styles.listTd} >
-                        <Button className={styles.Button} onClick={() => { this.handleEditItems(item.id) }}>修&nbsp;&nbsp;改</Button>
-                        <Button className={styles.Button} onClick={() => { this.handleDeleteItem(item.id) }}>删&nbsp;&nbsp;除</Button>
-                      </div>
+                      {userLimit.includes(20) || userLimit.includes(21) ?
+                        <div className={styles.listTd} >
+                          {userLimit.includes(20) && <Button className={styles.Button} onClick={() => { this.handleEditItems(item.id) }}>修&nbsp;&nbsp;改</Button>}
+                          {userLimit.includes(21) && <Button className={styles.Button} onClick={() => { this.handleDeleteItem(item.id) }}>删&nbsp;&nbsp;除</Button>}
+                        </div> : null}
                     </div>
                   )
                 })

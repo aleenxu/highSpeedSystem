@@ -100,6 +100,7 @@ class MonitoringModule extends React.Component {
       latlng: [],
       pileNum: "",
       roadName: "",
+      userLimit: [],
       situation: 0,
       startTime: this.getDate(),
       status: 1,
@@ -166,6 +167,13 @@ class MonitoringModule extends React.Component {
     this.secUrl = 'control/road/get/latlngs/sec/' // 根据道路、方向、起止桩号，计算经纬度和最后一个点所在的道路id
   }
   componentDidMount = () => {
+    // 获取用户权限
+    const limitArr = JSON.parse(localStorage.getItem('userLimit'))
+    const userLimit = []
+    limitArr.forEach((item) => {
+      userLimit.push(item.id)
+    })
+    this.setState({ userLimit })
     // 查询左侧列表数据
     this.handleEventList()
     // 查询饼图数据
@@ -795,13 +803,13 @@ class MonitoringModule extends React.Component {
   handleCondition = () => {
     const data = JSON.parse(JSON.stringify(this.VIboardParameters))
     delete data.existsDevices
-    const paramStr = '?deviceTypeId='+data.deviceTypeId+'&eventPileNum='+data.eventPileNum+'&eventTypeId='+data.eventTypeId
-    +'&value='+data.value+'&control='+data.control
+    const paramStr = '?deviceTypeId=' + data.deviceTypeId + '&eventPileNum=' + data.eventPileNum + '&eventTypeId=' + data.eventTypeId
+      + '&value=' + data.value + '&control=' + data.control
     /* const paramStr = '?deviceCode='+data.deviceCode+'&deviceLocation='+data.deviceLocation+'&deviceName='+data.deviceName+'&deviceTypeId='+data.deviceTypeId
     +'&roadCode='+data.roadCode+'&roadDirection='+data.roadDirection+'&roadName='+data.roadName+'&eventPileNum='+data.eventPileNum+'&eventTypeId='+data.eventTypeId
     '&value='+data.value+'&control='+data.control */
     debugger
-    getResponseDatas('post', this.conditionUrl+paramStr, this.VIboardParameters.existsDevices).then((res) => {
+    getResponseDatas('post', this.conditionUrl + paramStr, this.VIboardParameters.existsDevices).then((res) => {
       const result = res.data
       if (result.code === 200) {
         const plainOptionList = []
@@ -857,7 +865,7 @@ class MonitoringModule extends React.Component {
     } else {
       detailsPopup.devices[ind].device.splice(index, 1)
       this.setState({ detailsPopup })
-    } 
+    }
 
   }
   handleMarkControlPop = (titFlag) => {
@@ -1257,7 +1265,7 @@ class MonitoringModule extends React.Component {
   handleRelease = () => {
     const { channel, list, controlDes } = this.publishPlanVO
     const { reservePopup, startValue, endValue } = this.state
-    
+
     for (let i = 0; i < list.length; i++) {
       if (list[i].content == '') {
         message.warning('请填全显示内容')
@@ -1280,7 +1288,7 @@ class MonitoringModule extends React.Component {
       message.warning('发布渠道至少勾选一个')
       return
     }
-    
+
     this.publishPlanVO.controlDes = startValue + ' ' + reservePopup.roadName.split(' ')[1] + reservePopup.directionName + reservePopup.pileNum.split(' ')[0] + '米处,' + controlDes
     getResponseDatas('put', this.publishUrl, this.publishPlanVO).then((res) => {
       const result = res.data
@@ -1359,7 +1367,7 @@ class MonitoringModule extends React.Component {
     const {
       MeasuresList, eventsPopup, groupType, planList, EventTagPopup, EventTagPopupTit, roadNumber, endValueTime, conditionList, boxSelect, flagClose, oldDevicesList,
       boxSelectList, hwayList, directionList, VIboardPopup, groupStatus, controlPopup, controlBtnFlag, controlBtnFlagText, detailsPopup, whethePopup, reservePopup, startValue, endValue, endOpen, SidePopLeft, detailsLatlng
-      , controlTypes, eventTypes, deviceTypes, updatePoint } = this.state
+      , controlTypes, eventTypes, deviceTypes, updatePoint, userLimit } = this.state
     return (
       <div className={styles.MonitoringModule}>
         <SystemMenu />
@@ -1686,9 +1694,14 @@ class MonitoringModule extends React.Component {
                 </div>
               </div>
               <div className={styles.ItemFooter}>
-
                 {
-                  reservePopup.status === 3 ? <span onClick={() => { this.handlecancelRel(reservePopup.controllId, 'cancel') }}>撤&nbsp;&nbsp;销</span> : reservePopup.status === 1 ? <span onClick={reservePopup.update === true || reservePopup.update === false ? this.handleMarkControl : this.handleRelease}>发&nbsp;&nbsp;布</span> : <span style={{ background: '#999' }}>发&nbsp;&nbsp;布</span>
+                  userLimit.includes(100) && reservePopup.status === 1 ? <span onClick={reservePopup.update === true || reservePopup.update === false ? this.handleMarkControl : this.handleRelease}>发&nbsp;&nbsp;布</span> : null
+                }
+                {
+                  userLimit.includes(101) && reservePopup.status === 2 ? <span onClick={() => { this.handlecancelRel(reservePopup.controllId, 'cancel') }}>审&nbsp;&nbsp;核</span> : null
+                }
+                {
+                  reservePopup.status === 3 || reservePopup.status === 2 ? <span onClick={() => { this.handlecancelRel(reservePopup.controllId, 'cancel') }}>撤&nbsp;&nbsp;销</span> : null
                 }
                 {
                   reservePopup.status === 3 ? <span onClick={() => { this.handleEndValueTime(true) }}>延&nbsp;&nbsp;时</span> : null

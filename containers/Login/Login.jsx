@@ -28,6 +28,7 @@ class Login extends React.Component {
       const { code, data } = res.data
       if (code === 0) {
         localStorage.setItem('userLimit', JSON.stringify(data))
+        this.props.history.push('/monitoringmodule')
       }
     })
   }
@@ -59,7 +60,7 @@ class Login extends React.Component {
             loginName: '',
             passWord: '',
           }
-          this.props.history.push('/monitoringmodule')
+
         } else {
           message.warning(msg)
         }

@@ -29,6 +29,7 @@ class Intelligence extends React.Component {
       directions: null,
       roadSecIddata: null,
       roadSecIdItem: null,
+      userLimit: [],
     }
     this.Parameters = {
       keyword: '',
@@ -62,6 +63,13 @@ class Intelligence extends React.Component {
     this.secUrl = '/control/road/list/sec' // 根据公路名和方向获取路段'
   }
   componentDidMount = () => {
+    // 获取用户权限
+    const limitArr = JSON.parse(localStorage.getItem('userLimit'))
+    const userLimit = []
+    limitArr.forEach((item) => {
+      userLimit.push(item.id)
+    })
+    this.setState({ userLimit })
     this.boardData = this.board
     this.handleListByPage()
     this.handlelistDetail('directionList', 1)
@@ -233,7 +241,7 @@ class Intelligence extends React.Component {
     this.setState({ boardData: this.board, hwayDirection: null, roadSecIddata: null })
   }
   render() {
-    const { listByPage, current, boardData, directionList, roadSecIddata, roadSecIdItem, directions, hwayList, vendorList, deviceTypeList, ControlStatus, hwayDirection } = this.state
+    const { listByPage, current, userLimit, boardData, directionList, roadSecIddata, roadSecIdItem, directions, hwayList, vendorList, deviceTypeList, ControlStatus, hwayDirection } = this.state
     return (
       <div>
         <SystemMenu />
@@ -246,7 +254,7 @@ class Intelligence extends React.Component {
                 <Button className={styles.Button} onClick={() => { this.handlepage(1) }}>搜&nbsp;&nbsp;索</Button>
               </div>
               <div className={styles.rightItem}>
-                <Button className={styles.Button} onClick={this.handleAddData}>新&nbsp;&nbsp;增</Button>
+                {userLimit.includes(85) && <Button className={styles.Button} onClick={this.handleAddData}>新&nbsp;&nbsp;增</Button>}
               </div>
             </div>
             <div className={styles.ContetList}>
@@ -261,7 +269,7 @@ class Intelligence extends React.Component {
                 <div className={styles.listTd} >方向</div>
                 <div className={styles.listTd} >IP地址</div>
                 <div className={styles.listTd} >端口号</div>
-                <div className={styles.listTd} >操作</div>
+                {userLimit.includes(86) || userLimit.includes(87) ? <div className={styles.listTd} >操作</div> : null}
               </div>
               {
                 !!listByPage && listByPage.data.map((item) => {
@@ -277,10 +285,11 @@ class Intelligence extends React.Component {
                       <div className={styles.listTd} ><span className={styles.roadName}>{this.handledirection(directionList, item.direction)}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.deviceIp}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.port}</span></div>
-                      <div className={styles.listTd} >
-                        <Button className={styles.Button} onClick={() => { this.handleboardData(item) }}>修&nbsp;&nbsp;改</Button>
-                        <Button className={styles.Button} onClick={() => { this.handleDelect(item.rowId) }}>删&nbsp;&nbsp;除</Button>
-                      </div>
+                      {userLimit.includes(86) || userLimit.includes(87) ?
+                        <div className={styles.listTd} >
+                          {userLimit.includes(86) && <Button className={styles.Button} onClick={() => { this.handleboardData(item) }}>修&nbsp;&nbsp;改</Button>}
+                          {userLimit.includes(87) && <Button className={styles.Button} onClick={() => { this.handleDelect(item.rowId) }}>删&nbsp;&nbsp;除</Button>}
+                        </div> : null}
                     </div>
                   )
                 })
