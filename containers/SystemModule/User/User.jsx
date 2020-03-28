@@ -20,7 +20,7 @@ class User extends React.Component {
       depList: null,
       roleList: null,
       dataList: null,
-      userLimit: null,
+      userLimit: [],
       boardData: null,
       current: 1,
     }
@@ -50,6 +50,13 @@ class User extends React.Component {
     this.updateUrl = '/control/sys/user/update'
   }
   componentDidMount = () => {
+    // 获取用户权限
+    const limitArr = JSON.parse(localStorage.getItem('userLimit'))
+    const userLimit = []
+    limitArr.forEach((item) => {
+      userLimit.push(item.id)
+    })
+    this.setState({ userLimit })
     this.dataListData = JSON.parse(JSON.stringify(this.dataList))
     this.getSystemList()
     this.getSystemdep()
@@ -213,7 +220,7 @@ class User extends React.Component {
     this[type][name] = value
   }
   render() {
-    const { systemList, current, boardData, roleList, depList } = this.state
+    const { systemList, current, boardData, roleList, depList, userLimit } = this.state
     return (
       <div>
         <SystemMenu />
@@ -226,7 +233,7 @@ class User extends React.Component {
                 <span className={styles.Button} onClick={() => { this.handlepage(1) }}>搜&nbsp;&nbsp;索</span>
               </div>
               <div className={styles.rightItem}>
-                <span className={styles.Button} onClick={this.getAddUser} >新&nbsp;&nbsp;增</span>
+                {userLimit.includes(14) && <span className={styles.Button} onClick={this.getAddUser} >新&nbsp;&nbsp;增</span>}
               </div>
             </div>
             <div className={styles.ContetList}>
@@ -236,7 +243,7 @@ class User extends React.Component {
                 <div className={styles.listTd} >登陆名称</div>
                 <div className={styles.listTd} >组织机构</div>
                 <div className={styles.listTd} >角色</div>
-                <div className={styles.listTd} >操作</div>
+                {userLimit.includes(16) || userLimit.includes(37) || userLimit.includes(15) ? <div className={styles.listTd} >操作</div> : null}
               </div>
               {
                 systemList && systemList.list.map((item, index) => {
@@ -248,11 +255,14 @@ class User extends React.Component {
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.deptName}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.roleName}</span></div>
                       {/* <div className={styles.listTd} ><span className={styles.roadName}>11111</span></div> */}
-                      <div className={styles.listTd} >
-                        <Button className={styles.Button} onClick={() => { this.handleDataLists(item.id) }} >修&nbsp;&nbsp;改</Button>
-                        <Button className={styles.Button} onClick={() => { this.getresetPwd(item.id) }}>重置密码</Button>
-                        <Button className={styles.Button} onClick={() => { this.getfaciDelete(item.id) }}  >删&nbsp;&nbsp;除</Button>
-                      </div>
+                      {
+                        userLimit.includes(16) || userLimit.includes(37) || userLimit.includes(15) ?
+                          <div className={styles.listTd} >
+                            {userLimit.includes(16) && <Button className={styles.Button} onClick={() => { this.handleDataLists(item.id) }} >修&nbsp;&nbsp;改</Button>}
+                            {userLimit.includes(37) && <Button className={styles.Button} onClick={() => { this.getresetPwd(item.id) }}>重置密码</Button>}
+                            {userLimit.includes(15) && <Button className={styles.Button} onClick={() => { this.getfaciDelete(item.id) }}  >删&nbsp;&nbsp;除</Button>}
+                          </div> : null
+                      }
                     </div>
                   )
                 })

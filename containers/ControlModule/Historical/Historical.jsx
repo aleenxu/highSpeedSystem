@@ -20,6 +20,7 @@ class Historical extends React.Component {
       endOpen: false,
       reservePopup: null,
       operationData: null,
+      userLimit: [],
     }
     this.Parameters = {
       pageNo: 1,
@@ -36,6 +37,13 @@ class Historical extends React.Component {
     this.operationUrl = '/control/plan/list/operation/' // {eventTypeId}/{eventId} 查询方案操作记录集合'
   }
   componentDidMount = () => {
+    // 获取用户权限
+    const limitArr = JSON.parse(localStorage.getItem('userLimit'))
+    const userLimit = []
+    limitArr.forEach((item) => {
+      userLimit.push(item.id)
+    })
+    this.setState({ userLimit })
     // 事件类型下拉查询
     this.handlelistDetail('eventTypeData', 13)
     // 列表查询
@@ -160,7 +168,7 @@ class Historical extends React.Component {
     this.setState({ [name]: value, operationData: null })
   }
   render() {
-    const { eventTypeData, operationData, reservePopup, listByPage, current, endOpen, endValue, startValue } = this.state
+    const { eventTypeData, userLimit, operationData, reservePopup, listByPage, current, endOpen, endValue, startValue } = this.state
     return (
       <div>
         <SystemMenu />
@@ -235,7 +243,7 @@ class Historical extends React.Component {
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.secName}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.pileNum && item.pileNum.split(' ')[0]}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.pileNum && item.pileNum.split(' ')[1]}</span></div>
-                      <div className={styles.listTd} ><span className={styles.roadName}>{item.startTime?this.getDate(item.startTime):'-'}</span></div>
+                      <div className={styles.listTd} ><span className={styles.roadName}>{item.startTime ? this.getDate(item.startTime) : '-'}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.startTime && item.updateTime ? this.formatDuring(new Date(item.updateTime).getTime() - new Date(item.startTime).getTime()) : '-'}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.controllId ? '是' : '否'}</span></div>
                       <div className={styles.listTd} >
