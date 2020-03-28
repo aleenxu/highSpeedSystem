@@ -19,11 +19,17 @@ class SystemMenu extends React.Component {
     this.handleClick()
     this.limitArr = JSON.parse(localStorage.getItem('userLimit')) || []
     const userLimit = []
+    const path = []
     this.limitArr.forEach((item) => { // 循环出一级菜单
       if (item.parentId === 0) {
         userLimit.push(item)
+        path.push('#' + item.path)
       }
     })
+    if (!path.includes(window.location.hash)) {
+      window.location.hash = '#/login'
+      localStorage.clear()
+    }
     userLimit.forEach((item) => {
       item.Children = []
       this.limitArr.forEach((items) => {

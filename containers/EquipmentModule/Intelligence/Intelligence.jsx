@@ -64,7 +64,7 @@ class Intelligence extends React.Component {
   }
   componentDidMount = () => {
     // 获取用户权限
-    const limitArr = JSON.parse(localStorage.getItem('userLimit'))
+    const limitArr = JSON.parse(localStorage.getItem('userLimit'))||[]
     const userLimit = []
     limitArr.forEach((item) => {
       userLimit.push(item.id)
