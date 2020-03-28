@@ -8,12 +8,12 @@ class IsLogin extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      successInfo: null,
+      
     }
 
     this.menu = (
       <Menu>
-        <Menu.Item key="0" >用户：{userInfo ? userInfo.userName : '--'}</Menu.Item>
+        <Menu.Item key="0" >用户：{userInfo ? userInfo.loginName : '--'}</Menu.Item>
         <Menu.Item key="1" onClick={this.handleLogout}>退出系统</Menu.Item>
       </Menu>
     );

@@ -460,10 +460,12 @@ class MonitoringModule extends React.Component {
   // 更新设备及交通管控类型
   updateControlTypes = (controlId) => {
     const nowIndex = this.state.deviceString.indexOf(controlId) > -1 ? this.state.deviceString.indexOf(controlId) : -1
-    if (nowIndex > -1 && this.state.deviceString.length > 1) {
+    if (nowIndex > -1 && this.state.deviceString.length > 0) {
       this.state.deviceString.splice(nowIndex, 1)
-    } else if (this.state.deviceString.length === 1) {
-      message.info('管控类型至少选中一个')
+      if (this.state.deviceString.length == 0) {
+        message.info('管控类型至少选中一个')
+        this.state.deviceString.push(controlId)
+      }
     } else {
       this.state.deviceString.push(controlId)
     }
