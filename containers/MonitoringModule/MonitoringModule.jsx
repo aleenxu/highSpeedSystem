@@ -653,6 +653,7 @@ class MonitoringModule extends React.Component {
             })
           }
           console.log(this.state.detailsPopup, "look here")
+          localStorage.setItem('detailsPopup', JSON.stringify(this.state.detailsPopup))
         })
       }
     })
