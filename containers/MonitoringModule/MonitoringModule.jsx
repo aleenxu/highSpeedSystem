@@ -660,7 +660,8 @@ class MonitoringModule extends React.Component {
               window.mouseTool.close(true) //关闭，并清除覆盖物
             })
           }
-          // console.log(this.state.detailsPopup, "look here")
+          console.log(this.state.detailsPopup, "look here")
+          localStorage.setItem('detailsPopup', JSON.stringify(this.state.detailsPopup))
         })
       }
     })
