@@ -1335,7 +1335,7 @@ class MonitoringModule extends React.Component {
         this.handleplanList()
         this.handledetai({ eventType: eventTypeId, eventId })
         this.setState({ reservePopup: null })
-        message.success('取消发布成功')
+        message.success(result.message)
       }
     })
   }
@@ -1698,7 +1698,7 @@ class MonitoringModule extends React.Component {
                   userLimit.includes(100) && reservePopup.status === 1 ? <span onClick={reservePopup.update === true || reservePopup.update === false ? this.handleMarkControl : this.handleRelease}>发&nbsp;&nbsp;布</span> : null
                 }
                 {
-                  userLimit.includes(101) && reservePopup.status === 2 ? <span onClick={() => { this.handlecancelRel(reservePopup.controllId, 'cancel') }}>审&nbsp;&nbsp;核</span> : null
+                  userLimit.includes(101) && reservePopup.status === 2 ? <span onClick={() => { this.handlecancelRel(reservePopup.controllId, 'submit') }}>审&nbsp;&nbsp;核</span> : null
                 }
                 {
                   reservePopup.status === 3 || reservePopup.status === 2 ? <span onClick={() => { this.handlecancelRel(reservePopup.controllId, 'cancel') }}>撤&nbsp;&nbsp;销</span> : null
