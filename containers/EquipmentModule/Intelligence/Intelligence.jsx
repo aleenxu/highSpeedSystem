@@ -40,7 +40,7 @@ class Intelligence extends React.Component {
       deviceId: '',
       deviceIp: '',
       deviceName: '',
-      deviceTypeId: '',
+      deviceTypeId: '1',
       direction: '',
       displayCode: '',
       latlng: '',
@@ -64,7 +64,7 @@ class Intelligence extends React.Component {
   }
   componentDidMount = () => {
     // 获取用户权限
-    const limitArr = JSON.parse(localStorage.getItem('userLimit'))
+    const limitArr = JSON.parse(localStorage.getItem('userLimit')) || []
     const userLimit = []
     limitArr.forEach((item) => {
       userLimit.push(item.id)
@@ -318,7 +318,7 @@ class Intelligence extends React.Component {
                         name="deviceId"
                         label="设备编号"
                       >
-                        <Input onChange={(e) => { this.handleInput(e, 'deviceId', 'board') }} defaultValue={boardData.deviceId} />
+                        <Input disabled={boardData.rowId} onChange={(e) => { this.handleInput(e, 'deviceId', 'board') }} defaultValue={boardData.deviceId} />
                       </Form.Item>
                     </div>
                     <div className={styles.Item}>
@@ -354,7 +354,7 @@ class Intelligence extends React.Component {
                         hasFeedback
                         rules={[{ required: true, message: 'Please select your country!' }]}
                       >
-                        <Select onChange={(e) => { this.handleSelect(e, 'deviceTypeId', 'board') }} defaultValue={boardData.deviceTypeId}>
+                        <Select disabled onChange={(e) => { this.handleSelect(e, 'deviceTypeId', 'board') }} defaultValue={1}>{/*  //boardData.deviceTypeId */}
                           {
                             deviceTypeList && deviceTypeList.map((item) => {
                               return <Option key={item.id} value={item.id}>{item.name}</Option>

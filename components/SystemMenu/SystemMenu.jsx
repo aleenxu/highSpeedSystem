@@ -1,5 +1,5 @@
 import React from 'react'
-import { Menu, Icon } from 'antd';
+import { Menu, Icon, message } from 'antd';
 import styles from './SystemMenu.scss'
 import Times from '../DateTime/DateTime'
 import IsLogin from '../IsLogin/IsLogin'
@@ -19,11 +19,19 @@ class SystemMenu extends React.Component {
     this.handleClick()
     this.limitArr = JSON.parse(localStorage.getItem('userLimit')) || []
     const userLimit = []
-    this.limitArr.forEach((item) => { // 循环出一级菜单
+    const path = []
+    this.limitArr.forEach((item) => { // 
       if (item.parentId === 0) {
-        userLimit.push(item)
+        userLimit.push(item)  // 循环出一级菜单
       }
+      path.push('#' + item.path) // 所有路由权限
     })
+    console.log(path, window.location.hash);
+
+    if (!path.includes(window.location.hash)) { // 判断当前是否有当前路由权限
+      window.location.hash = '#/login'
+      localStorage.clear()
+    }
     userLimit.forEach((item) => {
       item.Children = []
       this.limitArr.forEach((items) => {

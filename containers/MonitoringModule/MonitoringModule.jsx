@@ -6,7 +6,8 @@ import styles from './MonitoringModule.scss'
 import classNames from 'classnames'
 import 'animate.css'
 import getResponseDatas from '../../plugs/HttpData/getResponseData'
-import { Input, Checkbox, Radio, Icon, Switch, DatePicker, Collapse, Select, Modal, message } from 'antd'
+import drags from '../../plugs/drags'
+import { Input, Checkbox, Radio, Icon, Switch, DatePicker, Collapse, Select, Modal, message, Button } from 'antd'
 import moment from 'moment'
 const { Panel } = Collapse
 const { Search } = Input
@@ -75,6 +76,7 @@ class MonitoringModule extends React.Component {
       deviceString: [], // 交通设施参数
       importantId: '',
       lineLatlngArr: null,
+      TimeData: null,
     }
     // 修改管控时的参数
     this.controlDatas = {
@@ -164,11 +166,13 @@ class MonitoringModule extends React.Component {
     this.endTimeUrl = '/control/plan/update/end/time/' // {eventTypeId}/{eventId}/{controllId} 修改管控方案结束时间'
     this.deviceUrl = '/control/event/get/control/type/by/device/' // 根据管控类型，获取管控设备集合（去重）
     this.markPublishUrl = '/control/event/mark/publish/' // 标注事件发起管控 和修改管控方案同一个接口
-    this.secUrl = 'control/road/get/latlngs/sec/' // 根据道路、方向、起止桩号，计算经纬度和最后一个点所在的道路id
+    this.secUrl = '/control/road/get/latlngs/sec/' // 根据道路、方向、起止桩号，计算经纬度和最后一个点所在的道路id
+    this.timeoutUrl = '/control/plan/list/soon/timeout' // 获取即将超时的管控方案'
+    this.promptUrl = '/control/plan/add/no/prompt/' // {eventId} 添加不再提示案件'
   }
   componentDidMount = () => {
     // 获取用户权限
-    const limitArr = JSON.parse(localStorage.getItem('userLimit'))
+    const limitArr = JSON.parse(localStorage.getItem('userLimit')) || []
     const userLimit = []
     limitArr.forEach((item) => {
       userLimit.push(item.id)
@@ -196,7 +200,11 @@ class MonitoringModule extends React.Component {
     this.getDeviceEventList()
     // 事件标注里的修改 高速、方向、桩号的起始和结束
     // this.handSecUrl()
+    this.timeInterval = setInterval(() => {
+      this.handleTimeData()
+    }, 60000)
   }
+
   onStartChange = (value) => {
     this.onPickerChange('startValue', value)
     this.publishPlanVO.startTime = value ? this.getDate(value._d) : ''
@@ -871,7 +879,6 @@ class MonitoringModule extends React.Component {
 
   }
   handleMarkControlPop = (titFlag) => {
-    debugger
     const { deviceString, deviceTypes, detailsPopup, eventType, importantId, lineLatlngArr } = this.state
     const deviceAry = []
     const that = this
@@ -1027,6 +1034,7 @@ class MonitoringModule extends React.Component {
   }
   handleMarkControl = () => {
     const { channel, controlDes } = this.publishPlanVO
+    console.log(this.publishPlanVO);
     const { reservePopup, startValue, endValue, eventType } = this.state
     const { list } = reservePopup
     for (let i = 0; i < list.length; i++) {
@@ -1267,6 +1275,7 @@ class MonitoringModule extends React.Component {
   handleRelease = () => {
     const { channel, list, controlDes } = this.publishPlanVO
     const { reservePopup, startValue, endValue } = this.state
+    console.log(this.publishPlanVO);
 
     for (let i = 0; i < list.length; i++) {
       if (list[i].content == '') {
@@ -1306,6 +1315,26 @@ class MonitoringModule extends React.Component {
         this.handleplanList()
         message.success('发布成功')
         this.setState({ reservePopup: null })
+      }
+      if (result.code === 201) {
+        const dom = []
+        result.data.forEach((item) => {
+          reservePopup.devices.forEach((items) => {
+            const appendId = item.deviceTypeId + '_' + item.deviceId
+            items.device.forEach((itemss) => {
+              if (itemss.appendId === appendId) {
+                dom.push(<p style={{ color: 'red' }}>{itemss.deviceName + '-' + itemss.directionName + items.codeName}-已管控</p>)
+              }
+            })
+          })
+        })
+
+        confirm({
+          title: '温馨提示',
+          content: dom,
+          okText: '确认',
+          cancelText: '取消',
+        })
       }
     })
   }
@@ -1357,11 +1386,60 @@ class MonitoringModule extends React.Component {
   handleWhethe = () => {
     const { reservePopup, endValueTime } = this.state
     const { eventTypeId, eventId, controllId } = reservePopup
-    getResponseDatas('put', this.endTimeUrl + eventTypeId + '/' + eventId + '/' + controllId, { endTime: endValueTime }).then((res) => {
+    getResponseDatas('put', this.endTimeUrl + eventTypeId + '/' + eventId + '/' + controllId + '?endTime=' + endValueTime).then((res) => {
       const result = res.data
       if (result.code === 200) {
         message.success('延时发布成功')
-        this.setState({ reservePopup: null })
+        this.setState({ reservePopup: null, endValueTime: null })
+      }
+    })
+  }
+  handleTimeData = () => {
+    getResponseDatas('get', this.timeoutUrl).then((res) => {
+      const result = res.data
+      console.log(result)
+      if (result.code === 200 && result.data.length) {
+        this.setState({ TimeData: result.data })
+      } else {
+        this.setState({ TimeData: null })
+      }
+    })
+  }
+  handleTimeDataState = () => {
+    this.setState({ TimeData: null })
+  }
+  // 延时时间
+  handleEndValueTimeState = (item) => {
+    if (item) {
+      this.TimeState = item
+      this.setState({
+        endValueTime: this.getDate(),
+      })
+    } else {
+      this.setState({
+        endValueTime: null,
+      })
+    }
+  }
+  handleWhetheState = () => {
+    const { endValueTime } = this.state
+    const { eventTypeId, eventId, controllId } = this.TimeState
+    getResponseDatas('put', this.endTimeUrl + eventTypeId + '/' + eventId + '/' + controllId + '?endTime=' + endValueTime).then((res) => {
+      const result = res.data
+      if (result.code === 200) {
+        message.success('延时发布成功')
+        this.TimeState = null
+        this.setState({ endValueTime: null })
+      }
+    })
+  }
+  handleNoneTimeState = (item) => {
+    const { eventId } = item
+    getResponseDatas('put', this.promptUrl + eventId).then((res) => {
+      const result = res.data
+      if (result.code === 200) {
+        message.success('操作成功')
+        this.setState({ endValueTime: null })
       }
     })
   }
@@ -1369,7 +1447,7 @@ class MonitoringModule extends React.Component {
     const {
       MeasuresList, eventsPopup, groupType, planList, EventTagPopup, EventTagPopupTit, roadNumber, endValueTime, conditionList, boxSelect, flagClose, oldDevicesList,
       boxSelectList, hwayList, directionList, VIboardPopup, groupStatus, controlPopup, controlBtnFlag, controlBtnFlagText, detailsPopup, whethePopup, reservePopup, startValue, endValue, endOpen, SidePopLeft, detailsLatlng
-      , controlTypes, eventTypes, deviceTypes, updatePoint, userLimit } = this.state
+      , controlTypes, eventTypes, deviceTypes, updatePoint, userLimit, TimeData } = this.state
     return (
       <div className={styles.MonitoringModule}>
         <SystemMenu />
@@ -1459,78 +1537,27 @@ class MonitoringModule extends React.Component {
             </div>
           </div> : null}
         {/* 事件详情 */}
-        {/* {detailsPopup ?
+        {TimeData ?
           <div className={styles.MaskBox}>
-            <div className={styles.DetailsBox}>
-              <div className={styles.Title}>事件详情<Icon className={styles.Close} onClick={() => { this.handleEventPopup('Details', false) }} type="close" /></div>
+            <div className={classNames(styles.DetailsBox, styles.TimeData)}>
+              <div className={styles.Title}>管控方案超时提醒<Icon className={styles.Close} onClick={() => { this.handleTimeDataState() }} type="close" /></div>
               <div className={styles.Content}>
-                <div className={styles.Header}>
-                  <span>事件编号&nbsp;:&nbsp;&nbsp;10001</span>
-                  <span>事件类型&nbsp;:&nbsp;&nbsp;交通拥堵</span>
-                </div>
                 <div className={styles.ItemBox}>
-                  <div className={styles.HeadItem}>基本信息</div>
-                  <div className={styles.RowBox}>道路名称：G6告诉公路清河收费站</div>
-                  <div className={styles.RowBox}>
-                    <p>方向&nbsp;:&nbsp;&nbsp;北向南</p>
-                    <p>车道&nbsp;:&nbsp;&nbsp;所有</p>
-                  </div>
-                  <div className={styles.RowBox}>
-                    <p>起始公里桩号&nbsp;:&nbsp;&nbsp;K100+100 </p>
-                    <p>结束公里桩号&nbsp;:&nbsp;&nbsp;K120+200</p>
-                  </div>
-                  <div className={styles.RowBox}>数据来源&nbsp;:&nbsp;&nbsp;高德数据</div>
-                </div>
-                <div className={styles.ItemBox}>
-                  <div className={styles.HeadItem}>当前路况</div>
-                  <div className={styles.RowBox}>
-                    <p>拥堵级别&nbsp;:&nbsp;&nbsp;<span style={{ color: '#b90303' }}>严重拥堵</span></p>
-                    <p>平局车速&nbsp;:&nbsp;&nbsp;<span style={{ color: '#b90303' }}>20kmh</span></p>
-                  </div>
-                </div>
-                <div className={styles.ItemBox}>
-                  <div className={styles.HeadItem}>天气情况</div>
-                  <div className={styles.RowBox}>
-                    <p>天气&nbsp;:&nbsp;&nbsp;<span style={{ color: '#ff7e00' }}>大雾</span></p>
-                    <p>能见度&nbsp;:&nbsp;&nbsp;<span style={{ color: '#ff7e00' }}>小于50米</span></p>
-                  </div>
-                </div>
-                <div className={styles.ItemBox}>
-                  <div className={styles.HeadItem}>道路施工</div>
-                  <div className={styles.RowBox}>
-                    <p>事件等级&nbsp;:&nbsp;&nbsp;<span style={{ color: '#b90303' }}>重大</span></p>
-                  </div>
-                  <div className={styles.RowBox}>施工时间&nbsp;:&nbsp;&nbsp;2020-02-14  12:00:00   —  2020-02-15  12:00:00</div>
-                </div>
-                <div className={styles.ItemBox}>
-                  <div className={styles.HeadItem}>道路控制设备现状</div>
-                  <div className={styles.RowBox}>
-                    **地点断面可变情报板&nbsp;:&nbsp;&nbsp;<span style={{ color: '#b90303' }}>小心驾驶/请勿超速</span>
-                  </div>
-                  <div className={styles.RowBox}>
-                    **地点车道可变情报板&nbsp;:&nbsp;&nbsp;一车道限速&nbsp;:&nbsp;&nbsp; <span style={{ color: '#11e002' }}>100km/h</span>
-                  </div>
-                  <div className={styles.RowBox}>
-                    <span style={{ width: '154px', display: 'inline-block' }} />
-                    二车道限速&nbsp;:&nbsp;&nbsp;<span style={{ color: '#11e002' }}>80km/h</span>
-                  </div>
-                  <div className={styles.RowBox}>
-                    **地点断面可变情报板&nbsp;:&nbsp;&nbsp;<span style={{ color: '#b90303' }}>应急车道禁止通行</span>
-                  </div>
-                  <div className={styles.RowBox}>
-                    ****地点**收费站入口&nbsp;:&nbsp;&nbsp;<span style={{ color: '#11e002' }}>开放</span>
-                  </div>
-                  <div className={styles.RowBox}>
-                    ****地点**收费站出口&nbsp;:&nbsp;&nbsp;<span style={{ color: '#11e002' }}>开放</span>
-                  </div>
-                </div>
-                <div className={styles.ItemFooter}>
-                  <span onClick={() => { this.handleEventPopup('Reserve', true) }}>查看管控预案</span>
-                  <span onClick={() => { this.handleEventPopup('Details', false) }}>返&nbsp;&nbsp;回</span>
+                  {/*  <div className={styles.HeadItem}>当前路况</div> */}
+                  {
+                    TimeData.map((item, index) => {
+                      return (
+                        <div className={styles.RowBox} key={item.eventId}>
+                          <div className={styles.left}>{index + 1}.{item.eventId}P方案{item.secName}发生{item.eventTypeName}</div>
+                          <div className={styles.right}><Button onClick={() => { this.handleNoneTimeState(item) }} className={styles.Button}>不再提示</Button><Button className={styles.Button} onClick={() => { this.handleEndValueTimeState(item) }}>延时</Button></div>
+                        </div>
+                      )
+                    })
+                  }
                 </div>
               </div>
             </div>
-          </div> : null} */}
+          </div> : null}
         {/* 管控预案查询 */}
         {reservePopup ?
           <div className={styles.MaskBox}>
@@ -1688,7 +1715,7 @@ class MonitoringModule extends React.Component {
                   <div className={styles.HeadItem}>发布渠道
                     <div style={{ marginLeft: '10px' }} className={styles.ItemInput}>
                       <Checkbox.Group defaultValue={reservePopup.channel} onChange={(e) => { this.handleCheckboxGroup(e, 'channel', 'publishPlanVO') }}>
-                        <Checkbox value="1" >发布渠道</Checkbox>
+                        <Checkbox value="1" >高德</Checkbox>
                         <Checkbox value="2" >可变情报表</Checkbox>
                       </Checkbox.Group>
                     </div>
@@ -1711,54 +1738,33 @@ class MonitoringModule extends React.Component {
                 <span onClick={() => { this.handleEventPopup('Reserve', false) }}>返&nbsp;&nbsp;回</span>
               </div>
             </div>
-            {
-              (reservePopup && endValueTime) ?
-                <div className={classNames(styles.EventPopup, styles.WhethePopupr)}>
-                  <div className={styles.Title}>是否修改管控时段结束时间?</div>
-                  <div className={styles.Centent}>
-                    <div className={styles.RowBox}>
-                      结束时间&nbsp;:&nbsp;&nbsp;
-                      <p className={styles.ItemInput}>
-                        <DatePicker
-                          disabledDate={this.disabledEndDate}
-                          showTime
-                          format="YYYY-MM-DD HH:mm:ss"
-                          value={endValueTime ? moment(endValueTime, 'YYYY-MM-DD HH:mm:ss') : endValue}
-                          placeholder="结束时间"
-                          onChange={this.onEndChangeTime}
-                        />
-                      </p>
-                    </div>
-                  </div>
-                  <div className={styles.ItemFooter}>
-                    <span onClick={(e) => { this.handleWhethe() }}>确&nbsp;&nbsp;认</span>
-                    <span onClick={() => { this.handleEndValueTime(false) }}>返&nbsp;&nbsp;回</span>
-                  </div>
-                </div> : null
-            }
           </div> : null
         }
-        {/* {
-          whethePopup ?
-            <div className={styles.MaskBox}>
-              <div className={classNames(styles.EventPopup, styles.WhethePopupr)}>
-                <div className={styles.Title}>是否添加**地点**断面可变情报板至***管控预案?</div>
-                <div className={styles.ItemFooter}>
-                  <span onClick={(e) => { this.handleEventPopup('Whethe', false, e) }}>确&nbsp;&nbsp;认</span>
-                  <span onClick={() => { this.handleEventPopup('Whethe', false) }}>返&nbsp;&nbsp;回</span>
+        {
+          (endValueTime) ?
+            <div className={classNames(styles.EventPopup, styles.WhethePopupr)} ref={(el) => { el ? el.onmousedown = drags : null }}>
+              <div className={styles.Title}>是否修改管控时段结束时间?</div>
+              <div className={styles.Centent}>
+                <div className={styles.RowBox}>
+                  结束时间&nbsp;:&nbsp;&nbsp;
+                  <p className={styles.ItemInput}>
+                    <DatePicker
+                      disabledDate={this.disabledEndDate}
+                      showTime
+                      format="YYYY-MM-DD HH:mm:ss"
+                      value={endValueTime ? moment(endValueTime, 'YYYY-MM-DD HH:mm:ss') : endValue}
+                      placeholder="结束时间"
+                      onChange={this.onEndChangeTime}
+                    />
+                  </p>
                 </div>
               </div>
+              <div className={styles.ItemFooter}>
+                <span onClick={(e) => { reservePopup ? this.handleWhethe() : this.handleWhetheState() }}>确&nbsp;&nbsp;认</span>
+                <span onClick={() => { this.handleEndValueTime(false) }}>返&nbsp;&nbsp;回</span>
+              </div>
             </div> : null
-        } */}
-        {/*  <div className={styles.MaskBox}>
-          <div className={classNames(styles.EventPopup, styles.WhethePopupr)}>
-            <div className={styles.Title} style={{ textIndent: 0, textAlign: 'center' }}>延时&nbsp;:<div className={classNames(styles.ItemInput, styles.WhetheInput)}><Input defaultValue="120" style={{ color: '#26ff6d' }} /></div>分钟</div>
-            <div className={styles.ItemFooter}>
-              <span onClick={() => { this.handleEventPopup('Whethe', false) }}>确&nbsp;&nbsp;认</span>
-              <span onClick={() => { this.handleEventPopup('Whethe', false) }}>返&nbsp;&nbsp;回</span>
-            </div>
-          </div>
-        </div> */}
+        }
         {
           detailsPopup ?
             <div className={styles.Eventdetails}>

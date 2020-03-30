@@ -1,11 +1,10 @@
 .MonitoringModule {
-  
-::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-}
-::-webkit-outer-spin-button {
-  -webkit-appearance: none;
-}
+  ::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+  }
+  ::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+  }
   position: fixed;
   left: 0;
   right: 0;
@@ -187,7 +186,7 @@
     left: 0;
     top: 0;
     z-index: 999;
-    background:rgba(19,35,52,.9)
+    background: rgba(19, 35, 52, 0.9);
   }
   // 标题
   .Title {
@@ -324,7 +323,7 @@
     background: url(../../imgs/popupBg.png) center center no-repeat;
     background-size: 100% 100%;
     position: absolute;
-    left: 30%;
+    left: 40%;
     top: 50%;
     margin-top: -159px;
     color: #fff;
@@ -389,6 +388,55 @@
     margin-top: -353px;
     color: #fff;
   }
+  .TimeData {
+    background: none !important;
+    width: auto !important;
+    min-width: 605px;
+    height: auto !important;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    margin: 0;
+    .Title {
+      background: #11181f;
+    }
+    .Content {
+      background: #0b0c0d;
+      padding-bottom: 30px;
+    }
+    .ItemBox {
+      padding: 10px 0;
+      max-height: 395px;
+      overflow-y: auto;
+      .RowBox {
+        margin: 15px 0 !important;
+        .left {
+          display: inline-block;
+        }
+        .right {
+          display: inline-block;
+        }
+      }
+    }
+
+    .Button {
+      min-width: 80px;
+      height: 25px;
+      display: inline-block;
+      background: #1a416a;
+      border: 1px solid #969495;
+      margin: 0 10px;
+      color: #fff;
+      text-align: center;
+      line-height: 25px;
+      cursor: pointer;
+      border-radius: 0;
+      &:hover {
+        background: #0b0e13;
+      }
+    }
+  }
   .Content {
     width: 100%;
     height: calc(100% - 140px);
@@ -447,7 +495,7 @@
         }
         .InputBox {
           width: 100%;
-          text-align: center;
+          text-align: left;
           margin: 10px 0;
           justify-content: flex-start;
           display: flex;
@@ -487,12 +535,19 @@
   }
   .WhethePopupr {
     width: 420px;
-    /* height: 115px; */
+    height: 220px;
     background: url(../../imgs/popupBg.png) center center no-repeat;
     background-size: 100% 100%;
+    cursor: move;
+    margin-top: 0;
+    z-index: 9999;
     .Centent {
       height: auto;
       text-align: center;
+    }
+    .ItemInput {
+      display: inline-block;
+      width: 65%;
     }
     .Title {
       line-height: 35px !important;
@@ -806,8 +861,8 @@
           cursor: pointer;
           margin: 1%;
         }
-        .currentSel{
-          background:#143757;
+        .currentSel {
+          background: #143757;
         }
       }
       .ItemName {
@@ -821,16 +876,16 @@
     }
     .ItemFooter {
       position: fixed !important;
-      width:auto;
-      bottom:-10px;
-      left:14.5%;
+      width: auto;
+      bottom: -10px;
+      left: 14.5%;
       color: #fff;
       transform: translate(-25%, 0);
       -webkit-transform: translate(-25%, 0);
       -moz-transform: translate(-25%, 0);
       -ms-transform: translate(-25%, 0);
       -o-transform: translate(-25%, 0);
-}
+    }
   }
 }
 .PanelItemNone {

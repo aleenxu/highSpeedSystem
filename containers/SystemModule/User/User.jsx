@@ -51,7 +51,7 @@ class User extends React.Component {
   }
   componentDidMount = () => {
     // 获取用户权限
-    const limitArr = JSON.parse(localStorage.getItem('userLimit'))
+    const limitArr = JSON.parse(localStorage.getItem('userLimit'))||[]
     const userLimit = []
     limitArr.forEach((item) => {
       userLimit.push(item.id)
@@ -149,7 +149,7 @@ class User extends React.Component {
       return
     }
     if (!this.dataList.loginName) {
-      message.error('请填写登陆名称!')
+      message.error('请填写登录名称!')
       return
     }
     if (!this.dataList.phone) {
@@ -240,7 +240,7 @@ class User extends React.Component {
               <div className={styles.listItems}>
                 <div className={styles.listTd} >用户ID</div>
                 <div className={styles.listTd} >用户姓名</div>
-                <div className={styles.listTd} >登陆名称</div>
+                <div className={styles.listTd} >登录名称</div>
                 <div className={styles.listTd} >组织机构</div>
                 <div className={styles.listTd} >角色</div>
                 {userLimit.includes(16) || userLimit.includes(37) || userLimit.includes(15) ? <div className={styles.listTd} >操作</div> : null}
@@ -296,7 +296,7 @@ class User extends React.Component {
                       <div className={styles.Item}>
                         <Form.Item
                           name="loginName"
-                          label="登陆名称"
+                          label="登录名称"
                         >
                           <Input disabled={boardData.id ? true : false} onChange={(e) => { this.handleInput(e, 'loginName', 'dataList') }} defaultValue={boardData.loginName} />
                         </Form.Item>
