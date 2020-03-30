@@ -630,6 +630,20 @@ class ReservePlan extends React.Component {
     })
   }
   handleUpdatePlan = (deviceList, plan) => {
+    const { eventType, deviceString } = this.state
+    debugger
+    const itemArr = []
+    deviceList.map((item) => {
+      item.device.map((items,index) =>{
+        debugger
+        itemArr.push({
+          "controlDeviceType": this.controlDatas.list[index].deviceControlType,
+          "deviceId": items.deviceId,
+          "deviceType": items.deviceType ? items.deviceType : items.deviceTypeId,
+          "showContent": this.controlDatas.list[index].content
+        })
+      })
+    })
     debugger
     for (let i = 0; i < this.controlDatas.list.length; i++) {
       if (!this.controlDatas.list[i].content) {
@@ -641,10 +655,10 @@ class ReservePlan extends React.Component {
         return
       }
     }
-    const paramStr = '?controlDeviceType=' + plan.controlDeviceType + '&controlDeviceTypeName=' + plan.controlDeviceTypeName + '&controlEventType=' + plan.controlEventType
-      + '&createUser=' + plan.createUser + '&direction=' + plan.direction + '&enabled=' + plan.enabled + '&locationMode=' + plan.locationMode + '&pileNum=' + plan.pileNum
-      + '&quoteNum=' + plan.quoteNum + '&roadName=' + plan.roadName + '&roadSecId=' + plan.roadSecId + '&rowId=' + plan.rowId + '&secName=' + plan.secName + '&startEndPileNum=' + plan.startEndPileNum
-    getResponseDatas('post', this.updatePlanUrl + paramStr, deviceList).then((res) => {
+    const paramStr = '?controlDeviceType=' + deviceString + '&controlEventType=' + eventType
+       +'&roadName='+ plan.roadName +'&rowId='+plan.rowId+ '&direction=' + plan.directionId + '&locationMode=' + plan.locationMode 
+       + '&startEndPileNum=' + this.controlDatas.startPileNum + ' ' +this.controlDatas.endPileNum
+    getResponseDatas('post', this.updatePlanUrl + paramStr, itemArr).then((res) => {
       const result = res.data
       if (result.code === 200) {
         if (result.code === 200) {
@@ -731,8 +745,8 @@ class ReservePlan extends React.Component {
     } else if (name == 'update') {
       debugger
       this.controlDatas = listByPage.data[nowIndex]
-      this.controlDatas.startPileNum = listByPage.data[nowIndex].pileNum.split(" ")[0]
-      this.controlDatas.endPileNum = listByPage.data[nowIndex].pileNum.split(" ")[1]
+      this.controlDatas.startPileNum = listByPage.data[nowIndex].startEndPileNum.split(" ")[0]
+      this.controlDatas.endPileNum = listByPage.data[nowIndex].startEndPileNum.split(" ")[1]
       this.controlDatas.directionId = listByPage.data[nowIndex].direction
       this.setState({
         eventType: listByPage.data[nowIndex].controlEventType,
