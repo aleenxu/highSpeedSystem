@@ -11,7 +11,6 @@ import { Pagination, Input, Button, Checkbox, Radio, Icon, Switch, DatePicker, C
 const { Panel } = Collapse
 const { Search } = Input
 const { Option } = Select
-const demoData = JSON.parse(localStorage.getItem('detailsPopup'))
 /*        预案库 */
 class ReservePlan extends React.Component {
   constructor(props) {
@@ -42,7 +41,7 @@ class ReservePlan extends React.Component {
       indeterminate: true,
       checkAll: false,
       plainOptionList: null,
-      EventTagPopup: true,
+      EventTagPopup: false,
       EventTagPopupTit: '标题',
       detailsLatlng: null, // 详情路段的经纬度
       boxSelect: null, // 框选
@@ -62,21 +61,22 @@ class ReservePlan extends React.Component {
       deviceString: [], // 交通设施参数
       importantId: '',
       lineLatlngArr: null,
+      addFlag: null, // 是否是新增过来的
     }
     // 修改管控时的参数
-    this.controlDatas = JSON.parse(localStorage.getItem('detailsPopup'))
-    // this.controlDatas = {
-    //   eventId: '', // 事件ID
-    //   roadId: '', // 高速ID
-    //   directionId: '', // 方向ID
-    //   startPileNum: '', //桩号
-    //   endPileNum: '', //桩号
-    //   roadName: '', // 高速名称
-    //   eventType: 1, // 事件类型
-    //   directionName: '',
-    //   locationMode: '1',
-    //   situation: 0, // 
-    // }
+    // this.controlDatas = JSON.parse(localStorage.getItem('detailsPopup'))
+    this.controlDatas = {
+      eventId: '', // 事件ID
+      roadId: '', // 高速ID
+      directionId: '', // 方向ID
+      startPileNum: '', //桩号
+      endPileNum: '', //桩号
+      roadName: '', // 高速名称
+      eventType: 1, // 事件类型
+      directionName: '',
+      locationMode: '1',
+      situation: 0, // 
+    }
     this.mapStyles = {
       position: 'absolute',
       top: '0',
@@ -88,18 +88,6 @@ class ReservePlan extends React.Component {
       alignItems: 'center',
       backgroundColor: '#1e375d',
       border: '1px #163959 solid',
-    }
-    this.addPlanUrlParams = {
-
-    }
-    this.updatePlanUrlParams = {
-
-    }
-    this.detailPlanUrlParams = {
-
-    }
-    this.getListPlanUrlParams = {
-
     }
     this.Parameters = {
       keyword: '',
@@ -114,6 +102,7 @@ class ReservePlan extends React.Component {
 
     this.addPlanUrl = '/control/contingencyPlan/addPlan' // 新增预案
     this.updatePlanUrl = '/control/contingencyPlan/updatePlan'//    修改预案
+    this.delPlanUrl = '/control/contingencyPlan/deletePlan'//    删除预案
     this.detailPlanUrl = '/control/contingencyPlan/getDeviceDetail'   //根据方案ID查询方案中设备
     this.getListPlanUrl = '/control/contingencyPlan/getDeviceNameList'//    根据设备ID和设备类型查询设备名称
     this.listByPageUrl = '/control/contingencyPlan/listByPage' // 分页查询设备
@@ -128,6 +117,7 @@ class ReservePlan extends React.Component {
     this.handlelistDetail('eventTypes', 23)
     // 获取全部交通设施
     this.getDeviceEventList()
+
   }
   // 字典查询
   handlelistDetail = (name, value) => {
@@ -159,16 +149,17 @@ class ReservePlan extends React.Component {
     })
   }
   handleInput = (e, name, type, data) => {
+    debugger
     if (type === 'publishPlanVO' && name === 'content') {
       this.publishPlanVO.list.forEach((item, index) => {
         if (item.deviceId === data) {
           this.publishPlanVO.list[index].content = e.target.value
         }
       })
-    } else if (type === 'reservePopup' && name === 'content') {
-      this.reservePopup.list.forEach((item, index) => {
+    } else if (type === 'controlDatas' && name === 'content') {
+      this.controlDatas.list.forEach((item, index) => {
         if (item.deviceId === data) {
-          this.reservePopup.list[index].content = e.target.value
+          this.controlDatas.list[index].content = e.target.value
         }
       })
     } else if (name === 'endPileNum' || name === 'startPileNum') {
@@ -180,6 +171,7 @@ class ReservePlan extends React.Component {
   }
   handSecUrl = () => {
     const that = this
+    debugger
     if (!this.controlDatas.roadName) {
       message.info('请选择高速！')
       return
@@ -213,7 +205,7 @@ class ReservePlan extends React.Component {
         }, () => {
           if (that.state.lineLatlngArr) {
             const latlngArr = JSON.parse(JSON.stringify(that.state.lineLatlngArr))
-            const colorFlag = that.controlDatas.eventType === 3 ? false : true
+            const colorFlag = that.state.eventType === 3 ? false : true
             window.drawLine(latlngArr, colorFlag)
           }
         })
@@ -239,16 +231,17 @@ class ReservePlan extends React.Component {
     })
   }
   handleSelect = (value, name, type, data) => {
+    debugger
     if (type === 'publishPlanVO' && name === 'deviceControlType') {
       this.publishPlanVO.list.forEach((item, index) => {
         if (item.deviceId === data) {
           this.publishPlanVO.list[index].deviceControlType = value
         }
       })
-    } else if (type === 'reservePopup' && name === 'deviceControlType') {
-      this.reservePopup.list.forEach((item, index) => {
+    } else if (type === 'controlDatas' && name === 'deviceControlType') {
+      this.controlDatas.list.forEach((item, index) => {
         if (item.deviceId === data) {
-          this.reservePopup.list[index].deviceControlType = value
+          this.controlDatas.list[index].deviceControlType = value
         }
       })
     } else if (type === 'controlDatas' && name === 'roadId') {
@@ -293,6 +286,7 @@ class ReservePlan extends React.Component {
           })
         })
       } else {
+        debugger
         this[type][name] = value
       }
     }
@@ -337,83 +331,83 @@ class ReservePlan extends React.Component {
       }
     })
   }
-    // 框选按钮点击
-    controlBtnClick = (event) => {
-      const _this = this;
-      const textFlag = $(event.target).text() === '框选设备'
-      this.setState({
-        controlBtnFlagText: textFlag ? '关闭框选' : '框选设备',
-      }, () => {
-        if (textFlag) {
-          if (this.state.EventTagPopup) {
-            if (this.controlDatas.startPileNum === '') {
-              message.info('数据不能为空,请输入数据!')
-              $('#startInt').focus()
-              this.setState({
-                controlBtnFlagText: '框选设备',
-              })
-              return
-            } else if (this.controlDatas.endPileNum === '') {
-              $('#endInt').focus()
-              message.info('数据不能为空,请输入数据!')
-              this.setState({
-                controlBtnFlagText: '框选设备',
-              })
-              return
-            }
+  // 框选按钮点击
+  controlBtnClick = (event) => {
+    const _this = this;
+    const textFlag = $(event.target).text() === '框选设备'
+    this.setState({
+      controlBtnFlagText: textFlag ? '关闭框选' : '框选设备',
+    }, () => {
+      if (textFlag) {
+        if (this.state.EventTagPopup) {
+          if (this.controlDatas.startPileNum === '') {
+            message.info('数据不能为空,请输入数据!')
+            $('#startInt').focus()
+            this.setState({
+              controlBtnFlagText: '框选设备',
+            })
+            return
+          } else if (this.controlDatas.endPileNum === '') {
+            $('#endInt').focus()
+            message.info('数据不能为空,请输入数据!')
+            this.setState({
+              controlBtnFlagText: '框选设备',
+            })
+            return
           }
-          $(".amap-maps").attr("style", "cursor:crosshair")
-          window.drawRectangle()
-          this.setState({
-            flagClose: true,
-            boxFlag: true,
-          }, () => {
-            window.map.on("mousedown", function (e) {
-              // console.log(e, "down..")
-              window.newPoint = new Array(4).fill(null)
-              const newArr = []
-              newArr[0] = e.lnglat.lng
-              newArr[1] = e.lnglat.lat
-              newPoint[0] = newArr
-              _this.setState({
-                boxFlag: true,
-              })
-            })
-            window.map.on("mouseup", function (e) {
-              // console.log(this.deviceList, "up..")
-              const newArr = []
-              newArr[0] = e.lnglat.lng
-              newArr[1] = e.lnglat.lat
-              newPoint[2] = newArr
-              newPoint[1] = [newPoint[2][0], newPoint[0][1]]
-              newPoint[3] = [newPoint[0][0], newPoint[2][1]]
-              if (_this.state.boxFlag && _this.state.flagClose) {
-                debugger
-                if (_this.state.EventTagPopup) {
-                  // console.log("标注的框选")
-                  const params = {
-                    devices: _this.state.deviceTypes,
-                    roadPileNum: _this.controlDatas.startPileNum + ' ' + _this.controlDatas.endPileNum,
-                    eventType: _this.state.eventType,
-                  }
-                  _this.state.controlBtnFlagText === '关闭框选' ? _this.getDevice(params) : null
-                }
-                _this.setState({
-                  boxFlag: false,
-                })
-              }
-            })
-          })
-        } else {
-          this.setState({
-            flagClose: null,
-            boxFlag: null,
-          })
-          $(".amap-maps").attr("style", "")
-          window.mouseTool.close(true) //关闭，并清除覆盖物
         }
-      })
-    }
+        $(".amap-maps").attr("style", "cursor:crosshair")
+        window.drawRectangle()
+        this.setState({
+          flagClose: true,
+          boxFlag: true,
+        }, () => {
+          window.map.on("mousedown", function (e) {
+            // console.log(e, "down..")
+            window.newPoint = new Array(4).fill(null)
+            const newArr = []
+            newArr[0] = e.lnglat.lng
+            newArr[1] = e.lnglat.lat
+            newPoint[0] = newArr
+            _this.setState({
+              boxFlag: true,
+            })
+          })
+          window.map.on("mouseup", function (e) {
+            // console.log(this.deviceList, "up..")
+            const newArr = []
+            newArr[0] = e.lnglat.lng
+            newArr[1] = e.lnglat.lat
+            newPoint[2] = newArr
+            newPoint[1] = [newPoint[2][0], newPoint[0][1]]
+            newPoint[3] = [newPoint[0][0], newPoint[2][1]]
+            if (_this.state.boxFlag && _this.state.flagClose) {
+              debugger
+              if (_this.state.EventTagPopup) {
+                // console.log("标注的框选")
+                const params = {
+                  devices: _this.state.deviceTypes,
+                  roadPileNum: _this.controlDatas.startPileNum + ' ' + _this.controlDatas.endPileNum,
+                  eventType: _this.state.eventType,
+                }
+                _this.state.controlBtnFlagText === '关闭框选' ? _this.getDevice(params) : null
+              }
+              _this.setState({
+                boxFlag: false,
+              })
+            }
+          })
+        })
+      } else {
+        this.setState({
+          flagClose: null,
+          boxFlag: null,
+        })
+        $(".amap-maps").attr("style", "")
+        window.mouseTool.close(true) //关闭，并清除覆盖物
+      }
+    })
+  }
   // 更新设备及交通管控类型
   updateControlTypes = (controlId) => {
     const nowIndex = this.state.deviceString.indexOf(controlId) > -1 ? this.state.deviceString.indexOf(controlId) : -1
@@ -436,7 +430,7 @@ class ReservePlan extends React.Component {
   getDeviceEventList = (flag) => {
     debugger
     const params = {
-      controlTypes: this.state.deviceString.join()
+      deviceString: '',
     }
     getResponseDatas('get', this.deviceUrl, params).then((res) => {
       const result = res.data
@@ -456,6 +450,8 @@ class ReservePlan extends React.Component {
             })
             this.setState({
               deviceString: arrId,
+            }, () => {
+              console.log('新增时全选', this.state.controlTypes, this.state.deviceString)
             })
           })
         }
@@ -588,29 +584,107 @@ class ReservePlan extends React.Component {
       EventTagPopup: boolean,
     })
   }
-  handleAddPlan = () => {
-    getResponseDatas('post', this.addPlanUrl, this.addPlanUrlParams ).then((res) => {
+  handleAddPlan = (deviceList, plan) => {
+    const { eventType, deviceString } = this.state
+    debugger
+    const itemArr = []
+    console.log(deviceList,'look at here')
+    deviceList.map((item) => {
+      item.device.map((items,index) =>{
+        itemArr.push({
+          "controlDeviceType": this.controlDatas.list[index].deviceControlType,
+          "deviceId": items.deviceId,
+          "deviceType": items.deviceTypeId,
+          "showContent": this.controlDatas.list[index].content
+        })
+      })
+    })
+    console.log(itemArr,'是不是呢？')
+    for (let i = 0; i < this.controlDatas.list.length; i++) {
+      if (!this.controlDatas.list[i].content) {
+        message.warning('请填全显示内容')
+        return
+      }
+      if (!this.controlDatas.list[i].deviceControlType) {
+        message.warning('请选择设备控制类型')
+        return
+      }
+    }
+    const paramStr = '?controlDeviceType=' + deviceString.join() + '&controlEventType=' + eventType
+       +'&roadName='+ plan.roadName + '&direction=' + plan.directionId + '&locationMode=' + plan.locationMode 
+       + '&startEndPileNum=' + this.controlDatas.startPileNum + ' ' +this.controlDatas.endPileNum
+    getResponseDatas('post', this.addPlanUrl+paramStr, itemArr).then((res) => {
       const result = res.data
       if (result.code === 200) {
-        
+        message.info(res.data.message)
+        this.setState({
+          EventTagPopup: null,
+          reservePopup: null,
+          addFlag: false,
+        },() => {
+          this.handleListByPage()
+        })
+      } else {
+        message.info(res.message)
       }
     })
   }
   handleUpdatePlan = (deviceList, plan) => {
-    getResponseDatas('post', this.updatePlanUrl, {deviceList:deviceList, plan:plan}).then((res) => {
+    debugger
+    for (let i = 0; i < this.controlDatas.list.length; i++) {
+      if (!this.controlDatas.list[i].content) {
+        message.warning('请填全显示内容')
+        return
+      }
+      if (!this.controlDatas.list[i].deviceControlType) {
+        message.warning('请选择设备控制类型')
+        return
+      }
+    }
+    const paramStr = '?controlDeviceType=' + plan.controlDeviceType + '&controlDeviceTypeName=' + plan.controlDeviceTypeName + '&controlEventType=' + plan.controlEventType
+      + '&createUser=' + plan.createUser + '&direction=' + plan.direction + '&enabled=' + plan.enabled + '&locationMode=' + plan.locationMode + '&pileNum=' + plan.pileNum
+      + '&quoteNum=' + plan.quoteNum + '&roadName=' + plan.roadName + '&roadSecId=' + plan.roadSecId + '&rowId=' + plan.rowId + '&secName=' + plan.secName + '&startEndPileNum=' + plan.startEndPileNum
+    getResponseDatas('post', this.updatePlanUrl + paramStr, deviceList).then((res) => {
       const result = res.data
       if (result.code === 200) {
-        debugger
-        console.log(result)
+        if (result.code === 200) {
+          message.info(res.data.message)
+          this.setState({
+            EventTagPopup: null,
+            reservePopup: null,
+          })
+        } else {
+          message.info(res.message)
+        }
       }
     })
   }
-  handleDetailPlan = (rowId, plan) => {
-    getResponseDatas('get', this.detailPlanUrl, {planId:rowId}).then((res) => {
+  handleDelPlan = (planId, nowIndex) => {
+    getResponseDatas('get', this.delPlanUrl, {planId: planId}).then((res) => {
+      const result = res.data
+      debugger
+      const arr = JSON.parse(JSON.stringify(this.state.listByPage))
+      arr.data.splice(nowIndex, 1)
+      this.setState({listByPage: arr})
+      if (result.code === 200) {
+        message.info(res.data.message)
+      } else {
+        message.info(res.message)
+      }
+    })
+  }
+  handleDetailPlan = (rowId) => {
+    getResponseDatas('get', this.detailPlanUrl, { planId: rowId }).then((res) => {
       const result = res.data
       if (result.code === 200) {
-        console.log(result.data, '设备',plan)
-        this.handleUpdatePlan(result.data, plan)
+        this.setState({
+          deviceTypes: result.data,
+          EventTagPopup: true,
+        }, () => {
+          debugger
+          console.log(this.state.deviceTypes, '看下有哪些设备')
+        })
+        // this.handleUpdatePlan(result.data, plan)
       }
     })
   }
@@ -618,7 +692,7 @@ class ReservePlan extends React.Component {
     getResponseDatas('post', this.getListPlanUrl, this.getListPlanUrlParams).then((res) => {
       const result = res.data
       if (result.code === 200) {
-        
+
       }
     })
   }
@@ -634,28 +708,75 @@ class ReservePlan extends React.Component {
     })
   }
   handlePlanPublic = (name, nowIndex) => {
-    const { listByPage } = this.state
-    
-    if( name == 'update' ) {
+    const { listByPage, deviceTypes } = this.state
+    const deviceAry = []
+    if (name == 'add') {
+      this.controlDatas = {
+        eventId: '', // 事件ID
+        roadId: '', // 高速ID
+        directionId: '', // 方向ID
+        startPileNum: '', //桩号
+        endPileNum: '', //桩号
+        roadName: '', // 高速名称
+        eventType: 1, // 事件类型
+        directionName: '',
+        locationMode: '1',
+        situation: 0, // 
+      }
+      this.getDeviceEventList()
+      this.setState({
+        EventTagPopup: true,
+        addFlag: true,
+      })
+    } else if (name == 'update') {
       debugger
-      this.handleDetailPlan(listByPage.data[nowIndex].rowId, listByPage.data[nowIndex]) // 根据rowId获取全部设备
-      // console.log(listByPage.data[nowIndex].rowId ,listByPage.data[nowIndex],'update')
+      this.controlDatas = listByPage.data[nowIndex]
+      this.controlDatas.startPileNum = listByPage.data[nowIndex].pileNum.split(" ")[0]
+      this.controlDatas.endPileNum = listByPage.data[nowIndex].pileNum.split(" ")[1]
+      this.controlDatas.directionId = listByPage.data[nowIndex].direction
+      this.setState({
+        eventType: listByPage.data[nowIndex].controlEventType,
+        deviceString: listByPage.data[nowIndex].controlDeviceType,
+      })
+      this.handleDetailPlan(listByPage.data[nowIndex].rowId) // 根据rowId获取全部设备
+    } else if (name == 'edit') {
+      console.log('编辑')
+      deviceTypes.forEach((item) => {
+        item.device.forEach((items) => {
+          deviceAry.push({
+            controlScope: items.controlScope ? items.controlScope : 0,
+            deviceId: items.deviceId,
+            deviceTypeId: items.deviceTypeId,
+            pileNum: items.pileNum ? items.pileNum : 0,
+            content: items.content,
+            deviceControlType: items.deviceControlType,
+          })
+        })
+      })
+      if (deviceAry.length === 0) {
+        message.warning('请添加设备')
+        return
+      }
+      this.setState({
+        reservePopup: true,
+      }, ()=>{
+        this.controlDatas.list = deviceAry
+        console.log('查看当前', this.controlDatas)
+      })
     } else {
-      console.log(listByPage.data[nowIndex],'del')
+      this.handleDelPlan(listByPage.data[nowIndex].rowId, nowIndex)
+      console.log(listByPage.data[nowIndex].rowId)
     }
   }
   handlepage = (pageNumber) => {
     this.Parameters.pageNo = pageNumber
     this.handleListByPage()
   }
-  handleInput = (e, name, type) => {
-    this[type][name] = e.target.value
-  }
   render() {
     const {
       listByPage, current, eventsPopup, EventTagPopup, EventTagPopupTit, roadNumber, endValueTime, conditionList, boxSelect, flagClose, oldDevicesList,
       boxSelectList, hwayList, directionList, VIboardPopup, groupStatus, controlPopup, controlBtnFlag, controlBtnFlagText, detailsPopup, whethePopup, reservePopup, startValue, endValue, endOpen, SidePopLeft, detailsLatlng
-      , controlTypes, eventTypes, deviceTypes, updatePoint } = this.state
+      , controlTypes, eventTypes, deviceTypes, updatePoint, addFlag } = this.state
     return (
       <div>
         <SystemMenu />
@@ -668,7 +789,7 @@ class ReservePlan extends React.Component {
                 <span className={styles.Button} onClick={() => { this.handlepage(1) }}>搜&nbsp;&nbsp;索</span>
               </div>
               <div className={styles.rightItem}>
-                <span className={styles.Button}>新&nbsp;&nbsp;增</span>
+                <span className={styles.Button} onClick={() => { this.handlePlanPublic('add') }}>新&nbsp;&nbsp;增</span>
               </div>
             </div>
             <div className={styles.ContetList}>
@@ -692,8 +813,8 @@ class ReservePlan extends React.Component {
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.controlDeviceTypeName}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.quoteNum}</span></div>
                       <div className={styles.listTd} >
-                        <Button className={styles.Button} onClick={() => {this.handlePlanPublic('update', index)}}>修&nbsp;&nbsp;改</Button>
-                        <Button className={styles.Button} onClick={() => {this.handlePlanPublic('del', index)}}>删&nbsp;&nbsp;除</Button>
+                        <Button className={styles.Button} onClick={() => { this.handlePlanPublic('update', index) }}>修&nbsp;&nbsp;改</Button>
+                        <Button className={styles.Button} onClick={() => { this.handlePlanPublic('del', index) }}>删&nbsp;&nbsp;除</Button>
                       </div>
                     </div>
                   )
@@ -708,33 +829,14 @@ class ReservePlan extends React.Component {
             </div>
           </div>
         </div>
-        {/* <div className={styles.MaskBox}>
-            <div className={styles.AddBox}>
-              <div className={styles.Title}>{'新增预案'}<Icon onClick={() => { this.handleClose('reservePopup', false) }} className={styles.Close} type="close" /></div>
-              <div className={styles.Conten}>
-                <div className={styles.Header}>
-                  <span>管控措施：</span>
-                </div>
-                <div className={styles.ItemBox}>
-                  <div className={styles.HeadItem}>可变情报版</div>
-                </div>
-                
-              </div>
-            </div>
-        </div> */}
+
         {
           EventTagPopup ?
             <div className={style.MaskBox} style={{ zIndex: '996' }}>
               <div className={style.EventTagging}>
-                <GMap styles={this.mapStyles} mapID={'popMap'} roadLatlng={detailsLatlng} handledetai={this.handledetai} detailsPopup={demoData} boxSelect={boxSelect} flagClose={flagClose} />
+                <GMap styles={this.mapStyles} mapID={'popMap'} roadLatlng={detailsLatlng} handledetai={this.handledetai} detailsPopup={this.controlDatas} boxSelect={boxSelect} flagClose={flagClose} />
                 <div className={style.EventTaggingLeft}>
                   <div className={style.Title} style={{ background: '#132334' }}>{'修改预案库'}<Icon className={style.Close} onClick={() => { this.handleEventTag(false) }} type="close" /></div>
-                  <div className={style.Centent}>
-                    <div className={style.ItemBox}>
-                      <span className={style.ItemName}>事件编号:</span>
-                      <div className={style.ItemInput} style={{ display: 'inline' }}>{this.controlDatas.eventId}</div>
-                    </div>
-                  </div>
                   <div className={style.Title} style={{ background: '#132334', lineHeight: '20px', height: '20px', marginTop: '10px', fontSize: '12px' }}>选择道路</div>
                   <div className={style.Centent}>
                     <div className={style.ItemBox}>
@@ -759,8 +861,8 @@ class ReservePlan extends React.Component {
                           <Option value="0">收费站</Option>
                           <Option value="1">里程桩</Option>
                         </Select>
-                        <Input id="startInt" style={{ width: '29%', height: '32px', margin: '8px 1%' }} defaultValue={this.controlDatas.startPileNum} onChange={(e) => { this.handleInput(e, 'startPileNum', 'controlDatas') }} />
-                        <Input id='endInt' style={{ width: '29%', height: '32px', margin: '8px 1%' }} defaultValue={this.controlDatas.endPileNum} onChange={(e) => { this.handleInput(e, 'endPileNum', 'controlDatas') }} />
+                        <Input id="startInt" style={{ width: '29%', height: '32px', margin: '8px 1%' }} defaultValue={this.controlDatas.startPileNum} onBlur={(e) => { this.handleInput(e, 'startPileNum', 'controlDatas'); this.handSecUrl() }} />
+                        <Input id='endInt' style={{ width: '29%', height: '32px', margin: '8px 1%' }} defaultValue={this.controlDatas.endPileNum} onBlur={(e) => { this.handleInput(e, 'endPileNum', 'controlDatas'); this.handSecUrl() }} />
                       </div>
                     </div>
                   </div>
@@ -776,25 +878,7 @@ class ReservePlan extends React.Component {
                       </div>
                     </div>
                   </div>
-                  <div className={style.Title} style={{ background: '#132334', lineHeight: '20px', height: '20px', fontSize: '12px' }}>当前车速</div>
-                  {
-                    this.state.eventType === 3 ? <div className={style.Centent}>
-                      <div className={style.ItemBox}>
-                        <span className={style.ItemName}>能见度&nbsp;:</span>
-                        <div className={classNames(style.ItemInput, style.ItemInputText)}>
-                          <Input type='number' defaultValue={this.controlDatas.situation} onChange={(e) => { this.handleInput(e, 'situation', 'controlDatas') }} /> m
-                      </div>
-                      </div>
-                    </div> :
-                      <div className={style.Centent}>
-                        <div className={style.ItemBox}>
-                          <span className={style.ItemName}>平均车速&nbsp;:</span>
-                          <div className={classNames(style.ItemInput, style.ItemInputText)}>
-                            <Input type='number' defaultValue={this.controlDatas.situation} onChange={(e) => { this.handleInput(e, 'situation', 'controlDatas') }} /> km/h
-                      </div>
-                        </div>
-                      </div>
-                  }
+
                   <div className={style.Title} style={{ background: '#132334', lineHeight: '20px', height: '20px', fontSize: '12px' }}>选择交通管控类型</div>
                   <div className={style.Centent}>
                     <div className={style.ItemBox}>
@@ -814,26 +898,26 @@ class ReservePlan extends React.Component {
                       expandIconPosition="right"
                     >
                       {
-                          deviceTypes && deviceTypes.map((item, ind) => {
-                            return (
-                              <Panel className={style.PanelChs} header={item.codeName} key={item.dictCode}>
-                                <div>
-                                  {
-                                    item.device && item.device.map((items, index) => {
-                                      return <div className={style.PanelBox}><p className={style.PanelItem} key={items}>{`${index + 1}. ${items.deviceName} ${items.directionName} ${item.codeName}`}</p><Icon onClick={() => { this.handleSubDetailsPopupList(ind, index) }} className={style.MinusItem} type="close" /></div>
-                                    })
-                                  }
-                                  {item.device && item.device.length === 0 && <p className={style.PanelItemNone}>暂无数据</p>}
-                                </div>
-                              </Panel>
-                            )
-                          })
+                        deviceTypes && deviceTypes.map((item, ind) => {
+                          return (
+                            <Panel className={style.PanelChs} header={item.codeName} key={item.dictCode}>
+                              <div>
+                                {
+                                  item.device && item.device.map((items, index) => {
+                                    return <div className={style.PanelBox}><p className={style.PanelItem} key={items}>{`${index + 1}. ${items.deviceName} ${items.directionName} ${item.codeName}`}</p><Icon onClick={() => { this.handleSubDetailsPopupList(ind, index) }} className={style.MinusItem} type="close" /></div>
+                                  })
+                                }
+                                {item.device && item.device.length === 0 && <p className={style.PanelItemNone}>暂无数据</p>}
+                              </div>
+                            </Panel>
+                          )
+                        })
                       }
                     </Collapse>
                   </div>
 
                   <div className={style.ItemFooter}>
-                    <span onClick={() => { this.handleMarkControlPop(EventTagPopupTit) }}>保存预案</span>
+                    <span onClick={() => { this.handlePlanPublic('edit') }}>编辑管控内容</span>
                   </div>
                 </div>
                 <div id="searchBox" style={{ top: '5px' }} className={`${style.searchBox} animated ${'bounceInDown'}`}>
@@ -862,6 +946,104 @@ class ReservePlan extends React.Component {
                 </div>
               </div>
             </div> : null
+        }
+        {reservePopup ?
+          <div className={styles.MaskBox} style={{zIndex:'1000'}}>
+            <div className={styles.AddBox}>
+              <div className={styles.Title}>{'预案详情'}<Icon onClick={() => { this.handleEventPopup('Reserve', false) }} className={styles.Close} type="close" /></div>
+              <div className={styles.Conten}>
+                <div className={styles.Header}>
+                  <span>管控措施：</span>
+                </div>
+                {
+                  deviceTypes && deviceTypes.map((items, indexs) => {
+                    return (
+                      items.dictCode === 1 ?
+                        <div className={styles.ItemBox}>
+                          <div className={styles.HeadItem}>{items.codeName}{/* <span className={styles.AddItem} onClick={(e) => { this.genExtraAddOnclick(e, items, reservePopup) }}><Icon type="plus" /></span> */}</div>
+                          <div className={styles.RowBox}>
+                            {
+                              items.device && items.device.map((item, index) => {
+                                return (
+                                  <div key={item.deviceId + item.deviceTypeId}>
+                                    <div className={style.InputBox}>
+                                      <div className={style.ItemInput} style={{ width: '30%' }}>{deviceTypes.status === 1 ? <Icon type="close-circle" className={styles.CloneItem} onClick={() => { this.handleCloseCircle(indexs, index, item.deviceId) }} /> : null}{index + 1}.{item.deviceName + '-' + item.directionName + items.codeName}&nbsp;:</div>
+                                      <div className={style.ItemInput} style={{ width: '50%' }}><Input style={{ textAlign: 'center', color: 'red' }} onChange={(e) => { this.handleInput(e, 'content', 'controlDatas', item.deviceId) }} disabled={reservePopup.status > 1 ? true : ''} defaultValue={item.displayContent} /></div>
+                                      <div className={style.ItemInput} style={{ width: '20%' }}>
+                                        <Select disabled={deviceTypes.status > 1 ? true : ''} defaultValue={item.deviceControlType ? item.deviceControlType : 0} style={{ width: '80%' }} onChange={(e) => { this.handleSelect(e, 'deviceControlType', 'controlDatas', item.deviceId) }}>
+                                          <Option value={0}>请选择</Option>
+                                          {
+                                            controlTypes && controlTypes.map((itemss) => {
+                                              return <Option key={itemss.controlTypeId} value={itemss.controlTypeId}>{itemss.controlTypeName}</Option>
+                                            })
+                                          }
+                                        </Select>
+                                      </div>
+                                    </div>
+                                  </div>
+                                )
+                              })
+                            }
+                            {!!items.device.length || <div className={style.PanelItemNone}>暂无数据</div>}
+                          </div>
+                        </div> : items.dictCode === 2 ?
+                          <div className={styles.ItemBox}>
+                            <div className={styles.HeadItem}>{items.codeName}{/* <span className={styles.AddItem} onClick={(e) => { this.genExtraAddOnclick(e, items, reservePopup) }}><Icon type="plus" /></span> */}</div>
+                            {
+                              items.device && items.device.map((item) => {
+                                return (
+                                  <div>
+                                    <div className={styles.RowBox}>
+                                      **地点车道可变情报板&nbsp;:&nbsp;&nbsp;一车道限速&nbsp;:&nbsp;&nbsp; <span style={{ color: '#11e002' }}>100km/h</span>
+                                    </div>
+                                    <div className={styles.RowBox}>
+                                      <span style={{ width: '154px', display: 'inline-block' }} />
+                                      二车道限速&nbsp;:&nbsp;&nbsp;<span style={{ color: '#11e002' }}>80km/h</span>
+                                    </div>
+                                  </div>
+                                )
+                              })
+                            }
+                            {!!items.device.length || <div className={style.PanelItemNone}>暂无数据</div>}
+                          </div> : items.dictCode === 3 ?
+                            <div className={styles.ItemBox}>
+                              <div className={styles.HeadItem}>{items.codeName}{/* <span className={styles.AddItem} onClick={(e) => { this.genExtraAddOnclick(e, items, reservePopup) }}><Icon type="plus" /></span> */}</div>
+                              {
+                                items.device && items.device.map((item) => {
+                                  return (
+                                    <div className={style.RowBox}>
+                                      <Icon type="close-circle" className={style.CloneItem} />****地点**收费站:&nbsp;:&nbsp;&nbsp;入口&nbsp;:&nbsp;&nbsp;<p><Switch checkedChildren="开放" unCheckedChildren="关闭" />&nbsp;:&nbsp;&nbsp;出口&nbsp;&nbsp;&nbsp;<Switch checkedChildren="开放" unCheckedChildren="关闭" /></p>
+                                    </div>
+                                  )
+                                })
+                              }
+                              {!!items.device.length || <div className={style.PanelItemNone}>暂无数据</div>}
+                            </div> : items.dictCode === 4 ?
+                              <div className={styles.ItemBox}>
+                                <div className={styles.HeadItem}>{items.codeName}{/* <span className={styles.AddItem} onClick={(e) => { this.genExtraAddOnclick(e, items, reservePopup) }}><Icon type="plus" /></span> */}</div>
+                                {
+                                  items.device && items.device.map((item) => {
+                                    return (
+                                      <div className={style.RowBox}>
+                                        <Icon type="close-circle" className={style.CloneItem} />****地点**收费站:&nbsp;:&nbsp;&nbsp;入口&nbsp;:&nbsp;&nbsp;<p><Switch checkedChildren="开放" unCheckedChildren="关闭" />&nbsp;:&nbsp;&nbsp;出口&nbsp;&nbsp;&nbsp;<Switch checkedChildren="开放" unCheckedChildren="关闭" /></p>
+                                      </div>
+                                    )
+                                  })
+                                }
+                                {!!items.device.length || <div className={style.PanelItemNone}>暂无数据</div>}
+                              </div> : null
+
+                    )
+                  })
+                }
+                <div className={style.ItemFooter}>
+                  <span onClick={() => { addFlag ? this.handleAddPlan(deviceTypes, this.controlDatas) : this.handleUpdatePlan(deviceTypes, this.controlDatas) }}>保&nbsp;&nbsp;存</span>
+                  <span onClick={() => { this.handleEventPopup('Reserve', false) }}>返&nbsp;&nbsp;回</span>
+                </div>
+              </div>
+            </div>
+
+          </div> : null
         }
         {
           boxSelect ?

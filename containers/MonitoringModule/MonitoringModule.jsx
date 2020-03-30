@@ -485,8 +485,9 @@ class MonitoringModule extends React.Component {
   }
   // 获取全部交通管控类型
   getDeviceEventList = (flag) => {
+    debugger
     const params = {
-      controlTypes: this.state.deviceString.join()
+      deviceString: '',
     }
     getResponseDatas('get', this.deviceUrl, params).then((res) => {
       const result = res.data
@@ -661,7 +662,7 @@ class MonitoringModule extends React.Component {
             })
           }
           console.log(this.state.detailsPopup, "look here")
-          localStorage.setItem('detailsPopup', JSON.stringify(this.state.detailsPopup))
+          // localStorage.setItem('detailsPopup', JSON.stringify(this.state.detailsPopup))
         })
       }
     })
@@ -2000,8 +2001,8 @@ class MonitoringModule extends React.Component {
                           <Option value="0">收费站</Option>
                           <Option value="1">里程桩</Option>
                         </Select>
-                        <Input id="startInt" style={{ width: '29%', height: '32px', margin: '8px 1%' }} defaultValue={this.controlDatas.startPileNum} onChange={(e) => { this.handleInput(e, 'startPileNum', 'controlDatas') }} />
-                        <Input id='endInt' style={{ width: '29%', height: '32px', margin: '8px 1%' }} defaultValue={this.controlDatas.endPileNum} onChange={(e) => { this.handleInput(e, 'endPileNum', 'controlDatas') }} />
+                        <Input id="startInt" style={{ width: '29%', height: '32px', margin: '8px 1%' }} defaultValue={this.controlDatas.startPileNum} onBlur={(e) => { this.handleInput(e, 'startPileNum', 'controlDatas');this.handSecUrl() }} />
+                        <Input id='endInt' style={{ width: '29%', height: '32px', margin: '8px 1%' }} defaultValue={this.controlDatas.endPileNum} onBlur={(e) => { this.handleInput(e, 'endPileNum', 'controlDatas');this.handSecUrl() }} />
                       </div>
                     </div>
                   </div>
