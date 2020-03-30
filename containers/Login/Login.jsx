@@ -12,7 +12,7 @@ class Login extends React.Component {
       loginName: '',
       password: '',
     }
-    this.loginUrl = '/control/sys/user/login' // 登陆
+    this.loginUrl = '/control/sys/user/login' // 登录
     this.limitUrl = '/control/sys/menu/getUserMentList?userId='
   }
   componentDidMount = () => {
