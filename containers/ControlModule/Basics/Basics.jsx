@@ -8,7 +8,7 @@ import { Pagination, Input, Select, DatePicker, Button, Icon, message } from 'an
 import moment from 'moment'
 const { Option } = Select
 /*        历史管控方案 */
-class Historical extends React.Component {
+class Basics extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -334,4 +334,4 @@ class Historical extends React.Component {
   }
 }
 
-export default Historical
+export default Basics

@@ -154,6 +154,7 @@ class Historical extends React.Component {
   handlepage = (pageNumber) => {
     this.Parameters.pageNo = pageNumber
     this.handleListByPage()
+    console.log(pageNumber);
   }
   // input
   handleInput = (e, name, type) => {
@@ -326,7 +327,6 @@ class Historical extends React.Component {
                       </div>
                     </div>
                   </div> : null}
-
               </div>
             </div>
           </div> : null}

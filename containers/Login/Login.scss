@@ -19,7 +19,7 @@
       height: 83%;
       position: absolute;
       background: url(./imgs/earthBg.png) center center no-repeat;
-      background-size: 100% 100%;
+      background-size: contain;
       top: 50%;
       left: 18%;
       transform: translate(0, -50%);

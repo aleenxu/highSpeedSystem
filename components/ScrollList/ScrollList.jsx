@@ -10,7 +10,13 @@ import iconBuild from '../../imgs/icon_build.png'
 import iconWeather from '../../imgs/icon_weather.png'
 import iconAccidents from '../../imgs/icon_accidents.png'
 import iconTagging from '../../imgs/icon_tagging.png'
-const { Panel } = Collapse;
+const { Panel } = Collapse
+// 获取用户权限
+const limitArr = JSON.parse(localStorage.getItem('userLimit')) || []
+const userLimit = []
+limitArr.forEach((item) => {
+  userLimit.push(item.id)
+})
 class ScrollList extends React.Component {
   constructor(props) {
     super(props)
@@ -159,6 +165,7 @@ class ScrollList extends React.Component {
   handleEventPopup = (e, type, boolean) => {
     // console.log($(e.target).parent().attr("latlng"), '当前')
     window.centerPoint = $(e.target).parent().attr("latlng");
+    const { handleEventPopup } = this.props
     if (type === 'Details') {
       const listItem = document.getElementsByClassName('listItem')
       if (e.currentTarget.style.background === '#0d2645') {
@@ -170,10 +177,9 @@ class ScrollList extends React.Component {
         $('#deviceBox').attr('style', 'transition:all .5s;')
         e.currentTarget.style.background = '#0d2645'
         window.listItemDom = e.currentTarget
+        /* handleEventPopup('setTimeOut', boolean) */
       }
     }
-
-    const { handleEventPopup } = this.props
     if (handleEventPopup) {
       handleEventPopup(type, boolean)
     }
@@ -306,7 +312,7 @@ class ScrollList extends React.Component {
               onChange={this.callback}
               expandIconPosition="right"
             >
-              <Panel header="管控方案管理" key="1" extra={this.genExtraexamine()}>
+              <Panel header="管控方案管理" key="1" extra={userLimit.includes(101) ? this.genExtraexamine() : null}>
                 <div>
                   <div className={styles.ProgressTotal}><em>管控方案发布管理</em>方案总数&nbsp;:&nbsp;{this.ProgressLength}</div>
                   {

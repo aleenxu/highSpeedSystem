@@ -391,7 +391,7 @@
   .TimeData {
     background: none !important;
     width: auto !important;
-    min-width: 605px;
+    min-width: 400px;
     height: auto !important;
     position: absolute;
     top: 50%;
@@ -412,10 +412,9 @@
       .RowBox {
         margin: 15px 0 !important;
         .left {
-          display: inline-block;
+         
         }
         .right {
-          display: inline-block;
         }
       }
     }

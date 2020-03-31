@@ -32,14 +32,17 @@ class SystemMenu extends React.Component {
       window.location.hash = '#/login'
       localStorage.clear()
     }
-    userLimit.forEach((item) => {
+    userLimit.forEach((item) => { // 获取当前一级目录下子级目录
       item.Children = []
       this.limitArr.forEach((items) => {
         if (items.parentId === item.id && items.path) {
-          item.Children.push(items)
+          item.Children.push(items) // 添加对应的一级目录子目录
         }
       })
+      /*   return item.Children.length || item.path === '/monitoringmodule' // 筛选出要展示的目录 */
     })
+
+
     this.setState({ userLimit })
   }
   handleGoDefault = () => {
@@ -68,7 +71,7 @@ class SystemMenu extends React.Component {
         <Menu onClick={this.handleClick} selectedKeys={[this.state.current]} mode="horizontal">
           {
             userLimit && userLimit.map((item) => {
-              if (item.Children.length) {
+              if (item.Children && item.Children.length) {
                 return (
                   <SubMenu key={"#" + item.path} title={<span className="submenu-title-wrapper">{item.name}</span>}>
                     {
@@ -81,7 +84,7 @@ class SystemMenu extends React.Component {
                   </SubMenu>
                 )
               } else {
-                return <Menu.Item key={"#" + item.path}><a href={"#" + item.path}>{item.name}</a></Menu.Item>
+                return item.path === '/monitoringmodule' ? <Menu.Item key={"#" + item.path}><a href={"#" + item.path}>{item.name}</a></Menu.Item> : <Menu.Item key={"#" + item.path}>{item.name}</Menu.Item>
               }
             })
           }

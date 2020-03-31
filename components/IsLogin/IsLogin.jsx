@@ -3,7 +3,7 @@ import { Menu, Dropdown, Icon, message } from 'antd';
 import getResponseDatas from '../../plugs/HttpData/getResponseData'
 import styles from './IsLogin.scss'
 
-const userInfo = JSON.parse(localStorage.getItem('userInfo'))
+
 class IsLogin extends React.Component {
   constructor(props) {
     super(props)
@@ -11,23 +11,24 @@ class IsLogin extends React.Component {
 
     }
 
-    this.menu = (
-      <Menu>
-        <Menu.Item key={userInfo.userName || '--'} >用户：{userInfo ? userInfo.userName : '--'}</Menu.Item>
-        <Menu.Item key="1" onClick={this.handleLogout}>退出系统</Menu.Item>
-      </Menu>
-    );
+
     this.logoutUrl = '/control/sys/user/logout'
   }
   componentDidMount = () => {
-
+    const userInfo = JSON.parse(localStorage.getItem('userInfo'))
+    this.menu = (
+      <Menu>
+        <Menu.Item key={userInfo.userName + userInfo.id || '--'} >用户：{userInfo ? userInfo.userName : '--'}</Menu.Item>
+        <Menu.Item key="1" onClick={this.handleLogout}>退出系统</Menu.Item>
+      </Menu>
+    );
   }
   handleLogout = () => {
     getResponseDatas('post', this.logoutUrl).then((res) => {
       const { code, msg } = res.data
       if (code === 0) {
-        localStorage.clear()
         window.location.hash = '#/login'
+        localStorage.clear()
       } else {
         message.warning(msg)
       }
