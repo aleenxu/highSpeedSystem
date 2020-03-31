@@ -27,16 +27,13 @@ class ReservePlan extends React.Component {
       whethePopup: null,
       startValue: null,
       endValue: null,
-      endValueTime: null,
       endOpen: false,
       SidePopLeft: null,
-      groupStatus: null,
       hwayList: null, // 高速下拉
       directionList: null, // 方向下拉
       directionId: '',
       VIboardPopup: null,
       roadNumber: null,
-      conditionList: null,
       checkedList: [],
       indeterminate: true,
       checkAll: false,
@@ -164,7 +161,7 @@ class ReservePlan extends React.Component {
       })
     } else if (name === 'endPileNum' || name === 'startPileNum') {
       this[type][name] = e.target.value
-      this.handSecUrl()
+      // this.handSecUrl()
     } else {
       this[type][name] = e.target.value
     }
@@ -322,6 +319,7 @@ class ReservePlan extends React.Component {
           }
         })
         if (result.data.length > 0) {
+          console.log(result.data, '框选后的数据')
           this.setState({ boxSelect: true, boxSelectList: result.data, oldDevicesList: noDevices })
         } else {
           message.info('没有选中相应的硬件设备！')
@@ -490,27 +488,6 @@ class ReservePlan extends React.Component {
         boxSelect: false,
       })
     }
-    if (type === 'Event') {
-      if (boolean) {
-        this.eventQuery = {
-          eventType: boolean.type,
-          searchKey: '',
-        }
-      }
-      this.setState({
-        eventsPopup: boolean,
-      })
-    }
-    if (type === 'Control') {
-      if (boolean) {
-        this.planStatus = 0
-        this.handlelistDetail('controlPopup', 14)
-      } else {
-        this.setState({
-          controlPopup: boolean,
-        })
-      }
-    }
     if (type === 'Details') {
       // console.log(type, boolean.latlng, '详情的经纬度')
       // console.log(boolean, '单条数据')
@@ -559,12 +536,9 @@ class ReservePlan extends React.Component {
         popLayer.attr('style', 'width:24%')
       } */
     }
-    if (type === 'VIboard') {
+/*     if (type === 'VIboard') {
       this.setState({ VIboardPopup: boolean })
-    }
-    if (type === 'condition') {
-      this.setState({ conditionList: boolean })
-    }
+    } */
     if (type === 'controldet') {
       this.handleViewControl(boolean.eventTypeId, boolean.eventId)
     }
@@ -788,9 +762,8 @@ class ReservePlan extends React.Component {
   }
   render() {
     const {
-      listByPage, current, eventsPopup, EventTagPopup, EventTagPopupTit, roadNumber, endValueTime, conditionList, boxSelect, flagClose, oldDevicesList,
-      boxSelectList, hwayList, directionList, VIboardPopup, groupStatus, controlPopup, controlBtnFlag, controlBtnFlagText, detailsPopup, whethePopup, reservePopup, startValue, endValue, endOpen, SidePopLeft, detailsLatlng
-      , controlTypes, eventTypes, deviceTypes, updatePoint, addFlag } = this.state
+      listByPage, current, EventTagPopup, EventTagPopupTit, roadNumber, boxSelect, flagClose, boxSelectList, hwayList, controlBtnFlagText, reservePopup, detailsLatlng,
+      controlTypes, eventTypes, deviceTypes, addFlag } = this.state
     return (
       <div>
         <SystemMenu />
@@ -939,7 +912,7 @@ class ReservePlan extends React.Component {
                   {/* <s>框选设备</s> */}
                 </div>
                 <div id="deviceBox" style={{ top: '5px', right: '0' }} className={`${style.mapIconManage} animated ${'bounceInDown'}`}>
-                  <span onClick={(e) => { this.controlBtnClick(e) }}>{controlBtnFlagText}</span><span>设备显示</span>
+                  <span onClick={(e) => { this.controlBtnClick(e) }}>{controlBtnFlagText}</span>{/* <span>设备显示</span> */}
                 </div>
                 <div id="roadStateBox" className={`${style.roadState} animated ${'bounceInUp'}`}>
                   <h5><p>路况</p></h5>
@@ -1081,7 +1054,7 @@ class ReservePlan extends React.Component {
                   >
                     {
                       boxSelectList.map((item) => {
-                        return <Checkbox key={item.deviceId} disabled={(item.controlling || item.exists) ? true : false} value={item.deviceId}>{item.deviceName + '-' + item.directionName}</Checkbox>
+                        return <Checkbox key={item.deviceId} disabled={(item.controlling == true || item.exists == true) ? true : false} value={item.deviceId}>{item.deviceName + '-' + item.directionName}</Checkbox>
                       })
                     }
 
