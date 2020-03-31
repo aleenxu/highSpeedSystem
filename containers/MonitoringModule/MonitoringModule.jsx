@@ -1605,11 +1605,10 @@ class MonitoringModule extends React.Component {
               {
                 TimeData.map((item, index) => {
                   return (
-                    <div className={classNames(styles.DetailsBox, styles.TimeData)} key={item.eventId}>
+                    <div className={classNames( styles.TimeData)} key={item.eventId}>
                       <div className={styles.Title}>{item.eventId}P管控方案超时提醒<Icon className={styles.Close} onClick={() => { this.handleTimeDataState() }} type="close" /></div>
                       <div className={styles.Content}>
                         <div className={styles.ItemBox}>
-                          {/*  <div className={styles.HeadItem}>当前路况</div> */}
                           <div className={styles.RowBox}>
                             <div className={styles.left}>{index + 1}.{item.eventId}P方案{item.secName}发生{item.eventTypeName}</div>
                             <div className={styles.right}><Button onClick={() => { this.handleNoneTimeState(item) }} className={styles.Button}>不再提示</Button><Button className={styles.Button} onClick={() => { this.handleEndValueTimeState(item) }}>延时</Button></div>
