@@ -30,6 +30,7 @@ class Intelligence extends React.Component {
       roadSecIddata: null,
       roadSecIdItem: null,
       userLimit: [],
+      deviceSizeList: null,
     }
     this.Parameters = {
       keyword: '',
@@ -51,6 +52,7 @@ class Intelligence extends React.Component {
       roadSecId: '',
       rowId: '',
       vendor: '',
+      deviceSize: '',
     }
     this.listByPageUrl = '/control/inforBoard/listByPage' // 分页查询设备
     this.listDetailUrl = '/control/dict/code/list/detail/' // {codeType} 根据字典类型，获取字典详情相关信息'
@@ -75,6 +77,7 @@ class Intelligence extends React.Component {
     this.handlelistDetail('directionList', 1)
     this.handlelistDetail('vendorList', 24)
     this.handlelistDetail('deviceTypeList', 18)
+    this.handlelistDetail('deviceSizeList', 25)
     // 获取级联方向下拉
     this.handlehwayDirection()
   }
@@ -241,7 +244,7 @@ class Intelligence extends React.Component {
     this.setState({ boardData: this.board, hwayDirection: null, roadSecIddata: null })
   }
   render() {
-    const { listByPage, current, userLimit, boardData, directionList, roadSecIddata, roadSecIdItem, directions, hwayList, vendorList, deviceTypeList, ControlStatus, hwayDirection } = this.state
+    const { listByPage, current, userLimit, deviceSizeList, boardData, directionList, roadSecIddata, roadSecIdItem, directions, hwayList, vendorList, deviceTypeList, ControlStatus, hwayDirection } = this.state
     return (
       <div>
         <SystemMenu />
@@ -347,17 +350,33 @@ class Intelligence extends React.Component {
                         </Select>
                       </Form.Item>
                     </div>
-                    <div className={styles.Item}>
+                    {/* <div className={styles.Item}>
                       <Form.Item
                         name="deviceTypeId"
                         label="设备类型"
                         hasFeedback
                         rules={[{ required: true, message: 'Please select your country!' }]}
                       >
-                        <Select disabled onChange={(e) => { this.handleSelect(e, 'deviceTypeId', 'board') }} defaultValue={1}>{/*  //boardData.deviceTypeId */}
+                        <Select disabled onChange={(e) => { this.handleSelect(e, 'deviceTypeId', 'board') }} defaultValue={1}> //boardData.deviceTypeId
                           {
                             deviceTypeList && deviceTypeList.map((item) => {
                               return <Option key={item.id} value={item.id}>{item.name}</Option>
+                            })
+                          }
+                        </Select>
+                      </Form.Item>
+                    </div> */}
+                    <div className={styles.Item}>
+                      <Form.Item
+                        name="deviceSize"
+                        label="设备尺寸"
+                        hasFeedback
+                        rules={[{ required: true, message: 'Please select your country!' }]}
+                      >
+                        <Select onChange={(e) => { this.handleSelect(e, 'deviceSize', 'board') }} defaultValue={boardData.deviceSize}>{/*  //boardData.deviceTypeId */}
+                          {
+                            deviceSizeList && deviceSizeList.map((item) => {
+                              return <Option key={item.id} value={item.name}>{item.name}</Option>
                             })
                           }
                         </Select>

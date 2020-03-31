@@ -903,7 +903,7 @@ class MonitoringModule extends React.Component {
     const deviceAry = []
     const that = this
     debugger
-    console.log(this.controlDatas,'见证奇迹的时刻....')
+    console.log(this.controlDatas, '见证奇迹的时刻....')
     if (titFlag === '主动管控') {
       if (!this.controlDatas.roadName) {
         message.info('请选择高速！')
@@ -989,8 +989,8 @@ class MonitoringModule extends React.Component {
       this.setState({
         reservePopup: this.reservePopup,
         startValue: this.getDate(),
-      },()=>{
-        console.log('显示管控详情后',this.state.reservePopup, this.controlDatas)
+      }, () => {
+        console.log('显示管控详情后', this.state.reservePopup, this.controlDatas)
       })
       this.handlelistDetail('MeasuresList', 22)
     } else {
@@ -1315,8 +1315,8 @@ class MonitoringModule extends React.Component {
         EventTagPopupTit: '标题',
       })
     } */
-    console.log(this.publishPlanVO,EventTagPopupTit);
-    debugger
+    /*    console.log(this.publishPlanVO,EventTagPopupTit);
+       debugger */
     for (let i = 0; i < list.length; i++) {
       if (list[i].content == '') {
         message.warning('请填全显示内容')
@@ -1502,7 +1502,7 @@ class MonitoringModule extends React.Component {
         /* this.handleTimeData() */
         // 开始下一次执行
         this.handlesetTimeOut()
-      }, 6000)
+      }, 60000)
     }
   }
   render() {
@@ -1601,25 +1601,26 @@ class MonitoringModule extends React.Component {
         {/* 事件详情 */}
         {TimeData ?
           <div className={styles.MaskBox}>
-            {
-              TimeData.map((item, index) => {
-                return (
-                  <div className={classNames(styles.DetailsBox, styles.TimeData)} key={item.eventId}>
-                    <div className={styles.Title}>{item.eventId}P管控方案超时提醒<Icon className={styles.Close} onClick={() => { this.handleTimeDataState() }} type="close" /></div>
-                    <div className={styles.Content}>
-                      <div className={styles.ItemBox}>
-                        {/*  <div className={styles.HeadItem}>当前路况</div> */}
-                        <div className={styles.RowBox}>
-                          <div className={styles.left}>{index + 1}.{item.eventId}P方案{item.secName}发生{item.eventTypeName}</div>
-                          <div className={styles.right}><Button onClick={() => { this.handleNoneTimeState(item) }} className={styles.Button}>不再提示</Button><Button className={styles.Button} onClick={() => { this.handleEndValueTimeState(item) }}>延时</Button></div>
+            <div className={styles.MaskCenterBox}>
+              {
+                TimeData.map((item, index) => {
+                  return (
+                    <div className={classNames(styles.DetailsBox, styles.TimeData)} key={item.eventId}>
+                      <div className={styles.Title}>{item.eventId}P管控方案超时提醒<Icon className={styles.Close} onClick={() => { this.handleTimeDataState() }} type="close" /></div>
+                      <div className={styles.Content}>
+                        <div className={styles.ItemBox}>
+                          {/*  <div className={styles.HeadItem}>当前路况</div> */}
+                          <div className={styles.RowBox}>
+                            <div className={styles.left}>{index + 1}.{item.eventId}P方案{item.secName}发生{item.eventTypeName}</div>
+                            <div className={styles.right}><Button onClick={() => { this.handleNoneTimeState(item) }} className={styles.Button}>不再提示</Button><Button className={styles.Button} onClick={() => { this.handleEndValueTimeState(item) }}>延时</Button></div>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                )
-              })
-            }
-
+                  )
+                })
+              }
+            </div>
           </div> : null}
         {/* 管控预案查询 */}
         {reservePopup ?
