@@ -96,7 +96,7 @@ class ScrollList extends React.Component {
   }
   getLineCenterPoint = (latlng) => {
     let newCenter = []
-    if (latlng.length > 0) {
+    if (latlng.length > 1) {
       const startPoint = Math.abs(latlng[0][0] - latlng[latlng.length - 1][0]) / 2
       const endPoint = Math.abs(latlng[0][1] - latlng[latlng.length - 1][1]) / 2
       if (latlng[0][0] > latlng[latlng.length - 1][0]) {

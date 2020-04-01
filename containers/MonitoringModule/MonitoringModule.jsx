@@ -310,6 +310,7 @@ class MonitoringModule extends React.Component {
         const latlngArr = JSON.parse(JSON.stringify(boolean.latlng))
         window.drawLine(latlngArr, window.lineFlag)
       } else {
+        this.handlesetTimeOut(boolean)
         this.setState({
           detailsPopup: false,
           controlBtnFlag: null,
@@ -1119,6 +1120,7 @@ class MonitoringModule extends React.Component {
         // 查询管控方案
         this.handleplanList()
         this.setState({ reservePopup: null })
+        this.handlesetTimeOut()
       }
     })
   }
@@ -1354,6 +1356,7 @@ class MonitoringModule extends React.Component {
         this.handleplanList()
         message.success('发布成功')
         this.setState({ reservePopup: null })
+        this.handlesetTimeOut()
       }
       if (result.code === 201) {
         const dom = []
