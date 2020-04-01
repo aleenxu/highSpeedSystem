@@ -83,7 +83,7 @@ class SidePop extends React.Component {
     `
   }
   componentDidMount = () => {
-    this.state.boxRight === 'unset' ? this.setState({transition:'bounceInLeft'}) : this.setState({transition:'bounceInRight'})
+    this.state.boxRight === 'unset' ? this.setState({ transition: 'bounceInLeft' }) : this.setState({ transition: 'bounceInRight' })
   }
   componentWillReceiveProps = (nextProps) => {
     if (this.props.SidePopLeft !== nextProps.SidePopLeft) {
@@ -109,10 +109,10 @@ class SidePop extends React.Component {
   handleLeftClick = (e) => {
     const _this = this;
     const styleLeft = 'left:20px;transition:all .5s;'
-    if (!this.state.iconFlag){
+    if (!this.state.iconFlag) {
       $(e.target).parent().parent().attr('style', _this.stylesL)
-      $('#searchBox').attr('style',styleLeft)
-      $('#roadStateBox').attr('style',styleLeft)
+      $('#searchBox').attr('style', styleLeft)
+      $('#roadStateBox').attr('style', styleLeft)
       $(e.target).attr('src', LOpenIcon)
       $(e.target).attr('title', '展开')
       this.setState({
@@ -121,23 +121,23 @@ class SidePop extends React.Component {
     } else {
       const styleLeftH = 'transition:all .5s;'
       $(e.target).parent().parent().attr('style', _this.stylesH)
-      $('#searchBox').attr('style',styleLeftH)
-      $('#roadStateBox').attr('style',styleLeftH)
+      $('#searchBox').attr('style', styleLeftH)
+      $('#roadStateBox').attr('style', styleLeftH)
       $(e.target).attr('src', LCloseIcon)
       $(e.target).attr('title', '收起')
       this.setState({
         iconFlag: false,
       })
-      
+
     }
   }
   // 右边栏的收起和展开
   handleRightClick = (e) => {
     const styleR = 'right:5px;transition:all .5s;'
     const _this = this;
-    if (!this.state.iconFlagR){
+    if (!this.state.iconFlagR) {
       $(e.target).parent().parent().attr('style', _this.stylesR)
-      $('#deviceBox').attr('style',styleR)
+      $('#deviceBox').attr('style', styleR)
       $(e.target).attr('src', ROpenIcon)
       $(e.target).attr('title', '展开')
       this.setState({
@@ -146,7 +146,7 @@ class SidePop extends React.Component {
     } else {
       const styleRH = 'transition:all .5s;'
       $(e.target).parent().parent().attr('style', _this.stylesRH)
-      $('#deviceBox').attr('style',styleRH)
+      $('#deviceBox').attr('style', styleRH)
       $(e.target).attr('src', RCloseIcon)
       $(e.target).attr('title', '收起')
       this.setState({
@@ -179,7 +179,7 @@ class SidePop extends React.Component {
       roadName: '路段起点',
       upTime: '方向',
       traffic: '管控时长',
-      time:'剩余时间',
+      time: '剩余时间',
       state: '状态'
     }
     //列表数据
@@ -200,7 +200,7 @@ class SidePop extends React.Component {
                 id: '道路编号',
                 roadName: '路段',
                 upTime: '方向',
-                traffic: item.eventName === '交通拥堵' ? '路况(km/h)' : item.eventName === '极端天气' ? '能见度(m)' : '影响车道',
+                traffic: item.eventName === '交通拥堵' ? '路况(km/h)' : item.eventName === '极端天气' ? '能见度(m)' : item.eventName === '主动管控' ? '事件类型' : '影响车道',
                 state: '上报时间',
                 type: item.eventType,
                 name: item.eventName,
@@ -216,12 +216,12 @@ class SidePop extends React.Component {
             {SidplanList && <ScrollList type="4" Tit="管控方案" Title={listTit} dataRes={SidplanList} handleEventPopup={this.handleEventPopup}></ScrollList>}
           </div>
         }
-        {boxRight === 'unset' ? 
-          <div style={{position: 'absolute', zIndex: '9999', left: '0', bottom: '0'}}>
-            <img style={{cursor:'pointer'}} title='收起' src={LCloseIcon} onClick={this.handleLeftClick} />
-          </div> : 
-          <div style={{position: 'absolute', zIndex: '9999', right: '0', bottom: '0'}}>
-            <img style={{cursor:'pointer'}} title='收起' src={RCloseIcon} onClick={this.handleRightClick} />
+        {boxRight === 'unset' ?
+          <div style={{ position: 'absolute', zIndex: '9999', left: '0', bottom: '0' }}>
+            <img style={{ cursor: 'pointer' }} title='收起' src={LCloseIcon} onClick={this.handleLeftClick} />
+          </div> :
+          <div style={{ position: 'absolute', zIndex: '9999', right: '0', bottom: '0' }}>
+            <img style={{ cursor: 'pointer' }} title='收起' src={RCloseIcon} onClick={this.handleRightClick} />
           </div>
         }
       </div>

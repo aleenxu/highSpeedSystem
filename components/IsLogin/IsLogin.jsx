@@ -30,8 +30,14 @@ class IsLogin extends React.Component {
       </Menu>
     );
   }
-  handleClose = (value) => {
-    this.setState({ password: value })
+  // 转格式
+  getFormData = (obj) => {
+    const formData = new FormData()
+    Object.keys(obj).forEach((item) => {
+      formData.append(item, obj[item])
+    })
+    console.log(formData)
+    return formData
   }
   getupdatePwd = () => {
     const { password, oldPassword, id } = this.loginKeys
@@ -47,15 +53,7 @@ class IsLogin extends React.Component {
       message.error('密码输入不一致！')
       return
     }
-    // 转格式
-    getFormData = (obj) => {
-      const formData = new FormData()
-      Object.keys(obj).forEach((item) => {
-        formData.append(item, obj[item])
-      })
-      console.log(formData)
-      return formData
-    }
+
     getResponseDatas('post', this.updatePassUrl, this.getFormData(this.loginKeys)).then((res) => {
       const result = res.data
       if (result.code === 0) {
@@ -81,15 +79,48 @@ class IsLogin extends React.Component {
       }
     })
   }
+  handleClose = (value) => {
+    this.setState({ password: value })
+  }
+  handleInputChange = (e, name) => {
+    this.loginKeys[name] = e.target.value
+  }
   render() {
+    const { password } = this.state
     return (
-      <div className={styles.isLoginBox}>
+      [<div className={styles.isLoginBox}>
         <Dropdown overlay={this.menu}>
           <a className="ant-dropdown-link" onClick={e => e.preventDefault()}>
             <Icon className={styles.imgHead} type="user" /> <Icon className={styles.arrow} type="down" />
           </a>
         </Dropdown>
-      </div>
+      </div>,
+      password ?
+        <div className={styles.traBox}>
+          <div className={styles.addListBox}>
+            <div className={styles.titleBox}>
+              <div className={styles.title} style={{ marginRight: 15 }}><span>修改密码</span></div>
+              <Icon type="close" onClick={() => { this.handleClose(null) }} className={styles.close} />
+            </div>
+            <div className={styles.content}>
+              <div className={styles.syetemItem}>
+                <div className={styles.inSle}>
+                  <Input.Password placeholder="输入新密码" onChange={(e) => { this.handleInputChange(e, 'password') }} />
+                </div>
+              </div>
+              <div className={styles.syetemItem}>
+                <div className={styles.inSle}>
+                  <Input.Password placeholder="再次输入新密码" onChange={(e) => { this.handleInputChange(e, 'oldPassword') }} />
+                </div>
+              </div>
+              <div className={styles.syetemItem}>
+                <span className={styles.Button} onClick={this.getupdatePwd}>确认</span>
+                <span className={styles.Button} onClick={() => { this.handleClose(null) }}>取消</span>
+              </div>
+            </div>
+          </div>
+        </div> : null
+      ]
     )
   }
 }

@@ -368,9 +368,9 @@ class ScrollList extends React.Component {
                     <div key={item.roadCode + item.locs} className={classNames(styles.listItem, 'listItem')} latlng={this.getLineCenterPoint(item.latlng)} onClick={(e) => { this.handleEventPopup(e, 'Details', item) }}>
                       <i style={{ background: item.controlStatusType > 0 ? 'green' : 'red', boxShadow: item.controlStatusType > 0 ? 'green 0px 0px 20px' : 'red 0px 0px 20px' }} />
                       <span>{item.roadCode}</span>
-                      <span title={item.locs && item.locs.split(' ')[0]}>{item.locs && item.locs.split(' ')[0]}</span>
+                      <span title={item.roadSection}>{item.roadSection}</span>
                       <span>{item.directionName}</span>
-                      <span>{item.situation}</span>
+                      <span>{item.eventType === 5 ? item.eventTypeName : item.situation}</span>
                       <span>{this.getDate(item.updateTime)}</span>
                     </div>
                   ))
