@@ -210,13 +210,17 @@ class Traffic extends React.Component {
                   onOk={this.handleDataonOk}
                 />
               </div>
-              <div className={styles.OperationItem}>
+              <div className={styles.OperationItem} style={{ 'min-width': 'auto' }}>
                 <Button className={styles.Button} onClick={this.geteventStatistics}>搜&nbsp;&nbsp;索</Button>
               </div>
             </div>
             {chartsData &&
               <div className={styles.ContetList}>
-                <SystemCharts height="95%" chartsItems={chartsData} />
+                <div className={styles.SystemCharts}>
+                  <div className={styles.chartsBox}>
+                    <SystemCharts height="100%" chartsItems={chartsData} />
+                  </div>
+                </div>
               </div>}
           </div>
         </div>

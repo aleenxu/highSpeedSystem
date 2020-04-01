@@ -238,7 +238,7 @@ class Historical extends React.Component {
                 !!listByPage && listByPage.data.map((item) => {
                   return (
                     <div className={styles.listItems}>
-                      <div className={styles.listTd} ><span className={styles.roadName}>{item.eventTypeId}</span></div>
+                      <div className={styles.listTd} ><span className={styles.roadName}>{item.eventId}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.eventTypeName}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.roadName}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.secName}</span></div>

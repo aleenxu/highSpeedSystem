@@ -72,7 +72,7 @@ class Intelligence extends React.Component {
       userLimit.push(item.id)
     })
     this.setState({ userLimit })
-    this.boardData = this.board
+    this.boardData = JSON.parse(JSON.stringify(this.board))
     this.handleListByPage()
     this.handlelistDetail('directionList', 1)
     this.handlelistDetail('vendorList', 24)
@@ -140,7 +140,7 @@ class Intelligence extends React.Component {
     getResponseDatas('post', url, this.board).then((res) => {
       const result = res.data
       if (result.code === 200) {
-        this.board = this.boardData
+        this.board = JSON.parse(JSON.stringify(this.boardData))
         this.setState({ boardData: null, directions: null, roadSecIddata: null })
         this.handleListByPage()
       }
@@ -228,7 +228,7 @@ class Intelligence extends React.Component {
   }
   // 查看当前方案详情
   handleboardData = (data) => {
-    this.board = data
+    this.board = JSON.parse(JSON.stringify(data))
     this.setState({ boardData: data, directions: data ? data.direction : null, roadSecIdItem: data ? data.roadSecId : null }, () => {
       if (data) {
         // 获取方向下拉
@@ -240,7 +240,7 @@ class Intelligence extends React.Component {
   }
   handleAddData = () => {
     console.log(this.board, this.boardData);
-    this.board = this.boardData
+    this.board = JSON.parse(JSON.stringify(this.boardData))
     this.setState({ boardData: this.board, hwayDirection: null, roadSecIddata: null })
   }
   render() {

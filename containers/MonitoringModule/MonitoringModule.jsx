@@ -1120,7 +1120,6 @@ class MonitoringModule extends React.Component {
         // 查询管控方案
         this.handleplanList()
         this.setState({ reservePopup: null })
-        this.handlesetTimeOut()
       }
     })
   }
@@ -1300,6 +1299,12 @@ class MonitoringModule extends React.Component {
       if (boolean && this.state.EventTagPopupTit !== '主动管控') {
         this.handSecUrl()
       }
+      // 刷新首页数据
+      if (boolean && this.state.EventTagPopupTit !== '标题') {
+        this.handlesetTimeOut(boolean)
+      } else {
+        this.handlesetTimeOut()
+      }
     })
     $('#searchBox').attr('style', 'transition:all .5s;')
     $('#roadStateBox').attr('style', 'transition:all .5s;')
@@ -1356,7 +1361,6 @@ class MonitoringModule extends React.Component {
         this.handleplanList()
         message.success('发布成功')
         this.setState({ reservePopup: null })
-        this.handlesetTimeOut()
       }
       if (result.code === 201) {
         const dom = []
@@ -1510,7 +1514,7 @@ class MonitoringModule extends React.Component {
         /* this.handleTimeData() */
         // 开始下一次执行
         this.handlesetTimeOut()
-      }, 60000)
+      }, 10000)
     }
   }
  
@@ -1568,7 +1572,7 @@ class MonitoringModule extends React.Component {
         {eventsPopup && hwayList ?
           <div className={styles.MaskBox}>
             <div className={styles.EventPopup}>
-              <div className={styles.Title} style={{ lineHeight: '32px' }}>{eventsPopup.name}事件过滤设置<Icon className={styles.Close} style={{ top: '37%' }} onClick={() => { this.handleEventPopup('Event', false) }} type="close" /></div>
+              <div className={styles.Title}>{eventsPopup.name}事件过滤设置<Icon className={styles.Close} style={{ top: '37%' }} onClick={() => { this.handleEventPopup('Event', false) }} type="close" /></div>
               <div className={styles.Centent}>
                 <div className={styles.ItemBox}>
                   <div className={styles.ItemInput} style={{ width: '100%', marginLeft: '25px' }}>

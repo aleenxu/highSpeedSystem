@@ -75,7 +75,7 @@ class SystemCharts extends React.Component {
           type: 'slider',
           show: true,
           xAxisIndex: [0],
-          start: 50,
+          start: 0,
           end: 100,
           bottom: 5,
         },
