@@ -203,15 +203,8 @@ class MonitoringModule extends React.Component {
     this.timeInterval = setInterval(() => {
       this.handleTimeData()
     }, 60000)
-    this.handlesetTimeOut(false)
   }
-  componentWillUnmount = () => {
-    clearInterval(this.timeInterval)
-    if (this.timeTimeout) {
-      clearTimeout(this.timeTimeout)
-      this.timeTimeout = null
-    }
-  }
+
   onStartChange = (value) => {
     this.onPickerChange('startValue', value)
     this.publishPlanVO.startTime = value ? this.getDate(value._d) : ''
@@ -310,7 +303,6 @@ class MonitoringModule extends React.Component {
         const latlngArr = JSON.parse(JSON.stringify(boolean.latlng))
         window.drawLine(latlngArr, window.lineFlag)
       } else {
-        this.handlesetTimeOut(boolean)
         this.setState({
           detailsPopup: false,
           controlBtnFlag: null,
@@ -348,10 +340,6 @@ class MonitoringModule extends React.Component {
       this.planStatus = 2
       this.handleplanList()
     }
-    if (type === 'setTimeOut') {
-      this.handlesetTimeOut(boolean)
-    }
-    this.handlesetTimeOut(boolean)
   }
   genExtra = () => (
     <Icon
@@ -515,6 +503,7 @@ class MonitoringModule extends React.Component {
   }
   // 获取全部交通管控类型
   getDeviceEventList = (flag) => {
+    debugger
     const params = {
       deviceString: '',
     }
@@ -542,6 +531,7 @@ class MonitoringModule extends React.Component {
 
       }
     })
+
   }
   // 获取左侧列表数据
   handleEventList = () => {
@@ -582,7 +572,6 @@ class MonitoringModule extends React.Component {
       const result = res.data
       if (result.code === 200) {
         this.setState({ planList: result.data, controlPopup: false })
-        this.handleEventPopup('Control', false)
       }
     })
   }
@@ -904,7 +893,7 @@ class MonitoringModule extends React.Component {
     const deviceAry = []
     const that = this
     debugger
-    console.log(this.controlDatas, '见证奇迹的时刻....')
+    console.log(this.controlDatas,'见证奇迹的时刻....')
     if (titFlag === '主动管控') {
       if (!this.controlDatas.roadName) {
         message.info('请选择高速！')
@@ -990,8 +979,8 @@ class MonitoringModule extends React.Component {
       this.setState({
         reservePopup: this.reservePopup,
         startValue: this.getDate(),
-      }, () => {
-        console.log('显示管控详情后', this.state.reservePopup, this.controlDatas)
+      },()=>{
+        console.log('显示管控详情后',this.state.reservePopup, this.controlDatas)
       })
       this.handlelistDetail('MeasuresList', 22)
     } else {
@@ -1120,7 +1109,6 @@ class MonitoringModule extends React.Component {
         // 查询管控方案
         this.handleplanList()
         this.setState({ reservePopup: null })
-        this.handlesetTimeOut()
       }
     })
   }
@@ -1208,8 +1196,6 @@ class MonitoringModule extends React.Component {
         // 获取方案详情
         that.handleViewControl(eventType, eventId)
         /* that.handleEventPopup('Reserve', true) */
-      } else {
-        message.warning(result.message)
       }
     })
   }
@@ -1223,16 +1209,14 @@ class MonitoringModule extends React.Component {
         /* this.detailsPopupData = detailsPopup */
         const list = []
         result.data.devices.forEach((item) => {
-          if (item.dictCode === 1) {
-            item.device.forEach((items) => {
-              list.push({
-                content: items.displayContent,
-                deviceId: items.deviceId,
-                deviceTypeId: items.deviceTypeId,
-                deviceControlType: items.deviceControlType,
-              })
+          item.device.forEach((items) => {
+            list.push({
+              content: items.displayContent,
+              deviceId: items.deviceId,
+              deviceTypeId: items.deviceTypeId,
+              deviceControlType: items.deviceControlType,
             })
-          }
+          })
         })
         this.publishPlanVO = {
           channel: '',
@@ -1317,8 +1301,8 @@ class MonitoringModule extends React.Component {
         EventTagPopupTit: '标题',
       })
     } */
-    /*    console.log(this.publishPlanVO,EventTagPopupTit);
-       debugger */
+    console.log(this.publishPlanVO,EventTagPopupTit);
+    debugger
     for (let i = 0; i < list.length; i++) {
       if (list[i].content == '') {
         message.warning('请填全显示内容')
@@ -1356,7 +1340,6 @@ class MonitoringModule extends React.Component {
         this.handleplanList()
         message.success('发布成功')
         this.setState({ reservePopup: null })
-        this.handlesetTimeOut()
       }
       if (result.code === 201) {
         const dom = []
@@ -1485,29 +1468,6 @@ class MonitoringModule extends React.Component {
       }
     })
   }
-
-  // 一分钟计时器
-  handlesetTimeOut = (value) => {
-    if (this.timeTimeout) {
-      clearTimeout(this.timeTimeout)
-      this.timeTimeout = null
-    }
-    if (!value) {
-      this.timeTimeout = setTimeout(() => {
-        // 查询左侧列表数据
-        this.handleEventList()
-        // 查询饼图数据
-        this.handlegroupType()
-        // 查询右侧柱状图
-        this.handleUrlAjax(this.groupStatusUrl, 'groupStatus')
-        // 查询管控方案
-        this.handleplanList()
-        /* this.handleTimeData() */
-        // 开始下一次执行
-        this.handlesetTimeOut()
-      }, 60000)
-    }
-  }
   render() {
     const {
       MeasuresList, eventsPopup, groupType, planList, EventTagPopup, EventTagPopupTit, roadNumber, endValueTime, conditionList, boxSelect, flagClose, oldDevicesList,
@@ -1604,24 +1564,23 @@ class MonitoringModule extends React.Component {
         {/* 事件详情 */}
         {TimeData ?
           <div className={styles.MaskBox}>
-            <div className={styles.MaskCenterBox}>
-              {
-                TimeData.map((item, index) => {
-                  return (
-                    <div className={classNames( styles.TimeData)} key={item.eventId}>
-                      <div className={styles.Title}>{item.eventId}P管控方案超时提醒<Icon className={styles.Close} onClick={() => { this.handleTimeDataState() }} type="close" /></div>
-                      <div className={styles.Content}>
-                        <div className={styles.ItemBox}>
-                          <div className={styles.RowBox}>
-                            <div className={styles.left}>{index + 1}.{item.eventId}P方案{item.secName}发生{item.eventTypeName}</div>
-                            <div className={styles.right}><Button onClick={() => { this.handleNoneTimeState(item) }} className={styles.Button}>不再提示</Button><Button className={styles.Button} onClick={() => { this.handleEndValueTimeState(item) }}>延时</Button></div>
-                          </div>
+            <div className={classNames(styles.DetailsBox, styles.TimeData)}>
+              <div className={styles.Title}>管控方案超时提醒<Icon className={styles.Close} onClick={() => { this.handleTimeDataState() }} type="close" /></div>
+              <div className={styles.Content}>
+                <div className={styles.ItemBox}>
+                  {/*  <div className={styles.HeadItem}>当前路况</div> */}
+                  {
+                    TimeData.map((item, index) => {
+                      return (
+                        <div className={styles.RowBox} key={item.eventId}>
+                          <div className={styles.left}>{index + 1}.{item.eventId}P方案{item.secName}发生{item.eventTypeName}</div>
+                          <div className={styles.right}><Button onClick={() => { this.handleNoneTimeState(item) }} className={styles.Button}>不再提示</Button><Button className={styles.Button} onClick={() => { this.handleEndValueTimeState(item) }}>延时</Button></div>
                         </div>
-                      </div>
-                    </div>
-                  )
-                })
-              }
+                      )
+                    })
+                  }
+                </div>
+              </div>
             </div>
           </div> : null}
         {/* 管控预案查询 */}
@@ -1782,7 +1741,7 @@ class MonitoringModule extends React.Component {
                     <div style={{ marginLeft: '10px' }} className={styles.ItemInput}>
                       <Checkbox.Group defaultValue={reservePopup.channel} onChange={(e) => { this.handleCheckboxGroup(e, 'channel', 'publishPlanVO') }}>
                         <Checkbox value="1" >高德</Checkbox>
-                        <Checkbox value="2" >管控设备</Checkbox>
+                        <Checkbox value="2" >可变情报表</Checkbox>
                       </Checkbox.Group>
                     </div>
                   </div>
@@ -2073,8 +2032,8 @@ class MonitoringModule extends React.Component {
                           <Option value="0">收费站</Option>
                           <Option value="1">里程桩</Option>
                         </Select>
-                        <Input id="startInt" style={{ width: '29%', height: '32px', margin: '8px 1%' }} defaultValue={this.controlDatas.startPileNum} onBlur={(e) => { this.handleInput(e, 'startPileNum', 'controlDatas'); this.handSecUrl() }} />
-                        <Input id='endInt' style={{ width: '29%', height: '32px', margin: '8px 1%' }} defaultValue={this.controlDatas.endPileNum} onBlur={(e) => { this.handleInput(e, 'endPileNum', 'controlDatas'); this.handSecUrl() }} />
+                        <Input id="startInt" style={{ width: '29%', height: '32px', margin: '8px 1%' }} defaultValue={this.controlDatas.startPileNum} onBlur={(e) => { this.handleInput(e, 'startPileNum', 'controlDatas');this.handSecUrl() }} />
+                        <Input id='endInt' style={{ width: '29%', height: '32px', margin: '8px 1%' }} defaultValue={this.controlDatas.endPileNum} onBlur={(e) => { this.handleInput(e, 'endPileNum', 'controlDatas');this.handSecUrl() }} />
                       </div>
                     </div>
                   </div>
