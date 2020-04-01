@@ -178,6 +178,7 @@ class ScrollList extends React.Component {
         $('#deviceBox').attr('style', 'transition:all .5s;')
         e.currentTarget.style.background = '#0d2645'
         window.listItemDom = e.currentTarget
+        
         /* handleEventPopup('setTimeOut', boolean) */
       }
     }
