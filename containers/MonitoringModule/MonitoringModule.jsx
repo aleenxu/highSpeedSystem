@@ -351,6 +351,8 @@ class MonitoringModule extends React.Component {
     if (type === 'setTimeOut') {
       this.handlesetTimeOut(boolean)
     }
+    console.log(boolean);
+    debugger
     this.handlesetTimeOut(boolean)
   }
   genExtra = () => (
