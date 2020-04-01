@@ -345,7 +345,7 @@ class MonitoringModule extends React.Component {
     if (type === 'setTimeOut') {
       this.handlesetTimeOut(boolean)
     }
-    console.log(boolean);
+    console.log(boolean,type);
     debugger
     this.handlesetTimeOut(boolean)
 >>>>>>> 78b948d66b0e5c4bcc2d22c0f6386f0f44a352f2
