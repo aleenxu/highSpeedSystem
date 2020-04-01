@@ -34,6 +34,7 @@ class ScrollList extends React.Component {
       two: false,
       three: false,
       four: false,
+      five: false,
     }
     this.eachartLength = 0
     this.ProgressLength = 0
@@ -247,22 +248,27 @@ class ScrollList extends React.Component {
       typeNow: $(event.currentTarget).attr('nowtype')
     }, () => {
       const type = this.state.typeNow
+      debugger
       switch (type) {
         case "1":
           const dataLength = this.state.dataAll[0].eventData.length
-          !this.state.one ? this.setState({ one: true }, () => { dataLength > 0 ? window.leftModuleOne.show() : message.info('暂无数据！') }) : this.setState({ one: false }, () => { window.leftModuleOne.hide() })
+          !this.state.one ? this.setState({ one: true }, () => { dataLength > 0 ? window.leftModule0.show() : message.info('暂无数据！') }) : this.setState({ one: false }, () => { window.leftModule0.hide() })
           break;
         case "2":
           const dataLength1 = this.state.dataAll[1].eventData.length
-          !this.state.two ? this.setState({ two: true }, () => { dataLength1 > 0 ? window.leftModuleTwo.show() : message.info('暂无数据！') }) : this.setState({ two: false }, () => { window.leftModuleTwo.hide() })
+          !this.state.two ? this.setState({ two: true }, () => { dataLength1 > 0 ? window.leftModule1.show() : message.info('暂无数据！') }) : this.setState({ two: false }, () => { window.leftModule1.hide() })
           break;
         case "3":
           const dataLength2 = this.state.dataAll[2].eventData.length
-          !this.state.three ? this.setState({ three: true }, () => { dataLength2 > 0 ? window.leftModuleThree.show() : message.info('暂无数据！') }) : this.setState({ three: false }, () => { window.leftModuleThree.hide() })
+          !this.state.three ? this.setState({ three: true }, () => { dataLength2 > 0 ? window.leftModule2.show() : message.info('暂无数据！') }) : this.setState({ three: false }, () => { window.leftModule2.hide() })
           break;
         case "4":
           const dataLength3 = this.state.dataAll[3].eventData.length
-          !this.state.four ? this.setState({ four: true }, () => { dataLength3 > 0 ? window.leftModuleFour.show() : message.info('暂无数据！') }) : this.setState({ four: false }, () => { window.leftModuleFour.hide() })
+          !this.state.four ? this.setState({ four: true }, () => { dataLength3 > 0 ? window.leftModule3.show() : message.info('暂无数据！') }) : this.setState({ four: false }, () => { window.leftModule3.hide() })
+          break;
+        case "5":
+          const dataLength4 = this.state.dataAll[4].eventData.length
+          !this.state.five ? this.setState({ five: true }, () => { dataLength4 > 0 ? window.leftModule4.show() : message.info('暂无数据！') }) : this.setState({ five: false }, () => { window.leftModule4.hide() })
           break;
       }
     })

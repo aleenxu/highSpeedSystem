@@ -351,8 +351,8 @@ class MonitoringModule extends React.Component {
     if (type === 'setTimeOut') {
       this.handlesetTimeOut(boolean)
     }
-    console.log(boolean,type);
-    debugger
+    // console.log(boolean,type);
+    // debugger
     this.handlesetTimeOut(boolean)
   }
   genExtra = () => (
@@ -399,7 +399,7 @@ class MonitoringModule extends React.Component {
     })
   }
   handleInput = (e, name, type, data) => {
-    debugger
+    // debugger
     if (type === 'publishPlanVO' && name === 'content') {
       this.publishPlanVO.list.forEach((item, index) => {
         if (item.deviceId === data) {
@@ -841,7 +841,7 @@ class MonitoringModule extends React.Component {
     /* const paramStr = '?deviceCode='+data.deviceCode+'&deviceLocation='+data.deviceLocation+'&deviceName='+data.deviceName+'&deviceTypeId='+data.deviceTypeId
     +'&roadCode='+data.roadCode+'&roadDirection='+data.roadDirection+'&roadName='+data.roadName+'&eventPileNum='+data.eventPileNum+'&eventTypeId='+data.eventTypeId
     '&value='+data.value+'&control='+data.control */
-    debugger
+    // debugger
     getResponseDatas('post', this.conditionUrl + paramStr, this.VIboardParameters.existsDevices).then((res) => {
       const result = res.data
       if (result.code === 200) {
@@ -1062,7 +1062,7 @@ class MonitoringModule extends React.Component {
     }
   }
   handleMarkControl = () => {
-    debugger
+    // debugger
     const { channel, controlDes } = this.publishPlanVO
     console.log(this.publishPlanVO);
     const { reservePopup, startValue, endValue, eventType } = this.state
@@ -1511,7 +1511,7 @@ class MonitoringModule extends React.Component {
         /* this.handleTimeData() */
         // 开始下一次执行
         this.handlesetTimeOut()
-      }, 10000)
+      }, 60000)
     }
   }
   render() {
