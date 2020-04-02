@@ -796,7 +796,7 @@ class ReservePlan extends React.Component {
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.rowId}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.roadName}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.secName}</span></div>
-                      <div className={styles.listTd} ><span className={styles.roadName}>{item.controlEventType}</span></div>
+                      <div className={styles.listTd} ><span className={styles.roadName}>{item.controlEventTypeName}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.controlDeviceTypeName}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.quoteNum}</span></div>
                       <div className={styles.listTd} >

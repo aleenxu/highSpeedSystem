@@ -175,14 +175,30 @@ class ScrollList extends React.Component {
         for (let i = 0; i < listItem.length; i++) {
           listItem[i].style.background = ''
         }
+        // $($('.ant-checkbox-input')).map((i, item) =>{
+        //   $(item).on('click')
+        //   if (item.checked) {
+        //     $(item).parent().removeClass('ant-checkbox-checked')
+        //     $(item).parent().parent().removeClass('ant-checkbox-wrapper-checked')
+        //     console.log(item.checked, '000')
+        //     $(item).trigger('click')
+        //     // item.checked = false
+        //     // $(item).prop("checked", false)
+        //     console.log(item.checked, '111')
+        //   }
+        // })
         $('#deviceBox').attr('style', 'transition:all .5s;')
         e.currentTarget.style.background = '#0d2645'
         window.listItemDom = e.currentTarget
+        
         /* handleEventPopup('setTimeOut', boolean) */
       }
     }
     if (handleEventPopup) {
       handleEventPopup(type, boolean)
+      // this.checkBoxClick()
+      console.log($($('.ant-checkbox-input')), '多少个')
+      
     }
   }
   formatDuring = (mss) => {
@@ -244,11 +260,11 @@ class ScrollList extends React.Component {
     </Badge>
   )
   checkBoxClick = event => {
+    console.log(this.state.listTitle)
     this.setState({
       typeNow: $(event.currentTarget).attr('nowtype')
     }, () => {
       const type = this.state.typeNow
-      debugger
       switch (type) {
         case "1":
           const dataLength = this.state.dataAll[0].eventData.length
@@ -272,10 +288,11 @@ class ScrollList extends React.Component {
           break;
       }
     })
+    
   }
 
   render() {
-    const { listType, listTit, listTitle, ProgressData, data, eachartData, sideachart } = this.state
+    const { typeNow, listType, listTit, listTitle, ProgressData, data, eachartData, sideachart } = this.state
     return (
       <div className={styles.scrollBox}>
         {listType === '1' &&
@@ -338,7 +355,7 @@ class ScrollList extends React.Component {
             <Checkbox.Group style={{
               position: "absolute", zIndex: 9, paddingLeft: "12px", top: "12px", borderBottom: '1px #fff solid',
               paddingBottom: '13px'
-            }} nowtype={listTitle.type} options={[{ label: '', value: listTitle }]} onClick={this.checkBoxClick} />
+            }} nowtype={listTitle.type} defaultValue={[typeNow]} options={[{ label: '', value: listTitle.type }]} onClick={this.checkBoxClick} />
             {listTitle.type === 1 &&
               <img className={styles.iconImg} src={iconTrafficJam} />
             }

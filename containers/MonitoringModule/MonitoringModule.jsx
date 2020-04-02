@@ -463,7 +463,8 @@ class MonitoringModule extends React.Component {
           this.controlDatas.eventTypeName = this.state.eventTypes[typeNum].name
         })
       } else if (value instanceof Array) {
-        window.map.setZoomAndCenter(13, value)
+        const nowZoom = window.map.getZoom()
+        window.map.setZoomAndCenter(nowZoom, value)
         this.setState({
           updatePoint: {
             content: '',

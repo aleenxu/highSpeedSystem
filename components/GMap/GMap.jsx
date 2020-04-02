@@ -115,7 +115,8 @@ class GMap extends React.Component {
       this.setState({
         centerPoint: window.centerPoint
       }, () => {
-        window.map.setZoomAndCenter(12, [this.state.centerPoint.split(",")[0], this.state.centerPoint.split(",")[1]])
+        const nowZoom = window.map.getZoom()
+        window.map.setZoomAndCenter(nowZoom, [this.state.centerPoint.split(",")[0], this.state.centerPoint.split(",")[1]])
       })
     }
   }
@@ -232,19 +233,21 @@ class GMap extends React.Component {
     const _this = this
     this.state.dataAll.map((leftItem, leftIndex) => {
       if (leftItem.eventData.length > 0) {
-        debugger
         // markEventType
         leftItem.eventData.map((item, index) => {
+          const itemData = JSON.parse(JSON.stringify(item))
           const marker = new AMap.Marker({
             position: new AMap.LngLat(item.latlng[0][0], item.latlng[0][1]),
             offset: new AMap.Pixel(-88, -19),
             icon: _this.returnMapIcon(leftIndex, item),
           })
           marker.on("click", () => {
+            const nowZoom = map.getZoom()
             // console.log("绑定点击事件",lineDatas, item.latlng[index])
-            map.setZoomAndCenter(12, [item.latlng[0][0], item.latlng[0][1]]); //同时设置地图层级与中心点
+            map.setZoomAndCenter(nowZoom, [item.latlng[0][0], item.latlng[0][1]]); //同时设置地图层级与中心点
             this.handledetai(item)
-            window.drawLine(item.latlng, window.lineFlag)
+            console.log(this.state.dataAll,'看下全部数据')
+            window.drawLine(itemData.latlng, window.lineFlag)
           })
           window['leftModule' + leftIndex].addLayer(marker) //把点添加到层组中
           window['leftModule' + leftIndex].setMap(map) // 层组渲染到地图中
@@ -266,7 +269,8 @@ class GMap extends React.Component {
           icon: imgIcon,
         });
         marker.on('click', (event) => {
-          map.setZoomAndCenter(12, positions[i].latlng); //同时设置地图层级与中心点
+          const nowZoom = map.getZoom()
+          map.setZoomAndCenter(nowZoom, positions[i].latlng); //同时设置地图层级与中心点
           this.openInfoWin(map, positions[i])
         })
         this.markers.push(marker)
