@@ -18,6 +18,7 @@ class MainMap extends React.Component {
       resizeEnable: true,
       center: [boardLatlng.split(',')[0], boardLatlng.split(',')[1]],
       zoom: 13,
+      mapStyle: "amap://styles/c3fa565f6171961e94b37c4cc2815ef8",
       showIndoorMap: false,
     })
     const marker = new AMap.Marker({
