@@ -1,0 +1,56 @@
+.mainMapBox {
+  width: 510px;
+  height: 510px;
+  z-index: 99999;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  background: #11181f;
+  border: 1px solid #173653;
+  transform: translate(-50%, -50%);
+  .affirm {
+    width: 100%;
+    height: 55px;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    z-index: 999999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #101113;
+     >span {
+      min-width: 80px;
+      height: 25px;
+      display: inline-block;
+      background: #1a416a;
+      border: 1px solid #969495;
+      margin: 0 5px;
+      color: #fff;
+      text-align: center;
+      line-height: 25px;
+      border-radius: 0;
+      cursor: pointer;
+      &:hover {
+        background: #0b0e13;
+      }
+    }
+  }
+}
+.mapcenter {
+  height: 50px;
+  z-index: 99999;
+  position: absolute;
+  color: #03edff;
+  text-align: center;
+  line-height: 50px;
+  font-size: 20px;
+  padding: 0 10px;
+  top: 4px;
+  left: 4px;
+}
+.mainMap {
+  width: 500px;
+  height: 400px;
+  margin: 55px 5px;
+}

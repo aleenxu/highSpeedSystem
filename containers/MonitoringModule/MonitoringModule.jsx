@@ -1446,6 +1446,9 @@ class MonitoringModule extends React.Component {
       console.log(result)
       if (result.code === 200 && result.data.length) {
         this.setState({ TimeData: result.data })
+        setTimeout(() => {
+          this.setState({ TimeData: null })
+        }, 30000)
       } else {
         this.setState({ TimeData: null })
       }
@@ -1454,8 +1457,6 @@ class MonitoringModule extends React.Component {
   handleTimeDataState = (index) => {
     const { TimeData } = this.state
     TimeData.splice(index, 1)
-    console.log(TimeData, index);
-
     this.setState({ TimeData: TimeData.length ? TimeData : null })
   }
   // 延时时间
@@ -1479,18 +1480,22 @@ class MonitoringModule extends React.Component {
       const result = res.data
       if (result.code === 200) {
         message.success('延时发布成功')
+        const { TimeData } = this.state
+        TimeData.splice(index, 1)
         this.TimeState = null
-        this.setState({ endValueTime: null })
+        this.setState({ endValueTime: null, TimeData: TimeData.length ? TimeData : null })
       }
     })
   }
-  handleNoneTimeState = (item) => {
+  handleNoneTimeState = (item, index) => {
     const { eventId } = item
     getResponseDatas('put', this.promptUrl + eventId).then((res) => {
       const result = res.data
       if (result.code === 200) {
         message.success('操作成功')
-        this.setState({ endValueTime: null, TimeData: null })
+        const { TimeData } = this.state
+        TimeData.splice(index, 1)
+        this.setState({ endValueTime: null, TimeData: TimeData.length ? TimeData : null })
       }
     })
   }
@@ -1517,7 +1522,7 @@ class MonitoringModule extends React.Component {
       }, 60000)
     }
   }
- 
+
   render() {
     const {
       MeasuresList, eventsPopup, groupType, planList, EventTagPopup, EventTagPopupTit, roadNumber, endValueTime, conditionList, boxSelect, flagClose, oldDevicesList,
@@ -1623,7 +1628,7 @@ class MonitoringModule extends React.Component {
                         <div className={styles.ItemBox}>
                           <div className={styles.RowBox}>
                             <div className={styles.left}>{index + 1}.{item.eventId}P方案-{item.secName}-{item.eventTypeName}</div>
-                            <div className={styles.right}><Button onClick={() => { this.handleNoneTimeState(item) }} className={styles.Button}>不再提示</Button><Button className={styles.Button} onClick={() => { this.handleEndValueTimeState(item) }}>延时</Button></div>
+                            <div className={styles.right}><Button onClick={() => { this.handleNoneTimeState(item, index) }} className={styles.Button}>不再提示</Button><Button className={styles.Button} onClick={() => { this.handleEndValueTimeState(item, index) }}>延时</Button></div>
                           </div>
                         </div>
                       </div>

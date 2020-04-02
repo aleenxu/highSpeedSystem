@@ -105,6 +105,7 @@ class SystemCharts extends React.Component {
         smooth: false,
         symbol: 'circle',
         symbolSize: 10,
+        /* barWidth :30, */
         itemStyle: {
           normal: {
             color: function (params) {

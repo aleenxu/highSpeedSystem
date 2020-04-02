@@ -45,6 +45,16 @@ class Traffic extends React.Component {
   }
   getJurisdiction = (value, type) => {
     const { RoadMessage = [] } = this.state
+    if (value == '') {
+      this.setState({
+        Jurisdiction: value,
+        RoadData: [],
+        RoadValue: value,
+        RoadsectionData: [],
+        Roadsection: value,
+      })
+      return
+    }
     RoadMessage.forEach((item) => {
       if (item.key === value) {
         this.setState({
@@ -64,6 +74,14 @@ class Traffic extends React.Component {
   }
   getRoadData = (value) => {
     const { RoadData } = this.state
+    if (value == '') {
+      this.setState({
+        RoadValue: value,
+        RoadsectionData: [],
+        Roadsection: value,
+      })
+      return
+    }
     RoadData.forEach((item) => {
       if (item.key === value) {
         this.setState({
@@ -166,6 +184,7 @@ class Traffic extends React.Component {
                   onChange={this.getJurisdiction}
                   value={Jurisdiction}
                 >
+                 {/*  <Option value="">全部</Option> */}
                   {
                     RoadMessage && RoadMessage.map((item) => {
                       return <Option key={item.key} value={item.key}>{item.key}</Option>
@@ -178,7 +197,9 @@ class Traffic extends React.Component {
                   onChange={this.getRoadData}
                   style={{ width: '100%' }}
                   value={RoadValue}
+                  disabled={Jurisdiction == ""}
                 >
+                  {/* <Option value="">全部</Option> */}
                   {
                     RoadData && RoadData.map((item) => {
                       return <Option value={item.key} key={item.key}>{item.key}</Option>
@@ -190,8 +211,10 @@ class Traffic extends React.Component {
                 <Select
                   style={{ width: '100%' }}
                   value={Roadsection}
+                  disabled={RoadValue == ""}
                   onChange={(e) => { this.onSecondChange(e, 'Roadsection') }}
                 >
+                  {/* <Option value="">全部</Option> */}
                   {
                     RoadsectionData && RoadsectionData.map((item) => {
                       return <Option value={item.road_sec_id} key={item.road_sec_id}>{item.sec_name}</Option>

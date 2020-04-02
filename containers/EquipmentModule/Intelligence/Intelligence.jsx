@@ -4,6 +4,7 @@ import Navigation from '../../../components/Navigation/Navigation'
 import getResponseDatas from '../../../plugs/HttpData/getResponseData'
 import styles from '../EquipmentModule.scss'
 import classNames from 'classNames'
+import MainMap from '../../../components/MainMap/MainMap'
 import { Pagination, Input, message, Modal, Icon, Form, Select, Button } from 'antd'
 
 const { confirm } = Modal
@@ -31,6 +32,9 @@ class Intelligence extends React.Component {
       roadSecIdItem: null,
       userLimit: [],
       deviceSizeList: null,
+      inmainMap: null,
+      boardLatlng: null,
+      Intelatlng: null,
     }
     this.Parameters = {
       keyword: '',
@@ -141,7 +145,7 @@ class Intelligence extends React.Component {
       const result = res.data
       if (result.code === 200) {
         this.board = JSON.parse(JSON.stringify(this.boardData))
-        this.setState({ boardData: null, directions: null, roadSecIddata: null })
+        this.setState({ boardData: null, boardLatlng: null, directions: null, roadSecIddata: null })
         this.handleListByPage()
       }
       message.success(result.message)
@@ -159,7 +163,7 @@ class Intelligence extends React.Component {
   handleDelect = (rowId) => {
     const that = this
     confirm({
-      title: '确认要删除当前用户?',
+      title: '确认要删除当前可变情报板?',
       cancelText: '取消',
       okText: '确认',
       onOk() {
@@ -229,7 +233,7 @@ class Intelligence extends React.Component {
   // 查看当前方案详情
   handleboardData = (data) => {
     this.board = JSON.parse(JSON.stringify(data))
-    this.setState({ boardData: data, directions: data ? data.direction : null, roadSecIdItem: data ? data.roadSecId : null }, () => {
+    this.setState({ boardData: data, boardLatlng: data ? data.latlng : null, directions: data ? data.direction : null, roadSecIdItem: data ? data.roadSecId : null }, () => {
       if (data) {
         // 获取方向下拉
         this.handlehwaySelect(data.roadName)
@@ -241,13 +245,23 @@ class Intelligence extends React.Component {
   handleAddData = () => {
     console.log(this.board, this.boardData);
     this.board = JSON.parse(JSON.stringify(this.boardData))
-    this.setState({ boardData: this.board, hwayDirection: null, roadSecIddata: null })
+    this.setState({ boardData: this.board, boardLatlng: null, hwayDirection: null, roadSecIddata: null })
+  }
+  handlemainMap = (latlng) => {
+    this.board.latlng = latlng
+    console.log(latlng);
+    
+    this.setState({ boardLatlng: latlng })
+  }
+  handleIntelatlng = (value) => {
+    this.setState({ Intelatlng: value })
   }
   render() {
-    const { listByPage, current, userLimit, deviceSizeList, boardData, directionList, roadSecIddata, roadSecIdItem, directions, hwayList, vendorList, deviceTypeList, ControlStatus, hwayDirection } = this.state
+    const { listByPage, Intelatlng, current, inmainMap, userLimit, boardLatlng, deviceSizeList, boardData, directionList, roadSecIddata, roadSecIdItem, directions, hwayList, vendorList, deviceTypeList, ControlStatus, hwayDirection } = this.state
     return (
       <div>
         <SystemMenu />
+        {Intelatlng ? <MainMap boardLatlng={boardLatlng} handlemainMap={this.handlemainMap} handleIntelatlng={this.handleIntelatlng} /> : null}
         <div className={styles.EqMain}>
           <Navigation />
           <div className={styles.EqCentent}>
@@ -467,7 +481,7 @@ class Intelligence extends React.Component {
                         name="latlng"
                         label="经&nbsp;纬&nbsp;度"
                       >
-                        <Input onChange={(e) => { this.handleInput(e, 'latlng', 'board') }} defaultValue={boardData.latlng} />
+                        <Input onClick={(e) => { this.handleIntelatlng(true) }} value={boardLatlng} />
                       </Form.Item>
                     </div>
                   </div>
@@ -492,6 +506,14 @@ class Intelligence extends React.Component {
                   <Button className={styles.Button} onClick={() => { this.handleboardData(null) }}>返&nbsp;&nbsp;回</Button>
                 </div>
               </div>
+            </div>
+          </div> : null}
+        {inmainMap ?
+          <div className={styles.mainMapBox}>
+            <div id="mapcenter" className={styles.mapcenter}>请点击屏幕</div>
+            <div id="InmainMap" className={styles.mainMap} />
+            <div className={styles.affirm}>
+              <span onClick={this.getinmainMap}>确定</span><span onClick={() => { this.getInmainMap(false) }}>关闭</span>
             </div>
           </div> : null}
       </div>
