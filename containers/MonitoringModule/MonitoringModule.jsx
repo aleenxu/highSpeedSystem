@@ -415,6 +415,8 @@ class MonitoringModule extends React.Component {
       // this.handSecUrl()
     } else {
       this[type][name] = e.target.value
+      console.log(this[type], e.target.value);
+
     }
   }
   handleSelect = (value, name, type, data) => {
@@ -1090,6 +1092,7 @@ class MonitoringModule extends React.Component {
     }
     const params = {
       channel,
+      controlDes,
       controlType: reservePopup.controlType,
       devices: list,
       directionId: reservePopup.directionId,
@@ -1107,7 +1110,7 @@ class MonitoringModule extends React.Component {
       value: reservePopup.situation,
       originalEventTypeId: reservePopup.originalEventTypeId,
     }
-    params.controlDes = startValue + ' ' + reservePopup.roadName.split(' ')[1] + reservePopup.directionName + reservePopup.pileNum.split(' ')[0] + '米处,' + controlDes
+    /* params.controlDes = startValue + ' ' + reservePopup.roadName.split(' ')[1] + reservePopup.directionName + reservePopup.pileNum.split(' ')[0] + '米处,' + controlDes */
     getResponseDatas('post', this.markPublishUrl, params).then((res) => {
       const result = res.data
       if (result.code === 200) {
@@ -1222,6 +1225,7 @@ class MonitoringModule extends React.Component {
         $('#roadStateBox').attr('style', 'transition:all .5s;')
         /* this.detailsPopupData = detailsPopup */
         const list = []
+        /* params.controlDes = startValue + ' ' + reservePopup.roadName.split(' ')[1] + reservePopup.directionName + reservePopup.pileNum.split(' ')[0] + '米处,' + controlDes */
         result.data.devices.forEach((item) => {
           if (item.dictCode === 1) {
             item.device.forEach((items) => {
@@ -1236,13 +1240,14 @@ class MonitoringModule extends React.Component {
         })
         this.publishPlanVO = {
           channel: '',
-          controlDes: '',
+          controlDes: result.data.controlDes || (result.data.startTime ? this.getDate(result.data.startTime) : this.getDate()) + ' ' + result.data.roadName.split(' ')[1] + result.data.directionName + result.data.pileNum.split(' ')[0] + '米处,',
           controllId: result.data.controllId,
           endTime: result.data.endTime ? this.getDate(result.data.endTime) : '',
           eventTypeId: result.data.eventTypeId,
           list,
           startTime: result.data.startTime ? this.getDate(result.data.startTime) : this.getDate(),
         }
+        result.data.controlDes = this.publishPlanVO.controlDes
         this.handlelistDetail('MeasuresList', 22)
         this.setState({ reservePopup: result.data, /* detailsPopup: null, */ startValue: this.publishPlanVO.startTime, endValue: this.publishPlanVO.endTime }, () => {
           // console.log(this.state.reservePopup, '要这个结构')
@@ -1347,7 +1352,7 @@ class MonitoringModule extends React.Component {
       message.warning('发布渠道至少勾选一个')
       return
     }
-    this.publishPlanVO.controlDes = startValue + ' ' + reservePopup.roadName.split(' ')[1] + reservePopup.directionName + reservePopup.pileNum.split(' ')[0] + '米处,' + controlDes
+    /*  this.publishPlanVO.controlDes = startValue + ' ' + reservePopup.roadName.split(' ')[1] + reservePopup.directionName + reservePopup.pileNum.split(' ')[0] + '米处,' + controlDes */
     getResponseDatas('put', this.publishUrl, this.publishPlanVO).then((res) => {
       const result = res.data
       if (result.code === 200) {
@@ -1400,7 +1405,7 @@ class MonitoringModule extends React.Component {
     console.log(operation)
     const _this = this
     confirm({
-      title: '确认要' +( operation == 'submit' ? '审核' : '撤销') + '管控方案',
+      title: '确认要' + (operation == 'submit' ? '审核' : '撤销') + '管控方案',
       content: '请求有延时,请耐心等待',
       cancelText: '取消',
       okText: '确认',

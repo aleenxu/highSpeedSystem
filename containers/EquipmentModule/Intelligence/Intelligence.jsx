@@ -503,7 +503,7 @@ class Intelligence extends React.Component {
                   </div>
                 </Form>
                 <div className={styles.Footer}>
-                  <Button className={styles.Button} onClick={this.handleListupdate} type="primary" htmlType="submit">保&nbsp;&nbsp;存</Button>
+                  <Button className={styles.Button} onClick={this.handleListupdate} htmlType="submit">保&nbsp;&nbsp;存</Button>
                   <Button className={styles.Button} onClick={() => { this.handleboardData(null) }}>返&nbsp;&nbsp;回</Button>
                 </div>
               </div>
