@@ -1397,25 +1397,44 @@ class MonitoringModule extends React.Component {
     this.setState({ reservePopup })
   }
   handlecancelRel = (controllId, operation) => {
-    const { reservePopup } = this.state
-    const { eventTypeId, eventId } = reservePopup
-    getResponseDatas('put', this.examineUrl + operation + '/' + controllId).then((res) => {
-      const result = res.data
-      if (result.code === 200) {
-        /*  this.detailsPopupData = '' // 清空方案详情 */
-        // 查询左侧列表数据
-        this.handleEventList()
-        // 查询饼图数据
-        this.handlegroupType()
-        // 查询右侧柱状图
-        this.handleUrlAjax(this.groupStatusUrl, 'groupStatus')
-        // 查询管控方案is
-        this.handleplanList()
-        this.handledetai({ eventType: eventTypeId, eventId })
-        this.setState({ reservePopup: null })
-        message.success(result.message)
-      }
+    console.log(operation)
+    const _this = this
+    confirm({
+      title: '确认要' +( operation == 'submit' ? '审核' : '撤销') + '管控方案',
+      content: '请求有延时,请耐心等待',
+      cancelText: '取消',
+      okText: '确认',
+      onOk() {
+        return new Promise((resolve) => {
+          const { reservePopup } = _this.state
+          const { eventTypeId, eventId } = reservePopup
+          getResponseDatas('put', _this.examineUrl + operation + '/' + controllId).then((res) => {
+            const result = res.data
+            if (result.code === 200) {
+              /*  this.detailsPopupData = '' // 清空方案详情 */
+              // 查询左侧列表数据
+              _this.handleEventList()
+              // 查询饼图数据
+              _this.handlegroupType()
+              // 查询右侧柱状图
+              _this.handleUrlAjax(_this.groupStatusUrl, 'groupStatus')
+              // 查询管控方案is
+              _this.handleplanList()
+              _this.handledetai({ eventType: eventTypeId, eventId })
+              _this.setState({ reservePopup: null })
+              resolve()
+              message.success(result.message)
+            } else {
+              resolve()
+              message.success(result.message)
+
+            }
+          })
+        }).catch(() => message.error('网络错误!'))
+      },
+      onCancel() { },
     })
+
   }
   // 延时时间
   handleEndValueTime = (boolean) => {
@@ -1854,7 +1873,7 @@ class MonitoringModule extends React.Component {
           detailsPopup ?
             <div className={styles.Eventdetails}>
               <Collapse
-                defaultActiveKey={[0, 1, 2, 3]}
+                defaultActiveKey={[0, 1, 2, 3, 4, 5]}
                 expandIconPosition="right"
               >
                 <Icon className={styles.Close} onClick={() => { this.handleEventPopup('Details', false) }} type="close" />

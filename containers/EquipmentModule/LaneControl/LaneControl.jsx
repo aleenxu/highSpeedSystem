@@ -13,8 +13,8 @@ const formItemLayout = {
   labelCol: { span: 6 },
   wrapperCol: { span: 14 },
 }
-/*         可变情报板 */
-class Intelligence extends React.Component {
+/*      车道控制器 */
+class LaneControl extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -39,14 +39,13 @@ class Intelligence extends React.Component {
     this.Parameters = {
       keyword: '',
       pageNo: 1,
-      deviceTypeId: '1',
     }
     this.board = {
       currentDisplay: '',
       deviceId: '',
       deviceIp: '',
       deviceName: '',
-      deviceTypeId: '1',
+      deviceTypeId: '5',
       direction: '',
       displayCode: '',
       latlng: '',
@@ -57,15 +56,16 @@ class Intelligence extends React.Component {
       roadSecId: '',
       rowId: '',
       vendor: '',
-      deviceSize: '',
+      laneNum:'',
+      /* deviceSize: '', */
     }
-    this.listByPageUrl = '/control/inforBoard/listByPage' // 分页查询设备
+    this.listByPageUrl = '/control/limitingSpeedBord/listByPage' // 分页查询设备
     this.listDetailUrl = '/control/dict/code/list/detail/' // {codeType} 根据字典类型，获取字典详情相关信息'
-    this.deleteUrl = '/control/inforBoard/delete' //  删除情报板'
+    this.deleteUrl = '/control/limitingSpeedBord/delete' //  删除'
     this.hwayUrl = '/control/road/list/hway' //  获取高速编号，用于下拉框'
-    this.updateUrl = '/control/inforBoard/update' // 修改情报板'
-    this.insertUrl = '/control/inforBoard/insert' // 新增情报板'
-    this.Status = '/control/inforBoard/getControlStatus' // 获取情报板状态'
+    this.updateUrl = '/control/limitingSpeedBord/update' // 修改'
+    this.insertUrl = '/control/limitingSpeedBord/insert' // 新增'
+    this.Status = '/control/limitingSpeedBord/getControlStatus' // 获取状态'
     this.directionUrl = '/control/road/list/hway/direction' //  获取高速和方向的级联下拉框，用于下拉框'
     this.secUrl = '/control/road/list/sec' // 根据公路名和方向获取路段'
   }
@@ -82,7 +82,7 @@ class Intelligence extends React.Component {
     this.handlelistDetail('directionList', 1)
     this.handlelistDetail('vendorList', 24)
     this.handlelistDetail('deviceTypeList', 18)
-    this.handlelistDetail('deviceSizeList', 25)
+    this.handlelistDetail('deviceSizeList', 27)
     // 获取级联方向下拉
     this.handlehwayDirection()
   }
@@ -164,7 +164,7 @@ class Intelligence extends React.Component {
   handleDelect = (rowId) => {
     const that = this
     confirm({
-      title: '确认要删除当前可变情报板?',
+      title: '确认要删除当前车道控制器?',
       cancelText: '取消',
       okText: '确认',
       onOk() {
@@ -197,7 +197,9 @@ class Intelligence extends React.Component {
 
   handledirection = (data, id) => {
     for (let i = 0; i < data.length; i++) {
-      if (data[i].id === id) {
+      console.log(data,data[i].id,id);
+      
+      if (data[i].id == id) {
         return data[i].name
       }
     }
@@ -251,7 +253,7 @@ class Intelligence extends React.Component {
   handlemainMap = (latlng) => {
     this.board.latlng = latlng
     console.log(latlng);
-    
+
     this.setState({ boardLatlng: latlng })
   }
   handleIntelatlng = (value) => {
@@ -283,6 +285,7 @@ class Intelligence extends React.Component {
                 {/* <div className={styles.listTd} >型号</div> */}
                 <div className={styles.listTd} >高速公路</div>
                 <div className={styles.listTd} >桩号</div>
+                <div className={styles.listTd} >车道</div>
                 <div className={styles.listTd} >经纬度坐标</div>
                 <div className={styles.listTd} >方向</div>
                 <div className={styles.listTd} >IP地址</div>
@@ -293,12 +296,13 @@ class Intelligence extends React.Component {
                 !!listByPage && listByPage.data.map((item) => {
                   return (
                     <div className={styles.listItems}>
-                      <div className={styles.listTd} ><span className={styles.roadName} title={item.deviceId}>{item.deviceId}</span></div>
+                      <div className={styles.listTd} ><span className={styles.roadName}>{item.deviceId}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.deviceName}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{this.handledirection(vendorList, item.vendor)}</span></div>
                       {/* <div className={styles.listTd} ><span className={styles.roadName}>{item.pileNum}</span></div> */}
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.roadName}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.pileNum}</span></div>
+                      <div className={styles.listTd} ><span className={styles.roadName}>{item.laneNum}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.latlng}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{this.handledirection(directionList, item.direction)}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.deviceIp}</span></div>
@@ -359,7 +363,7 @@ class Intelligence extends React.Component {
                         <Select onChange={(e) => { this.handleSelect(e, 'vendor', 'board') }} defaultValue={boardData.vendor}>
                           {
                             vendorList && vendorList.map((item) => {
-                              return <Option key={item.id} value={item.id}>{item.name}</Option>
+                              return <Option key={item.id} value={''+item.id}>{item.name}</Option>
                             })
                           }
                         </Select>
@@ -372,7 +376,7 @@ class Intelligence extends React.Component {
                         hasFeedback
                         rules={[{ required: true, message: 'Please select your country!' }]}
                       >
-                        <Select disabled onChange={(e) => { this.handleSelect(e, 'deviceTypeId', 'board') }} defaultValue={1}> //boardData.deviceTypeId
+                        <Select disabled onChange={(e) => { this.handleSelect(e, 'deviceTypeId', 'board') }} defaultValue={5}>
                           {
                             deviceTypeList && deviceTypeList.map((item) => {
                               return <Option key={item.id} value={item.id}>{item.name}</Option>
@@ -383,15 +387,15 @@ class Intelligence extends React.Component {
                     </div> */}
                     <div className={styles.Item}>
                       <Form.Item
-                        name="deviceSize"
-                        label="设备尺寸"
+                        name="laneNum"
+                        label="车&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;道"
                         hasFeedback
                         rules={[{ required: true, message: 'Please select your country!' }]}
                       >
-                        <Select onChange={(e) => { this.handleSelect(e, 'deviceSize', 'board') }} defaultValue={boardData.deviceSize}>{/*  //boardData.deviceTypeId */}
+                        <Select onChange={(e) => { this.handleSelect(e, 'laneNum', 'board') }} defaultValue={boardData.laneNum}>
                           {
                             deviceSizeList && deviceSizeList.map((item) => {
-                              return <Option key={item.id} value={item.name}>{item.name}</Option>
+                              return <Option key={item.id} value={item.id}>{item.name}</Option>
                             })
                           }
                         </Select>
@@ -522,4 +526,4 @@ class Intelligence extends React.Component {
   }
 }
 
-export default Intelligence
+export default LaneControl
