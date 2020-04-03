@@ -408,25 +408,46 @@ class ReservePlan extends React.Component {
   }
   // 更新设备及交通管控类型
   updateControlTypes = (controlId) => {
-    const nowIndex = this.state.deviceString.indexOf(controlId) > -1 ? this.state.deviceString.indexOf(controlId) : -1
-    if (nowIndex > -1 && this.state.deviceString.length > 0) {
-      this.state.deviceString.splice(nowIndex, 1)
-      if (this.state.deviceString.length == 0) {
-        message.info('管控类型至少选中一个')
-        this.state.deviceString.push(controlId)
-      }
+    if (typeof(this.state.deviceString) == 'string') {
+      this.setState({
+        deviceString: this.state.deviceString.split(','),
+      },() => {
+        const nowIndex = this.state.deviceString.indexOf(controlId) > -1 ? this.state.deviceString.indexOf(controlId) : -1
+        if (nowIndex > -1 && this.state.deviceString.length > 0) {
+          this.state.deviceString.splice(nowIndex, 1)
+          if (this.state.deviceString.length == 0) {
+            message.info('管控类型至少选中一个')
+            this.state.deviceString.push(controlId)
+          }
+        } else {
+          this.state.deviceString.push(controlId)
+        }
+        this.setState({
+          deviceString: this.state.deviceString,
+        },() => {
+          this.getDeviceEventList(true)
+        })
+      })
     } else {
-      this.state.deviceString.push(controlId)
+      const nowIndex = this.state.deviceString.join().split(',').indexOf(controlId) > -1 ? this.state.deviceString.join().split(',').indexOf(controlId) : -1
+        if (nowIndex > -1 && this.state.deviceString.length > 0) {
+          this.state.deviceString.splice(nowIndex, 1)
+          if (this.state.deviceString.length == 0) {
+            message.info('管控类型至少选中一个')
+            this.state.deviceString.push(controlId)
+          }
+        } else {
+          this.state.deviceString.push(controlId)
+        }
+        this.setState({
+          deviceString: this.state.deviceString,
+        },() => {
+          this.getDeviceEventList(true)
+        })
     }
-    this.setState({
-      deviceString: this.state.deviceString,
-    }, () => {
-      this.getDeviceEventList(true)
-    })
   }
   // 获取全部交通管控类型
   getDeviceEventList = (flag) => {
-    debugger
     const params = {
       deviceString: '',
     }
@@ -872,7 +893,7 @@ class ReservePlan extends React.Component {
                       <div className={style.ItemInput}>
                         {
                           controlTypes && controlTypes.map((item) => {
-                            return <div className={classNames(style.AddItem, (this.state.deviceString.indexOf(item.controlTypeId) > -1 ? style.currentSel : null))} key={'controlTypes' + item.controlTypeId} onClick={() => { this.updateControlTypes(item.controlTypeId) }}>{item.controlTypeName}</div>
+                            return <div className={classNames(style.AddItem, (this.state.deviceString.indexOf(item.controlTypeId) > -1 || this.state.deviceString.indexOf(String(item.controlTypeId)) > -1 ? style.currentSel : null))} key={'controlTypes' + item.controlTypeId} onClick={() => { this.updateControlTypes(String(item.controlTypeId)) }}>{item.controlTypeName}</div>
                           })
                         }
                       </div>

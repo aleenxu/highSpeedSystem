@@ -296,7 +296,7 @@ class MonitoringModule extends React.Component {
         this.setState({
           detailsLatlng: boolean.latlng,
         })
-        boolean.eventType === 3 ? window.lineFlag = false : window.lineFlag = true
+        boolean.eventType === 3 || boolean.markEventType === 3 ? window.lineFlag = false : window.lineFlag = true
         // let roadLatlngData = {
         //   "path": boolean.latlng
         // }
@@ -925,11 +925,12 @@ class MonitoringModule extends React.Component {
         $('#endInt').focus()
         return
       }
-      if (!this.controlDatas.situation) {
+      if (!this.controlDatas.situation || this.controlDatas.situation < 0 ) {
+          this.controlDatas.situation = 0
         if (eventType !== 3) {
-          message.info('请输入平均车速！')
+          message.info('请输入正确的平均车速！')
         } else {
-          message.info('请输入能见度！')
+          message.info('请输入正确的能见度！')
         }
         return
       }
