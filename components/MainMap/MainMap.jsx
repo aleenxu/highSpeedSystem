@@ -1,5 +1,6 @@
 import React from 'react'
 import styles from './MainMap.scss'
+import fnDown from '../../plugs/drags'
 
 class MainMap extends React.Component {
   constructor(props) {
@@ -16,7 +17,7 @@ class MainMap extends React.Component {
     const boardLatlng = this.props.boardLatlng
     this.map = new AMap.Map('InmainMap', {
       resizeEnable: true,
-      center: [boardLatlng.split(',')[0], boardLatlng.split(',')[1]],
+      center: boardLatlng ? [boardLatlng.split(',')[0], boardLatlng.split(',')[1]] : [120.0105285600, 32.3521228100],
       zoom: 13,
       mapStyle: "amap://styles/c3fa565f6171961e94b37c4cc2815ef8",
       showIndoorMap: false,
@@ -47,7 +48,7 @@ class MainMap extends React.Component {
   render() {
     const { } = this.state
     return (
-      <div className={styles.mainMapBox}>
+      <div className={styles.mainMapBox} ref={(e) => { e ? e.onmousedown = fnDown : null }}>
         <div id="mapcenter" className={styles.mapcenter}>{this.props.boardLatlng ? '您所点击的位置 :' + this.props.boardLatlng : '请点击屏幕'}</div>
         <div id="InmainMap" className={styles.mainMap} />
         <div className={styles.affirm}>

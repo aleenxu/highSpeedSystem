@@ -97,6 +97,11 @@ const Analysis = Loadable({
   loading: Loading,
   delay: 0,
 })
+const LaneControl = Loadable({
+  loader: () => import('./containers/EquipmentModule/LaneControl/LaneControl'),
+  loading: Loading,
+  delay: 0,
+})
 const Parent = () => (
   <div>
     {/* <Route path="*" component={SystemMenu} /> */}
@@ -116,6 +121,7 @@ const Parent = () => (
     <Route exact path="/fIntelboard" component={FIntelboard} />
     <Route exact path="/historical" component={Historical} />
     <Route exact path="/analysis" component={Analysis} />
+    <Route exact path="/laneControl" component={LaneControl} />
     <Route exact path="/login" component={Login} />
   </div>
 )

@@ -39,6 +39,7 @@ class Intelligence extends React.Component {
     this.Parameters = {
       keyword: '',
       pageNo: 1,
+      deviceTypeId: '1',
     }
     this.board = {
       currentDisplay: '',
@@ -292,7 +293,7 @@ class Intelligence extends React.Component {
                 !!listByPage && listByPage.data.map((item) => {
                   return (
                     <div className={styles.listItems}>
-                      <div className={styles.listTd} ><span className={styles.roadName}>{item.deviceId}</span></div>
+                      <div className={styles.listTd} ><span className={styles.roadName} title={item.deviceId}>{item.deviceId}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.deviceName}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{this.handledirection(vendorList, item.vendor)}</span></div>
                       {/* <div className={styles.listTd} ><span className={styles.roadName}>{item.pileNum}</span></div> */}
@@ -502,7 +503,7 @@ class Intelligence extends React.Component {
                   </div>
                 </Form>
                 <div className={styles.Footer}>
-                  <Button className={styles.Button} onClick={this.handleListupdate} type="primary" htmlType="submit">保&nbsp;&nbsp;存</Button>
+                  <Button className={styles.Button} onClick={this.handleListupdate} htmlType="submit">保&nbsp;&nbsp;存</Button>
                   <Button className={styles.Button} onClick={() => { this.handleboardData(null) }}>返&nbsp;&nbsp;回</Button>
                 </div>
               </div>
