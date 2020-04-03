@@ -41,6 +41,7 @@ class ScrollList extends React.Component {
     this.examineLength = 0
   }
   componentDidMount = () => {
+    console.log(this.state.data, '看看..')
     const { eachartData, ProgressData } = this.props
     if (eachartData) {
       const data = []
@@ -260,35 +261,43 @@ class ScrollList extends React.Component {
     </Badge>
   )
   checkBoxClick = event => {
-    console.log(this.state.listTitle)
+    let checkArr = []
+    checkArr.push(event)
+    setTimeout(()=>{
+      checkArr.map((item)=>{
+        item.target.checked = false
+        console.log(item, '看看效果')
+      })
+    },3000)
+    debugger
+    console.log(event,this.state.listTitle)
     this.setState({
-      typeNow: $(event.currentTarget).attr('nowtype')
+      typeNow: event.target.nowtype
     }, () => {
       const type = this.state.typeNow
-      switch (type) {
-        case "1":
+      switch (this.state.typeNow) {
+        case 1:
           const dataLength = this.state.dataAll[0].eventData.length
           !this.state.one ? this.setState({ one: true }, () => { dataLength > 0 ? window.leftModule0.show() : message.info('暂无数据！') }) : this.setState({ one: false }, () => { window.leftModule0.hide() })
           break;
-        case "2":
+        case 2:
           const dataLength1 = this.state.dataAll[1].eventData.length
           !this.state.two ? this.setState({ two: true }, () => { dataLength1 > 0 ? window.leftModule1.show() : message.info('暂无数据！') }) : this.setState({ two: false }, () => { window.leftModule1.hide() })
           break;
-        case "3":
+        case 3:
           const dataLength2 = this.state.dataAll[2].eventData.length
           !this.state.three ? this.setState({ three: true }, () => { dataLength2 > 0 ? window.leftModule2.show() : message.info('暂无数据！') }) : this.setState({ three: false }, () => { window.leftModule2.hide() })
           break;
-        case "4":
+        case 4:
           const dataLength3 = this.state.dataAll[3].eventData.length
           !this.state.four ? this.setState({ four: true }, () => { dataLength3 > 0 ? window.leftModule3.show() : message.info('暂无数据！') }) : this.setState({ four: false }, () => { window.leftModule3.hide() })
           break;
-        case "5":
+        case 5:
           const dataLength4 = this.state.dataAll[4].eventData.length
           !this.state.five ? this.setState({ five: true }, () => { dataLength4 > 0 ? window.leftModule4.show() : message.info('暂无数据！') }) : this.setState({ five: false }, () => { window.leftModule4.hide() })
           break;
       }
     })
-    
   }
 
   render() {
@@ -352,10 +361,14 @@ class ScrollList extends React.Component {
         }
         {listType === '3' &&
           <div>
-            <Checkbox.Group style={{
+            <Checkbox defaultChecked={false} style={{
+              position: "absolute", zIndex: 9, paddingLeft: "12px", paddingRight: "12px", top: "12px", borderBottom: '1px #fff solid',
+              paddingBottom: '13px', background:'rgba(19, 27, 37, 0.8)',
+            }} nowtype={listTitle.type} onChange={this.checkBoxClick} />
+            {/* <Checkbox.Group style={{
               position: "absolute", zIndex: 9, paddingLeft: "12px", top: "12px", borderBottom: '1px #fff solid',
               paddingBottom: '13px'
-            }} nowtype={listTitle.type} defaultValue={[typeNow]} options={[{ label: '', value: listTitle.type }]} onClick={this.checkBoxClick} />
+            }} nowtype={listTitle.type} defaultValue={['1']} options={['1','2','3','4','5']} onClick={this.checkBoxClick} /> */}
             {listTitle.type === 1 &&
               <img className={styles.iconImg} src={iconTrafficJam} />
             }
@@ -387,16 +400,16 @@ class ScrollList extends React.Component {
                       <span className={styles.tit}>{listTitle.state}</span>
                     </div>
                   }
-                  {data && data.map((item, index) => (
+                  {data.length > 0 ? data.map((item, index) => (
                     <div key={item.roadCode + item.locs} className={classNames(styles.listItem, 'listItem')} latlng={this.getLineCenterPoint(item.latlng)} onClick={(e) => { this.handleEventPopup(e, 'Details', item) }}>
                       <i style={{ background: item.controlStatusType > 0 ? 'green' : 'red', boxShadow: item.controlStatusType > 0 ? 'green 0px 0px 20px' : 'red 0px 0px 20px' }} />
                       <span>{item.roadCode}</span>
                       <span title={item.roadSection}>{item.roadSection}</span>
-                      <span>{item.directionName}</span>
+                      <span>{item.eventType === 3 ? '双方向' : item.directionName}</span>
                       <span>{item.eventType === 5 ? item.eventTypeName : item.situation}</span>
                       <span>{this.getDate(item.updateTime)}</span>
                     </div>
-                  ))
+                  )) : <p className={styles.PanelItemNone}>暂无数据</p>
                   }
                 </div>
               </Panel>
@@ -421,7 +434,7 @@ class ScrollList extends React.Component {
                       <span className={styles.tit}>{listTitle.state}</span>
                     </div>
                   }
-                  {data && data.map((item, index) => (
+                  {data.length > 0 ? data.map((item, index) => (
                     <div key={item.eventId + item.roadName} className={classNames(styles.listItem, 'listItem')} onClick={(e) => { this.handleEventPopup(e, 'controldet', item) }} >
                       <span>{item.roadName}</span>
                       <span>{item.startPileNum}</span>
@@ -430,7 +443,7 @@ class ScrollList extends React.Component {
                       <span>{item.endTime ? this.formatDuring(new Date(item.endTime).getTime() - new Date().getTime()) : item.planStatusName}</span>
                       <span style={{ color: this.getColor(item.status) }}>{item.planStatusName}</span>
                     </div>
-                  ))
+                  )) : <p className={styles.PanelItemNone}>暂无数据</p>
                   }
                 </div>
               </Panel>

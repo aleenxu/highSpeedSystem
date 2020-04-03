@@ -246,7 +246,8 @@ class GMap extends React.Component {
             // console.log("绑定点击事件",lineDatas, item.latlng[index])
             map.setZoomAndCenter(nowZoom, [item.latlng[0][0], item.latlng[0][1]]); //同时设置地图层级与中心点
             this.handledetai(item)
-            console.log(this.state.dataAll,'看下全部数据')
+            console.log(item, '看下全部数据')
+            // const lineFlag = (item.markEventType !== 3 ? true : false)
             window.drawLine(itemData.latlng, window.lineFlag)
           })
           window['leftModule' + leftIndex].addLayer(marker) //把点添加到层组中
@@ -280,9 +281,11 @@ class GMap extends React.Component {
     }
   }
   drawLine = (path, type) => {
-    window.lineLayers.hide()
-    window.lineLayers.bx = []
-    window.lineLayers.show();
+    debugger
+    window['lineLayers'].hide()
+    // window['lineLayers'].clearLayer()
+    window['lineLayers'].fx = []
+    window['lineLayers'].show()
     const polyline = new AMap.Polyline({
       path: path,
       isOutline: true,
@@ -299,8 +302,8 @@ class GMap extends React.Component {
       lineCap: 'round',
       zIndex: 50,
     })
-    window.lineLayers.addLayer(polyline)
-    window.lineLayers.setMap(map)
+    window['lineLayers'].addLayer(polyline)
+    window['lineLayers'].setMap(map)
   }
   returnMapIcon = (index, item) => {
     switch (index) {
