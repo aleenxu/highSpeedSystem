@@ -308,10 +308,14 @@ class MonitoringModule extends React.Component {
         const latlngArr = JSON.parse(JSON.stringify(boolean.latlng))
         window.drawLine(latlngArr, window.lineFlag)
       } else {
+
         this.handlesetTimeOut(boolean)
         this.setState({
           detailsPopup: false,
           controlBtnFlag: null,
+          SidePopLeft: '', // 刷新左侧事件
+        },()=>{
+          this.handleEventList() //刷新左侧事件
         })
       }
     }
