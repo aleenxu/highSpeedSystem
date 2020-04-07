@@ -661,6 +661,8 @@ class ReservePlan extends React.Component {
           this.setState({
             EventTagPopup: null,
             reservePopup: null,
+          },()=>{
+            this.handleListByPage()
           })
         } else {
           message.info(res.message)
@@ -844,8 +846,8 @@ class ReservePlan extends React.Component {
               <div className={style.EventTagging}>
                 <GMap styles={this.mapStyles} mapID={'popMap'} roadLatlng={detailsLatlng} handledetai={this.handledetai} detailsPopup={this.controlDatas} boxSelect={boxSelect} flagClose={flagClose} />
                 <div className={style.EventTaggingLeft}>
-                  <div className={style.Title} style={{ background: '#132334' }}>{'修改预案库'}<Icon className={style.Close} onClick={() => { this.handleEventTag(false) }} type="close" /></div>
-                  <div className={style.Title} style={{ background: '#132334', lineHeight: '20px', height: '20px', marginTop: '10px', fontSize: '12px' }}>选择道路</div>
+                  <div className={style.Title} style={{ background: '#132334', position: 'fixed', top: '61px', left: 'calc(5% + 6px)', zIndex:'999',width:'calc(21.6% - 2px)' }}>{'修改预案库'}<Icon className={style.Close} onClick={() => { this.handleEventTag(false) }} type="close" /></div>
+                  <div className={style.Title} style={{ background: '#132334', lineHeight: '20px', height: '20px', marginTop: '60px', fontSize: '12px' }}>选择道路</div>
                   <div className={style.Centent}>
                     <div className={style.ItemBox}>
                       <div className={style.ItemInput}>

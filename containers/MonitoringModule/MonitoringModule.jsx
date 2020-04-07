@@ -928,6 +928,7 @@ class MonitoringModule extends React.Component {
         return
       }
       if (!this.controlDatas.situation || this.controlDatas.situation < 0 ) {
+        debugger
           this.controlDatas.situation = 0
         if (eventType !== 3) {
           message.info('请输入正确的平均车速！')
@@ -2083,7 +2084,7 @@ class MonitoringModule extends React.Component {
               <div className={styles.EventTagging}>
                 <GMap styles={this.mapStyles} mapID={'popMap'} dataAll={SidePopLeft} roadLatlng={detailsLatlng} handledetai={this.handledetai} detailsPopup={detailsPopup} boxSelect={boxSelect} flagClose={flagClose} />
                 <div className={styles.EventTaggingLeft}>
-                  <div className={styles.Title} style={{ background: '#132334' }}>{EventTagPopupTit}<Icon className={styles.Close} onClick={() => { this.handleEventTag(false) }} type="close" /></div>
+                  <div className={styles.Title} style={{ background: '#132334', position: 'fixed', top: '61px', left: 'calc(5% + 6px)', zIndex:'999',width:'calc(21.6% - 2px)'  }}>{EventTagPopupTit}<Icon className={styles.Close} onClick={() => { this.handleEventTag(false) }} type="close" /></div>
                   {
                     EventTagPopupTit !== '主动管控' ?
                       <div className={styles.Centent}>
@@ -2094,7 +2095,7 @@ class MonitoringModule extends React.Component {
                       </div> : null
                   }
 
-                  <div className={styles.Title} style={{ background: '#132334', lineHeight: '20px', height: '20px', marginTop: '10px', fontSize: '12px' }}>选择道路</div>
+                  <div className={styles.Title} style={{ background: '#132334', lineHeight: '20px', height: '20px', marginTop: '60px', fontSize: '12px' }}>选择道路</div>
                   <div className={styles.Centent}>
                     <div className={styles.ItemBox}>
                       <div className={styles.ItemInput}>

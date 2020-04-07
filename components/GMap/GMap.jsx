@@ -29,6 +29,7 @@ class GMap extends React.Component {
       infoFBoardJson: [], //F屏情报版
       tollGateJson: [], //收费站
       speedLimitJson: [], //限速版
+      carRoadJson: [], //车道控制器
       roadLatlng: this.props.roadLatlng, // 路段的经纬度
       detailsPopup: this.props.detailsPopup, // 右侧详情显示
       boxSelect: this.props.boxSelect, // 框选弹层
@@ -129,22 +130,26 @@ class GMap extends React.Component {
   loadPoint = () => {
     getResponseDatas('get', this.mapPointUrl + '?searchKey=' + this.state.keyWords).then((res) => {
       const jsonData = res.data
+      console.log(jsonData, '地图点的数据')
       if (jsonData.code == 200 && jsonData.data.length > 0) {
         window.mapPointArr = jsonData.data
         jsonData.data.map((item) => {
-          // 根据类型划分图标类型 1、可变情报板;2、可变限速板;3、收费站;4、F屏情报版;
+          // 根据类型划分图标类型 1、可变情报板;2、F屏情报版;3、可变限速板;4、收费站; 5、车道控制器;
           switch (item.deviceTypeId) {
             case 1:
               this.state.infoBoardJson.push(item)
               break;
             case 2:
-              this.state.speedLimitJson.push(item)
+              this.state.infoFBoardJson.push(item)
               break;
             case 3:
-              this.state.tollGateJson.push(item)
+              this.state.speedLimitJson.push(item)
               break;
             case 4:
-              this.state.infoFBoardJson.push(item)
+              this.state.tollGateJson.push(item)
+              break;
+            case 5:
+              this.state.carRoadJson.push(item)
               break;
           }
         })
@@ -190,6 +195,7 @@ class GMap extends React.Component {
     this.createLayerGroup('deviceFInfoBoard') // map中F情报版显示的图层
     this.createLayerGroup('deviceInfoBoard') // map中情报版限速显示的图层
     this.createLayerGroup('deviceTurnBoard') // map中可变情报版显示的图层
+    this.createLayerGroup('carRoadBoard') // map中车道控制器显示的图层
     this.createLayerGroup('lineLayers') // map中绘制线显示的图层
     //输入提示
     const autoOptions = {
@@ -205,11 +211,13 @@ class GMap extends React.Component {
     // 图标收费站
     this.drawMarkers(this.state.tollGateJson, fBoardIcon, 'deviceTollGate')
     // 图标F屏情报版
-    this.drawMarkers(this.state.infoFBoardJson, speedLimitIcon, 'deviceFInfoBoard')
+    this.drawMarkers(this.state.infoFBoardJson, fBoardIcon, 'deviceFInfoBoard')
     // 图标情报版
     this.drawMarkers(this.state.speedLimitJson, speedLimitIcon, 'deviceInfoBoard')
     // 图标可变情报版
     this.drawMarkers(this.state.infoBoardJson, turnBoardIcon, 'deviceTurnBoard')
+    // 图标可变情报版
+    this.drawMarkers(this.state.carRoadJson, speedLimitIcon, 'carRoadBoard')
     // 左侧功能数据图标
     setTimeout(() => {
       this.loadLeftModulePoint()

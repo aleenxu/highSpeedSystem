@@ -176,18 +176,9 @@ class ScrollList extends React.Component {
         for (let i = 0; i < listItem.length; i++) {
           listItem[i].style.background = ''
         }
-        // $($('.ant-checkbox-input')).map((i, item) =>{
-        //   $(item).on('click')
-        //   if (item.checked) {
-        //     $(item).parent().removeClass('ant-checkbox-checked')
-        //     $(item).parent().parent().removeClass('ant-checkbox-wrapper-checked')
-        //     console.log(item.checked, '000')
-        //     $(item).trigger('click')
-        //     // item.checked = false
-        //     // $(item).prop("checked", false)
-        //     console.log(item.checked, '111')
-        //   }
-        // })
+        $($('.ant-checkbox-input')).map((i, item) =>{
+          $(item).parent().removeClass('ant-checkbox-checked')
+        })
         $('#deviceBox').attr('style', 'transition:all .5s;')
         e.currentTarget.style.background = '#0d2645'
         window.listItemDom = e.currentTarget
@@ -265,12 +256,19 @@ class ScrollList extends React.Component {
     checkArr.push(event)
     setTimeout(()=>{
       checkArr.map((item)=>{
-        item.target.checked = false
+        // item.target.checked = false
         console.log(item, '看看效果')
       })
+      // this.setState({
+      //   one: false,
+      //   two: false,
+      //   three: false,
+      //   four: false,
+      //   five: false,
+      // })
     },3000)
     debugger
-    console.log(event,this.state.listTitle)
+    console.log(event,this.state.listTitle,event.target.checked)
     this.setState({
       typeNow: event.target.nowtype
     }, () => {
@@ -361,7 +359,7 @@ class ScrollList extends React.Component {
         }
         {listType === '3' &&
           <div>
-            <Checkbox defaultChecked={false} style={{
+            <Checkbox defaultChecked={this.state.one} style={{
               position: "absolute", zIndex: 9, paddingLeft: "12px", paddingRight: "12px", top: "12px", borderBottom: '1px #fff solid',
               paddingBottom: '13px', background:'rgba(19, 27, 37, 0.8)',
             }} nowtype={listTitle.type} onChange={this.checkBoxClick} />
