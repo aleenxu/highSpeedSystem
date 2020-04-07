@@ -59,7 +59,7 @@ class IsLogin extends React.Component {
       if (result.code === 0) {
         console.log(result.data)
         this.handleClose(null)
-        message.error('密码修改成功,3秒后返回登陆页面！')
+        message.error('密码修改成功,3秒后返回登录页面！')
         setTimeout(() => {
           this.handleLogout()
         }, 3000)
