@@ -671,18 +671,26 @@ class ReservePlan extends React.Component {
     })
   }
   handleDelPlan = (planId, nowIndex) => {
-    getResponseDatas('get', this.delPlanUrl, {planId: planId}).then((res) => {
-      const result = res.data
-      debugger
-      const arr = JSON.parse(JSON.stringify(this.state.listByPage))
-      arr.data.splice(nowIndex, 1)
-      this.setState({listByPage: arr})
-      if (result.code === 200) {
-        message.info(res.data.message)
-      } else {
-        message.info(res.message)
+    Modal.confirm({
+      title: '确定要删除当前预案吗？',
+      okText: '确定',
+      cancelText: '取消',
+      onOk : () => {
+        getResponseDatas('get', this.delPlanUrl, {planId: planId}).then((res) => {
+          const result = res.data
+          debugger
+          const arr = JSON.parse(JSON.stringify(this.state.listByPage))
+          arr.data.splice(nowIndex, 1)
+          this.setState({listByPage: arr})
+          if (result.code === 200) {
+            message.info(res.data.message)
+          } else {
+            message.info(res.message)
+          }
+        })
       }
     })
+    
   }
   handleDetailPlan = (rowId) => {
     getResponseDatas('get', this.detailPlanUrl, { planId: rowId }).then((res) => {

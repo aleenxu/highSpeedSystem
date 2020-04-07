@@ -77,6 +77,7 @@ class MonitoringModule extends React.Component {
       importantId: '',
       lineLatlngArr: null,
       TimeData: null,
+      directionName: '',
     }
     // 修改管控时的参数
     this.controlDatas = {
@@ -443,18 +444,26 @@ class MonitoringModule extends React.Component {
           this.setState({
             roadNumber: item.directions,
             directionId: '',
+            directionName: item.directions[0].directionName ? item.directions[0].directionName : '',
+          },()=>{
+            this.controlDatas.roadId = item.roadId
+            this.controlDatas.roadName = item.roadName
+            debugger
+            this.controlDatas.directionName = this.state.roadNumber[0].directionName
+            this.controlDatas.directionId = this.state.roadNumber[0].directionId
+            this.handSecUrl()
           })
-          // this.controlDatas.directionId = ''
-          this.controlDatas.roadId = item.roadId
-          this.controlDatas.roadName = item.roadName
+          
         }
       })
-      this.handSecUrl()
     } else if (type === 'controlDatas' && name === 'directionId') {
       this.state.roadNumber.forEach((item, index) => {
         if (item.directionId === value) {
           this.controlDatas.directionId = item.directionId
           this.controlDatas.directionName = item.directionName
+          this.setState({
+            directionName: item.directionName,
+          })
         }
       })
       this.handSecUrl()
@@ -910,7 +919,6 @@ class MonitoringModule extends React.Component {
     const { deviceString, deviceTypes, detailsPopup, eventType, importantId, lineLatlngArr } = this.state
     const deviceAry = []
     const that = this
-    debugger
     console.log(this.controlDatas, '见证奇迹的时刻....')
     if (titFlag === '主动管控') {
       if (!this.controlDatas.roadName) {
@@ -931,8 +939,7 @@ class MonitoringModule extends React.Component {
         $('#endInt').focus()
         return
       }
-      if (!this.controlDatas.situation || this.controlDatas.situation < 0 ) {
-        debugger
+      if (this.controlDatas.situation === '' || this.controlDatas.situation < 0 ) {
           this.controlDatas.situation = 0
         if (eventType !== 3) {
           message.info('请输入正确的平均车速！')
@@ -977,7 +984,7 @@ class MonitoringModule extends React.Component {
         latlngs: lineLatlngArr,
         roadSecId: importantId,
         situation: this.controlDatas.situation,
-        eventLength: this.controlDatas.situation,
+        eventLength: this.controlDatas.eventLength,
         status: 1,
         statusName: "待发布"
       }
@@ -1043,7 +1050,7 @@ class MonitoringModule extends React.Component {
         latlngs: lineLatlngArr ? lineLatlngArr : this.controlDatas.latlng,
         roadSecId: importantId ? importantId : this.controlDatas.roadSecId,
         situation: this.controlDatas.situation,
-        eventLength: this.controlDatas.situation,
+        eventLength: this.controlDatas.eventLength,
         status: 1,
         statusName: "待发布"
       }
@@ -1146,12 +1153,12 @@ class MonitoringModule extends React.Component {
     }
     if (!this.controlDatas.startPileNum) {
       message.info('请输入起始桩号！')
-      $('#startInt').focus()
+      // $('#startInt').focus()
       return
     }
     if (!this.controlDatas.endPileNum) {
       message.info('请输入结束桩号！')
-      $('#endInt').focus()
+      // $('#endInt').focus()
       return
     }
     const params = {
@@ -1167,6 +1174,7 @@ class MonitoringModule extends React.Component {
           importantId: result.data.roadSecId,
           lineLatlngArr: result.data.latlng,
         }, () => {
+          this.controlDatas.eventLength = result.data.eventLength
           if (that.state.lineLatlngArr) {
             const latlngArr = JSON.parse(JSON.stringify(that.state.lineLatlngArr))
             const colorFlag = that.controlDatas.eventType === 3 ? false : true
@@ -1292,6 +1300,7 @@ class MonitoringModule extends React.Component {
         flagClose: null,
         boxFlag: null,
         controlBtnFlagText: '框选设备',
+        directionName: '',
         // EventTagPopupTit: '标题',
       })
       $(".amap-maps").attr("style", "")
@@ -2112,7 +2121,7 @@ class MonitoringModule extends React.Component {
                             })
                           }
                         </Select>
-                        <Select defaultValue={this.controlDatas.directionName} style={{ width: '48%', margin: '0 1%' }} onChange={(e) => { this.handleSelect(e, 'directionId', 'controlDatas') }} >
+                        <Select value={this.state.directionName} style={{ width: '48%', margin: '0 1%' }} onChange={(e) => { this.handleSelect(e, 'directionId', 'controlDatas') }} >
                           <Option value="">请选择</Option>
                           {
                             roadNumber && roadNumber.map((item) => {
