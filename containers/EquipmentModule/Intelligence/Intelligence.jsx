@@ -141,6 +141,56 @@ class Intelligence extends React.Component {
   }
   // 添加与编辑
   handleListupdate = () => {
+    const { boardLatlng } = this.state
+    const { port, deviceId, deviceName, vendor, deviceSize, roadName, pileNum, direction, roadSecId, deviceIp } = this.board
+    if (deviceId == '') {
+      message.warning('请填写设备编号')
+      return
+    }
+    if (deviceName == '') {
+      message.warning('请填写设备名称')
+      return
+    }
+    if (vendor == '') {
+      message.warning('请填写设备厂家')
+      return
+    }
+    if (deviceSize == '') {
+      message.warning('请填写设备尺寸')
+      return
+    }
+    if (roadName == '') {
+      message.warning('请填写高速公路')
+      return
+    }
+    if (pileNum == '') {
+      message.warning('请填写桩号')
+      return
+    }
+    if (direction == '') {
+      message.warning('请填写方向')
+      return
+    }
+
+    if (roadSecId == '') {
+      message.warning('请填写所属路段')
+      return
+    }
+    if (boardLatlng == '') {
+      message.warning('请填写经纬度')
+      return
+    }
+    if (vendor == 1) {
+      if (deviceIp == '') {
+        message.warning('请填写Ip地址')
+        return
+      }
+      if (port == '') {
+        message.warning('请填写端口号')
+        return
+      }
+    }
+
     const url = this.board.rowId ? this.updateUrl : this.insertUrl
     getResponseDatas('post', url, this.board).then((res) => {
       const result = res.data
@@ -251,7 +301,7 @@ class Intelligence extends React.Component {
   handlemainMap = (latlng) => {
     this.board.latlng = latlng
     console.log(latlng);
-    
+
     this.setState({ boardLatlng: latlng })
   }
   handleIntelatlng = (value) => {

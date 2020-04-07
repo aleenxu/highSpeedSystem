@@ -1690,7 +1690,7 @@ class MonitoringModule extends React.Component {
                     <div className={styles.RowBox}>
                       <p>起始桩号&nbsp;:&nbsp;&nbsp;<span style={{ color: '#c67f03' }}>{reservePopup.pileNum && reservePopup.pileNum.split(' ')[0]}</span></p>
                       {
-                        (reservePopup.eventTypeId == 5 && reservePopup.markEventType == 3) || reservePopup.eventType == 3 ?
+                        (reservePopup.eventTypeId == 5 && reservePopup.markEventType == 3) || reservePopup.eventTypeId == 3 ?
                           [<p>能见度&nbsp;:&nbsp;&nbsp;<span>{reservePopup.situation}m</span></p>,
                           <p>影响道路长度&nbsp;:&nbsp;&nbsp;<span style={{ color: '#f31113' }}>{reservePopup.eventLength}m</span></p>] :
                           [<p>平均车速&nbsp;:&nbsp;&nbsp;<span style={{ color: '#c67f03' }}>{reservePopup.situation}km/h</span></p>,

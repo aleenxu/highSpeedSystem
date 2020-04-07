@@ -38,7 +38,7 @@ class Historical extends React.Component {
   }
   componentDidMount = () => {
     // 获取用户权限
-    const limitArr = JSON.parse(localStorage.getItem('userLimit'))||[]
+    const limitArr = JSON.parse(localStorage.getItem('userLimit')) || []
     const userLimit = []
     limitArr.forEach((item) => {
       userLimit.push(item.id)
@@ -64,7 +64,7 @@ class Historical extends React.Component {
   }
   formatDuring = (mss) => {
     if (mss <= 0) {
-      return '已超时'
+      return '0时0分0秒'
     } else {
       var days = parseInt(mss / (1000 * 60 * 60 * 24));
       const hours = parseInt((mss % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
@@ -315,11 +315,11 @@ class Historical extends React.Component {
                           operationData && operationData.map((item, index) => {
                             return (
                               <div className={styles.listItems}>
-                                <div className={styles.listTd} >{index}</div>
+                                <div className={styles.listTd} >{index+1}</div>
                                 <div className={styles.listTd} >{item.operationUser}</div>
                                 <div className={styles.listTd} >{item.operationName}</div>
+                                <div className={styles.listTd} >{item.operationTime && item.endTime ? this.formatDuring(new Date(item.endTime).getTime() - new Date(item.operationTime).getTime()) : '-'}</div>
                                 <div className={styles.listTd} >{item.operationTime}</div>
-                                <div className={styles.listTd} >{item.surplusTime}</div>
                               </div>
                             )
                           })
