@@ -202,11 +202,17 @@ class GMap extends React.Component {
       city: "泰州",
       input: "tipinput"
     };
+    const autoOptionsPop = {
+      city: "泰州",
+      input: "tipinputPop"
+    };
     const auto = new AMap.Autocomplete(autoOptions);
+    const autoPop = new AMap.Autocomplete(autoOptionsPop);
     this.placeSearch = new AMap.PlaceSearch({
       map: map
     });  //构造地点查询类
     AMap.event.addListener(auto, "select", this.searchKeyWords);//注册监听，当选中某条记录时会触发
+    AMap.event.addListener(autoPop, "select", this.searchKeyWords);//注册监听，当选中某条记录时会触发
     // 点的新建
     // 图标收费站匝道灯
     this.drawMarkers(this.state.tollGateJson, fBoardIcon, 'deviceTollGate')

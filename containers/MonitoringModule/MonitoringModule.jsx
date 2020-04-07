@@ -1074,6 +1074,7 @@ class MonitoringModule extends React.Component {
     console.log(this.publishPlanVO);
     const { reservePopup, startValue, endValue, eventType } = this.state
     const { list } = reservePopup
+    console.log(list, '当前有啥东西？')
     for (let i = 0; i < list.length; i++) {
       if (!list[i].content) {
         message.warning('请填全显示内容')
@@ -2215,7 +2216,7 @@ class MonitoringModule extends React.Component {
                   </div>
                 </div>
                 <div id="searchBox" style={{ top: '5px' }} className={`${styles.searchBox} animated ${'bounceInDown'}`}>
-                  <Search id="tipinput" placeholder="请输入内容" enterButton />
+                  <Search id="tipinputPop" placeholder="请输入内容" enterButton />
                   {/* <s>框选设备</s> */}
                 </div>
                 <div id="deviceBox" style={{ top: '5px', right: '0' }} className={`${styles.mapIconManage} animated ${'bounceInDown'}`}>
