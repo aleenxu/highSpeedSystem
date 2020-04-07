@@ -51,7 +51,7 @@ class Rolemana extends React.Component {
   }
   componentDidMount = () => {
     // 获取用户权限
-    const limitArr = JSON.parse(localStorage.getItem('userLimit'))||[]
+    const limitArr = JSON.parse(localStorage.getItem('userLimit')) || []
     const userLimit = []
     limitArr.forEach((item) => {
       userLimit.push(item.id)
@@ -182,7 +182,7 @@ class Rolemana extends React.Component {
     const value = typeof (e) === 'object' ? e.target.value : e
     this.defaultparams[itemname] = value
   }
-  handleAddEdit = () => {
+  /* handleAddEdit = () => {
     if (this.isAdd) {
       getResponseDatas('post', this.addListUrl, this.getFormData(this.defaultparams)).then((res) => {
         const { code, msg } = res.data
@@ -223,7 +223,7 @@ class Rolemana extends React.Component {
       })
     }
     this.handleCloseGroupMsg()
-  }
+  } */
   handleDeleteItem = (id) => {
     const that = this
     this.deleteParams.roleIds.push(id)
@@ -261,8 +261,28 @@ class Rolemana extends React.Component {
     const { value } = e.target
     this.listParams.keyword = value
   }
-
+  handleSubmit = (e) => {
+    e.preventDefault()
+    this.props.form.validateFields((err, values) => {
+      if (!err) {
+        const url = this.defaultparams.id ? this.updateUrl : this.addListUrl
+        getResponseDatas('post', url, this.getFormData(this.defaultparams)).then((res) => {
+          const { code, msg } = res.data
+          if (code === 0) {
+            /*    this.listParams.keyword = ''
+               this.listParams.pageNo = 1 */
+            this.handleCloseGroupMsg()
+            this.getDeptList()
+            message.info(msg)
+          } else {
+            message.info(msg)
+          }
+        })
+      }
+    })
+  }
   render() {
+    const { getFieldDecorator } = this.props.form
     const { listDatas, showGroupMsg, treeData, listItems, totalCount, userLimit, current } = this.state
     return (
       <div>
@@ -315,11 +335,11 @@ class Rolemana extends React.Component {
           {
             showGroupMsg ?
               <div className={styles.MaskBox}>
-                <div className={styles.AddBox} style={{ width: '550px', height: '510px' }}>
+                <div className={styles.AddBox} style={{ width: '550px' }}>
                   <div className={styles.Title}>{listItems ? '编辑' : '新增'}<Icon onClick={this.handleCloseGroupMsg} className={styles.Close} type="close" /></div>
                   <div className={classNames(styles.Conten, styles.treeData)}>
                     <Form
-                      name="validate_other"
+                      onSubmit={this.handleSubmit}
                       {...formItemLayout}
                     >
                       <div className={styles.ItemLine}>
@@ -328,7 +348,15 @@ class Rolemana extends React.Component {
                             name="name"
                             label="角色名称"
                           >
-                            <Input defaultValue={listItems && listItems.name} onChange={(e) => { this.handleGroupMsgChange(e, 'name') }} />
+                            {getFieldDecorator('name', {
+                              rules: [
+                                {
+                                  required: true,
+                                  message: '请输入角色名称!',
+                                },
+                              ],
+                              initialValue: listItems && listItems.name,
+                            })(<Input onChange={(e) => { this.handleGroupMsgChange(e, 'name') }} />)}
                           </Form.Item>
                         </div>
                       </div>
@@ -338,7 +366,15 @@ class Rolemana extends React.Component {
                             name="remark"
                             label="角色描述"
                           >
-                            <Input defaultValue={listItems && listItems.remark} onChange={(e) => { this.handleGroupMsgChange(e, 'remark') }} />
+                            {getFieldDecorator('remark', {
+                              rules: [
+                                {
+                                  required: true,
+                                  message: '请输入角色描述!',
+                                },
+                              ],
+                              initialValue: listItems && listItems.remark,
+                            })(<Input onChange={(e) => { this.handleGroupMsgChange(e, 'remark') }} />)}
                           </Form.Item>
                         </div>
                       </div>
@@ -364,12 +400,13 @@ class Rolemana extends React.Component {
                             </Tree> : null}
                         </Form.Item>
                       </div>
-
+                      <Form.Item>
+                        <div className={styles.Footer} style={{ width: '170%' }}>
+                          <Button className={styles.Button} type="primary" htmlType="submit">保&nbsp;&nbsp;存</Button>
+                          <Button className={styles.Button} onClick={this.handleCloseGroupMsg}>返&nbsp;&nbsp;回</Button>
+                        </div>
+                      </Form.Item>
                     </Form>
-                    <div className={styles.Footer}>
-                      <Button className={styles.Button} onClick={this.handleAddEdit} type="primary" htmlType="submit">保&nbsp;&nbsp;存</Button>
-                      <Button className={styles.Button} onClick={this.handleCloseGroupMsg}>返&nbsp;&nbsp;回</Button>
-                    </div>
                   </div>
                 </div>
               </div> : null
@@ -380,4 +417,4 @@ class Rolemana extends React.Component {
   }
 }
 
-export default Rolemana
+export default Form.create()(Rolemana)

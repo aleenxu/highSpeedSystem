@@ -49,7 +49,7 @@ class Institution extends React.Component {
     this.getDeptList()
     this.getparentGroup()
     // 获取用户权限
-    const limitArr = JSON.parse(localStorage.getItem('userLimit'))||[]
+    const limitArr = JSON.parse(localStorage.getItem('userLimit')) || []
     const userLimit = []
     limitArr.forEach((item) => {
       userLimit.push(item.id)
@@ -108,14 +108,11 @@ class Institution extends React.Component {
     })
   }
   handleGroupMsgChange = (e, itemname) => {
-    let value = typeof (e) === 'object' ? e.target.value : e
-    if (itemname === 'deptCode') {
-      value = value.replace(/[^\-?\d.]/g, '')
-    }
+    const value = typeof (e) === 'object' ? e.target.value : e
     this.defaultparams[itemname] = value
     console.log(this.defaultparams)
   }
-  handleAddEdit = () => {
+  /* handleAddEdit = () => {
     if (this.isAdd) {
       getResponseDatas('post', this.addListUrl, this.getFormData(this.defaultparams)).then((res) => {
         const { code, msg } = res.data
@@ -141,7 +138,7 @@ class Institution extends React.Component {
       })
     }
     this.handleCloseGroupMsg()
-  }
+  } */
   handleDeleteItem = (id) => {
     const that = this
     this.deleteParams.deptIds.push(id)
@@ -180,7 +177,28 @@ class Institution extends React.Component {
     this.listParams.pageNo = pageNumber
     this.getDeptList()
   }
+  handleSubmit = (e) => {
+    e.preventDefault()
+    this.props.form.validateFields((err, values) => {
+      if (!err) {
+        const url = this.defaultparams.id ? this.updateUrl : this.addListUrl
+        getResponseDatas('post', url, this.getFormData(this.defaultparams)).then((res) => {
+          const { code, msg } = res.data
+          if (code === 0) {
+            /* this.listParams.keyword = ''
+            this.listParams.pageNo = 1 */
+            message.success(msg)
+            this.handleCloseGroupMsg()
+            this.getDeptList()
+          } else {
+            message.info(msg)
+          }
+        })
+      }
+    })
+  }
   render() {
+    const { getFieldDecorator } = this.props.form
     const { listItems, listDatas, showGroupMsg, parentGroup, userLimit, current } = this.state
     return (
       <div>
@@ -237,11 +255,11 @@ class Institution extends React.Component {
           {
             showGroupMsg ?
               <div className={styles.MaskBox}>
-                <div className={styles.AddBox} style={{ height: '330px' }}>
+                <div className={styles.AddBox}>
                   <div className={styles.Title}>{listItems ? '编辑' : '新增'}<Icon onClick={this.handleCloseGroupMsg} className={styles.Close} type="close" /></div>
                   <div className={styles.Conten}>
                     <Form
-                      name="validate_other"
+                      onSubmit={this.handleSubmit}
                       {...formItemLayout}
                     >
                       <div className={styles.ItemLine}>
@@ -250,7 +268,19 @@ class Institution extends React.Component {
                             name="deptCode"
                             label="部门编号"
                           >
-                            <Input defaultValue={listItems && listItems.deptCode} onChange={(e) => { this.handleGroupMsgChange(e, 'deptCode') }} />
+                            {getFieldDecorator('deptCode', {
+                              rules: [
+                                {
+                                  required: true,
+                                  message: '请输入部门编号!',
+                                },
+                                {
+                                  pattern: new RegExp(/^[1-9]\d*$/, 'g'),
+                                  message: '请输入正确的部门编号',
+                                },
+                              ],
+                              initialValue: listItems && listItems.deptCode,
+                            })(<Input onChange={(e) => { this.handleGroupMsgChange(e, 'deptCode') }} />)}
                           </Form.Item>
                         </div>
                         <div className={styles.Item}>
@@ -258,7 +288,15 @@ class Institution extends React.Component {
                             name="deptName"
                             label="部门名称"
                           >
-                            <Input defaultValue={listItems && listItems.deptName} onChange={(e) => { this.handleGroupMsgChange(e, 'deptName') }} />
+                            {getFieldDecorator('deptName', {
+                              rules: [
+                                {
+                                  required: true,
+                                  message: '请输入部门名称!',
+                                },
+                              ],
+                              initialValue: listItems && listItems.deptName,
+                            })(<Input onChange={(e) => { this.handleGroupMsgChange(e, 'deptName') }} />)}
                           </Form.Item>
                         </div>
                       </div>
@@ -268,26 +306,45 @@ class Institution extends React.Component {
                             name="leaderName"
                             label="负责人"
                           >
-                            <Input defaultValue={listItems && listItems.leaderName} onChange={(e) => { this.handleGroupMsgChange(e, 'leaderName') }} />
+                            {getFieldDecorator('leaderName', {
+                              rules: [
+                                {
+                                  required: true,
+                                  message: '请输入负责人!',
+                                },
+                              ],
+                              initialValue: listItems && listItems.leaderName,
+                            })(<Input onChange={(e) => { this.handleGroupMsgChange(e, 'leaderName') }} />)}
+
                           </Form.Item>
                         </div>
                         <div className={styles.Item}>
                           <Form.Item
                             name="parentId"
                             label="父部门"
-                            hasFeedback
-                            rules={[{ required: true, message: 'Please select your country!' }]}
                           >
-                            <Select defaultValue={listItems ? listItems.parentId : 0} onChange={(e) => { this.handleGroupMsgChange(e, 'parentId') }}>
-                              <Option value={0} key={0}>请选择所属用父部门</Option>
-                              {
-                                !!parentGroup && parentGroup.map((item) => {
-                                  return (
-                                    <Option value={item.id} key={item.id}>{item.deptName}</Option>
-                                  )
-                                })
-                              }
-                            </Select>
+                            {getFieldDecorator('parentId', {
+                              rules: [
+                                {
+                                  required: true,
+                                  message: '请输入父部门!',
+                                },
+                              ],
+                              initialValue: listItems ? listItems.parentId : 0,
+                            })(
+                              <Select onChange={(e) => { this.handleGroupMsgChange(e, 'parentId') }}>
+                                <Option value={0} key={0}>请选择所属用父部门</Option>
+                                {
+                                  !!parentGroup && parentGroup.map((item) => {
+                                    return (
+                                      <Option value={item.id} key={item.id}>{item.deptName}</Option>
+                                    )
+                                  })
+                                }
+                              </Select>
+                            )}
+
+
                           </Form.Item>
                         </div>
                       </div>
@@ -297,7 +354,15 @@ class Institution extends React.Component {
                             name="remark"
                             label="备注"
                           >
-                            <Input defaultValue={listItems && listItems.remark} onChange={(e) => { this.handleGroupMsgChange(e, 'remark') }} />
+                            {getFieldDecorator('remark', {
+                              rules: [
+                                {
+                                  required: true,
+                                  message: '请输入备注!',
+                                },
+                              ],
+                              initialValue: listItems && listItems.remark,
+                            })(<Input onChange={(e) => { this.handleGroupMsgChange(e, 'remark') }} />)}
                           </Form.Item>
                         </div>
                         <div className={styles.Item}>
@@ -305,15 +370,31 @@ class Institution extends React.Component {
                             name="sort"
                             label="序号"
                           >
-                            <Input defaultValue={listItems && listItems.sort} onChange={(e) => { this.handleGroupMsgChange(e, 'sort') }} />
+                            {getFieldDecorator('sort', {
+                              rules: [
+                                {
+                                  required: true,
+                                  message: '请输入序号!',
+                                },
+                                {
+                                  pattern: new RegExp(/^[1-9]\d*$/, 'g'),
+                                  message: '请输入正确的部门编号',
+                                },
+                              ],
+                              initialValue: listItems && listItems['sort'],
+                            })(<Input onChange={(e) => { this.handleGroupMsgChange(e, 'sort') }} />)}
+
                           </Form.Item>
                         </div>
                       </div>
+                      <Form.Item >
+                        <div className={styles.Footer} style={{ width: '170%' }}>
+                          <Button className={styles.Button} type="primary" htmlType="submit">保&nbsp;&nbsp;存</Button>
+                          <Button className={styles.Button} onClick={this.handleCloseGroupMsg}>返&nbsp;&nbsp;回</Button>
+                        </div>
+                      </Form.Item>
                     </Form>
-                    <div className={styles.Footer}>
-                      <Button className={styles.Button} onClick={this.handleAddEdit} type="primary" htmlType="submit">保&nbsp;&nbsp;存</Button>
-                      <Button className={styles.Button} onClick={this.handleCloseGroupMsg}>返&nbsp;&nbsp;回</Button>
-                    </div>
+
                   </div>
                 </div>
               </div> : null
@@ -324,4 +405,4 @@ class Institution extends React.Component {
   }
 }
 
-export default Institution
+export default Form.create()(Institution)

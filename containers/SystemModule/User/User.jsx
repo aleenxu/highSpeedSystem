@@ -51,7 +51,7 @@ class User extends React.Component {
   }
   componentDidMount = () => {
     // 获取用户权限
-    const limitArr = JSON.parse(localStorage.getItem('userLimit'))||[]
+    const limitArr = JSON.parse(localStorage.getItem('userLimit')) || []
     const userLimit = []
     limitArr.forEach((item) => {
       userLimit.push(item.id)
@@ -141,7 +141,7 @@ class User extends React.Component {
       onCancel() { },
     })
   }
-  getAddUserList = () => {
+/*   getAddUserList = () => {
     console.log(this.dataList);
     const url = this.dataList.id ? this.updateUrl : this.saveUrl
     if (!this.dataList.userName) {
@@ -178,7 +178,7 @@ class User extends React.Component {
         message.error(result.msg)
       }
     })
-  }
+  } */
   getAddUser = () => {
     const boardData = JSON.parse(JSON.stringify(this.dataListData))
     this.boardData = boardData
@@ -216,10 +216,28 @@ class User extends React.Component {
   }
   handleSelect = (value, name, type) => {
     console.log(value, name, type);
-
     this[type][name] = value
   }
+  handleSubmit = (e) => {
+    e.preventDefault()
+    this.props.form.validateFields((err, values) => {
+      if (!err) {
+        const url = this.dataList.id ? this.updateUrl : this.saveUrl
+        getResponseDatas('post', url, this.getFormData(this.dataList)).then((res) => {
+          const result = res.data
+          if (result.code === 0) {
+            message.success('保存成功!')
+            this.getSystemList()
+            this.setState({ boardData: null })
+          } else {
+            message.error(result.msg)
+          }
+        })
+      }
+    })
+  }
   render() {
+    const { getFieldDecorator } = this.props.form
     const { systemList, current, boardData, roleList, depList, userLimit } = this.state
     return (
       <div>
@@ -277,12 +295,12 @@ class User extends React.Component {
           </div>
           {boardData ?
             <div className={styles.MaskBox}>
-              <div className={styles.AddBox} style={{ height: '330px' }}>
+              <div className={styles.AddBox}>
                 <div className={styles.Title}>{boardData.id ? '编辑' : '新增'}<Icon onClick={() => { this.handleDataLists(null) }} className={styles.Close} type="close" /></div>
                 <div className={styles.Conten}>
                   <Form
-                    name="validate_other"
                     {...formItemLayout}
+                    onSubmit={this.handleSubmit}
                   >
                     <div className={styles.ItemLine}>
                       <div className={styles.Item}>
@@ -290,7 +308,16 @@ class User extends React.Component {
                           name="userName"
                           label="用户名称"
                         >
-                          <Input onChange={(e) => { this.handleInput(e, 'userName', 'dataList') }} defaultValue={boardData.userName} />
+                          {getFieldDecorator('userName', {
+                            rules: [
+                              {
+                                required: true,
+                                message: '请输入用户名称!',
+                              },
+                            ],
+                            initialValue: boardData.userName,
+                          })(<Input onChange={(e) => { this.handleInput(e, 'userName', 'dataList') }} />)}
+
                         </Form.Item>
                       </div>
                       <div className={styles.Item}>
@@ -298,17 +325,34 @@ class User extends React.Component {
                           name="loginName"
                           label="登录名称"
                         >
-                          <Input disabled={boardData.id ? true : false} onChange={(e) => { this.handleInput(e, 'loginName', 'dataList') }} defaultValue={boardData.loginName} />
+                          {getFieldDecorator('loginName', {
+                            rules: [
+                              {
+                                required: true,
+                                message: '请输入登录名称!',
+                              },
+                            ],
+                            initialValue: boardData.loginName,
+                          })(<Input disabled={boardData.id} onChange={(e) => { this.handleInput(e, 'loginName', 'dataList') }} />)}
                         </Form.Item>
                       </div>
                     </div>
                     <div className={styles.ItemLine}>
                       <div className={styles.Item}>
-                        <Form.Item
-                          name="email"
-                          label="电子邮箱"
-                        >
-                          <Input onChange={(e) => { this.handleInput(e, 'email', 'dataList') }} defaultValue={boardData.email} />
+                        <Form.Item label="电子邮箱">
+                          {getFieldDecorator('email', {
+                            rules: [
+                              {
+                                type: 'email',
+                                message: '请输入正确的电子邮箱!',
+                              },
+                              {
+                                required: true,
+                                message: '请输入电子邮箱!',
+                              },
+                            ],
+                            initialValue: boardData.email,
+                          })(<Input onChange={(e) => { this.handleInput(e, 'email', 'dataList') }} />)}
                         </Form.Item>
                       </div>
                       <div className={styles.Item}>
@@ -316,7 +360,19 @@ class User extends React.Component {
                           name="phone"
                           label="联系电话"
                         >
-                          <Input onChange={(e) => { this.handleInput(e, 'phone', 'dataList') }} defaultValue={boardData.phone} />
+                          {getFieldDecorator('phone', {
+                            rules: [
+                              {
+                                pattern: /^1[3|4|5|7|8][0-9]\d{8}$/,
+                                message: '请输入正确的手机号',
+                              },
+                              {
+                                required: true,
+                                message: '请输入手机号!',
+                              },
+                            ],
+                            initialValue: boardData.phone,
+                          })(<Input onChange={(e) => { this.handleInput(e, 'phone', 'dataList') }} />)}
                         </Form.Item>
                       </div>
                     </div>
@@ -325,40 +381,59 @@ class User extends React.Component {
                         <Form.Item
                           name="deptId"
                           label="组织机构"
-                          hasFeedback
-                          rules={[{ required: true, message: 'Please select your country!' }]}
                         >
-                          <Select onChange={(e) => { this.handleSelect(e, 'deptIds', 'dataList') }} defaultValue={boardData.deptId}>
-                            {
-                              depList && depList.map((item, index) => {
-                                return <Option value={item.id + ''} key={item.id}>{item.deptName}</Option>
-                              })
-                            }
-                          </Select>
+                          {getFieldDecorator('deptId', {
+                            rules: [
+                              {
+                                required: true,
+                                message: '请输入组织机构!',
+                              },
+                            ],
+                            initialValue: boardData.deptId,
+                          })(
+                            <Select onChange={(e) => { this.handleSelect(e, 'deptIds', 'dataList') }}>
+                              {
+                                depList && depList.map((item, index) => {
+                                  return <Option value={item.id + ''} key={item.id}>{item.deptName}</Option>
+                                })
+                              }
+                            </Select>)}
                         </Form.Item>
                       </div>
                       <div className={styles.Item}>
                         <Form.Item
                           name="roleId"
-                          label="角色"
-                          hasFeedback
-                          rules={[{ required: true, message: 'Please select your country!' }]}
+                          label="用户角色"
                         >
-                          <Select onChange={(e) => { this.handleSelect(e, 'roleIds', 'dataList') }} defaultValue={boardData.roleId}>
-                            {
-                              roleList && roleList.map((item) => {
-                                return <Option value={item.id + ''} key={item.id}>{item.name}</Option>
-                              })
-                            }
-                          </Select>
+                          {getFieldDecorator('roleId', {
+                            rules: [
+                              {
+                                required: true,
+                                message: '请输入用户角色!',
+                              },
+                            ],
+                            initialValue: boardData.roleId,
+                          })(
+                            <Select onChange={(e) => { this.handleSelect(e, 'roleIds', 'dataList') }}>
+                              {
+                                roleList && roleList.map((item) => {
+                                  return <Option value={item.id + ''} key={item.id}>{item.name}</Option>
+                                })
+                              }
+                            </Select>)}
+
                         </Form.Item>
                       </div>
                     </div>
+
+                    <Form.Item >
+                      <div className={styles.Footer} style={{ width: '170%' }}>
+                        <Button className={styles.Button} type="primary" htmlType="submit">保&nbsp;&nbsp;存</Button>
+                        <Button className={styles.Button} onClick={() => { this.handleDataLists(null) }}>返&nbsp;&nbsp;回</Button>
+                      </div>
+                    </Form.Item>
                   </Form>
-                  <div className={styles.Footer}>
-                    <Button className={styles.Button} onClick={this.getAddUserList} type="primary" htmlType="submit">保&nbsp;&nbsp;存</Button>
-                    <Button className={styles.Button} onClick={() => { this.handleDataLists(null) }}>返&nbsp;&nbsp;回</Button>
-                  </div>
+
                 </div>
               </div>
             </div> : null}
@@ -368,4 +443,4 @@ class User extends React.Component {
   }
 }
 
-export default User
+export default Form.create()(User)

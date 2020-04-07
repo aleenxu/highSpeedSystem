@@ -386,8 +386,8 @@ class MonitoringModule extends React.Component {
       }
     }
     this.VIboardParameters.existsDevices = existsDevices
-    this.getdeviceList(item)
-    this.handlelistDetail('roadNumber', 1)
+    this.getdeviceList(item) // 获取到当前已有设备id
+    this.handlelistDetail('roadNumber', 1) // 获取当前道路下拉
     this.handleEventPopup('VIboard', item.codeName)
   }
   getdeviceList = (data) => {
@@ -836,14 +836,14 @@ class MonitoringModule extends React.Component {
   // 可变情报板查询
   handleCondition = () => {
     const data = JSON.parse(JSON.stringify(this.VIboardParameters))
-    delete data.existsDevices
-    const paramStr = '?deviceTypeId=' + data.deviceTypeId + '&eventPileNum=' + data.eventPileNum + '&eventTypeId=' + data.eventTypeId
-      + '&value=' + data.value + '&control=' + data.control
-    /* const paramStr = '?deviceCode='+data.deviceCode+'&deviceLocation='+data.deviceLocation+'&deviceName='+data.deviceName+'&deviceTypeId='+data.deviceTypeId
-    +'&roadCode='+data.roadCode+'&roadDirection='+data.roadDirection+'&roadName='+data.roadName+'&eventPileNum='+data.eventPileNum+'&eventTypeId='+data.eventTypeId
-    '&value='+data.value+'&control='+data.control */
+    /*  delete data.existsDevices
+     const paramStr = '?deviceTypeId=' + data.deviceTypeId + '&eventPileNum=' + data.eventPileNum + '&eventTypeId=' + data.eventTypeId
+       + '&value=' + data.value + '&control=' + data.control */
+    const paramStr = '?deviceCode=' + data.deviceCode + '&deviceLocation=' + data.deviceLocation + '&deviceName=' + data.deviceName + '&deviceTypeId=' + data.deviceTypeId
+      + '&roadCode=' + data.roadCode + '&roadDirection=' + data.roadDirection + '&roadName=' + data.roadName + '&eventPileNum=' + data.eventPileNum + '&eventTypeId=' + data.eventTypeId
+    '&value=' + data.value + '&control=' + data.control
     // debugger
-    getResponseDatas('post', this.conditionUrl + paramStr, this.VIboardParameters.existsDevices).then((res) => {
+    getResponseDatas('post', this.conditionUrl + paramStr, data.existsDevices).then((res) => {
       const result = res.data
       if (result.code === 200) {
         const plainOptionList = []
@@ -875,14 +875,16 @@ class MonitoringModule extends React.Component {
     })
   }
   handledetailsPopupList = () => {
+    // conditionList查询到的设备  checkedList 选中的设备id
     const { checkedList, detailsPopup, conditionList } = this.state
     this.deviceList = [...this.deviceList, ...checkedList]
     const { deviceTypeId } = this.VIboardParameters
+    console.log(conditionList)
     conditionList.forEach((item) => {
       checkedList.forEach((items) => {
         if (item.deviceId === items) {
           detailsPopup.devices.forEach((itemss, index) => {
-            if (itemss.dictCode === deviceTypeId) {
+            if (itemss.dictCode === item.deviceTypeId) {
               detailsPopup.devices[index].device.push(item)
             }
           })
@@ -927,8 +929,8 @@ class MonitoringModule extends React.Component {
         $('#endInt').focus()
         return
       }
-      if (!this.controlDatas.situation || this.controlDatas.situation < 0 ) {
-          this.controlDatas.situation = 0
+      if (!this.controlDatas.situation || this.controlDatas.situation < 0) {
+        this.controlDatas.situation = 0
         if (eventType !== 3) {
           message.info('请输入正确的平均车速！')
         } else {
@@ -1956,7 +1958,7 @@ class MonitoringModule extends React.Component {
                         <Option value="">请选择</Option>
                         {
                           hwayList && hwayList.map((item) => {
-                            return <Option key={item.id} value={item.id}>{item.name}</Option>
+                            return <Option key={item.id} value={item.name}>{item.name}</Option>
                           })
                         }
                       </Select>

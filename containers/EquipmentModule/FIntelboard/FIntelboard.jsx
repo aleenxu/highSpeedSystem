@@ -13,8 +13,7 @@ const formItemLayout = {
   labelCol: { span: 6 },
   wrapperCol: { span: 14 },
 }
-/*         可变情报板 */
-class FIntelboard extends React.Component {
+class Intelligence extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -82,7 +81,7 @@ class FIntelboard extends React.Component {
     this.handlelistDetail('directionList', 1)
     this.handlelistDetail('vendorList', 24)
     this.handlelistDetail('deviceTypeList', 18)
-    this.handlelistDetail('deviceSizeList', 26)
+    this.handlelistDetail('deviceSizeList', 25)
     // 获取级联方向下拉
     this.handlehwayDirection()
   }
@@ -128,10 +127,11 @@ class FIntelboard extends React.Component {
       const result = res.data
       if (result.code === 200) {
         if (name) {
-          console.log(result.data.length > 0 ? result.data[0].roadSecId : null);
-
           this.board.roadSecId = result.data.length > 0 ? result.data[0].roadSecId : null
-          this.setState({ roadSecIdItem: result.data.length > 0 ? result.data[0].roadSecId : null })
+          this.props.form.setFieldsValue({
+            roadSecId: this.board.roadSecId,
+          })
+          this.setState({ roadSecIdItem: this.board.roadSecId })
         }
         this.setState({ roadSecIddata: result.data })
       } else {
@@ -140,67 +140,68 @@ class FIntelboard extends React.Component {
     })
   }
   // 添加与编辑
-  handleListupdate = () => {
-    const { boardLatlng } = this.state
-    const { port, deviceId, deviceName, vendor, deviceSize, roadName, pileNum, direction, roadSecId, deviceIp } = this.board
-    if (deviceId == '') {
-      message.warning('请填写设备编号')
-      return
-    }
-    if (deviceName == '') {
-      message.warning('请填写设备名称')
-      return
-    }
-    if (vendor == '') {
-      message.warning('请填写设备厂家')
-      return
-    }
-    if (deviceSize == '') {
-      message.warning('请填写设备尺寸')
-      return
-    }
-    if (roadName == '') {
-      message.warning('请填写高速公路')
-      return
-    }
-    if (pileNum == '') {
-      message.warning('请填写桩号')
-      return
-    }
-    if (direction == '') {
-      message.warning('请填写方向')
-      return
-    }
-
-    if (roadSecId == '') {
-      message.warning('请填写所属路段')
-      return
-    }
-    if (boardLatlng == '') {
-      message.warning('请填写经纬度')
-      return
-    }
-    if (vendor == 1) {
-      if (deviceIp == '') {
-        message.warning('请填写Ip地址')
-        return
-      }
-      if (port == '') {
-        message.warning('请填写端口号')
-        return
-      }
-    }
-    const url = this.board.rowId ? this.updateUrl : this.insertUrl
-    getResponseDatas('post', url, this.board).then((res) => {
-      const result = res.data
-      if (result.code === 200) {
-        this.board = JSON.parse(JSON.stringify(this.boardData))
-        this.setState({ boardData: null, boardLatlng: null, directions: null, roadSecIddata: null })
-        this.handleListByPage()
-      }
-      message.success(result.message)
-    })
-  }
+  /*  handleListupdate = () => {
+     const { boardLatlng } = this.state
+     const { port, deviceId, deviceName, vendor, deviceSize, roadName, pileNum, direction, roadSecId, deviceIp } = this.board
+     if (deviceId == '') {
+       message.warning('请填写设备编号')
+       return
+     }
+     if (deviceName == '') {
+       message.warning('请填写设备名称')
+       return
+     }
+     if (vendor == '') {
+       message.warning('请填写设备厂家')
+       return
+     }
+     if (deviceSize == '') {
+       message.warning('请填写设备尺寸')
+       return
+     }
+     if (roadName == '') {
+       message.warning('请填写高速公路')
+       return
+     }
+     if (pileNum == '') {
+       message.warning('请填写桩号')
+       return
+     }
+     if (direction == '') {
+       message.warning('请填写方向')
+       return
+     }
+ 
+     if (roadSecId == '') {
+       message.warning('请填写所属路段')
+       return
+     }
+     if (boardLatlng == '') {
+       message.warning('请填写经纬度')
+       return
+     }
+     if (vendor == 1) {
+       if (deviceIp == '') {
+         message.warning('请填写Ip地址')
+         return
+       }
+       if (port == '') {
+         message.warning('请填写端口号')
+         return
+       }
+     }
+ 
+     const url = this.board.rowId ? this.updateUrl : this.insertUrl
+     getResponseDatas('post', url, this.board).then((res) => {
+       const result = res.data
+       if (result.code === 200) {
+         this.board = JSON.parse(JSON.stringify(this.boardData))
+         this.setState({ boardData: null, boardLatlng: null, directions: null, roadSecIddata: null })
+         this.handleListByPage()
+       }
+       message.success(result.message)
+     })
+   } */
   // 通用呆板式接口请求
   handleUrlAjax = (type, url, name, data) => {
     getResponseDatas(type, url, data).then((res) => {
@@ -213,7 +214,7 @@ class FIntelboard extends React.Component {
   handleDelect = (rowId) => {
     const that = this
     confirm({
-      title: '确认要删除当前F型情报板?',
+      title: '确认要删除当前可变情报板?',
       cancelText: '取消',
       okText: '确认',
       onOk() {
@@ -274,6 +275,9 @@ class FIntelboard extends React.Component {
         if (name) {
           this.board.direction = item.directions[0].directionId
           this.handlelistSec(name)
+          this.props.form.setFieldsValue({
+            direction: item.directions[0].directionId,
+          })
           this.setState({ directions: item.directions[0].directionId })
         }
         this.setState({ hwayDirection: item.directions })
@@ -299,14 +303,33 @@ class FIntelboard extends React.Component {
   }
   handlemainMap = (latlng) => {
     this.board.latlng = latlng
-    console.log(latlng);
-
+    this.props.form.setFieldsValue({
+      latlng,
+    })
     this.setState({ boardLatlng: latlng })
   }
   handleIntelatlng = (value) => {
     this.setState({ Intelatlng: value })
   }
+  handleSubmit = (e) => {
+    e.preventDefault()
+    this.props.form.validateFields((err, values) => {
+      if (!err) {
+        const url = this.board.rowId ? this.updateUrl : this.insertUrl
+        getResponseDatas('post', url, this.board).then((res) => {
+          const result = res.data
+          if (result.code === 200) {
+            this.board = JSON.parse(JSON.stringify(this.boardData))
+            this.setState({ boardData: null, boardLatlng: null, directions: null, roadSecIddata: null })
+            this.handleListByPage()
+          }
+          message.success(result.message)
+        })
+      }
+    })
+  }
   render() {
+    const { getFieldDecorator } = this.props.form
     const { listByPage, Intelatlng, current, inmainMap, userLimit, boardLatlng, deviceSizeList, boardData, directionList, roadSecIddata, roadSecIdItem, directions, hwayList, vendorList, deviceTypeList, ControlStatus, hwayDirection } = this.state
     return (
       <div>
@@ -342,7 +365,7 @@ class FIntelboard extends React.Component {
                 !!listByPage && listByPage.data.map((item) => {
                   return (
                     <div className={styles.listItems}>
-                      <div className={styles.listTd} ><span className={styles.roadName}>{item.deviceId}</span></div>
+                      <div className={styles.listTd} ><span className={styles.roadName} title={item.deviceId}>{item.deviceId}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.deviceName}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{this.handledirection(vendorList, item.vendor)}</span></div>
                       {/* <div className={styles.listTd} ><span className={styles.roadName}>{item.pileNum}</span></div> */}
@@ -376,7 +399,7 @@ class FIntelboard extends React.Component {
               <div className={styles.Title}>{boardData.rowId ? '编辑' : '新增'}<Icon onClick={() => { this.handleboardData(null) }} className={styles.Close} type="close" /></div>
               <div className={styles.Conten}>
                 <Form
-                  name="validate_other"
+                  onSubmit={this.handleSubmit}
                   {...formItemLayout}
                 >
                   <div className={styles.ItemLine}>
@@ -385,7 +408,15 @@ class FIntelboard extends React.Component {
                         name="deviceId"
                         label="设备编号"
                       >
-                        <Input disabled={boardData.rowId} onChange={(e) => { this.handleInput(e, 'deviceId', 'board') }} defaultValue={boardData.deviceId} />
+                        {getFieldDecorator('deviceId', {
+                          rules: [
+                            {
+                              required: true,
+                              message: '请输入设备编号!',
+                            },
+                          ],
+                          initialValue: boardData.deviceId,
+                        })(<Input disabled={boardData.rowId} onChange={(e) => { this.handleInput(e, 'deviceId', 'board') }} />)}
                       </Form.Item>
                     </div>
                     <div className={styles.Item}>
@@ -393,7 +424,15 @@ class FIntelboard extends React.Component {
                         name="deviceName"
                         label="设备名称"
                       >
-                        <Input onChange={(e) => { this.handleInput(e, 'deviceName', 'board') }} defaultValue={boardData.deviceName} />
+                        {getFieldDecorator('deviceName', {
+                          rules: [
+                            {
+                              required: true,
+                              message: '请输入设备名称!',
+                            },
+                          ],
+                          initialValue: boardData.deviceName,
+                        })(<Input onChange={(e) => { this.handleInput(e, 'deviceName', 'board') }} />)}
                       </Form.Item>
                     </div>
                   </div>
@@ -402,16 +441,24 @@ class FIntelboard extends React.Component {
                       <Form.Item
                         name="vendor"
                         label="设备厂家"
-                        hasFeedback
-                        rules={[{ required: true, message: 'Please select your country!' }]}
                       >
-                        <Select onChange={(e) => { this.handleSelect(e, 'vendor', 'board') }} defaultValue={boardData.vendor}>
-                          {
-                            vendorList && vendorList.map((item) => {
-                              return <Option key={item.id} value={item.id}>{item.name}</Option>
-                            })
-                          }
-                        </Select>
+                        {getFieldDecorator('vendor', {
+                          rules: [
+                            {
+                              required: true,
+                              message: '请输入设备厂家!',
+                            },
+                          ],
+                          initialValue: boardData.vendor,
+                        })(
+                          <Select onChange={(e) => { this.handleSelect(e, 'vendor', 'board') }} >
+                            {
+                              vendorList && vendorList.map((item) => {
+                                return <Option key={item.id} value={item.id}>{item.name}</Option>
+                              })
+                            }
+                          </Select>
+                        )}
                       </Form.Item>
                     </div>
                     {/* <div className={styles.Item}>
@@ -434,16 +481,25 @@ class FIntelboard extends React.Component {
                       <Form.Item
                         name="deviceSize"
                         label="设备尺寸"
-                        hasFeedback
-                        rules={[{ required: true, message: 'Please select your country!' }]}
                       >
-                        <Select onChange={(e) => { this.handleSelect(e, 'deviceSize', 'board') }} defaultValue={boardData.deviceSize}>{/*  //boardData.deviceTypeId */}
-                          {
-                            deviceSizeList && deviceSizeList.map((item) => {
-                              return <Option key={item.id} value={item.name}>{item.name}</Option>
-                            })
-                          }
-                        </Select>
+                        {getFieldDecorator('deviceSize', {
+                          rules: [
+                            {
+                              required: true,
+                              message: '请输入设备尺寸!',
+                            },
+                          ],
+                          initialValue: boardData.deviceSize,
+                        })(
+                          <Select onChange={(e) => { this.handleSelect(e, 'deviceSize', 'board') }}>
+                            {
+                              deviceSizeList && deviceSizeList.map((item) => {
+                                return <Option key={item.id} value={item.name}>{item.name}</Option>
+                              })
+                            }
+                          </Select>)}
+
+
                       </Form.Item>
                     </div>
                   </div>
@@ -452,17 +508,25 @@ class FIntelboard extends React.Component {
                       <Form.Item
                         name="roadName"
                         label="高速公路"
-                        hasFeedback
-                        rules={[{ required: true, message: 'Please select your country!' }]}
                       >
-                        <Select onChange={(e) => { this.handleSelect(e, 'roadName', 'board') }} defaultValue={boardData.roadName}>
+                        {getFieldDecorator('roadName', {
+                          rules: [
+                            {
+                              required: true,
+                              message: '请输入高速公路!',
+                            },
+                          ],
+                          initialValue: boardData.roadName,
+                        })(
+                          <Select onChange={(e) => { this.handleSelect(e, 'roadName', 'board') }}>
 
-                          {
-                            hwayList && hwayList.map((item) => {
-                              return <Option value={item.roadId}>{item.roadName}</Option>
-                            })
-                          }
-                        </Select>
+                            {
+                              hwayList && hwayList.map((item) => {
+                                return <Option value={item.roadId}>{item.roadName}</Option>
+                              })
+                            }
+                          </Select>
+                        )}
                       </Form.Item>
                     </div>
                     <div className={styles.Item}>
@@ -470,7 +534,15 @@ class FIntelboard extends React.Component {
                         name="pileNum"
                         label="桩&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;号"
                       >
-                        <Input onChange={(e) => { this.handleInput(e, 'pileNum', 'board') }} defaultValue={boardData.pileNum} />
+                        {getFieldDecorator('pileNum', {
+                          rules: [
+                            {
+                              required: true,
+                              message: '请输入桩号!',
+                            },
+                          ],
+                          initialValue: boardData.pileNum,
+                        })(<Input onChange={(e) => { this.handleInput(e, 'pileNum', 'board') }} />)}
                       </Form.Item>
                     </div>
                   </div>
@@ -479,16 +551,24 @@ class FIntelboard extends React.Component {
                       <Form.Item
                         name="direction"
                         label="方&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;向"
-                        hasFeedback
-                        rules={[{ required: true, message: 'Please select your country!' }]}
                       >
-                        <Select onChange={(e) => { this.handleSelect(e, 'direction', 'board') }} value={directions}>
-                          {
-                            hwayDirection && hwayDirection.map((item) => {
-                              return <Option value={item.directionId}>{item.directionName}</Option>
-                            })
-                          }
-                        </Select>
+                        {getFieldDecorator('direction', {
+                          rules: [
+                            {
+                              required: true,
+                              message: '请输入方向!',
+                            },
+                          ],
+                          initialValue: directions,
+                        })(
+                          <Select onChange={(e) => { this.handleSelect(e, 'direction', 'board') }}>
+                            {
+                              hwayDirection && hwayDirection.map((item) => {
+                                return <Option value={item.directionId}>{item.directionName}</Option>
+                              })
+                            }
+                          </Select>
+                        )}
                       </Form.Item>
                     </div>
                     <div className={styles.Item}>
@@ -496,13 +576,23 @@ class FIntelboard extends React.Component {
                         name="roadSecId"
                         label="所属路段"
                       >
-                        <Select onChange={(e) => { this.handleSelect(e, 'roadSecId', 'board') }} value={roadSecIdItem}>
-                          {
-                            roadSecIddata && roadSecIddata.map((item) => {
-                              return <Option value={item.roadSecId}>{item.secName}</Option>
-                            })
-                          }
-                        </Select>
+                        {getFieldDecorator('roadSecId', {
+                          rules: [
+                            {
+                              required: true,
+                              message: '请输入所属路段!',
+                            },
+                          ],
+                          initialValue: roadSecIdItem,
+                        })(
+                          <Select onChange={(e) => { this.handleSelect(e, 'roadSecId', 'board') }}>
+                            {
+                              roadSecIddata && roadSecIddata.map((item) => {
+                                return <Option value={item.roadSecId}>{item.secName}</Option>
+                              })
+                            }
+                          </Select>
+                        )}
                         {/* <Input onChange={(e) => { this.handleInput(e, 'roadSecId', 'board') }} value={roadSecIddata} /> */}
                       </Form.Item>
                     </div>
@@ -513,7 +603,19 @@ class FIntelboard extends React.Component {
                         name="deviceIp"
                         label="IP&nbsp;地&nbsp;址"
                       >
-                        <Input onChange={(e) => { this.handleInput(e, 'deviceIp', 'board') }} defaultValue={boardData.deviceIp} />
+                        {getFieldDecorator('deviceIp', {
+                          rules: [
+                            {
+                              pattern: /^(25[0-5]|2[0-4]\d|1\d{2}|[1-9]\d|[1-9])\.((([0-9]|([1-9]\d)|(1\d\d)|(2([0-4]\d|5[0-5])))))\.((([0-9]|([1-9]\d)|(1\d\d)|(2([0-4]\d|5[0-5])))))\.((([0-9]|([1-9]\d)|(1\d\d)|(2([0-4]\d|5[0-5])))))$/,
+                              message: '请输入正确的IP',
+                            },
+                            {
+                              required: true,
+                              message: '请输入IP地址!',
+                            },
+                          ],
+                          initialValue: boardData.deviceIp,
+                        })(<Input onChange={(e) => { this.handleInput(e, 'deviceIp', 'board') }} />)}
                       </Form.Item>
                     </div>
                     <div className={styles.Item}>
@@ -521,7 +623,21 @@ class FIntelboard extends React.Component {
                         name="port"
                         label="端&nbsp;口&nbsp;号"
                       >
-                        <Input onChange={(e) => { this.handleInput(e, 'port', 'board') }} defaultValue={boardData.port} />
+                        {getFieldDecorator('port', {
+                          rules: [
+                            {
+                              required: false,
+                              pattern: new RegExp(/^[1-9]\d*$/, "g"),
+                              message: '请输入正确的端口'
+                            },
+                            {
+                              required: true,
+                              message: '请输入端口号!',
+                            },
+                          ],
+                          initialValue: boardData.port,
+                        })(<Input onChange={(e) => { this.handleInput(e, 'port', 'board') }} />)}
+
                       </Form.Item>
                     </div>
                   </div>
@@ -531,7 +647,17 @@ class FIntelboard extends React.Component {
                         name="latlng"
                         label="经&nbsp;纬&nbsp;度"
                       >
-                        <Input onClick={(e) => { this.handleIntelatlng(true) }} value={boardLatlng} />
+                        {getFieldDecorator('latlng', {
+                          rules: [
+                            {
+                              required: true,
+                              message: '请输入经纬度!',
+                            },
+                          ],
+                          initialValue: boardLatlng,
+                        })(<Input onClick={(e) => { this.handleIntelatlng(true) }} />)}
+
+
                       </Form.Item>
                     </div>
                   </div>
@@ -550,11 +676,14 @@ class FIntelboard extends React.Component {
                       </Form.Item>
                     </div>
                   </div>
+                  <Form.Item>
+                    <div className={styles.Footer} style={{ width: '170%' }}>
+                      <Button className={styles.Button} onClick={this.handleListupdate} htmlType="submit">保&nbsp;&nbsp;存</Button>
+                      <Button className={styles.Button} onClick={() => { this.handleboardData(null) }}>返&nbsp;&nbsp;回</Button>
+                    </div>
+                  </Form.Item>
                 </Form>
-                <div className={styles.Footer}>
-                  <Button className={styles.Button} onClick={this.handleListupdate} type="primary" htmlType="submit">保&nbsp;&nbsp;存</Button>
-                  <Button className={styles.Button} onClick={() => { this.handleboardData(null) }}>返&nbsp;&nbsp;回</Button>
-                </div>
+
               </div>
             </div>
           </div> : null}
@@ -571,4 +700,4 @@ class FIntelboard extends React.Component {
   }
 }
 
-export default FIntelboard
+export default Form.create()(Intelligence)
