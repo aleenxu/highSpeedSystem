@@ -1,3 +1,15 @@
+:global(.ant-message-notice-content) {
+  background: #343a52;
+  color: #dcdce6;
+  margin-top: 60px;
+}
+:global(.ant-modal-content){
+  background: #343a52;
+  
+}
+:global(.ant-modal-confirm-body .ant-modal-confirm-title){
+color: #dcdce6;
+}
 .EqMain {
   height: calc(100vh - 54.5px);
   background: #0e151d;

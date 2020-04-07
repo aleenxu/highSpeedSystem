@@ -77,6 +77,7 @@ class MonitoringModule extends React.Component {
       importantId: '',
       lineLatlngArr: null,
       TimeData: null,
+      directionName: '',
     }
     // 修改管控时的参数
     this.controlDatas = {
@@ -308,10 +309,14 @@ class MonitoringModule extends React.Component {
         const latlngArr = JSON.parse(JSON.stringify(boolean.latlng))
         window.drawLine(latlngArr, window.lineFlag)
       } else {
+
         this.handlesetTimeOut(boolean)
         this.setState({
           detailsPopup: false,
           controlBtnFlag: null,
+          SidePopLeft: '', // 刷新左侧事件
+        },()=>{
+          this.handleEventList() //刷新左侧事件
         })
       }
     }
@@ -439,18 +444,26 @@ class MonitoringModule extends React.Component {
           this.setState({
             roadNumber: item.directions,
             directionId: '',
+            directionName: item.directions[0].directionName ? item.directions[0].directionName : '',
+          },()=>{
+            this.controlDatas.roadId = item.roadId
+            this.controlDatas.roadName = item.roadName
+            debugger
+            this.controlDatas.directionName = this.state.roadNumber[0].directionName
+            this.controlDatas.directionId = this.state.roadNumber[0].directionId
+            this.handSecUrl()
           })
-          // this.controlDatas.directionId = ''
-          this.controlDatas.roadId = item.roadId
-          this.controlDatas.roadName = item.roadName
+          
         }
       })
-      this.handSecUrl()
     } else if (type === 'controlDatas' && name === 'directionId') {
       this.state.roadNumber.forEach((item, index) => {
         if (item.directionId === value) {
           this.controlDatas.directionId = item.directionId
           this.controlDatas.directionName = item.directionName
+          this.setState({
+            directionName: item.directionName,
+          })
         }
       })
       this.handSecUrl()
@@ -908,7 +921,6 @@ class MonitoringModule extends React.Component {
     const { deviceString, deviceTypes, detailsPopup, eventType, importantId, lineLatlngArr } = this.state
     const deviceAry = []
     const that = this
-    debugger
     console.log(this.controlDatas, '见证奇迹的时刻....')
     if (titFlag === '主动管控') {
       if (!this.controlDatas.roadName) {
@@ -929,8 +941,8 @@ class MonitoringModule extends React.Component {
         $('#endInt').focus()
         return
       }
-      if (!this.controlDatas.situation || this.controlDatas.situation < 0) {
-        this.controlDatas.situation = 0
+      if (this.controlDatas.situation === '' || this.controlDatas.situation < 0 ) {
+          this.controlDatas.situation = 0
         if (eventType !== 3) {
           message.info('请输入正确的平均车速！')
         } else {
@@ -974,7 +986,7 @@ class MonitoringModule extends React.Component {
         latlngs: lineLatlngArr,
         roadSecId: importantId,
         situation: this.controlDatas.situation,
-        eventLength: this.controlDatas.situation,
+        eventLength: this.controlDatas.eventLength,
         status: 1,
         statusName: "待发布"
       }
@@ -1040,7 +1052,7 @@ class MonitoringModule extends React.Component {
         latlngs: lineLatlngArr ? lineLatlngArr : this.controlDatas.latlng,
         roadSecId: importantId ? importantId : this.controlDatas.roadSecId,
         situation: this.controlDatas.situation,
-        eventLength: this.controlDatas.situation,
+        eventLength: this.controlDatas.eventLength,
         status: 1,
         statusName: "待发布"
       }
@@ -1071,6 +1083,7 @@ class MonitoringModule extends React.Component {
     console.log(this.publishPlanVO);
     const { reservePopup, startValue, endValue, eventType } = this.state
     const { list } = reservePopup
+    console.log(list, '当前有啥东西？')
     for (let i = 0; i < list.length; i++) {
       if (!list[i].content) {
         message.warning('请填全显示内容')
@@ -1142,12 +1155,12 @@ class MonitoringModule extends React.Component {
     }
     if (!this.controlDatas.startPileNum) {
       message.info('请输入起始桩号！')
-      $('#startInt').focus()
+      // $('#startInt').focus()
       return
     }
     if (!this.controlDatas.endPileNum) {
       message.info('请输入结束桩号！')
-      $('#endInt').focus()
+      // $('#endInt').focus()
       return
     }
     const params = {
@@ -1163,6 +1176,7 @@ class MonitoringModule extends React.Component {
           importantId: result.data.roadSecId,
           lineLatlngArr: result.data.latlng,
         }, () => {
+          this.controlDatas.eventLength = result.data.eventLength
           if (that.state.lineLatlngArr) {
             const latlngArr = JSON.parse(JSON.stringify(that.state.lineLatlngArr))
             const colorFlag = that.controlDatas.eventType === 3 ? false : true
@@ -1288,6 +1302,7 @@ class MonitoringModule extends React.Component {
         flagClose: null,
         boxFlag: null,
         controlBtnFlagText: '框选设备',
+        directionName: '',
         // EventTagPopupTit: '标题',
       })
       $(".amap-maps").attr("style", "")
@@ -1585,10 +1600,10 @@ class MonitoringModule extends React.Component {
             <span>畅通</span>
           </p> */}
           <h5>
-            <em>收费站</em>
-            <em>F屏情报板</em>
-            <em>限速牌专用</em>
-            <em>可变情报板</em>
+          <em>收费站匝道灯</em>
+          <em>F屏情报板</em>
+          <em>车道控制器</em>
+          <em>门架情报板</em>
           </h5>
         </div>
         {/* 设备显示弹窗 */}
@@ -2085,7 +2100,7 @@ class MonitoringModule extends React.Component {
               <div className={styles.EventTagging}>
                 <GMap styles={this.mapStyles} mapID={'popMap'} dataAll={SidePopLeft} roadLatlng={detailsLatlng} handledetai={this.handledetai} detailsPopup={detailsPopup} boxSelect={boxSelect} flagClose={flagClose} />
                 <div className={styles.EventTaggingLeft}>
-                  <div className={styles.Title} style={{ background: '#132334' }}>{EventTagPopupTit}<Icon className={styles.Close} onClick={() => { this.handleEventTag(false) }} type="close" /></div>
+                  <div className={styles.Title} style={{ background: '#132334', position: 'fixed', top: '61px', left: 'calc(5% + 6px)', zIndex:'999',width:'calc(21.6% - 2px)'  }}>{EventTagPopupTit}<Icon className={styles.Close} onClick={() => { this.handleEventTag(false) }} type="close" /></div>
                   {
                     EventTagPopupTit !== '主动管控' ?
                       <div className={styles.Centent}>
@@ -2096,7 +2111,7 @@ class MonitoringModule extends React.Component {
                       </div> : null
                   }
 
-                  <div className={styles.Title} style={{ background: '#132334', lineHeight: '20px', height: '20px', marginTop: '10px', fontSize: '12px' }}>选择道路</div>
+                  <div className={styles.Title} style={{ background: '#132334', lineHeight: '20px', height: '20px', marginTop: '60px', fontSize: '12px' }}>选择道路</div>
                   <div className={styles.Centent}>
                     <div className={styles.ItemBox}>
                       <div className={styles.ItemInput}>
@@ -2108,7 +2123,7 @@ class MonitoringModule extends React.Component {
                             })
                           }
                         </Select>
-                        <Select defaultValue={this.controlDatas.directionName} style={{ width: '48%', margin: '0 1%' }} onChange={(e) => { this.handleSelect(e, 'directionId', 'controlDatas') }} >
+                        <Select value={this.state.directionName} style={{ width: '48%', margin: '0 1%' }} onChange={(e) => { this.handleSelect(e, 'directionId', 'controlDatas') }} >
                           <Option value="">请选择</Option>
                           {
                             roadNumber && roadNumber.map((item) => {
@@ -2212,7 +2227,7 @@ class MonitoringModule extends React.Component {
                   </div>
                 </div>
                 <div id="searchBox" style={{ top: '5px' }} className={`${styles.searchBox} animated ${'bounceInDown'}`}>
-                  <Search id="tipinput" placeholder="请输入内容" enterButton />
+                  <Search id="tipinputPop" placeholder="请输入内容" enterButton />
                   {/* <s>框选设备</s> */}
                 </div>
                 <div id="deviceBox" style={{ top: '5px', right: '0' }} className={`${styles.mapIconManage} animated ${'bounceInDown'}`}>
@@ -2235,10 +2250,10 @@ class MonitoringModule extends React.Component {
                   <span>畅通</span>
                 </p> */}
                   <h5>
-                    <em>收费站</em>
+                    <em>收费站匝道灯</em>
                     <em>F屏情报板</em>
-                    <em>限速牌专用</em>
-                    <em>可变情报板</em>
+                    <em>车道控制器</em>
+                    <em>门架情报板</em>
                   </h5>
                 </div>
               </div>

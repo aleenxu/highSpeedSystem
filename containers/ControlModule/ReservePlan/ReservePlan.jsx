@@ -661,6 +661,8 @@ class ReservePlan extends React.Component {
           this.setState({
             EventTagPopup: null,
             reservePopup: null,
+          },()=>{
+            this.handleListByPage()
           })
         } else {
           message.info(res.message)
@@ -669,18 +671,26 @@ class ReservePlan extends React.Component {
     })
   }
   handleDelPlan = (planId, nowIndex) => {
-    getResponseDatas('get', this.delPlanUrl, {planId: planId}).then((res) => {
-      const result = res.data
-      debugger
-      const arr = JSON.parse(JSON.stringify(this.state.listByPage))
-      arr.data.splice(nowIndex, 1)
-      this.setState({listByPage: arr})
-      if (result.code === 200) {
-        message.info(res.data.message)
-      } else {
-        message.info(res.message)
+    Modal.confirm({
+      title: '确定要删除当前预案吗？',
+      okText: '确定',
+      cancelText: '取消',
+      onOk : () => {
+        getResponseDatas('get', this.delPlanUrl, {planId: planId}).then((res) => {
+          const result = res.data
+          debugger
+          const arr = JSON.parse(JSON.stringify(this.state.listByPage))
+          arr.data.splice(nowIndex, 1)
+          this.setState({listByPage: arr})
+          if (result.code === 200) {
+            message.info(res.data.message)
+          } else {
+            message.info(res.message)
+          }
+        })
       }
     })
+    
   }
   handleDetailPlan = (rowId) => {
     getResponseDatas('get', this.detailPlanUrl, { planId: rowId }).then((res) => {
@@ -844,8 +854,8 @@ class ReservePlan extends React.Component {
               <div className={style.EventTagging}>
                 <GMap styles={this.mapStyles} mapID={'popMap'} roadLatlng={detailsLatlng} handledetai={this.handledetai} detailsPopup={this.controlDatas} boxSelect={boxSelect} flagClose={flagClose} />
                 <div className={style.EventTaggingLeft}>
-                  <div className={style.Title} style={{ background: '#132334' }}>{'修改预案库'}<Icon className={style.Close} onClick={() => { this.handleEventTag(false) }} type="close" /></div>
-                  <div className={style.Title} style={{ background: '#132334', lineHeight: '20px', height: '20px', marginTop: '10px', fontSize: '12px' }}>选择道路</div>
+                  <div className={style.Title} style={{ background: '#132334', position: 'fixed', top: '61px', left: 'calc(5% + 6px)', zIndex:'999',width:'calc(21.6% - 2px)' }}>{'修改预案库'}<Icon className={style.Close} onClick={() => { this.handleEventTag(false) }} type="close" /></div>
+                  <div className={style.Title} style={{ background: '#132334', lineHeight: '20px', height: '20px', marginTop: '60px', fontSize: '12px' }}>选择道路</div>
                   <div className={style.Centent}>
                     <div className={style.ItemBox}>
                       <div className={style.ItemInput}>
@@ -946,10 +956,10 @@ class ReservePlan extends React.Component {
                     <s>{'200 - 500'}</s>
                   </h5>
                   <h5>
-                    <em>收费站</em>
+                    <em>收费站匝道灯</em>
                     <em>F屏情报板</em>
-                    <em>限速牌专用</em>
-                    <em>可变情报板</em>
+                    <em>车道控制器</em>
+                    <em>门架情报板</em>
                   </h5>
                 </div>
               </div>
