@@ -315,7 +315,7 @@ class MonitoringModule extends React.Component {
           detailsPopup: false,
           controlBtnFlag: null,
           SidePopLeft: '', // 刷新左侧事件
-        },()=>{
+        }, () => {
           this.handleEventList() //刷新左侧事件
         })
       }
@@ -445,7 +445,7 @@ class MonitoringModule extends React.Component {
             roadNumber: item.directions,
             directionId: '',
             directionName: item.directions[0].directionName ? item.directions[0].directionName : '',
-          },()=>{
+          }, () => {
             this.controlDatas.roadId = item.roadId
             this.controlDatas.roadName = item.roadName
             debugger
@@ -453,7 +453,7 @@ class MonitoringModule extends React.Component {
             this.controlDatas.directionId = this.state.roadNumber[0].directionId
             this.handSecUrl()
           })
-          
+
         }
       })
     } else if (type === 'controlDatas' && name === 'directionId') {
@@ -866,6 +866,8 @@ class MonitoringModule extends React.Component {
           }
         })
         this.setState({ conditionList: result.data, plainOptionList })
+      } else {
+        message.warning(result.message)
       }
     })
   }
@@ -941,8 +943,8 @@ class MonitoringModule extends React.Component {
         $('#endInt').focus()
         return
       }
-      if (this.controlDatas.situation === '' || this.controlDatas.situation < 0 ) {
-          this.controlDatas.situation = 0
+      if (this.controlDatas.situation === '' || this.controlDatas.situation < 0) {
+        this.controlDatas.situation = 0
         if (eventType !== 3) {
           message.info('请输入正确的平均车速！')
         } else {
@@ -1600,10 +1602,10 @@ class MonitoringModule extends React.Component {
             <span>畅通</span>
           </p> */}
           <h5>
-          <em>收费站匝道灯</em>
-          <em>F屏情报板</em>
-          <em>车道控制器</em>
-          <em>门架情报板</em>
+            <em>收费站匝道灯</em>
+            <em>F屏情报板</em>
+            <em>车道控制器</em>
+            <em>门架情报板</em>
           </h5>
         </div>
         {/* 设备显示弹窗 */}
@@ -2100,7 +2102,7 @@ class MonitoringModule extends React.Component {
               <div className={styles.EventTagging}>
                 <GMap styles={this.mapStyles} mapID={'popMap'} dataAll={SidePopLeft} roadLatlng={detailsLatlng} handledetai={this.handledetai} detailsPopup={detailsPopup} boxSelect={boxSelect} flagClose={flagClose} />
                 <div className={styles.EventTaggingLeft}>
-                  <div className={styles.Title} style={{ background: '#132334', position: 'fixed', top: '61px', left: 'calc(5% + 6px)', zIndex:'999',width:'calc(21.6% - 2px)'  }}>{EventTagPopupTit}<Icon className={styles.Close} onClick={() => { this.handleEventTag(false) }} type="close" /></div>
+                  <div className={styles.Title} style={{ background: '#132334', position: 'fixed', top: '61px', left: 'calc(5% + 6px)', zIndex: '999', width: 'calc(21.6% - 2px)' }}>{EventTagPopupTit}<Icon className={styles.Close} onClick={() => { this.handleEventTag(false) }} type="close" /></div>
                   {
                     EventTagPopupTit !== '主动管控' ?
                       <div className={styles.Centent}>
