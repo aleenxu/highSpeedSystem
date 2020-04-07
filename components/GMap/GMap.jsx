@@ -27,8 +27,8 @@ class GMap extends React.Component {
       keyWords: '', // 查询的关键词
       infoBoardJson: [], //情报版
       infoFBoardJson: [], //F屏情报版
-      tollGateJson: [], //收费站
-      speedLimitJson: [], //限速版
+      tollGateJson: [], //收费站匝道灯
+      speedLimitJson: [], //车道控制器限速版
       carRoadJson: [], //车道控制器
       roadLatlng: this.props.roadLatlng, // 路段的经纬度
       detailsPopup: this.props.detailsPopup, // 右侧详情显示
@@ -191,10 +191,10 @@ class GMap extends React.Component {
     this.createLayerGroup('leftModule2') // 极端天气选中复选框显示的图层
     this.createLayerGroup('leftModule3') // 交通事故选中复选框显示的图层
     this.createLayerGroup('leftModule4') // 主动管控选中复选框显示的图层
-    this.createLayerGroup('deviceTollGate') // map中收费站图标显示的图层
+    this.createLayerGroup('deviceTollGate') // map中收费站匝道灯图标显示的图层
     this.createLayerGroup('deviceFInfoBoard') // map中F情报版显示的图层
-    this.createLayerGroup('deviceInfoBoard') // map中情报版限速显示的图层
-    this.createLayerGroup('deviceTurnBoard') // map中可变情报版显示的图层
+    this.createLayerGroup('deviceInfoBoard') // map中车道控制器情报版限速显示的图层
+    this.createLayerGroup('deviceTurnBoard') // map中门架情报板显示的图层
     this.createLayerGroup('carRoadBoard') // map中车道控制器显示的图层
     this.createLayerGroup('lineLayers') // map中绘制线显示的图层
     //输入提示
@@ -208,15 +208,15 @@ class GMap extends React.Component {
     });  //构造地点查询类
     AMap.event.addListener(auto, "select", this.searchKeyWords);//注册监听，当选中某条记录时会触发
     // 点的新建
-    // 图标收费站
+    // 图标收费站匝道灯
     this.drawMarkers(this.state.tollGateJson, fBoardIcon, 'deviceTollGate')
     // 图标F屏情报版
     this.drawMarkers(this.state.infoFBoardJson, fBoardIcon, 'deviceFInfoBoard')
-    // 图标情报版
+    // 图标车道控制器
     this.drawMarkers(this.state.speedLimitJson, speedLimitIcon, 'deviceInfoBoard')
-    // 图标可变情报版
+    // 图标门架情报板
     this.drawMarkers(this.state.infoBoardJson, turnBoardIcon, 'deviceTurnBoard')
-    // 图标可变情报版
+    // 图标车道控制器
     this.drawMarkers(this.state.carRoadJson, speedLimitIcon, 'carRoadBoard')
     // 左侧功能数据图标
     setTimeout(() => {
