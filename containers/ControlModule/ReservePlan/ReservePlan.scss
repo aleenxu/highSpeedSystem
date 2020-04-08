@@ -402,10 +402,9 @@
         background: none;
       }
       > em {
-        width: 38%;
         height: 26px;
-        line-height: 22px;
-        magin: 3px 0;
+        line-height: 25px;
+        margin: 2px 0;
         font-size: 12px;
         color: #fff;
         display: inline-block;
@@ -415,12 +414,14 @@
         padding-left: 25px;
       }
       > em:nth-child(2) {
+        width: 38%;
         background: url(../../../imgs/fBoard_s.png) no-repeat;
       }
       > em:nth-child(3) {
         background: url(../../../imgs/speedLimit_s.png) no-repeat;
       }
       > em:nth-child(4) {
+        width: 38%;
         background: url(../../../imgs/turnBoard_s.png) no-repeat;
       }
     }

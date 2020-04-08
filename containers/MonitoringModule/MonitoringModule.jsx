@@ -1602,10 +1602,10 @@ class MonitoringModule extends React.Component {
             <span>畅通</span>
           </p> */}
           <h5>
-            <em>收费站匝道灯</em>
-            <em>F屏情报板</em>
-            <em>车道控制器</em>
-            <em>门架情报板</em>
+          <em>收费站匝道灯</em>
+          <em>F屏情报板</em>
+          <em>车道控制器 / 限速牌专用</em>
+          <em>门架情报板</em>
           </h5>
         </div>
         {/* 设备显示弹窗 */}
@@ -2254,7 +2254,7 @@ class MonitoringModule extends React.Component {
                   <h5>
                     <em>收费站匝道灯</em>
                     <em>F屏情报板</em>
-                    <em>车道控制器</em>
+                    <em>车道控制器 / 限速牌专用</em>
                     <em>门架情报板</em>
                   </h5>
                 </div>
