@@ -1,6 +1,6 @@
 import React from 'react'
 import CryptoJS from 'crypto-js'
-import { Icon, Checkbox, message, Input, Button } from 'antd'
+import { Icon, Checkbox, message, Input, Button ,Form} from 'antd'
 
 import styles from './Login.scss'
 import getResponseDatas from '../../plugs/HttpData/getResponseData'
@@ -160,7 +160,6 @@ class Login extends React.Component {
             loginName: '',
             passWord: '',
           }
-
         } else {
           message.warning(msg)
         }

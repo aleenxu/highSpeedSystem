@@ -354,6 +354,10 @@ class Rolemana extends React.Component {
                                   required: true,
                                   message: '请输入角色名称!',
                                 },
+                                {
+                                  max: 18,
+                                  message: '超出最大长度',
+                                },
                               ],
                               initialValue: listItems && listItems.name,
                             })(<Input onChange={(e) => { this.handleGroupMsgChange(e, 'name') }} />)}

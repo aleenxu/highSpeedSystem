@@ -179,7 +179,7 @@ class ScrollList extends React.Component {
         $('#deviceBox').attr('style', 'transition:all .5s;')
         e.currentTarget.style.background = '#0d2645'
         window.listItemDom = e.currentTarget
-        
+
         /* handleEventPopup('setTimeOut', boolean) */
       }
     }
@@ -187,7 +187,7 @@ class ScrollList extends React.Component {
       handleEventPopup(type, boolean)
       // this.checkBoxClick()
       console.log($($('.ant-checkbox-input')), '多少个')
-      
+
     }
   }
   formatDuring = (mss) => {
@@ -241,9 +241,19 @@ class ScrollList extends React.Component {
     <Badge count={this.examineLength} title="待审核总数">
       <Icon
         type="solution"
+        className="BadgeIcon"
         onClick={(event) => {
           event.stopPropagation()
-          this.handleEventPopup('', 'examine', true)
+          let boolean = false
+          console.log($('.BadgeIcon').css("color"))
+          if ($('.BadgeIcon').css("color") == 'rgb(53, 186, 255)') {
+            $('.BadgeIcon').css({ color: 'rgb(255, 255, 255)' })
+            boolean = false
+          } else {
+            $('.BadgeIcon').css({ color: 'rgb(53, 186, 255)' })
+            boolean = true
+          }
+          this.handleEventPopup('', 'examine', boolean)
         }}
       />
     </Badge>
@@ -251,8 +261,8 @@ class ScrollList extends React.Component {
   checkBoxClick = event => {
     let checkArr = []
     checkArr.push(event)
-    setTimeout(()=>{
-      checkArr.map((item)=>{
+    setTimeout(() => {
+      checkArr.map((item) => {
         // item.target.checked = false
         console.log(item, '看看效果')
       })
@@ -263,9 +273,9 @@ class ScrollList extends React.Component {
       //   four: false,
       //   five: false,
       // })
-    },3000)
-    debugger
-    console.log(event,this.state.listTitle,event.target.checked)
+    }, 3000)
+    // debugger
+    console.log(event, this.state.listTitle, event.target.checked)
     this.setState({
       typeNow: event.target.nowtype
     }, () => {
@@ -358,7 +368,7 @@ class ScrollList extends React.Component {
           <div>
             <Checkbox defaultChecked={this.state.one} style={{
               position: "absolute", zIndex: 9, paddingLeft: "12px", paddingRight: "12px", top: "12px", borderBottom: '1px #fff solid',
-              paddingBottom: '13px', background:'rgba(19, 27, 37, 0.8)',
+              paddingBottom: '13px', background: 'rgba(19, 27, 37, 0.8)',
             }} nowtype={listTitle.type} onChange={this.checkBoxClick} />
             {/* <Checkbox.Group style={{
               position: "absolute", zIndex: 9, paddingLeft: "12px", top: "12px", borderBottom: '1px #fff solid',
@@ -383,7 +393,7 @@ class ScrollList extends React.Component {
               onChange={this.callback}
               expandIconPosition="right"
             >
-              <Panel style={{ paddingLeft: '40px' }} header={listTit} key="2" extra={this.genExtra(listTitle, 'Event')}>
+              <Panel style={{ paddingLeft: '40px' }} header={listTit} key="1" extra={this.genExtra(listTitle, 'Event')}>
                 <div style={{ marginLeft: '-40px' }} className={styles.listBox}>
                   {listTitle &&
                     <div className={styles.listItem}>

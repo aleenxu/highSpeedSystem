@@ -348,7 +348,7 @@ class MonitoringModule extends React.Component {
       this.handleViewControl(boolean.eventTypeId, boolean.eventId)
     }
     if (type === 'examine') {
-      this.planStatus = 2
+      this.planStatus = boolean ? 2 : 0
       this.handleplanList()
     }
     if (type === 'setTimeOut') {
@@ -425,7 +425,7 @@ class MonitoringModule extends React.Component {
     }
   }
   handleSelect = (value, name, type, data) => {
-    debugger
+    //debugger
     if (type === 'publishPlanVO' && name === 'deviceControlType') {
       this.publishPlanVO.list.forEach((item, index) => {
         if (item.deviceId === data) {
@@ -448,7 +448,7 @@ class MonitoringModule extends React.Component {
           }, () => {
             this.controlDatas.roadId = item.roadId
             this.controlDatas.roadName = item.roadName
-            debugger
+            //debugger
             this.controlDatas.directionName = this.state.roadNumber[0].directionName
             this.controlDatas.directionId = this.state.roadNumber[0].directionId
             this.handSecUrl()
