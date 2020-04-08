@@ -2239,7 +2239,7 @@ class MonitoringModule extends React.Component {
                                 </div>
                               </Panel>
                             )
-                          }) : deviceTypes.map((item, ind) => {
+                          }) : detailsPopup.devices && detailsPopup.devices.map((item, ind) => {
                             return (
                               <Panel className={styles.PanelChs} header={item.codeName} key={item.dictCode}>
                                 <div>
