@@ -31,10 +31,11 @@ class LaneControl extends React.Component {
       roadSecIddata: null,
       roadSecIdItem: null,
       userLimit: [],
-      deviceSizeList: null,
+      deviceSizeList: [],
       inmainMap: null,
       boardLatlng: null,
       Intelatlng: null,
+      functionList: [],
     }
     this.Parameters = {
       keyword: '',
@@ -57,7 +58,7 @@ class LaneControl extends React.Component {
       rowId: '',
       vendor: '',
       laneNum: '',
-      /* deviceSize: '', */
+      function: '',
     }
     this.listByPageUrl = '/control/limitingSpeedBord/listByPage' // 分页查询设备
     this.listDetailUrl = '/control/dict/code/list/detail/' // {codeType} 根据字典类型，获取字典详情相关信息'
@@ -83,6 +84,7 @@ class LaneControl extends React.Component {
     this.handlelistDetail('vendorList', 24)
     this.handlelistDetail('deviceTypeList', 18)
     this.handlelistDetail('deviceSizeList', 27)
+    this.handlelistDetail('functionList', 28)
     // 获取级联方向下拉
     this.handlehwayDirection()
   }
@@ -333,7 +335,7 @@ class LaneControl extends React.Component {
   }
   render() {
     const { getFieldDecorator } = this.props.form
-    const { listByPage, Intelatlng, current, inmainMap, userLimit, boardLatlng, deviceSizeList, boardData, directionList, roadSecIddata, roadSecIdItem, directions, hwayList, vendorList, deviceTypeList, ControlStatus, hwayDirection } = this.state
+    const { listByPage, Intelatlng, current, inmainMap, userLimit, boardLatlng, functionList, deviceSizeList, boardData, directionList, roadSecIddata, roadSecIdItem, directions, hwayList, vendorList, deviceTypeList, ControlStatus, hwayDirection } = this.state
     return (
       <div>
         <SystemMenu />
@@ -343,7 +345,7 @@ class LaneControl extends React.Component {
           <div className={styles.EqCentent}>
             <div className={styles.Operation}>
               <div className={styles.leftItem}>
-                <div><Input onChange={(e) => { this.handleInput(e, 'keyword', 'Parameters') }} /></div>
+                <div><Input placeholder="请输入关键字" onChange={(e) => { this.handleInput(e, 'keyword', 'Parameters') }} /></div>
                 <Button className={styles.Button} onClick={() => { this.handlepage(1) }}>搜&nbsp;&nbsp;索</Button>
               </div>
               <div className={styles.rightItem}>
@@ -359,6 +361,7 @@ class LaneControl extends React.Component {
                 <div className={styles.listTd} >高速公路</div>
                 <div className={styles.listTd} >桩号</div>
                 <div className={styles.listTd} >车道</div>
+                <div className={styles.listTd} >设备功能</div>
                 <div className={styles.listTd} >经纬度坐标</div>
                 <div className={styles.listTd} >方向</div>
                 <div className={styles.listTd} >IP地址</div>
@@ -375,7 +378,8 @@ class LaneControl extends React.Component {
                       {/* <div className={styles.listTd} ><span className={styles.roadName}>{item.pileNum}</span></div> */}
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.roadName}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.pileNum}</span></div>
-                      <div className={styles.listTd} ><span className={styles.roadName}>{item.laneNum}</span></div>
+                      <div className={styles.listTd} ><span className={styles.roadName}>{this.handledirection(deviceSizeList, item.laneNum)}</span></div>
+                      <div className={styles.listTd} ><span className={styles.roadName}>{this.handledirection(functionList, item.function)}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.latlng}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{this.handledirection(directionList, item.direction)}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.deviceIp}</span></div>
@@ -459,7 +463,7 @@ class LaneControl extends React.Component {
                           <Select onChange={(e) => { this.handleSelect(e, 'vendor', 'board') }} >
                             {
                               vendorList && vendorList.map((item) => {
-                                return <Option key={item.id} value={''+item.id}>{item.name}</Option>
+                                return <Option key={item.id} value={'' + item.id}>{item.name}</Option>
                               })
                             }
                           </Select>
@@ -660,8 +664,31 @@ class LaneControl extends React.Component {
                           ],
                           initialValue: boardLatlng,
                         })(<Input onClick={(e) => { this.handleIntelatlng(true) }} />)}
+                      </Form.Item>
+                    </div>
+                    <div className={styles.Item}>
+                      <Form.Item
+                        name="function"
+                        label="设备功能"
+                      >
+                        {getFieldDecorator('function', {
+                          rules: [
+                            {
+                              required: true,
+                              message: '请输入设备功能!',
+                            },
+                          ],
+                          initialValue: boardData.function,
+                        })(
+                          <Select onChange={(e) => { this.handleSelect(e, 'function', 'board') }}>
 
-
+                            {
+                              functionList && functionList.map((item) => {
+                                return <Option key={item.name + item.id} value={item.id}>{item.name}</Option>
+                              })
+                            }
+                          </Select>
+                        )}
                       </Form.Item>
                     </div>
                   </div>

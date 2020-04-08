@@ -28,7 +28,7 @@ class Analysis extends React.Component {
           <div className={styles.EqCentent}>
             <div className={styles.Operation}>
               <div className={styles.leftItem}>
-                <div><Input /></div>
+                <div><Input placeholder="请输入关键字"/></div>
                 <span className={styles.Button}>搜&nbsp;&nbsp;索</span>
               </div>
             </div>

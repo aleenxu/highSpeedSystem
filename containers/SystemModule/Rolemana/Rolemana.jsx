@@ -292,7 +292,7 @@ class Rolemana extends React.Component {
           <div className={styles.EqCentent}>
             <div className={styles.Operation}>
               <div className={styles.leftItem}>
-                <div> <Input onChange={(e) => { this.handleInputChange(e, 'keyword') }} /></div>
+                <div> <Input placeholder="请输入关键字" onChange={(e) => { this.handleInputChange(e, 'keyword') }} /></div>
                 <span className={styles.Button} onClick={() => { this.handlePagination('1') }}>搜&nbsp;&nbsp;索</span>
               </div>
               <div className={styles.rightItem}>
@@ -353,6 +353,10 @@ class Rolemana extends React.Component {
                                 {
                                   required: true,
                                   message: '请输入角色名称!',
+                                },
+                                {
+                                  max: 18,
+                                  message: '超出最大长度',
                                 },
                               ],
                               initialValue: listItems && listItems.name,

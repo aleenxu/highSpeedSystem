@@ -141,44 +141,44 @@ class User extends React.Component {
       onCancel() { },
     })
   }
-/*   getAddUserList = () => {
-    console.log(this.dataList);
-    const url = this.dataList.id ? this.updateUrl : this.saveUrl
-    if (!this.dataList.userName) {
-      message.error('请填写用户名称!')
-      return
-    }
-    if (!this.dataList.loginName) {
-      message.error('请填写登录名称!')
-      return
-    }
-    if (!this.dataList.phone) {
-      message.error('请填写联系电话!')
-      return
-    }
-    if (!this.dataList.email) {
-      message.error('请填写电子邮箱!')
-      return
-    }
-    if ((!this.dataList.deptIds) || (!this.dataList.deptIds.length)) {
-      message.error('请选择组织机构!')
-      return
-    }
-    if ((!this.dataList.roleIds) || (!this.dataList.roleIds.length)) {
-      message.error('请选择角色!')
-      return
-    }
-    getResponseDatas('post', url, this.getFormData(this.dataList)).then((res) => {
-      const result = res.data
-      if (result.code === 0) {
-        message.success('保存成功!')
-        this.getSystemList()
-        this.setState({ boardData: null })
-      } else {
-        message.error(result.msg)
+  /*   getAddUserList = () => {
+      console.log(this.dataList);
+      const url = this.dataList.id ? this.updateUrl : this.saveUrl
+      if (!this.dataList.userName) {
+        message.error('请填写用户名称!')
+        return
       }
-    })
-  } */
+      if (!this.dataList.loginName) {
+        message.error('请填写登录名称!')
+        return
+      }
+      if (!this.dataList.phone) {
+        message.error('请填写联系电话!')
+        return
+      }
+      if (!this.dataList.email) {
+        message.error('请填写电子邮箱!')
+        return
+      }
+      if ((!this.dataList.deptIds) || (!this.dataList.deptIds.length)) {
+        message.error('请选择组织机构!')
+        return
+      }
+      if ((!this.dataList.roleIds) || (!this.dataList.roleIds.length)) {
+        message.error('请选择角色!')
+        return
+      }
+      getResponseDatas('post', url, this.getFormData(this.dataList)).then((res) => {
+        const result = res.data
+        if (result.code === 0) {
+          message.success('保存成功!')
+          this.getSystemList()
+          this.setState({ boardData: null })
+        } else {
+          message.error(result.msg)
+        }
+      })
+    } */
   getAddUser = () => {
     const boardData = JSON.parse(JSON.stringify(this.dataListData))
     this.boardData = boardData
@@ -236,6 +236,17 @@ class User extends React.Component {
       }
     })
   }
+  validateNoChinese = (rule, value, callback) => {
+    let reg = /^[^\u4e00-\u9fa5]+$/g;
+    let regEmpty = /^\s*$/g;
+    if (value && !reg.test(value)) {
+      callback('书写格式错误');
+    } else if (value && regEmpty.test(value)) {
+      callback('缺陷编号不能为空');
+    } else {
+      callback();
+    }
+  }
   render() {
     const { getFieldDecorator } = this.props.form
     const { systemList, current, boardData, roleList, depList, userLimit } = this.state
@@ -247,7 +258,7 @@ class User extends React.Component {
           <div className={styles.EqCentent}>
             <div className={styles.Operation}>
               <div className={styles.leftItem}>
-                <div><Input onChange={(e) => { this.handleInput(e, 'keyword', 'sysUser') }} /></div>
+                <div><Input placeholder="请输入关键字" onChange={(e) => { this.handleInput(e, 'keyword', 'sysUser') }} /></div>
                 <span className={styles.Button} onClick={() => { this.handlepage(1) }}>搜&nbsp;&nbsp;索</span>
               </div>
               <div className={styles.rightItem}>
@@ -314,6 +325,10 @@ class User extends React.Component {
                                 required: true,
                                 message: '请输入用户名称!',
                               },
+                              {
+                                max: 18,
+                                message: '超出最大长度',
+                              },
                             ],
                             initialValue: boardData.userName,
                           })(<Input onChange={(e) => { this.handleInput(e, 'userName', 'dataList') }} />)}
@@ -330,6 +345,13 @@ class User extends React.Component {
                               {
                                 required: true,
                                 message: '请输入登录名称!',
+                              },
+                              {
+                                max: 18,
+                                message: '超出最大长度',
+                              },
+                              {
+                                validator: this.validateNoChinese,
                               },
                             ],
                             initialValue: boardData.loginName,

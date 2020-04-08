@@ -425,10 +425,10 @@ class ReservePlan extends React.Component {
   }
   // 更新设备及交通管控类型
   updateControlTypes = (controlId) => {
-    if (typeof(this.state.deviceString) == 'string') {
+    if (typeof (this.state.deviceString) == 'string') {
       this.setState({
         deviceString: this.state.deviceString.split(','),
-      },() => {
+      }, () => {
         const nowIndex = this.state.deviceString.indexOf(controlId) > -1 ? this.state.deviceString.indexOf(controlId) : -1
         if (nowIndex > -1 && this.state.deviceString.length > 0) {
           this.state.deviceString.splice(nowIndex, 1)
@@ -441,26 +441,26 @@ class ReservePlan extends React.Component {
         }
         this.setState({
           deviceString: this.state.deviceString,
-        },() => {
+        }, () => {
           this.getDeviceEventList(true)
         })
       })
     } else {
       const nowIndex = this.state.deviceString.join().split(',').indexOf(controlId) > -1 ? this.state.deviceString.join().split(',').indexOf(controlId) : -1
-        if (nowIndex > -1 && this.state.deviceString.length > 0) {
-          this.state.deviceString.splice(nowIndex, 1)
-          if (this.state.deviceString.length == 0) {
-            message.info('管控类型至少选中一个')
-            this.state.deviceString.push(controlId)
-          }
-        } else {
+      if (nowIndex > -1 && this.state.deviceString.length > 0) {
+        this.state.deviceString.splice(nowIndex, 1)
+        if (this.state.deviceString.length == 0) {
+          message.info('管控类型至少选中一个')
           this.state.deviceString.push(controlId)
         }
-        this.setState({
-          deviceString: this.state.deviceString,
-        },() => {
-          this.getDeviceEventList(true)
-        })
+      } else {
+        this.state.deviceString.push(controlId)
+      }
+      this.setState({
+        deviceString: this.state.deviceString,
+      }, () => {
+        this.getDeviceEventList(true)
+      })
     }
   }
   // 获取全部交通管控类型
@@ -574,9 +574,9 @@ class ReservePlan extends React.Component {
         popLayer.attr('style', 'width:24%')
       } */
     }
-/*     if (type === 'VIboard') {
-      this.setState({ VIboardPopup: boolean })
-    } */
+    /*     if (type === 'VIboard') {
+          this.setState({ VIboardPopup: boolean })
+        } */
     if (type === 'controldet') {
       this.handleViewControl(boolean.eventTypeId, boolean.eventId)
     }
@@ -600,9 +600,9 @@ class ReservePlan extends React.Component {
     const { eventType, deviceString } = this.state
     debugger
     const itemArr = []
-    console.log(deviceList,'look at here')
+    console.log(deviceList, 'look at here')
     deviceList.map((item) => {
-      item.device.map((items,index) =>{
+      item.device.map((items, index) => {
         itemArr.push({
           "controlDeviceType": this.controlDatas.list[index].deviceControlType,
           "deviceId": items.deviceId,
@@ -611,7 +611,7 @@ class ReservePlan extends React.Component {
         })
       })
     })
-    console.log(itemArr,'是不是呢？')
+    console.log(itemArr, '是不是呢？')
     for (let i = 0; i < this.controlDatas.list.length; i++) {
       if (!this.controlDatas.list[i].content) {
         message.warning('请填全显示内容')
@@ -623,9 +623,9 @@ class ReservePlan extends React.Component {
       }
     }
     const paramStr = '?controlDeviceType=' + deviceString.join() + '&controlEventType=' + eventType
-       +'&roadName='+ plan.roadName + '&direction=' + plan.directionId + '&locationMode=' + plan.locationMode 
-       + '&startEndPileNum=' + this.controlDatas.startPileNum + ' ' +this.controlDatas.endPileNum
-    getResponseDatas('post', this.addPlanUrl+paramStr, itemArr).then((res) => {
+      + '&roadName=' + plan.roadName + '&direction=' + plan.directionId + '&locationMode=' + plan.locationMode
+      + '&startEndPileNum=' + this.controlDatas.startPileNum + ' ' + this.controlDatas.endPileNum
+    getResponseDatas('post', this.addPlanUrl + paramStr, itemArr).then((res) => {
       const result = res.data
       if (result.code === 200) {
         message.info(res.data.message)
@@ -633,7 +633,7 @@ class ReservePlan extends React.Component {
           EventTagPopup: null,
           reservePopup: null,
           addFlag: false,
-        },() => {
+        }, () => {
           this.handleListByPage()
         })
       } else {
@@ -646,7 +646,7 @@ class ReservePlan extends React.Component {
     debugger
     const itemArr = []
     deviceList.map((item) => {
-      item.device.map((items,index) =>{
+      item.device.map((items, index) => {
         debugger
         itemArr.push({
           "controlDeviceType": this.controlDatas.list[index].deviceControlType,
@@ -668,8 +668,8 @@ class ReservePlan extends React.Component {
       }
     }
     const paramStr = '?controlDeviceType=' + deviceString + '&controlEventType=' + eventType
-       +'&roadName='+ plan.roadName +'&rowId='+plan.rowId+ '&direction=' + plan.directionId + '&locationMode=' + plan.locationMode 
-       + '&startEndPileNum=' + this.controlDatas.startPileNum + ' ' +this.controlDatas.endPileNum
+      + '&roadName=' + plan.roadName + '&rowId=' + plan.rowId + '&direction=' + plan.directionId + '&locationMode=' + plan.locationMode
+      + '&startEndPileNum=' + this.controlDatas.startPileNum + ' ' + this.controlDatas.endPileNum
     getResponseDatas('post', this.updatePlanUrl + paramStr, itemArr).then((res) => {
       const result = res.data
       if (result.code === 200) {
@@ -690,13 +690,13 @@ class ReservePlan extends React.Component {
       title: '确定要删除当前预案吗？',
       okText: '确定',
       cancelText: '取消',
-      onOk : () => {
-        getResponseDatas('get', this.delPlanUrl, {planId: planId}).then((res) => {
+      onOk: () => {
+        getResponseDatas('get', this.delPlanUrl, { planId: planId }).then((res) => {
           const result = res.data
           debugger
           const arr = JSON.parse(JSON.stringify(this.state.listByPage))
           arr.data.splice(nowIndex, 1)
-          this.setState({listByPage: arr})
+          this.setState({ listByPage: arr })
           if (result.code === 200) {
             message.info(res.data.message)
           } else {
@@ -705,7 +705,7 @@ class ReservePlan extends React.Component {
         })
       }
     })
-    
+
   }
   handleDetailPlan = (rowId) => {
     getResponseDatas('get', this.detailPlanUrl, { planId: rowId }).then((res) => {
@@ -808,7 +808,7 @@ class ReservePlan extends React.Component {
       }
       this.setState({
         reservePopup: true,
-      }, ()=>{
+      }, () => {
         this.controlDatas.list = deviceAry
         console.log('查看当前', this.controlDatas)
       })
@@ -833,7 +833,7 @@ class ReservePlan extends React.Component {
           <div className={styles.EqCentent}>
             <div className={styles.Operation}>
               <div className={styles.leftItem}>
-                <div><Input onChange={(e) => { this.handleInput(e, 'keyword', 'Parameters') }} /></div>
+                <div><Input placeholder="请输入关键字" onChange={(e) => { this.handleInput(e, 'keyword', 'Parameters') }} /></div>
                 <span className={styles.Button} onClick={() => { this.handlepage(1) }}>搜&nbsp;&nbsp;索</span>
               </div>
               <div className={styles.rightItem}>
@@ -884,7 +884,7 @@ class ReservePlan extends React.Component {
               <div className={style.EventTagging}>
                 <GMap styles={this.mapStyles} mapID={'popMap'} roadLatlng={detailsLatlng} handledetai={this.handledetai} detailsPopup={this.controlDatas} boxSelect={boxSelect} flagClose={flagClose} />
                 <div className={style.EventTaggingLeft}>
-                  <div className={style.Title} style={{ background: '#132334', position: 'fixed', top: '61px', left: 'calc(5% + 6px)', zIndex:'999',width:'calc(21.6% - 2px)' }}>{'修改预案库'}<Icon className={style.Close} onClick={() => { this.handleEventTag(false) }} type="close" /></div>
+                  <div className={style.Title} style={{ background: '#132334', position: 'fixed', top: '61px', left: 'calc(5% + 6px)', zIndex: '999', width: 'calc(21.6% - 2px)' }}>{'修改预案库'}<Icon className={style.Close} onClick={() => { this.handleEventTag(false) }} type="close" /></div>
                   <div className={style.Title} style={{ background: '#132334', lineHeight: '20px', height: '20px', marginTop: '60px', fontSize: '12px' }}>选择道路</div>
                   <div className={style.Centent}>
                     <div className={style.ItemBox}>
@@ -996,7 +996,7 @@ class ReservePlan extends React.Component {
             </div> : null
         }
         {reservePopup ?
-          <div className={styles.MaskBox} style={{zIndex:'1000'}}>
+          <div className={styles.MaskBox} style={{ zIndex: '1000' }}>
             <div className={styles.AddBox}>
               <div className={styles.Title}>{'预案详情'}<Icon onClick={() => { this.handleEventPopup('Reserve', false) }} className={styles.Close} type="close" /></div>
               <div className={styles.Conten}>

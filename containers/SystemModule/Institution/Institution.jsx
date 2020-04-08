@@ -197,6 +197,17 @@ class Institution extends React.Component {
       }
     })
   }
+  validateNoChinese = (rule, value, callback) => {
+    let reg = /^[^\u4e00-\u9fa5]+$/g;
+    let regEmpty = /^\s*$/g;
+    if (value && !reg.test(value)) {
+      callback('书写格式错误');
+    } else if (value && regEmpty.test(value)) {
+      callback('缺陷编号不能为空');
+    } else {
+      callback();
+    }
+  }
   render() {
     const { getFieldDecorator } = this.props.form
     const { listItems, listDatas, showGroupMsg, parentGroup, userLimit, current } = this.state
@@ -208,7 +219,7 @@ class Institution extends React.Component {
           <div className={styles.EqCentent}>
             <div className={styles.Operation}>
               <div className={styles.leftItem}>
-                <div><Input onChange={this.handleKeywordChange} /></div>
+                <div><Input placeholder="请输入关键字" onChange={this.handleKeywordChange} /></div>
                 <span className={styles.Button} onClick={() => { this.handlePagination('1') }}>搜&nbsp;&nbsp;索</span>
               </div>
               <div className={styles.rightItem}>
@@ -275,8 +286,7 @@ class Institution extends React.Component {
                                   message: '请输入部门编号!',
                                 },
                                 {
-                                  pattern: new RegExp(/^[1-9]\d*$/, 'g'),
-                                  message: '请输入正确的部门编号',
+                                  validator: this.validateNoChinese,
                                 },
                               ],
                               initialValue: listItems && listItems.deptCode,
@@ -293,6 +303,10 @@ class Institution extends React.Component {
                                 {
                                   required: true,
                                   message: '请输入部门名称!',
+                                },
+                                {
+                                  max: 18,
+                                  message: '超出最大长度',
                                 },
                               ],
                               initialValue: listItems && listItems.deptName,
@@ -311,6 +325,10 @@ class Institution extends React.Component {
                                 {
                                   required: true,
                                   message: '请输入负责人!',
+                                },
+                                {
+                                  max: 18,
+                                  message: '超出最大长度',
                                 },
                               ],
                               initialValue: listItems && listItems.leaderName,
