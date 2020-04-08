@@ -1732,7 +1732,7 @@ class MonitoringModule extends React.Component {
                                       {/* <div><Icon type="close-circle" className={styles.CloneItem} onClick={() => { this.handleCloseCircle(indexs, index, item.deviceId) }} />{index + 1}.{item.deviceName + '-' + item.directionName + items.codeName}&nbsp;:</div> */}
                                       <div className={styles.InputBox}>
                                         <div className={styles.ItemInput} style={{ width: '30%' }}>{reservePopup.status === 1 ? <Icon type="close-circle" className={styles.CloneItem} onClick={() => { this.handleCloseCircle(indexs, index, item.deviceId) }} /> : null}{index + 1}.{item.deviceName + '-' + item.directionName + items.codeName}&nbsp;:</div>
-                                        <div className={styles.ItemInput} style={{ width: '50%' }}><Input style={{ textAlign: 'center', color: 'red' }} onChange={(e) => { reservePopup.update == true || reservePopup.update == false ? this.handleInput(e, 'content', 'reservePopup', item.deviceId) : this.handleInput(e, 'content', 'publishPlanVO', item.deviceId) }} disabled={reservePopup.status > 1 ? true : ''} defaultValue={item.displayContent} /></div>
+                                        <div className={styles.ItemInput} style={{ width: '50%' }}><Input style={{ textAlign: 'center', color: 'red' }} placeholder='请输入描述' onChange={(e) => { reservePopup.update == true || reservePopup.update == false ? this.handleInput(e, 'content', 'reservePopup', item.deviceId) : this.handleInput(e, 'content', 'publishPlanVO', item.deviceId) }} disabled={reservePopup.status > 1 ? true : ''} defaultValue={item.displayContent} /></div>
                                         <div className={styles.ItemInput} style={{ width: '20%' }}>
                                           <Select disabled={reservePopup.status > 1 ? true : ''} defaultValue={item.deviceControlType ? item.deviceControlType : 0} style={{ width: '80%' }} onChange={(e) => { reservePopup.update == true || reservePopup.update == false ? this.handleSelect(e, 'deviceControlType', 'reservePopup', item.deviceId) : this.handleSelect(e, 'deviceControlType', 'publishPlanVO', item.deviceId) }}>
                                             <Option value={0}>请选择</Option>
@@ -2133,12 +2133,12 @@ class MonitoringModule extends React.Component {
                             })
                           }
                         </Select>
-                        <Select defaultValue={"1"} style={{ width: '36%', margin: '8px 1%' }} disabled={true} onChange={(e) => { this.handleSelect(e, 'locationMode', 'controlDatas') }} >
+                        <Select defaultValue={"1"} style={{ width: '26%', margin: '8px 1%' }} disabled={true} onChange={(e) => { this.handleSelect(e, 'locationMode', 'controlDatas') }} >
                           <Option value="0">收费站</Option>
                           <Option value="1">里程桩</Option>
                         </Select>
-                        <Input id="startInt" style={{ width: '29%', height: '32px', margin: '8px 1%' }} defaultValue={this.controlDatas.startPileNum} onBlur={(e) => { this.handleInput(e, 'startPileNum', 'controlDatas'); this.handSecUrl() }} />
-                        <Input id='endInt' style={{ width: '29%', height: '32px', margin: '8px 1%' }} defaultValue={this.controlDatas.endPileNum} onBlur={(e) => { this.handleInput(e, 'endPileNum', 'controlDatas'); this.handSecUrl() }} />
+                        <Input id="startInt" style={{ width: '34%', height: '32px', margin: '8px 1%' }} placeholder='起始桩号如:k1' defaultValue={this.controlDatas.startPileNum} onBlur={(e) => { this.handleInput(e, 'startPileNum', 'controlDatas'); this.handSecUrl() }} />
+                        <Input id='endInt' style={{ width: '34%', height: '32px', margin: '8px 1%' }} placeholder='结束桩号如:k30' defaultValue={this.controlDatas.endPileNum} onBlur={(e) => { this.handleInput(e, 'endPileNum', 'controlDatas'); this.handSecUrl() }} />
                       </div>
                     </div>
                   </div>

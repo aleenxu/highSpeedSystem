@@ -179,12 +179,12 @@ class ReservePlan extends React.Component {
     }
     if (!this.controlDatas.startPileNum) {
       message.info('请输入起始桩号！')
-      $('#startInt').focus()
+      // $('#startInt').focus()
       return
     }
     if (!this.controlDatas.endPileNum) {
       message.info('请输入结束桩号！')
-      $('#endInt').focus()
+      // $('#endInt').focus()
       return
     }
     const params = {
@@ -879,8 +879,8 @@ class ReservePlan extends React.Component {
                           <Option value="0">收费站</Option>
                           <Option value="1">里程桩</Option>
                         </Select>
-                        <Input id="startInt" style={{ width: '29%', height: '32px', margin: '8px 1%' }} defaultValue={this.controlDatas.startPileNum} onBlur={(e) => { this.handleInput(e, 'startPileNum', 'controlDatas'); this.handSecUrl() }} />
-                        <Input id='endInt' style={{ width: '29%', height: '32px', margin: '8px 1%' }} defaultValue={this.controlDatas.endPileNum} onBlur={(e) => { this.handleInput(e, 'endPileNum', 'controlDatas'); this.handSecUrl() }} />
+                        <Input id="startInt" style={{ width: '29%', height: '32px', margin: '8px 1%' }} placeholder='起始桩号如:k1' defaultValue={this.controlDatas.startPileNum} onBlur={(e) => { this.handleInput(e, 'startPileNum', 'controlDatas'); this.handSecUrl() }} />
+                        <Input id='endInt' style={{ width: '29%', height: '32px', margin: '8px 1%' }} placeholder='结束桩号如:k30' defaultValue={this.controlDatas.endPileNum} onBlur={(e) => { this.handleInput(e, 'endPileNum', 'controlDatas'); this.handSecUrl() }} />
                       </div>
                     </div>
                   </div>
@@ -986,7 +986,7 @@ class ReservePlan extends React.Component {
                                   <div key={item.deviceId + item.deviceTypeId}>
                                     <div className={style.InputBox}>
                                       <div className={style.ItemInput} style={{ width: '30%' }}>{deviceTypes.status === 1 ? <Icon type="close-circle" className={styles.CloneItem} onClick={() => { this.handleCloseCircle(indexs, index, item.deviceId) }} /> : null}{index + 1}.{item.deviceName + '-' + item.directionName + items.codeName}&nbsp;:</div>
-                                      <div className={style.ItemInput} style={{ width: '50%' }}><Input style={{ textAlign: 'center', color: 'red' }} onChange={(e) => { this.handleInput(e, 'content', 'controlDatas', item.deviceId) }} disabled={reservePopup.status > 1 ? true : ''} defaultValue={item.displayContent} /></div>
+                                      <div className={style.ItemInput} style={{ width: '50%' }}><Input style={{ textAlign: 'center', color: 'red' }} placeholder='请输入描述' onChange={(e) => { this.handleInput(e, 'content', 'controlDatas', item.deviceId) }} disabled={reservePopup.status > 1 ? true : ''} defaultValue={item.displayContent} /></div>
                                       <div className={style.ItemInput} style={{ width: '20%' }}>
                                         <Select disabled={deviceTypes.status > 1 ? true : ''} defaultValue={item.deviceControlType ? item.deviceControlType : 0} style={{ width: '80%' }} onChange={(e) => { this.handleSelect(e, 'deviceControlType', 'controlDatas', item.deviceId) }}>
                                           <Option value={0}>请选择</Option>

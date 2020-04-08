@@ -358,7 +358,7 @@ class GMap extends React.Component {
       info.push(`<div class='content_box'>`);
       info.push(`<div class='content_box_title'><h4>设备信息</h4>`);
       info.push(`<p class='input-item'>设备名称：<span>`+dataItem.deviceName+`</span></p>`);
-      info.push(`<p class='input-item'>设备类型：<span>`+dataItem.deviceName+`</span></p>`);
+      info.push(`<p class='input-item'>设备类型：<span>`+dataItem.deviceTypeName+`</span></p>`);
       info.push(`<p class='input-item'>桩号：<span>`+dataItem.pileNum+`</span></p>`);
       info.push(`<p class='input-item'>走向：<span>`+dataItem.directionName+`</span></p>`);
       info.push(`<p class='input-item'>管控状态：<span>`+(dataItem.controlling ? '已管控' : '未管控') +`</span></p>`);
