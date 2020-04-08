@@ -715,13 +715,13 @@ class MonitoringModule extends React.Component {
   // 获取所有框选设备
   getDevice = (item) => {
     const existsDevices = []
-    const listDevices = []
+    // const listDevices = []
     if (item && item.devices.length > 0) {
       for (let i = 0, devicesArr = item.devices; i < devicesArr.length; i++) {
         // console.log(devicesArr, "00001")
         devicesArr[i].device && devicesArr[i].device.map((item) => {
           existsDevices.push(item.appendId)
-          listDevices.push(item.deviceId)
+          // listDevices.push(item.deviceId)
         })
       }
     }
@@ -737,8 +737,8 @@ class MonitoringModule extends React.Component {
       if (result.code === 200) {
         const noDevices = []
         result.data.map((item) => {
-          if (!(listDevices.includes(item.deviceId))) {
-            noDevices.push(item.deviceId)
+          if (!(existsDevices.includes(item.appendId))) {
+            noDevices.push(item.appendId)
           }
         })
         if (result.data.length > 0) {
@@ -769,9 +769,10 @@ class MonitoringModule extends React.Component {
   }
   handleBoxSelectList = () => {
     const { checkedListBox, detailsPopup, boxSelectList, oldDevicesList, EventTagPopupTit, deviceTypes } = this.state
+    console.log(boxSelectList,deviceTypes, '看看')
     boxSelectList.forEach((item) => {
       checkedListBox.forEach((items) => {
-        if (item.deviceId === items) {
+        if (item.appendId === items) {
           if (EventTagPopupTit !== '主动管控') {
             detailsPopup.devices.forEach((itemss, index) => {
               if (itemss.dictCode === item.deviceTypeId) {
@@ -920,6 +921,7 @@ class MonitoringModule extends React.Component {
 
   }
   handleMarkControlPop = (titFlag) => {
+    debugger
     const { deviceString, deviceTypes, detailsPopup, eventType, importantId, lineLatlngArr } = this.state
     const deviceAry = []
     const that = this
@@ -1147,6 +1149,7 @@ class MonitoringModule extends React.Component {
   }
   handSecUrl = () => {
     const that = this
+    debugger
     if (!this.controlDatas.roadName) {
       message.info('请选择高速！')
       return
@@ -1277,12 +1280,25 @@ class MonitoringModule extends React.Component {
   handleEventTag = (boolean, e) => {
     if (boolean && $(e.target).text() === '修改管控方案') {
       this.controlDatas = JSON.parse(JSON.stringify(this.state.detailsPopup))
+      console.log(this.controlDatas, '修改管控方案')
       this.controlDatas.startPileNum = this.controlDatas.pileNum.split(' ')[0]
       this.controlDatas.endPileNum = this.controlDatas.pileNum.split(' ')[1]
+      this.controlDatas.directionId = this.controlDatas.driverDirection
       this.setState({
         deviceTypes: this.state.detailsPopup.devices,
         eventType: this.state.detailsPopup.eventType,
+        directionName: this.state.detailsPopup.directionName,
         controlBtnFlagText: '框选设备',
+      })
+      this.state.directionList.forEach((item, index) => {
+        if (item.roadId === this.controlDatas.roadName) {
+          this.setState({
+            roadNumber: item.directions,
+            directionId: this.controlDatas.driverDirection,
+            directionName: this.controlDatas.directionName,
+          })
+
+        }
       })
       // this.handlelistDetail('controlTypes', 22)
     } else {
@@ -1795,7 +1811,20 @@ class MonitoringModule extends React.Component {
                                     })
                                   }
                                   {!!items.device.length || <div className={styles.PanelItemNone}>暂无数据</div>}
-                                </div> : null
+                                </div> : items.dictCode === 5 ?
+                              <div className={styles.ItemBox}>
+                                <div className={styles.HeadItem}>{items.codeName}{/* <span className={styles.AddItem} onClick={(e) => { this.genExtraAddOnclick(e, items, reservePopup) }}><Icon type="plus" /></span> */}</div>
+                                {
+                                  items.device && items.device.map((item) => {
+                                    return (
+                                      <div className={styles.RowBox}>
+                                        <Icon type="close-circle" className={styles.CloneItem} />****地点**收费站:&nbsp;:&nbsp;&nbsp;入口&nbsp;:&nbsp;&nbsp;<p><Switch checkedChildren="开放" unCheckedChildren="关闭" />&nbsp;:&nbsp;&nbsp;出口&nbsp;&nbsp;&nbsp;<Switch checkedChildren="开放" unCheckedChildren="关闭" /></p>
+                                      </div>
+                                    )
+                                  })
+                                }
+                                {!!items.device.length || <div className={styles.PanelItemNone}>暂无数据</div>}
+                              </div>  : null
 
                       )
                     })
@@ -2048,7 +2077,7 @@ class MonitoringModule extends React.Component {
                   >
                     {
                       boxSelectList.map((item) => {
-                        return <Checkbox key={item.deviceId} disabled={(item.controlling == true || item.exists == true) ? true : false} value={item.deviceId}>{item.deviceName + '-' + item.directionName}</Checkbox>
+                        return <Checkbox key={item.deviceId} disabled={(item.controlling == true || item.exists == true) ? true : false} value={item.appendId}>{item.deviceName + '-' + item.directionName}</Checkbox>
                       })
                     }
 
@@ -2112,12 +2141,16 @@ class MonitoringModule extends React.Component {
                         </div>
                       </div> : null
                   }
-
-                  <div className={styles.Title} style={{ background: '#132334', lineHeight: '20px', height: '20px', marginTop: '60px', fontSize: '12px' }}>选择道路</div>
+                  {
+                    EventTagPopupTit !== '主动管控' ?
+                    <div className={styles.Title} style={{ background: '#132334', lineHeight: '20px', height: '20px', marginTop: '0px', fontSize: '12px' }}>选择道路</div>
+                    :
+                    <div className={styles.Title} style={{ background: '#132334', lineHeight: '20px', height: '20px', marginTop: '60px', fontSize: '12px' }}>选择道路</div>
+                  }
                   <div className={styles.Centent}>
                     <div className={styles.ItemBox}>
                       <div className={styles.ItemInput}>
-                        <Select defaultValue={this.controlDatas.roadName} style={{ width: '48%', margin: '0 1%' }} onChange={(e) => { this.handleSelect(e, 'roadId', 'controlDatas') }}>
+                        <Select value={this.controlDatas.roadName} style={{ width: '48%', margin: '0 1%' }} onChange={(e) => { this.handleSelect(e, 'roadId', 'controlDatas') }}>
                           <Option value="">请选择</Option>
                           {
                             hwayList && hwayList.map((item) => {

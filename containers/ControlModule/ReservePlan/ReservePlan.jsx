@@ -59,6 +59,7 @@ class ReservePlan extends React.Component {
       importantId: '',
       lineLatlngArr: null,
       addFlag: null, // 是否是新增过来的
+      directionName: '',
     }
     // 修改管控时的参数
     // this.controlDatas = JSON.parse(localStorage.getItem('detailsPopup'))
@@ -247,10 +248,26 @@ class ReservePlan extends React.Component {
           this.setState({
             roadNumber: item.directions,
             directionId: '',
+            directionName: item.directions[0].directionName ? item.directions[0].directionName : '',
+          }, () => {
+            this.controlDatas.roadId = item.roadId
+            this.controlDatas.roadName = item.roadName
+            debugger
+            this.controlDatas.directionName = this.state.roadNumber[0].directionName
+            this.controlDatas.directionId = this.state.roadNumber[0].directionId
+            this.handSecUrl()
           })
-          // this.controlDatas.directionId = ''
-          this.controlDatas.roadId = item.roadId
-          this.controlDatas.roadName = item.roadName
+
+        }
+      })
+    } else if (type === 'controlDatas' && name === 'directionId') {
+      this.state.roadNumber.forEach((item, index) => {
+        if (item.directionId === value) {
+          this.controlDatas.directionId = item.directionId
+          this.controlDatas.directionName = item.directionName
+          this.setState({
+            directionName: item.directionName,
+          })
         }
       })
       this.handSecUrl()
@@ -656,17 +673,15 @@ class ReservePlan extends React.Component {
     getResponseDatas('post', this.updatePlanUrl + paramStr, itemArr).then((res) => {
       const result = res.data
       if (result.code === 200) {
-        if (result.code === 200) {
-          message.info(res.data.message)
-          this.setState({
-            EventTagPopup: null,
-            reservePopup: null,
-          },()=>{
-            this.handleListByPage()
-          })
-        } else {
-          message.info(res.message)
-        }
+        message.info(res.data.message)
+        this.setState({
+          EventTagPopup: null,
+          reservePopup: null,
+        },()=>{
+          this.handleListByPage()
+        })
+      } else {
+        message.info(res.message)
       }
     })
   }
@@ -746,17 +761,32 @@ class ReservePlan extends React.Component {
       this.setState({
         EventTagPopup: true,
         addFlag: true,
+        directionName: '',
       })
     } else if (name == 'update') {
       debugger
       this.controlDatas = listByPage.data[nowIndex]
+      console.log(this.controlDatas, '啊啊啊~')
       this.controlDatas.startPileNum = listByPage.data[nowIndex].startEndPileNum.split(" ")[0]
       this.controlDatas.endPileNum = listByPage.data[nowIndex].startEndPileNum.split(" ")[1]
       this.controlDatas.directionId = listByPage.data[nowIndex].direction
+      this.controlDatas.directionName = listByPage.data[nowIndex].directionName
       this.setState({
         eventType: listByPage.data[nowIndex].controlEventType,
         deviceString: listByPage.data[nowIndex].controlDeviceType,
+        directionName: listByPage.data[nowIndex].directionName,
       })
+      this.state.directionList.forEach((item, index) => {
+        if (item.roadId === this.controlDatas.roadName) {
+          this.setState({
+            roadNumber: item.directions,
+            directionId: this.controlDatas.driverDirection,
+            directionName: this.controlDatas.directionName,
+          })
+
+        }
+      })
+      
       this.handleDetailPlan(listByPage.data[nowIndex].rowId) // 根据rowId获取全部设备
     } else if (name == 'edit') {
       console.log('编辑')
@@ -867,7 +897,7 @@ class ReservePlan extends React.Component {
                             })
                           }
                         </Select>
-                        <Select defaultValue={this.controlDatas.directionName} style={{ width: '48%', margin: '0 1%' }} onChange={(e) => { this.handleSelect(e, 'directionId', 'controlDatas') }} >
+                        <Select value={this.state.directionName} style={{ width: '48%', margin: '0 1%' }} onChange={(e) => { this.handleSelect(e, 'directionId', 'controlDatas') }} >
                           <Option value="">请选择</Option>
                           {
                             roadNumber && roadNumber.map((item) => {
