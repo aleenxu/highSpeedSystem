@@ -130,7 +130,7 @@ class GMap extends React.Component {
   loadPoint = () => {
     getResponseDatas('get', this.mapPointUrl + '?searchKey=' + this.state.keyWords).then((res) => {
       const jsonData = res.data
-      console.log(jsonData, '地图点的数据')
+      // console.log(jsonData, '地图点的数据')
       if (jsonData.code == 200 && jsonData.data.length > 0) {
         window.mapPointArr = jsonData.data
         jsonData.data.map((item) => {
@@ -260,7 +260,7 @@ class GMap extends React.Component {
             // console.log("绑定点击事件",lineDatas, item.latlng[index])
             map.setZoomAndCenter(nowZoom, [item.latlng[0][0], item.latlng[0][1]]); //同时设置地图层级与中心点
             this.handledetai(item)
-            console.log(item, '看下全部数据')
+            // console.log(item, '看下全部数据')
             // const lineFlag = (item.markEventType !== 3 ? true : false)
             window.drawLine(itemData.latlng, window.lineFlag)
           })
@@ -353,12 +353,15 @@ class GMap extends React.Component {
   }
     //在指定位置打开信息窗体
     openInfoWin = (map, dataItem) => {
+      console.log(dataItem, '弹层的相关信息')
       var info = [];
       info.push(`<div class='content_box'>`);
       info.push(`<div class='content_box_title'><h4>设备信息</h4>`);
       info.push(`<p class='input-item'>设备名称：<span>`+dataItem.deviceName+`</span></p>`);
-      info.push(`<p class='input-item'>桩号:<span>`+dataItem.pileNum+`</span></p>`);
+      info.push(`<p class='input-item'>设备类型：<span>`+dataItem.deviceName+`</span></p>`);
+      info.push(`<p class='input-item'>桩号：<span>`+dataItem.pileNum+`</span></p>`);
       info.push(`<p class='input-item'>走向：<span>`+dataItem.directionName+`</span></p>`);
+      info.push(`<p class='input-item'>管控状态：<span>`+(dataItem.controlling ? '已管控' : '未管控') +`</span></p>`);
       info.push(`<p class='input-item'>所属高速：<span>`+dataItem.roadName+`</span></p></div></div>`);
       const infoWindow = new AMap.InfoWindow({
         content: info.join("")  //使用默认信息窗体框样式，显示信息内容

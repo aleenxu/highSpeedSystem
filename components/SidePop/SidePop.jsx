@@ -6,7 +6,7 @@ import ROpenIcon from '../../imgs/icon_r_open.png'
 import LCloseIcon from '../../imgs/icon_left_close.png'
 import LOpenIcon from '../../imgs/icon_left_open.png'
 import $ from 'jquery'
-
+const rdom = require('react-dom'); 
 class SidePop extends React.Component {
   constructor(props) {
     super(props)
@@ -20,6 +20,8 @@ class SidePop extends React.Component {
       transition: '',
       iconFlag: false,
       iconFlagR: false,
+      scrollLength: 0, // 左滚动距离
+      scrollLengthR: 0, // 右滚动距离
     }
     this.styles = {
       position: 'fixed',
@@ -47,7 +49,7 @@ class SidePop extends React.Component {
       transition:all .5s;`
 
     this.stylesL = `
-      position: absolute;
+      position: fixed;
       bottom: 5px;
       left: 5px;
       width: 24px;
@@ -70,7 +72,7 @@ class SidePop extends React.Component {
       transition:all .5s;`
 
     this.stylesR = `
-      position: absolute;
+      position: fixed;
       bottom: 5px;
       right: 5px;
       width: 24px;
@@ -154,8 +156,23 @@ class SidePop extends React.Component {
       })
     }
   }
+  // 滚动监听
+  handleScroll = e => {
+    const ele = rdom.findDOMNode(this);
+    // console.log(e.nativeEvent,e.nativeEvent.deltaY)
+    if (e.nativeEvent.deltaY < 0) {
+      /* scrolling up */
+      // console.log( '往上滚动',ele.scrollTop)
+      this.state.boxRight === 'unset' ? this.setState({scrollLength: ele.scrollTop}) : this.setState({scrollLengthR: ele.scrollTop})
+      
+    } else {
+      /* scrolling down */
+      // console.log('往下滚动',ele.scrollTop)
+      this.state.boxRight === 'unset' ? this.setState({scrollLength: ele.scrollTop}) : this.setState({scrollLengthR: ele.scrollTop})
+    }
+  }
   render() {
-    const { boxLeft, boxRight, SidplanList, SidePopLeft, groupType, groupStatus } = this.state
+    const { boxLeft, boxRight, SidplanList, SidePopLeft, groupType, groupStatus, scrollLength, scrollLengthR } = this.state
     const eachartsData = {} //eacharts数据
     const progressData = {} //进度条数据
     const listData = [
@@ -193,7 +210,7 @@ class SidePop extends React.Component {
     return (
       <div style={this.styles} className={`animated ${this.state.transition}`}>
         {boxRight === 'unset' &&
-          <div style={{ width: '100%' }}>
+          <div style={{ width: '100%' }} onWheel={(e)=>{this.handleScroll(e)}}>
             {!!groupType && <ScrollList eachartData={groupType} type="1" dataRes="eacharts" handleEventPopup={this.handleEventPopup}></ScrollList>}
             {!!SidePopLeft && SidePopLeft.map((item, index) => {
               const listTit = {
@@ -211,16 +228,16 @@ class SidePop extends React.Component {
         }
         {
           boxLeft === 'unset' &&
-          <div style={{ width: '100%' }}>
+          <div style={{ width: '100%' }} onWheel={(e)=>{this.handleScroll(e)}}>
             {groupStatus && <ScrollList type="2" ProgressData={groupStatus} dataRes="进度条" handleEventPopup={this.handleEventPopup}></ScrollList>}
             {SidplanList && <ScrollList type="4" Tit="管控方案" Title={listTit} dataRes={SidplanList} handleEventPopup={this.handleEventPopup}></ScrollList>}
           </div>
         }
         {boxRight === 'unset' ?
-          <div style={{ position: 'absolute', zIndex: '9999', left: '0', bottom: '0' }}>
+          <div className={'animated'} style={{ position: 'absolute', transition: 'all .2s', zIndex: '9999', left: '0', bottom: scrollLength ? '-' + scrollLength + 'px' : '0' }}>
             <img style={{ cursor: 'pointer' }} title='收起' src={LCloseIcon} onClick={this.handleLeftClick} />
           </div> :
-          <div style={{ position: 'absolute', zIndex: '9999', right: '0', bottom: '0' }}>
+          <div className={'animated'} style={{ position: 'absolute', transition: 'all .2s', zIndex: '9999', right: '0', bottom: scrollLengthR ? '-' + scrollLengthR + 'px' : '0' }}>
             <img style={{ cursor: 'pointer' }} title='收起' src={RCloseIcon} onClick={this.handleRightClick} />
           </div>
         }
