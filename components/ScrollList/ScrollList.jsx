@@ -41,7 +41,6 @@ class ScrollList extends React.Component {
     this.examineLength = 0
   }
   componentDidMount = () => {
-    console.log(this.state.data, '看看..')
     const { eachartData, ProgressData } = this.props
     if (eachartData) {
       const data = []

@@ -59,6 +59,7 @@ class ReservePlan extends React.Component {
       importantId: '',
       lineLatlngArr: null,
       addFlag: null, // 是否是新增过来的
+      directionName: '',
     }
     // 修改管控时的参数
     // this.controlDatas = JSON.parse(localStorage.getItem('detailsPopup'))
@@ -179,12 +180,12 @@ class ReservePlan extends React.Component {
     }
     if (!this.controlDatas.startPileNum) {
       message.info('请输入起始桩号！')
-      $('#startInt').focus()
+      // $('#startInt').focus()
       return
     }
     if (!this.controlDatas.endPileNum) {
       message.info('请输入结束桩号！')
-      $('#endInt').focus()
+      // $('#endInt').focus()
       return
     }
     const params = {
@@ -247,10 +248,26 @@ class ReservePlan extends React.Component {
           this.setState({
             roadNumber: item.directions,
             directionId: '',
+            directionName: item.directions[0].directionName ? item.directions[0].directionName : '',
+          }, () => {
+            this.controlDatas.roadId = item.roadId
+            this.controlDatas.roadName = item.roadName
+            debugger
+            this.controlDatas.directionName = this.state.roadNumber[0].directionName
+            this.controlDatas.directionId = this.state.roadNumber[0].directionId
+            this.handSecUrl()
           })
-          // this.controlDatas.directionId = ''
-          this.controlDatas.roadId = item.roadId
-          this.controlDatas.roadName = item.roadName
+
+        }
+      })
+    } else if (type === 'controlDatas' && name === 'directionId') {
+      this.state.roadNumber.forEach((item, index) => {
+        if (item.directionId === value) {
+          this.controlDatas.directionId = item.directionId
+          this.controlDatas.directionName = item.directionName
+          this.setState({
+            directionName: item.directionName,
+          })
         }
       })
       this.handSecUrl()
@@ -656,17 +673,15 @@ class ReservePlan extends React.Component {
     getResponseDatas('post', this.updatePlanUrl + paramStr, itemArr).then((res) => {
       const result = res.data
       if (result.code === 200) {
-        if (result.code === 200) {
-          message.info(res.data.message)
-          this.setState({
-            EventTagPopup: null,
-            reservePopup: null,
-          }, () => {
-            this.handleListByPage()
-          })
-        } else {
-          message.info(res.message)
-        }
+        message.info(res.data.message)
+        this.setState({
+          EventTagPopup: null,
+          reservePopup: null,
+        },()=>{
+          this.handleListByPage()
+        })
+      } else {
+        message.info(res.message)
       }
     })
   }
@@ -746,17 +761,32 @@ class ReservePlan extends React.Component {
       this.setState({
         EventTagPopup: true,
         addFlag: true,
+        directionName: '',
       })
     } else if (name == 'update') {
       debugger
       this.controlDatas = listByPage.data[nowIndex]
+      console.log(this.controlDatas, '啊啊啊~')
       this.controlDatas.startPileNum = listByPage.data[nowIndex].startEndPileNum.split(" ")[0]
       this.controlDatas.endPileNum = listByPage.data[nowIndex].startEndPileNum.split(" ")[1]
       this.controlDatas.directionId = listByPage.data[nowIndex].direction
+      this.controlDatas.directionName = listByPage.data[nowIndex].directionName
       this.setState({
         eventType: listByPage.data[nowIndex].controlEventType,
         deviceString: listByPage.data[nowIndex].controlDeviceType,
+        directionName: listByPage.data[nowIndex].directionName,
       })
+      this.state.directionList.forEach((item, index) => {
+        if (item.roadId === this.controlDatas.roadName) {
+          this.setState({
+            roadNumber: item.directions,
+            directionId: this.controlDatas.driverDirection,
+            directionName: this.controlDatas.directionName,
+          })
+
+        }
+      })
+      
       this.handleDetailPlan(listByPage.data[nowIndex].rowId) // 根据rowId获取全部设备
     } else if (name == 'edit') {
       console.log('编辑')
@@ -867,7 +897,7 @@ class ReservePlan extends React.Component {
                             })
                           }
                         </Select>
-                        <Select defaultValue={this.controlDatas.directionName} style={{ width: '48%', margin: '0 1%' }} onChange={(e) => { this.handleSelect(e, 'directionId', 'controlDatas') }} >
+                        <Select value={this.state.directionName} style={{ width: '48%', margin: '0 1%' }} onChange={(e) => { this.handleSelect(e, 'directionId', 'controlDatas') }} >
                           <Option value="">请选择</Option>
                           {
                             roadNumber && roadNumber.map((item) => {
@@ -875,12 +905,12 @@ class ReservePlan extends React.Component {
                             })
                           }
                         </Select>
-                        <Select defaultValue={"1"} style={{ width: '36%', margin: '8px 1%' }} disabled={true} onChange={(e) => { this.handleSelect(e, 'locationMode', 'controlDatas') }} >
+                        <Select defaultValue={"1"} style={{ width: '26%', margin: '8px 1%' }} disabled={true} onChange={(e) => { this.handleSelect(e, 'locationMode', 'controlDatas') }} >
                           <Option value="0">收费站</Option>
                           <Option value="1">里程桩</Option>
                         </Select>
-                        <Input id="startInt" style={{ width: '29%', height: '32px', margin: '8px 1%' }} defaultValue={this.controlDatas.startPileNum} onBlur={(e) => { this.handleInput(e, 'startPileNum', 'controlDatas'); this.handSecUrl() }} />
-                        <Input id='endInt' style={{ width: '29%', height: '32px', margin: '8px 1%' }} defaultValue={this.controlDatas.endPileNum} onBlur={(e) => { this.handleInput(e, 'endPileNum', 'controlDatas'); this.handSecUrl() }} />
+                        <Input id="startInt" style={{ width: '34%', height: '32px', margin: '8px 1%' }} placeholder='起始桩号如:k1' defaultValue={this.controlDatas.startPileNum} onBlur={(e) => { this.handleInput(e, 'startPileNum', 'controlDatas'); this.handSecUrl() }} />
+                        <Input id='endInt' style={{ width: '34%', height: '32px', margin: '8px 1%' }} placeholder='结束桩号如:k30' defaultValue={this.controlDatas.endPileNum} onBlur={(e) => { this.handleInput(e, 'endPileNum', 'controlDatas'); this.handSecUrl() }} />
                       </div>
                     </div>
                   </div>
@@ -986,7 +1016,7 @@ class ReservePlan extends React.Component {
                                   <div key={item.deviceId + item.deviceTypeId}>
                                     <div className={style.InputBox}>
                                       <div className={style.ItemInput} style={{ width: '30%' }}>{deviceTypes.status === 1 ? <Icon type="close-circle" className={styles.CloneItem} onClick={() => { this.handleCloseCircle(indexs, index, item.deviceId) }} /> : null}{index + 1}.{item.deviceName + '-' + item.directionName + items.codeName}&nbsp;:</div>
-                                      <div className={style.ItemInput} style={{ width: '50%' }}><Input style={{ textAlign: 'center', color: 'red' }} onChange={(e) => { this.handleInput(e, 'content', 'controlDatas', item.deviceId) }} disabled={reservePopup.status > 1 ? true : ''} defaultValue={item.displayContent} /></div>
+                                      <div className={style.ItemInput} style={{ width: '50%' }}><Input style={{ textAlign: 'center', color: 'red' }} placeholder='请输入描述' onChange={(e) => { this.handleInput(e, 'content', 'controlDatas', item.deviceId) }} disabled={reservePopup.status > 1 ? true : ''} defaultValue={item.displayContent} /></div>
                                       <div className={style.ItemInput} style={{ width: '20%' }}>
                                         <Select disabled={deviceTypes.status > 1 ? true : ''} defaultValue={item.deviceControlType ? item.deviceControlType : 0} style={{ width: '80%' }} onChange={(e) => { this.handleSelect(e, 'deviceControlType', 'controlDatas', item.deviceId) }}>
                                           <Option value={0}>请选择</Option>
