@@ -537,7 +537,7 @@ class MonitoringModule extends React.Component {
   // 获取全部交通管控类型
   getDeviceEventList = (flag) => {
     const params = {
-      deviceString: '',
+      deviceString: this.state.deviceString.join(),
     }
     getResponseDatas('get', this.deviceUrl, params).then((res) => {
       const result = res.data
@@ -757,7 +757,20 @@ class MonitoringModule extends React.Component {
     })
   }
   getcheckedListBox = (checkedListBox) => {
-    const { oldDevicesList } = this.state
+    const { oldDevicesList, boxSelectList } = this.state
+    /* boxSelectList.map((item)=>{
+      if (checkedListBox[checkedListBox.length -1] === item.appendId) {
+        if (item.exists || item.controlling) {
+          message.info('已管控')
+        }else {
+          this.setState({
+            checkedListBox,
+            indeterminateBox: !!checkedListBox.length && checkedListBox.length < oldDevicesList.length,
+            checkAllBox: checkedListBox.length === oldDevicesList.length,
+          })
+        }
+      }
+    }) */
     this.setState({
       checkedListBox,
       indeterminateBox: !!checkedListBox.length && checkedListBox.length < oldDevicesList.length,
@@ -774,7 +787,6 @@ class MonitoringModule extends React.Component {
   }
   handleBoxSelectList = () => {
     const { checkedListBox, detailsPopup, boxSelectList, oldDevicesList, EventTagPopupTit, deviceTypes } = this.state
-    console.log(boxSelectList, deviceTypes, '看看')
     boxSelectList.forEach((item) => {
       checkedListBox.forEach((items) => {
         if (item.appendId === items) {
@@ -1630,10 +1642,11 @@ class MonitoringModule extends React.Component {
             <span>畅通</span>
           </p> */}
           <h5>
-            <em>收费站匝道灯</em>
-            <em>F屏情报板</em>
-            <em>车道控制器 / 限速牌专用</em>
             <em>门架情报板</em>
+            <em>F屏情报板</em>
+            <em>限速牌专用</em>
+            <em>收费站匝道灯</em>
+            <em>车道控制器</em>
           </h5>
         </div>
         {/* 设备显示弹窗 */}
@@ -2099,7 +2112,7 @@ class MonitoringModule extends React.Component {
                   >
                     {
                       boxSelectList.map((item) => {
-                        return <Checkbox key={item.deviceId} disabled={(item.controlling == true || item.exists == true) ? true : false} value={item.appendId}>{item.deviceName + '-' + item.directionName}</Checkbox>
+                        return <Checkbox key={item.appendId} disabled={item.exists === true || item.controlling === true ? true : false} value={item.appendId}>{item.deviceName + '-' + item.directionName }<b style={{color:'yellow'}}>{item.exists === true || item.controlling === true ? " ( 已管控 )" : " "}</b></Checkbox>
                       })
                     }
 
@@ -2134,7 +2147,7 @@ class MonitoringModule extends React.Component {
                   >
                     {
                       conditionList.map((item) => {
-                        return <Checkbox key={item.deviceId} disabled={(item.controlling == true || item.exists == true) ? true : false} value={item.deviceId}>{item.deviceName + '-' + item.directionName}</Checkbox>
+                        return <Checkbox key={item.deviceId} disabled={(item.controlling === true || item.exists === true) ? true : false} value={item.deviceId}>{item.deviceName + '-' + item.directionName}<b style={{color:'yellow'}}>{item.exists === true || item.controlling === true ? " ( 已管控 )" : " "}</b></Checkbox>
                       })
                     }
 
@@ -2261,7 +2274,7 @@ class MonitoringModule extends React.Component {
                                 </div>
                               </Panel>
                             )
-                          }) : deviceTypes.map((item, ind) => {
+                          }) : detailsPopup.devices && detailsPopup.devices.map((item, ind) => {
                             return (
                               <Panel className={styles.PanelChs} header={item.codeName} key={item.dictCode}>
                                 <div>
@@ -2307,10 +2320,11 @@ class MonitoringModule extends React.Component {
                   <span>畅通</span>
                 </p> */}
                   <h5>
-                    <em>收费站匝道灯</em>
-                    <em>F屏情报板</em>
-                    <em>车道控制器 / 限速牌专用</em>
                     <em>门架情报板</em>
+                    <em>F屏情报板</em>
+                    <em>限速牌专用</em>
+                    <em>收费站匝道灯</em>
+                    <em>车道控制器</em>
                   </h5>
                 </div>
               </div>
