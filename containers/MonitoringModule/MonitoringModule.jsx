@@ -532,7 +532,7 @@ class MonitoringModule extends React.Component {
   // 获取全部交通管控类型
   getDeviceEventList = (flag) => {
     const params = {
-      deviceString: '',
+      deviceString: this.state.deviceString.join(),
     }
     getResponseDatas('get', this.deviceUrl, params).then((res) => {
       const result = res.data
