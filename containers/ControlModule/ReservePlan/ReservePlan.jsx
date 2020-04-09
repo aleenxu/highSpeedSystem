@@ -986,10 +986,11 @@ class ReservePlan extends React.Component {
                     <s>{'200 - 500'}</s>
                   </h5>
                   <h5>
-                    <em>收费站匝道灯</em>
-                    <em>F屏情报板</em>
-                    <em>车道控制器 / 限速牌专用</em>
                     <em>门架情报板</em>
+                    <em>F屏情报板</em>
+                    <em>限速牌专用</em>
+                    <em>收费站匝道灯</em>
+                    <em>车道控制器</em>
                   </h5>
                 </div>
               </div>
@@ -1115,7 +1116,7 @@ class ReservePlan extends React.Component {
                   >
                     {
                       boxSelectList.map((item) => {
-                        return <Checkbox key={item.deviceId} disabled={(item.controlling == true || item.exists == true) ? true : false} value={item.deviceId}>{item.deviceName + '-' + item.directionName}</Checkbox>
+                        return <Checkbox key={item.deviceId} disabled={(item.controlling === true || item.exists === true) ? true : false} value={item.deviceId}>{item.deviceName + '-' + item.directionName}<b style={{color:'yellow'}}>{item.exists === true || item.controlling === true ? " ( 已管控 )" : " "}</b></Checkbox>
                       })
                     }
 
