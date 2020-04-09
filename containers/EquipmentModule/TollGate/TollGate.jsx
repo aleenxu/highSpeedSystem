@@ -402,6 +402,7 @@ class TollGate extends React.Component {
                 <Form
                   onSubmit={this.handleSubmit}
                   {...formItemLayout}
+                  autoComplete="off"
                 >
                   <div className={styles.ItemLine}>
                     <div className={styles.Item}>
@@ -415,9 +416,13 @@ class TollGate extends React.Component {
                               required: true,
                               message: '请输入设备编号!',
                             },
+                            {
+                              max: 50,
+                              message: '超出最大长度',
+                            },
                           ],
                           initialValue: boardData.deviceId,
-                        })(<Input disabled={boardData.rowId} onChange={(e) => { this.handleInput(e, 'deviceId', 'board') }} />)}
+                        })(<Input disabled={Boolean(boardData.rowId)} onChange={(e) => { this.handleInput(e, 'deviceId', 'board') }} />)}
                       </Form.Item>
                     </div>
                     <div className={styles.Item}>
@@ -430,6 +435,10 @@ class TollGate extends React.Component {
                             {
                               required: true,
                               message: '请输入设备名称!',
+                            },
+                            {
+                              max: 20,
+                              message: '超出最大长度',
                             },
                           ],
                           initialValue: boardData.deviceName,
@@ -464,45 +473,20 @@ class TollGate extends React.Component {
                     </div>
                     <div className={styles.Item}>
                       <Form.Item
-                        name="deviceTypeId"
-                        label="设备类型"
-                        hasFeedback
-                        rules={[{ required: true, message: 'Please select your country!' }]}
+                        name="latlng"
+                        label="经&nbsp;纬&nbsp;度"
                       >
-                        <Select disabled onChange={(e) => { this.handleSelect(e, 'deviceTypeId', 'board') }} defaultValue={4}>
-                          {
-                            deviceTypeList && deviceTypeList.map((item) => {
-                              return <Option key={item.id} value={item.id}>{item.name}</Option>
-                            })
-                          }
-                        </Select>
-                      </Form.Item>
-                    </div>
-                    {/* <div className={styles.Item}>
-                      <Form.Item
-                        name="deviceSize"
-                        label="设备尺寸"
-                      >
-                        {getFieldDecorator('deviceSize', {
+                        {getFieldDecorator('latlng', {
                           rules: [
                             {
                               required: true,
-                              message: '请输入设备尺寸!',
+                              message: '请输入经纬度!',
                             },
                           ],
-                          initialValue: boardData.deviceSize,
-                        })(
-                          <Select onChange={(e) => { this.handleSelect(e, 'deviceSize', 'board') }}>
-                            {
-                              deviceSizeList && deviceSizeList.map((item) => {
-                                return <Option key={item.id} value={item.name}>{item.name}</Option>
-                              })
-                            }
-                          </Select>)}
-
-
+                          initialValue: boardLatlng,
+                        })(<Input onClick={(e) => { this.handleIntelatlng(true) }} />)}
                       </Form.Item>
-                    </div> */}
+                    </div>
                   </div>
                   <div className={styles.ItemLine}>
                     <div className={styles.Item}>
@@ -540,6 +524,10 @@ class TollGate extends React.Component {
                             {
                               required: true,
                               message: '请输入桩号!',
+                            },
+                            {
+                              max: 20,
+                              message: '超出最大长度',
                             },
                           ],
                           initialValue: boardData.pileNum,
@@ -614,6 +602,10 @@ class TollGate extends React.Component {
                               required: this.board.vendor == 1 ? true : false,
                               message: '请输入IP地址!',
                             },
+                            {
+                              max: 20,
+                              message: '超出最大长度',
+                            },
                           ],
                           initialValue: boardData.deviceIp,
                         })(<Input onChange={(e) => { this.handleInput(e, 'deviceIp', 'board') }} />)}
@@ -635,6 +627,10 @@ class TollGate extends React.Component {
                               required: this.board.vendor == 1 ? true : false,
                               message: '请输入端口号!',
                             },
+                            {
+                              max: 5,
+                              message: '超出最大长度',
+                            },
                           ],
                           initialValue: boardData.port,
                         })(<Input onChange={(e) => { this.handleInput(e, 'port', 'board') }} />)}
@@ -642,7 +638,7 @@ class TollGate extends React.Component {
                       </Form.Item>
                     </div>
                   </div>
-                  <div className={styles.ItemLine}>
+                  {/* <div className={styles.ItemLine}>
                     <div className={styles.Item}>
                       <Form.Item
                         name="latlng"
@@ -661,7 +657,7 @@ class TollGate extends React.Component {
 
                       </Form.Item>
                     </div>
-                  </div>
+                  </div> */}
                   <div className={classNames(styles.ItemLine, styles.ItemLineList)}>
                     <div className={styles.Item}>
                       <Button onClick={this.handleControlStatus} className={classNames(styles.Button, styles.ItemBt)}>状态查询</Button>

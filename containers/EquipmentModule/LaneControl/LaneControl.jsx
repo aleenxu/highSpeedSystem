@@ -250,8 +250,6 @@ class LaneControl extends React.Component {
 
   handledirection = (data, id) => {
     for (let i = 0; i < data.length; i++) {
-      console.log(data, data[i].id, id);
-
       if (data[i].id == id) {
         return data[i].name
       }
@@ -410,6 +408,7 @@ class LaneControl extends React.Component {
                 <Form
                   onSubmit={this.handleSubmit}
                   {...formItemLayout}
+                  autoComplete="off"
                 >
                   <div className={styles.ItemLine}>
                     <div className={styles.Item}>
@@ -423,9 +422,13 @@ class LaneControl extends React.Component {
                               required: true,
                               message: '请输入设备编号!',
                             },
+                            {
+                              max: 50,
+                              message: '超出最大长度',
+                            },
                           ],
                           initialValue: boardData.deviceId,
-                        })(<Input disabled={boardData.rowId} onChange={(e) => { this.handleInput(e, 'deviceId', 'board') }} />)}
+                        })(<Input disabled={Boolean(boardData.rowId)} onChange={(e) => { this.handleInput(e, 'deviceId', 'board') }} />)}
                       </Form.Item>
                     </div>
                     <div className={styles.Item}>
@@ -438,6 +441,10 @@ class LaneControl extends React.Component {
                             {
                               required: true,
                               message: '请输入设备名称!',
+                            },
+                            {
+                              max: 20,
+                              message: '超出最大长度',
                             },
                           ],
                           initialValue: boardData.deviceName,
@@ -549,6 +556,10 @@ class LaneControl extends React.Component {
                               required: true,
                               message: '请输入桩号!',
                             },
+                            {
+                              max: 20,
+                              message: '超出最大长度',
+                            },
                           ],
                           initialValue: boardData.pileNum,
                         })(<Input onChange={(e) => { this.handleInput(e, 'pileNum', 'board') }} />)}
@@ -621,6 +632,10 @@ class LaneControl extends React.Component {
                               required: this.board.vendor == 1 ? true : false,
                               message: '请输入IP地址!',
                             },
+                            {
+                              max: 20,
+                              message: '超出最大长度',
+                            },
                           ],
                           initialValue: boardData.deviceIp,
                         })(<Input onChange={(e) => { this.handleInput(e, 'deviceIp', 'board') }} />)}
@@ -641,6 +656,10 @@ class LaneControl extends React.Component {
                             {
                               required: this.board.vendor == 1 ? true : false,
                               message: '请输入端口号!',
+                            },
+                            {
+                              max: 5,
+                              message: '超出最大长度',
                             },
                           ],
                           initialValue: boardData.port,

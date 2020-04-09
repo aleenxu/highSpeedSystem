@@ -49,7 +49,7 @@ class Navigation extends React.Component {
             title={
               <span>
                 <Icon type='appstore' />
-                <span>管控设置</span>
+                <span>设置目录</span>
               </span>
             }
           >

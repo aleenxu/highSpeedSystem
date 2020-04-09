@@ -272,6 +272,7 @@ class Institution extends React.Component {
                     <Form
                       onSubmit={this.handleSubmit}
                       {...formItemLayout}
+                      autoComplete="off"
                     >
                       <div className={styles.ItemLine}>
                         <div className={styles.Item}>

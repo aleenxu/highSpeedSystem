@@ -312,6 +312,7 @@ class User extends React.Component {
                   <Form
                     {...formItemLayout}
                     onSubmit={this.handleSubmit}
+                    autoComplete="off"
                   >
                     <div className={styles.ItemLine}>
                       <div className={styles.Item}>

@@ -883,7 +883,7 @@ class MonitoringModule extends React.Component {
             plainOptionList.push(item.deviceId)
           }
         })
-        this.setState({ conditionList: result.data, plainOptionList })
+        this.setState({ conditionList: result.data, plainOptionList, checkedList: [], checkAll: false })
       } else {
         message.warning(result.message)
       }
@@ -1281,7 +1281,7 @@ class MonitoringModule extends React.Component {
         })
         this.publishPlanVO = {
           channel: '',
-          controlDes: result.data.controlDes || result.data.startTime ? this.getDate(result.data.startTime) : this.getDate() + ' ' + result.data.roadName.split(' ')[1] + result.data.directionName + result.data.pileNum.split(' ')[0] + '米处,发生' + result.data.eventTypeName + ((result.data.eventTypeId == 5 && result.data.markEventType == 3) || result.data.eventTypeId == 3 ? (',能见度为' + result.data.situation + 'm,影响道路长度为' + result.data.eventLength + 'm') : (',平均车速为' + result.data.situation + 'km/h,拥堵路段长度为' + result.data.eventLength + 'm')),
+          controlDes: result.data.controlDes ||( result.data.startTime ? this.getDate(result.data.startTime) : this.getDate() + ' ' + result.data.roadName.split(' ')[1] + result.data.directionName + result.data.pileNum.split(' ')[0] + '米处,发生' + result.data.eventTypeName + ((result.data.eventTypeId == 5 && result.data.markEventType == 3) || result.data.eventTypeId == 3 ? (',能见度为' + result.data.situation + 'm,影响道路长度为' + result.data.eventLength + 'm') : (',平均车速为' + result.data.situation + 'km/h,拥堵路段长度为' + result.data.eventLength + 'm'))),
           controllId: result.data.controllId,
           endTime: result.data.endTime ? this.getDate(result.data.endTime) : '',
           eventTypeId: result.data.eventTypeId,
@@ -1387,7 +1387,7 @@ class MonitoringModule extends React.Component {
        debugger */
     console.log(this.publishPlanVO);
     for (let i = 0; i < list.length; i++) {
-      if (list[i].content === '') {
+      if (list[i].content === '' || list[i].content === null) { // 值为0 通过
         message.warning('请填全显示内容')
         return
       }
@@ -1612,7 +1612,7 @@ class MonitoringModule extends React.Component {
     const {
       MeasuresList, eventsPopup, groupType, planList, EventTagPopup, EventTagPopupTit, roadNumber, endValueTime, conditionList, boxSelect, flagClose, oldDevicesList,
       boxSelectList, hwayList, directionList, VIboardPopup, groupStatus, controlPopup, controlBtnFlag, controlBtnFlagText, detailsPopup, whethePopup, reservePopup, startValue, endValue, endOpen, SidePopLeft, detailsLatlng
-      , controlTypes, eventTypes, deviceTypes, updatePoint, userLimit, TimeData, deviceCodeList, deviceDetailList } = this.state
+      , controlTypes, eventTypes, deviceTypes, updatePoint, userLimit, TimeData, deviceCodeList, deviceDetailList, checkedListBox } = this.state
     return (
       <div className={styles.MonitoringModule}>
         <SystemMenu />
@@ -1839,7 +1839,7 @@ class MonitoringModule extends React.Component {
                                               <Option value={''}>请选择</Option>
                                               {
                                                 deviceCodeList && deviceCodeList[(item['function'] || 1) - 1].map((itemss) => {
-                                                  return <Option key={itemss.dictCode} value={''+itemss.dictCode}>{itemss.codeName}</Option>
+                                                  return <Option key={itemss.dictCode} value={'' + itemss.dictCode}>{itemss.codeName}</Option>
                                                 })
                                               }
                                             </Select>
@@ -2107,12 +2107,12 @@ class MonitoringModule extends React.Component {
                   </div>
                   <br />
                   <Checkbox.Group
-                    value={this.state.checkedListBox}
+                    value={checkedListBox}
                     onChange={this.getcheckedListBox}
                   >
                     {
                       boxSelectList.map((item) => {
-                        return <Checkbox key={item.appendId} disabled={item.exists === true || item.controlling === true ? true : false} value={item.appendId}>{item.deviceName + '-' + item.directionName }<b style={{color:'yellow'}}>{item.exists === true || item.controlling === true ? " ( 已管控 )" : " "}</b></Checkbox>
+                        return <Checkbox key={item.appendId} disabled={item.exists === true || item.controlling === true ? true : false} value={item.appendId}>{item.deviceName + '-' + item.directionName + (item.laneNumName ? ('-' + item.laneNumName) : '')}<b style={{ color: 'yellow' }}>{item.exists === true || item.controlling === true ? " ( 已管控 )" : " "}</b></Checkbox>
                       })
                     }
 
@@ -2147,7 +2147,7 @@ class MonitoringModule extends React.Component {
                   >
                     {
                       conditionList.map((item) => {
-                        return <Checkbox key={item.deviceId} disabled={(item.controlling === true || item.exists === true) ? true : false} value={item.deviceId}>{item.deviceName + '-' + item.directionName}<b style={{color:'yellow'}}>{item.exists === true || item.controlling === true ? " ( 已管控 )" : " "}</b></Checkbox>
+                        return <Checkbox key={item.deviceId} disabled={(item.controlling === true || item.exists === true) ? true : false} value={item.deviceId}>{item.deviceName + '-' + item.directionName + (item.laneNumName ? ('-' + item.laneNumName) : '')}<b style={{ color: 'yellow' }}>{item.exists === true || item.controlling === true ? " ( 已管控 )" : " "}</b></Checkbox>
                       })
                     }
 

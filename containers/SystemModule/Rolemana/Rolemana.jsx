@@ -23,7 +23,7 @@ class Rolemana extends React.Component {
       totalCount: 1,
       expandedKeys: [],
       autoExpandParent: true,
-      checkedKeys: [],
+      checkedKeys: [38],
       selectedKeys: [],
       treeData: null,
       userLimit: [],
@@ -44,7 +44,7 @@ class Rolemana extends React.Component {
     }
     this.defaultparams = {
       id: '',
-      menuIds: '',
+      menuIds: '38',
       name: '',
       remark: '',
     }
@@ -109,7 +109,7 @@ class Rolemana extends React.Component {
     data.map((item) => {
       if (item.children) {
         return (
-          <TreeNode title={item.name} key={item.id} dataRef={item}>
+          <TreeNode title={item.name} key={item.id} dataRef={item} disabled={item.id === 38}>
             {this.renderTreeNodes(item.children)}
           </TreeNode>
         )
@@ -148,14 +148,13 @@ class Rolemana extends React.Component {
     })
   }
   handleCloseGroupMsg = () => {
-    this.state.checkedKeys = []
     this.defaultparams = {
       id: '',
-      menuIds: '',
+      menuIds: '38',
       name: '',
       remark: '',
     }
-    this.setState({ showGroupMsg: false })
+    this.setState({ showGroupMsg: false, expandedKeys: [], checkedKeys: [38], selectedKeys: [], autoExpandParent: true, })
   }
   handleEditItems = (id) => {
     this.isAdd = false
@@ -341,6 +340,7 @@ class Rolemana extends React.Component {
                     <Form
                       onSubmit={this.handleSubmit}
                       {...formItemLayout}
+                      autoComplete="off"
                     >
                       <div className={styles.ItemLine}>
                         <div className={styles.Item} style={{ width: '100%' }}>
