@@ -108,8 +108,8 @@ class Traffic extends React.Component {
         const dataX = []
         const dataY = []
         result.data.forEach((item) => {
-          dataX.push(Object.keys(item)[0])
-          dataY.push(Object.values(item)[0])
+          dataX.push(item.append)
+          dataY.push(item.num)
         })
         this.setState({
           chartsData: { dataX, dataY }

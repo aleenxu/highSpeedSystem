@@ -184,7 +184,7 @@ class Traffic extends React.Component {
                   onChange={this.getJurisdiction}
                   value={Jurisdiction}
                 >
-                 {/*  <Option value="">全部</Option> */}
+                  <Option value="">全部</Option>
                   {
                     RoadMessage && RoadMessage.map((item) => {
                       return <Option key={item.key} value={item.key}>{item.key}</Option>
@@ -199,7 +199,7 @@ class Traffic extends React.Component {
                   value={RoadValue}
                   disabled={Jurisdiction == ""}
                 >
-                  {/* <Option value="">全部</Option> */}
+                  <Option value="">全部</Option>
                   {
                     RoadData && RoadData.map((item) => {
                       return <Option value={item.key} key={item.key}>{item.key}</Option>
@@ -214,7 +214,7 @@ class Traffic extends React.Component {
                   disabled={RoadValue == ""}
                   onChange={(e) => { this.onSecondChange(e, 'Roadsection') }}
                 >
-                  {/* <Option value="">全部</Option> */}
+                  <Option value="">全部</Option>
                   {
                     RoadsectionData && RoadsectionData.map((item) => {
                       return <Option value={item.road_sec_id} key={item.road_sec_id}>{item.sec_name}</Option>

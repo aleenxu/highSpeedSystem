@@ -619,7 +619,7 @@ class SpeedLimit extends React.Component {
                               message: '请输入正确的IP',
                             },
                             {
-                              required: true,
+                              required: this.board.vendor == 1 ? true : false,
                               message: '请输入IP地址!',
                             },
                           ],
@@ -640,7 +640,7 @@ class SpeedLimit extends React.Component {
                               message: '请输入正确的端口'
                             },
                             {
-                              required: true,
+                              required: this.board.vendor == 1 ? true : false,
                               message: '请输入端口号!',
                             },
                           ],
