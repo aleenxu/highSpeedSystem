@@ -116,6 +116,9 @@
   .ItemInput {
     width: 100%;
     height: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     // 修改input 框样式
     :global(.ant-input) {
       height: 32px;

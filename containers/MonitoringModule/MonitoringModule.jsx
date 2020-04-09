@@ -604,6 +604,7 @@ class MonitoringModule extends React.Component {
   }
   // 框选按钮点击
   controlBtnClick = (event) => {
+    debugger
     const _this = this;
     const textFlag = $(event.target).text() === '框选设备'
     this.setState({
@@ -803,12 +804,12 @@ class MonitoringModule extends React.Component {
       })
     })
     if (EventTagPopupTit !== '主动管控') {
-      this.setState({ detailsPopup, boxSelectList: null, checkAllBox: null, controlBtnFlagText: '框选设备', boxSelect: null, flagClose: null, boxFlag: null }, () => {
+      this.setState({ detailsPopup, boxSelectList: null, checkAllBox: null, checkedListBox:null, controlBtnFlagText: '框选设备', boxSelect: null, flagClose: null, boxFlag: null }, () => {
         $(".amap-maps").attr("style", "")
         window.mouseTool.close(true) //关闭，并清除覆盖物
       })
     } else {
-      this.setState({ deviceTypes, boxSelectList: null, checkAllBox: null, controlBtnFlagText: '框选设备', boxSelect: null, flagClose: null, boxFlag: null }, () => {
+      this.setState({ deviceTypes, boxSelectList: null, checkAllBox: null, checkedListBox:null, controlBtnFlagText: '框选设备', boxSelect: null, flagClose: null, boxFlag: null }, () => {
         $(".amap-maps").attr("style", "")
         window.mouseTool.close(true) //关闭，并清除覆盖物
       })

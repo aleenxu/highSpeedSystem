@@ -501,7 +501,7 @@ class ReservePlan extends React.Component {
     debugger
     boxSelectList.forEach((item) => {
       checkedListBox.forEach((items) => {
-        if (item.deviceId === items) {
+        if (item.appendId === items) {
           deviceTypes.forEach((itemss, index) => {
             if (itemss.dictCode === item.deviceTypeId) {
               deviceTypes[index].device.push(item)
@@ -511,7 +511,7 @@ class ReservePlan extends React.Component {
         }
       })
     })
-    this.setState({ deviceTypes, boxSelectList: null, checkAllBox: null, controlBtnFlagText: '框选设备', boxSelect: null, flagClose: null, boxFlag: null }, () => {
+    this.setState({ deviceTypes, boxSelectList: null, checkAllBox: null, checkedListBox:null, controlBtnFlagText: '框选设备', boxSelect: null, flagClose: null, boxFlag: null }, () => {
       $(".amap-maps").attr("style", "")
       window.mouseTool.close(true) //关闭，并清除覆盖物
     })
@@ -613,14 +613,17 @@ class ReservePlan extends React.Component {
     })
     console.log(itemArr, '是不是呢？')
     for (let i = 0; i < this.controlDatas.list.length; i++) {
-      if (!this.controlDatas.list[i].content) {
-        message.warning('请填全显示内容')
-        return
+      if (this.controlDatas.list[i].deviceTypeId !== 3 && this.controlDatas.list[i].deviceTypeId !== 5) {
+        if (!this.controlDatas.list[i].content) {
+          message.warning('请填全显示内容')
+          return
+        }
+        if (!this.controlDatas.list[i].deviceControlType) {
+          message.warning('请选择设备控制类型')
+          return
+        }
       }
-      if (!this.controlDatas.list[i].deviceControlType) {
-        message.warning('请选择设备控制类型')
-        return
-      }
+      
     }
     const paramStr = '?controlDeviceType=' + deviceString.join() + '&controlEventType=' + eventType
       + '&roadName=' + plan.roadName + '&direction=' + plan.directionId + '&locationMode=' + plan.locationMode
@@ -1007,7 +1010,7 @@ class ReservePlan extends React.Component {
                 {
                   deviceTypes && deviceTypes.map((items, indexs) => {
                     return (
-                      items.dictCode === 1 ?
+                      items.dictCode === 1 || items.dictCode === 2 || items.dictCode === 4 ?
                         <div className={styles.ItemBox}>
                           <div className={styles.HeadItem}>{items.codeName}{/* <span className={styles.AddItem} onClick={(e) => { this.genExtraAddOnclick(e, items, reservePopup) }}><Icon type="plus" /></span> */}</div>
                           <div className={styles.RowBox}>
@@ -1016,7 +1019,7 @@ class ReservePlan extends React.Component {
                                 return (
                                   <div key={item.deviceId + item.deviceTypeId}>
                                     <div className={style.InputBox}>
-                                      <div className={style.ItemInput} style={{ width: '30%' }}>{deviceTypes.status === 1 ? <Icon type="close-circle" className={styles.CloneItem} onClick={() => { this.handleCloseCircle(indexs, index, item.deviceId) }} /> : null}{index + 1}.{item.deviceName + '-' + item.directionName + items.codeName}&nbsp;:</div>
+                                      <div className={style.ItemInput} style={{ width: '30%', textAlign:'right', lineHeight:'30px', paddingRight:'8px' }} title={index + 1 +'.' + item.deviceName + '-' + item.directionName + items.codeName}>{deviceTypes.status === 1 ? <Icon type="close-circle" className={styles.CloneItem} onClick={() => { this.handleCloseCircle(indexs, index, item.deviceId) }} /> : null}{index + 1}.{item.deviceName + '-' + item.directionName + items.codeName}&nbsp;:</div>
                                       <div className={style.ItemInput} style={{ width: '50%' }}><Input style={{ textAlign: 'center', color: 'red' }} placeholder='请输入描述' onChange={(e) => { this.handleInput(e, 'content', 'controlDatas', item.deviceId) }} disabled={reservePopup.status > 1 ? true : ''} defaultValue={item.displayContent} /></div>
                                       <div className={style.ItemInput} style={{ width: '20%' }}>
                                         <Select disabled={deviceTypes.status > 1 ? true : ''} defaultValue={item.deviceControlType ? item.deviceControlType : 0} style={{ width: '80%' }} onChange={(e) => { this.handleSelect(e, 'deviceControlType', 'controlDatas', item.deviceId) }}>
@@ -1035,51 +1038,78 @@ class ReservePlan extends React.Component {
                             }
                             {!!items.device.length || <div className={style.PanelItemNone}>暂无数据</div>}
                           </div>
-                        </div> : items.dictCode === 2 ?
-                          <div className={styles.ItemBox}>
-                            <div className={styles.HeadItem}>{items.codeName}{/* <span className={styles.AddItem} onClick={(e) => { this.genExtraAddOnclick(e, items, reservePopup) }}><Icon type="plus" /></span> */}</div>
-                            {
-                              items.device && items.device.map((item) => {
-                                return (
-                                  <div>
-                                    <div className={styles.RowBox}>
-                                      **地点车道可变情报板&nbsp;:&nbsp;&nbsp;一车道限速&nbsp;:&nbsp;&nbsp; <span style={{ color: '#11e002' }}>100km/h</span>
-                                    </div>
-                                    <div className={styles.RowBox}>
-                                      <span style={{ width: '154px', display: 'inline-block' }} />
-                                      二车道限速&nbsp;:&nbsp;&nbsp;<span style={{ color: '#11e002' }}>80km/h</span>
-                                    </div>
-                                  </div>
-                                )
-                              })
-                            }
-                            {!!items.device.length || <div className={style.PanelItemNone}>暂无数据</div>}
-                          </div> : items.dictCode === 3 ?
-                            <div className={styles.ItemBox}>
-                              <div className={styles.HeadItem}>{items.codeName}{/* <span className={styles.AddItem} onClick={(e) => { this.genExtraAddOnclick(e, items, reservePopup) }}><Icon type="plus" /></span> */}</div>
-                              {
-                                items.device && items.device.map((item) => {
-                                  return (
-                                    <div className={style.RowBox}>
-                                      <Icon type="close-circle" className={style.CloneItem} />****地点**收费站:&nbsp;:&nbsp;&nbsp;入口&nbsp;:&nbsp;&nbsp;<p><Switch checkedChildren="开放" unCheckedChildren="关闭" />&nbsp;:&nbsp;&nbsp;出口&nbsp;&nbsp;&nbsp;<Switch checkedChildren="开放" unCheckedChildren="关闭" /></p>
-                                    </div>
-                                  )
-                                })
-                              }
-                              {!!items.device.length || <div className={style.PanelItemNone}>暂无数据</div>}
-                            </div> : items.dictCode === 4 ?
-                              <div className={styles.ItemBox}>
-                                <div className={styles.HeadItem}>{items.codeName}{/* <span className={styles.AddItem} onClick={(e) => { this.genExtraAddOnclick(e, items, reservePopup) }}><Icon type="plus" /></span> */}</div>
+                        </div> : items.dictCode === 3 ?
+                        <div className={styles.ItemBox}>
+                              <div className={styles.HeadItem}>{items.codeName}</div>
+                              <div className={styles.RowBox}>
                                 {
-                                  items.device && items.device.map((item) => {
+                                  items.device && items.device.map((item, index) => {
                                     return (
-                                      <div className={style.RowBox}>
-                                        <Icon type="close-circle" className={style.CloneItem} />****地点**收费站:&nbsp;:&nbsp;&nbsp;入口&nbsp;:&nbsp;&nbsp;<p><Switch checkedChildren="开放" unCheckedChildren="关闭" />&nbsp;:&nbsp;&nbsp;出口&nbsp;&nbsp;&nbsp;<Switch checkedChildren="开放" unCheckedChildren="关闭" /></p>
+
+                                      <div className={style.InputBox} key={item.deviceId + item.deviceTypeId}>
+                                        <div className={style.ItemInput} style={{ width: '30%', textAlign:'right', lineHeight:'30px', paddingRight:'8px' }} title={index + 1 +'.' + item.deviceName + '-' + item.directionName + items.codeName}>{reservePopup.status === 1 ? <Icon type="close-circle" className={styles.CloneItem} onClick={() => { this.handleCloseCircle(indexs, index, item.deviceId) }} /> : null}{index + 1}.{item.deviceName + '-' + item.directionName + items.codeName}&nbsp;:</div>
+                                        <div className={style.ItemInput} style={{ width: '30%' }}>
+                                          <Select disabled={reservePopup.status > 1 ? true : ''} defaultValue={item.deviceControlType ? item.deviceControlType : 0} style={{ width: '80%' }} onChange={(e) => { reservePopup.update == true || reservePopup.update == false ? this.handleSelect(e, 'deviceControlType', 'reservePopup', item.deviceId) : this.handleSelect(e, 'deviceControlType', 'publishPlanVO', item.deviceId) }}>
+                                            <Option value={0}>请选择</Option>
+                                            {
+                                              controlTypes && controlTypes.map((itemss) => {
+                                                return <Option key={itemss.controlTypeId} value={itemss.controlTypeId}>{itemss.controlTypeName}</Option>
+                                              })
+                                            }
+                                          </Select>
+                                        </div>
+                                        <div className={style.ItemInput} style={{ width: '30%' }}>
+                                          <Select disabled={reservePopup.status > 1 ? true : ''} defaultValue={item.deviceControlType ? item.deviceControlType : 0} style={{ width: '80%' }} onChange={(e) => { reservePopup.update == true || reservePopup.update == false ? this.handleSelect(e, 'deviceControlType', 'reservePopup', item.deviceId) : this.handleSelect(e, 'deviceControlType', 'publishPlanVO', item.deviceId) }}>
+                                            <Option value={0}>请选择</Option>
+                                            {
+                                              controlTypes && controlTypes.map((itemss) => {
+                                                return <Option key={itemss.controlTypeId} value={itemss.controlTypeId}>{itemss.controlTypeName}</Option>
+                                              })
+                                            }
+                                          </Select>
+                                        </div>
                                       </div>
+
                                     )
                                   })
                                 }
                                 {!!items.device.length || <div className={style.PanelItemNone}>暂无数据</div>}
+                              </div>
+                            </div> : items.dictCode === 5 ?
+                            <div className={styles.ItemBox}>
+                                <div className={styles.HeadItem}>{items.codeName}</div>
+                                <div className={styles.RowBox}>
+                                  {
+                                    items.device && items.device.map((item, index) => {
+                                      return (
+                                        <div className={style.InputBox} key={item.deviceId + item.deviceTypeId}>
+                                          <div className={style.ItemInput} style={{ width: '30%', textAlign:'right', lineHeight:'30px', paddingRight:'8px' }} title={index + 1 +'.' + item.deviceName + '-' + item.directionName + items.codeName}>{reservePopup.status === 1 ? <Icon type="close-circle" className={styles.CloneItem} onClick={() => { this.handleCloseCircle(indexs, index, item.deviceId) }} /> : null}{index + 1}.{item.deviceName + '-' + item.directionName + items.codeName}&nbsp;:</div>
+                                          <div className={style.ItemInput} style={{ width: '30%' }}>
+                                            <Select disabled={reservePopup.status > 1 ? true : ''} defaultValue={item.deviceControlType ? item.deviceControlType : 0} style={{ width: '80%' }} onChange={(e) => { reservePopup.update == true || reservePopup.update == false ? this.handleSelect(e, 'deviceControlType', 'reservePopup', item.deviceId) : this.handleSelect(e, 'deviceControlType', 'publishPlanVO', item.deviceId) }}>
+                                              <Option value={0}>请选择</Option>
+                                              {
+                                                controlTypes && controlTypes.map((itemss) => {
+                                                  return <Option key={itemss.controlTypeId} value={itemss.controlTypeId}>{itemss.controlTypeName}</Option>
+                                                })
+                                              }
+                                            </Select>
+                                          </div>
+                                          <div className={style.ItemInput} style={{ width: '30%' }}>
+                                            <Select disabled={reservePopup.status > 1 ? true : ''} defaultValue={item.deviceControlType ? item.deviceControlType : 0} style={{ width: '80%' }} onChange={(e) => { reservePopup.update == true || reservePopup.update == false ? this.handleSelect(e, 'deviceControlType', 'reservePopup', item.deviceId) : this.handleSelect(e, 'deviceControlType', 'publishPlanVO', item.deviceId) }}>
+                                              <Option value={0}>请选择</Option>
+                                              {
+                                                controlTypes && controlTypes.map((itemss) => {
+                                                  return <Option key={itemss.controlTypeId} value={itemss.controlTypeId}>{itemss.controlTypeName}</Option>
+                                                })
+                                              }
+                                            </Select>
+                                          </div>
+                                        </div>
+                                      )
+                                    })
+                                  }
+                                  {!!items.device.length || <div className={style.PanelItemNone}>暂无数据</div>}
+                                </div>
                               </div> : null
 
                     )
@@ -1116,7 +1146,7 @@ class ReservePlan extends React.Component {
                   >
                     {
                       boxSelectList.map((item) => {
-                        return <Checkbox key={item.deviceId} disabled={(item.controlling === true || item.exists === true) ? true : false} value={item.deviceId}>{item.deviceName + '-' + item.directionName}<b style={{color:'yellow'}}>{item.exists === true || item.controlling === true ? " ( 已管控 )" : " "}</b></Checkbox>
+                        return <Checkbox key={item.appendId} disabled={item.exists === true || item.controlling === true ? true : false} value={item.appendId}>{item.deviceName + '-' + item.directionName }<b style={{color:'yellow'}}>{item.exists === true || item.controlling === true ? " ( 已管控 )" : " "}</b></Checkbox>
                       })
                     }
 
