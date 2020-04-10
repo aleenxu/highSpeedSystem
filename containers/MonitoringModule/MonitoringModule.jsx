@@ -316,7 +316,7 @@ class MonitoringModule extends React.Component {
         const latlngArr = JSON.parse(JSON.stringify(boolean.latlng))
         window.drawLine(latlngArr, window.lineFlag)
       } else {
-
+        window.centerPoint = null
         this.handlesetTimeOut(boolean)
         this.setState({
           detailsPopup: false,
