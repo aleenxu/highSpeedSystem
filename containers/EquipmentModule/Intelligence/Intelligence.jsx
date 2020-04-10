@@ -649,7 +649,7 @@ class Intelligence extends React.Component {
                               message: '请输入正确的端口'
                             },
                             {
-                              required: this.board.vendor == 1 ? true : false,
+                              required: this.board.vendor == 1,
                               message: '请输入端口号!',
                             },
                             {
@@ -657,7 +657,7 @@ class Intelligence extends React.Component {
                               message: '超出最大长度',
                             },
                           ],
-                          initialValue: boardData.port,
+                          initialValue: boardData.port?(boardData.port + ''):'',
                         })(<Input onChange={(e) => { this.handleInput(e, 'port', 'board') }} />)}
 
                       </Form.Item>
@@ -680,6 +680,26 @@ class Intelligence extends React.Component {
                         })(<Input onClick={(e) => { this.handleIntelatlng(true) }} />)}
 
 
+                      </Form.Item>
+                    </div>
+                    <div className={styles.Item}>
+                      <Form.Item
+                        name="currentDisplay"
+                        label="默认显示内容"
+                      >
+                        {getFieldDecorator('currentDisplay', {
+                          rules: [
+                            {
+                              required: true,
+                              message: '请输入默认显示内容!',
+                            },
+                            {
+                              max: 20,
+                              message: '超出最大长度',
+                            },
+                          ],
+                          initialValue: boardData.currentDisplay,
+                        })(<Input onChange={(e) => { this.handleInput(e, 'currentDisplay', 'board') }} />)}
                       </Form.Item>
                     </div>
                   </div>
