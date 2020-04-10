@@ -530,7 +530,7 @@ class Intelligence extends React.Component {
 
                             {
                               hwayList && hwayList.map((item) => {
-                                return <Option value={item.roadId}>{item.roadName}</Option>
+                                return <Option value={item.roadId} key={item.roadId}>{item.roadName}</Option>
                               })
                             }
                           </Select>
@@ -576,7 +576,7 @@ class Intelligence extends React.Component {
                           <Select onChange={(e) => { this.handleSelect(e, 'direction', 'board') }}>
                             {
                               hwayDirection && hwayDirection.map((item) => {
-                                return <Option value={item.directionId}>{item.directionName}</Option>
+                                return <Option value={item.directionId} key={item.directionId}>{item.directionName}</Option>
                               })
                             }
                           </Select>
