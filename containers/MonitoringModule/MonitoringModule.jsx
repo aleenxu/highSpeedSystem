@@ -270,6 +270,11 @@ class MonitoringModule extends React.Component {
       this.setState({
         boxSelect: false,
       })
+      if (!boolean) {
+        this.setState({
+          checkedListBox: null,
+        })
+      }
     }
     if (type === 'Event') {
       if (boolean) {
@@ -316,7 +321,7 @@ class MonitoringModule extends React.Component {
         const latlngArr = JSON.parse(JSON.stringify(boolean.latlng))
         window.drawLine(latlngArr, window.lineFlag)
       } else {
-        window.centerPoint = null
+        debugger
         this.handlesetTimeOut(boolean)
         this.setState({
           detailsPopup: false,
@@ -324,6 +329,7 @@ class MonitoringModule extends React.Component {
           SidePopLeft: '', // 刷新左侧事件
         }, () => {
           this.handleEventList() //刷新左侧事件
+          map.setZoomAndCenter(16, [120.0105282600, 32.3521221100]) // 复位地图中心点
         })
       }
     }
