@@ -2,6 +2,7 @@ import React from 'react'
 import tollStationIcon from '../../imgs/tollStation_s.png'
 import fBoardIcon from '../../imgs/fBoard_s.png'
 import speedLimitIcon from '../../imgs/speedLimit_s.png'
+import carLimitIcon from '../../imgs/carLimit_s.png'
 import turnBoardIcon from '../../imgs/map_turnBoard_s.png'
 // import { ReactComponent as turnBoardIcon } from '../../imgs/turnBoard_s.svg'
 import mapTrafficJam from '../../imgs/map_traffic_jam.png'
@@ -223,7 +224,7 @@ class GMap extends React.Component {
     // 图标门架情报板
     this.drawMarkers(this.state.infoBoardJson, turnBoardIcon, 'deviceTurnBoard')
     // 图标车道控制器
-    this.drawMarkers(this.state.carRoadJson, speedLimitIcon, 'carRoadBoard')
+    this.drawMarkers(this.state.carRoadJson, carLimitIcon, 'carRoadBoard')
     // 左侧功能数据图标
     setTimeout(() => {
       this.loadLeftModulePoint()
