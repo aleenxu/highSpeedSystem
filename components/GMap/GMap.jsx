@@ -219,7 +219,7 @@ class GMap extends React.Component {
     this.drawMarkers(this.state.tollGateJson, tollStationIcon, 'deviceTollGate')
     // 图标F屏情报版
     this.drawMarkers(this.state.infoFBoardJson, fBoardIcon, 'deviceFInfoBoard')
-    // 图标车道控制器
+    // 图标限速牌专用
     this.drawMarkers(this.state.speedLimitJson, speedLimitIcon, 'deviceInfoBoard')
     // 图标门架情报板
     this.drawMarkers(this.state.infoBoardJson, turnBoardIcon, 'deviceTurnBoard')
@@ -276,6 +276,7 @@ class GMap extends React.Component {
   drawMarkers = (positions, imgIcon, layer) => {
     const map = this.map
     let marker;
+    this.markers = []
     if (map) {
       for (let i = 0; i < positions.length; i++) {
         const latlng = positions[i].latlng
