@@ -527,6 +527,11 @@ class ReservePlan extends React.Component {
       this.setState({
         boxSelect: false,
       })
+      if (!boolean) {
+        this.setState({
+          checkedListBox: null,
+        })
+      }
     }
     if (type === 'Details') {
       // console.log(type, boolean.latlng, '详情的经纬度')
@@ -1025,7 +1030,7 @@ class ReservePlan extends React.Component {
                 {
                   deviceTypes && deviceTypes.map((items, indexs) => {
                     return (
-                      items.dictCode === 1 || items.dictCode === 2 || items.dictCode === 4 ?
+                      items.dictCode === 1 || items.dictCode === 2 ?
                         <div className={styles.ItemBox}>
                           <div className={styles.HeadItem}>{items.codeName}{/* <span className={styles.AddItem} onClick={(e) => { this.genExtraAddOnclick(e, items, reservePopup) }}><Icon type="plus" /></span> */}</div>
                           <div className={styles.RowBox}>
@@ -1090,7 +1095,42 @@ class ReservePlan extends React.Component {
                                 }
                                 {!!items.device.length || <div className={style.PanelItemNone}>暂无数据</div>}
                               </div>
-                            </div> : items.dictCode === 5 ?
+                            </div> : items.dictCode === 4 ?
+                            <div className={styles.ItemBox}>
+                                <div className={styles.HeadItem}>{items.codeName}</div>
+                                <div className={styles.RowBox}>
+                                  {
+                                    items.device && items.device.map((item, index) => {
+                                      return (
+                                        <div className={style.InputBox} key={item.deviceId + item.deviceTypeId}>
+                                          <div className={style.ItemInput} style={{ width: '30%', textAlign:'right', lineHeight:'30px', paddingRight:'8px' }} title={index + 1 +'.' + item.deviceName + '-' + item.directionName + items.codeName}>{index + 1}.{item.deviceName + '-' + item.directionName + items.codeName}&nbsp;:</div>
+                                          <div className={style.ItemInput} style={{ width: '30%' }}>
+                                            <Select defaultValue={item.showContent ? item.showContent : ''} style={{ width: '85%' }} onChange={(e) => { this.handleSelect(e, 'content', 'controlDatas', item) }}>
+                                              <Option value={''}>请选择</Option>
+                                              {
+                                                deviceCodeList && deviceCodeList[1].map((itemss) => {
+                                                  return <Option key={itemss.dictCode} value={''+itemss.dictCode}>{itemss.codeName}</Option>
+                                                })
+                                              }
+                                            </Select>
+                                          </div>
+                                          <div className={style.ItemInput} style={{ width: '30%' }}>
+                                          <Select disabled={deviceTypes.status > 1 ? true : ''} defaultValue={item.controlDeviceType ? item.controlDeviceType : 0} style={{ width: '80%' }} onChange={(e) => { this.handleSelect(e, 'deviceControlType', 'controlDatas', item) }}>
+                                          <Option value={0}>请选择</Option>
+                                          {
+                                            controlTypes && controlTypes.map((itemss) => {
+                                              return <Option key={itemss.controlTypeId} value={itemss.controlTypeId}>{itemss.controlTypeName}</Option>
+                                            })
+                                          }
+                                        </Select>
+                                          </div>
+                                        </div>
+                                      )
+                                    })
+                                  }
+                                  {!!items.device.length || <div className={style.PanelItemNone}>暂无数据</div>}
+                                </div>
+                              </div> : items.dictCode === 5 ?
                             <div className={styles.ItemBox}>
                                 <div className={styles.HeadItem}>{items.codeName}</div>
                                 <div className={styles.RowBox}>

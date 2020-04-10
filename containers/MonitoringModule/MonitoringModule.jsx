@@ -329,7 +329,7 @@ class MonitoringModule extends React.Component {
           SidePopLeft: '', // 刷新左侧事件
         }, () => {
           this.handleEventList() //刷新左侧事件
-          map.setZoomAndCenter(16, [120.0105282600, 32.3521221100]) // 复位地图中心点
+          window.centerPoint = '120.0105282600, 32.3521221100' // 复位地图中心点
         })
       }
     }
