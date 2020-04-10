@@ -85,6 +85,8 @@ class MonitoringModule extends React.Component {
       deviceInfoBoard: true, // map中车道控制器情报版限速显示的图层
       deviceTurnBoard: true, // map中门架情报板显示的图层
       carRoadBoard: true, // map中车道控制器显示的图层
+      hwayDirection: [],
+      roadDirection: '',
     }
     // 修改管控时的参数
     this.controlDatas = {
@@ -385,7 +387,21 @@ class MonitoringModule extends React.Component {
       } */
     }
     if (type === 'VIboard') {
-      this.setState({ VIboardPopup: boolean })
+      this.VIboardParameters = {
+        deviceCode: '',
+        deviceLocation: '',
+        deviceName: '',
+        deviceTypeId: '',
+        roadCode: '',
+        roadDirection: '',
+        roadName: '',
+        eventPileNum: '',
+        eventTypeId: '',
+        value: '',
+        control: false,
+        existsDevices: [],
+      }
+      this.setState({ VIboardPopup: boolean, hwayDirection: null, roadDirection: '' })
     }
     if (type === 'condition') {
       this.setState({ conditionList: boolean })
@@ -512,6 +528,19 @@ class MonitoringModule extends React.Component {
         }
       })
       this.handSecUrl()
+    } else if (name === 'roadCode' && type === 'VIboardParameters') {
+      const { directionList } = this.state
+      this[type][name] = value
+      directionList.forEach((item) => {
+        if (item.roadId == value) {
+          this.VIboardParameters.roadDirection = item.directions[0] && item.directions[0].directionId
+          this.setState({ hwayDirection: item.directions, roadDirection: item.directions[0] && item.directions[0].directionId })
+        }
+      })
+      if (value == '') {
+        this.VIboardParameters.roadDirection = ''
+        this.setState({ hwayDirection: [], roadDirection: '' })
+      }
     } else {
       if (type === 'Click' && !(value instanceof Array)) {
         this.handSecUrl()
@@ -542,6 +571,9 @@ class MonitoringModule extends React.Component {
           })
         })
       } else {
+        if (name === 'roadDirection') {
+          this.setState({ roadDirection: value })
+        }
         this[type][name] = value
       }
     }
@@ -828,7 +860,7 @@ class MonitoringModule extends React.Component {
   }
   handleBoxSelectList = () => {
     const { checkedListBox, detailsPopup, boxSelectList, oldDevicesList, EventTagPopupTit, deviceTypes } = this.state
-    console.log(boxSelectList,detailsPopup);
+    console.log(boxSelectList, detailsPopup);
     debugger
     boxSelectList.forEach((item) => {
       checkedListBox.forEach((items) => {
@@ -1653,7 +1685,7 @@ class MonitoringModule extends React.Component {
 
   render() {
     const {
-      MeasuresList, eventsPopup, groupType, planList, EventTagPopup, EventTagPopupTit, roadNumber, endValueTime, conditionList, boxSelect, flagClose, oldDevicesList,
+      roadDirection, hwayDirection, MeasuresList, eventsPopup, groupType, planList, EventTagPopup, EventTagPopupTit, roadNumber, endValueTime, conditionList, boxSelect, flagClose, oldDevicesList,
       boxSelectList, hwayList, directionList, VIboardPopup, groupStatus, controlPopup, controlBtnFlag, controlBtnFlagText, detailsPopup, whethePopup, reservePopup, startValue, endValue, endOpen, SidePopLeft, detailsLatlng
       , controlTypes, eventTypes, deviceTypes, updatePoint, userLimit, TimeData, deviceCodeList, deviceDetailList, checkedListBox } = this.state
     return (
@@ -1709,7 +1741,7 @@ class MonitoringModule extends React.Component {
           </Checkbox.Group>,
         </div> */}
         {/* 事件检测过滤设置弹窗 */}
-        {eventsPopup && hwayList ?
+        {eventsPopup ?
           <div className={styles.MaskBox}>
             <div className={styles.EventPopup}>
               <div className={styles.Title}>{eventsPopup.name}事件过滤设置<Icon className={styles.Close} style={{ top: '37%' }} onClick={() => { this.handleEventPopup('Event', false) }} type="close" /></div>
@@ -2122,8 +2154,8 @@ class MonitoringModule extends React.Component {
                       <Select defaultValue="" style={{ width: '100%' }} onChange={(e) => { this.handleSelect(e, 'roadCode', 'VIboardParameters') }}>
                         <Option value="">请选择</Option>
                         {
-                          hwayList && hwayList.map((item) => {
-                            return <Option key={item.id} value={item.name}>{item.name}</Option>
+                          directionList && directionList.map((item) => {
+                            return <Option value={item.roadId} key={item.roadId}>{item.roadName}</Option>
                           })
                         }
                       </Select>
@@ -2132,17 +2164,17 @@ class MonitoringModule extends React.Component {
                   <div className={styles.ItemBox}>
                     <span className={styles.ItemName}>道&nbsp;路&nbsp;名&nbsp;称&nbsp;:</span>
                     <div className={styles.ItemInput}>
-                      <Input onChange={(e) => { this.handleInput(e, 'roadName', 'VIboardParameters') }} />
+                      <Input placeholder='如 泰州大桥主线' onChange={(e) => { this.handleInput(e, 'roadName', 'VIboardParameters') }} />
                     </div>
                   </div>
                   <div className={styles.ItemBox}>
                     <span className={styles.ItemName}>道&nbsp;路&nbsp;方&nbsp;向&nbsp;:</span>
                     <div className={styles.ItemInput}>
-                      <Select defaultValue="" style={{ width: '100%' }} onChange={(e) => { this.handleSelect(e, 'roadDirection', 'VIboardParameters') }} >
+                      <Select value={roadDirection} style={{ width: '100%' }} onChange={(e) => { this.handleSelect(e, 'roadDirection', 'VIboardParameters') }} >
                         <Option value="">请选择</Option>
                         {
-                          roadNumber && roadNumber.map((item) => {
-                            return <Option key={item.id} value={item.id}>{item.name}</Option>
+                          hwayDirection && hwayDirection.map((item) => {
+                            return <Option value={item.directionId} key={item.directionId}>{item.directionName}</Option>
                           })
                         }
                       </Select>
@@ -2151,19 +2183,19 @@ class MonitoringModule extends React.Component {
                   <div className={styles.ItemBox}>
                     <span className={styles.ItemName}>设&nbsp;备&nbsp;编&nbsp;号&nbsp;:</span>
                     <div className={styles.ItemInput}>
-                      <Input onChange={(e) => { this.handleInput(e, 'deviceCode', 'VIboardParameters') }} />
+                      <Input placeholder='如 878bbced-a937-4159-8245-9dd4d3a20f2a' onChange={(e) => { this.handleInput(e, 'deviceCode', 'VIboardParameters') }} />
                     </div>
                   </div>
                   <div className={styles.ItemBox}>
                     <span className={styles.ItemName}>设&nbsp;备&nbsp;名&nbsp;称&nbsp;:</span>
                     <div className={styles.ItemInput}>
-                      <Input onChange={(e) => { this.handleInput(e, 'deviceName', 'VIboardParameters') }} />
+                      <Input placeholder='如 CMS20' onChange={(e) => { this.handleInput(e, 'deviceName', 'VIboardParameters') }} />
                     </div>
                   </div>
                   <div className={styles.ItemBox}>
                     <span className={styles.ItemName}>设&nbsp;备&nbsp;位&nbsp;置&nbsp;:</span>
                     <div className={styles.ItemInput}>
-                      <Input onChange={(e) => { this.handleInput(e, 'deviceLocation', 'VIboardParameters') }} />
+                      <Input placeholder='如 K14+680' onChange={(e) => { this.handleInput(e, 'deviceLocation', 'VIboardParameters') }} />
                     </div>
                   </div>
                   <div className={styles.ItemFooter} style={{ bottom: '-15px' }}>

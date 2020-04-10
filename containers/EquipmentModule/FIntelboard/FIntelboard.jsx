@@ -371,7 +371,7 @@ class Intelligence extends React.Component {
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.roadName}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.pileNum}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.latlng}</span></div>
-                      <div className={styles.listTd} ><span className={styles.roadName}>{this.handledirection(directionList, item.direction)}</span></div>
+                      <div className={styles.listTd} ><span className={styles.roadName}>{item.directionName}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.deviceIp}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.port}</span></div>
                       {userLimit.includes(86) || userLimit.includes(87) ?
@@ -530,7 +530,7 @@ class Intelligence extends React.Component {
 
                             {
                               hwayList && hwayList.map((item) => {
-                                return <Option value={item.roadId}>{item.roadName}</Option>
+                                return <Option value={item.roadId} key={item.roadId}>{item.roadName}</Option>
                               })
                             }
                           </Select>
@@ -576,7 +576,7 @@ class Intelligence extends React.Component {
                           <Select onChange={(e) => { this.handleSelect(e, 'direction', 'board') }}>
                             {
                               hwayDirection && hwayDirection.map((item) => {
-                                return <Option value={item.directionId}>{item.directionName}</Option>
+                                return <Option value={item.directionId} key={item.directionId}>{item.directionName}</Option>
                               })
                             }
                           </Select>

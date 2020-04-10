@@ -301,7 +301,7 @@ class LaneControl extends React.Component {
   // 查看当前方案详情
   handleboardData = (data) => {
     this.board = JSON.parse(JSON.stringify(data))
-    this.setState({ boardData: data,Intelatlng:null, boardLatlng: data ? data.latlng : null, directions: data ? data.direction : null, roadSecIdItem: data ? data.roadSecId : null }, () => {
+    this.setState({ boardData: data, Intelatlng: null, boardLatlng: data ? data.latlng : null, directions: data ? data.direction : null, roadSecIdItem: data ? data.roadSecId : null }, () => {
       if (data) {
         // 获取方向下拉
         this.handlehwaySelect(data.roadName)
@@ -334,7 +334,7 @@ class LaneControl extends React.Component {
           const result = res.data
           if (result.code === 200) {
             this.board = JSON.parse(JSON.stringify(this.boardData))
-            this.setState({ boardData: null, boardLatlng: null, directions: null, roadSecIddata: null,Intelatlng:null, })
+            this.setState({ boardData: null, boardLatlng: null, directions: null, roadSecIddata: null, Intelatlng: null, })
             this.handleListByPage()
           }
           message.success(result.message)
@@ -390,7 +390,7 @@ class LaneControl extends React.Component {
                       <div className={styles.listTd} ><span className={styles.roadName}>{this.handledirection(deviceSizeList, item.laneNum)}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{this.handledirection(functionList, item.function)}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.latlng}</span></div>
-                      <div className={styles.listTd} ><span className={styles.roadName}>{this.handledirection(directionList, item.direction)}</span></div>
+                      <div className={styles.listTd} ><span className={styles.roadName}>{item.directionName}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.deviceIp}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.port}</span></div>
                       {userLimit.includes(86) || userLimit.includes(87) ?

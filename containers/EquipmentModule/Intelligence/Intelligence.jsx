@@ -372,7 +372,7 @@ class Intelligence extends React.Component {
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.roadName}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.pileNum}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.latlng}</span></div>
-                      <div className={styles.listTd} ><span className={styles.roadName}>{this.handledirection(directionList, item.direction)}</span></div>
+                      <div className={styles.listTd} ><span className={styles.roadName}>{item.directionName}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.deviceIp}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.port}</span></div>
                       {userLimit.includes(86) || userLimit.includes(87) ?

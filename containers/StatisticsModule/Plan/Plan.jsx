@@ -10,7 +10,7 @@ import moment from 'moment'
 const { Option } = Select
 const { RangePicker } = DatePicker
 /*        管控统计             */
-class Traffic extends React.Component {
+class Plan extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -25,8 +25,8 @@ class Traffic extends React.Component {
     }
     this.Parameters = {
       RoadSection: '',
-      endTime: this.getDate('endTime'),
-      startTime: this.getDate('startTime'),
+      endTime: '',
+      startTime: '',
       eventType: '',
       region: '',
       road: '',
@@ -228,8 +228,6 @@ class Traffic extends React.Component {
                   showTime={{ format: 'HH:mm:ss' }}
                   format="YYYY-MM-DD HH:mm:ss"
                   onChange={this.handleDatastring}
-                  onCalendarChange={this.aaa}
-                  defaultValue={[moment(this.getDate('startTime'), 'YYYY-MM-DD HH:mm:ss'), moment(this.getDate('endTime'), 'YYYY-MM-DD HH:mm:ss')]}
                   onOk={this.handleDataonOk}
                 />
               </div>
@@ -252,4 +250,4 @@ class Traffic extends React.Component {
   }
 }
 
-export default Traffic
+export default Plan
