@@ -82,6 +82,7 @@ class SpeedLimit extends React.Component {
     this.handlelistDetail('vendorList', 24)
     this.handlelistDetail('deviceTypeList', 18)
     this.handlelistDetail('deviceSizeList', 25)
+    this.handlelistDetail('currentList', 29)
     // 获取级联方向下拉
     this.handlehwayDirection()
   }
@@ -330,7 +331,7 @@ class SpeedLimit extends React.Component {
   }
   render() {
     const { getFieldDecorator } = this.props.form
-    const { listByPage, Intelatlng, current, inmainMap, userLimit, boardLatlng, deviceSizeList, boardData, directionList, roadSecIddata, roadSecIdItem, directions, hwayList, vendorList, deviceTypeList, ControlStatus, hwayDirection } = this.state
+    const { listByPage, Intelatlng, current, currentList, inmainMap, userLimit, boardLatlng, deviceSizeList, boardData, directionList, roadSecIddata, roadSecIdItem, directions, hwayList, vendorList, deviceTypeList, ControlStatus, hwayDirection } = this.state
     return (
       <div>
         <SystemMenu />
@@ -649,7 +650,7 @@ class SpeedLimit extends React.Component {
                               message: '请输入正确的端口'
                             },
                             {
-                              required: this.board.vendor == 1 ? true : false,
+                              required: this.board.vendor == 1 ,
                               message: '请输入端口号!',
                             },
                             {
@@ -657,32 +658,39 @@ class SpeedLimit extends React.Component {
                               message: '超出最大长度',
                             },
                           ],
-                          initialValue: boardData.port,
+                          initialValue: boardData.port?(boardData.port + ''):'',
                         })(<Input onChange={(e) => { this.handleInput(e, 'port', 'board') }} />)}
 
                       </Form.Item>
                     </div>
                   </div>
-                  {/* <div className={styles.ItemLine}>
+                  <div className={styles.ItemLine}>
                     <div className={styles.Item}>
                       <Form.Item
-                        name="latlng"
-                        label="经&nbsp;纬&nbsp;度"
+                        name="currentDisplay"
+                        label="默认显示内容"
                       >
-                        {getFieldDecorator('latlng', {
+                        {getFieldDecorator('currentDisplay', {
                           rules: [
                             {
                               required: true,
-                              message: '请输入经纬度!',
+                              message: '请选择默认显示内容!',
                             },
                           ],
-                          initialValue: boardLatlng,
-                        })(<Input onClick={(e) => { this.handleIntelatlng(true) }} />)}
-
-
+                          initialValue: boardData.currentDisplay,
+                        })(
+                          <Select onChange={(e) => { this.handleSelect(e, 'currentDisplay', 'board') }}>
+                            {
+                              currentList && currentList.map((item) => {
+                                return <Option key={item.name} value={item.name}>{item.name}</Option>
+                              })
+                            }
+                          </Select>
+                        )}
                       </Form.Item>
                     </div>
-                  </div> */}
+                  </div>
+
                   <div className={classNames(styles.ItemLine, styles.ItemLineList)}>
                     <div className={styles.Item}>
                       <Button onClick={this.handleControlStatus} className={classNames(styles.Button, styles.ItemBt)}>状态查询</Button>

@@ -36,10 +36,12 @@ class LaneControl extends React.Component {
       boardLatlng: null,
       Intelatlng: null,
       functionList: [],
+      deviceCodeList: null,
     }
     this.Parameters = {
       keyword: '',
       pageNo: 1,
+      deviceTypeId: '5',
     }
     this.board = {
       currentDisplay: '',
@@ -50,7 +52,7 @@ class LaneControl extends React.Component {
       direction: '',
       displayCode: '',
       latlng: '',
-      online: '',
+      online: null,
       pileNum: '',
       port: '',
       roadName: '',
@@ -69,6 +71,7 @@ class LaneControl extends React.Component {
     this.Status = '/control/limitingSpeedBord/getControlStatus' // 获取状态'
     this.directionUrl = '/control/road/list/hway/direction' //  获取高速和方向的级联下拉框，用于下拉框'
     this.secUrl = '/control/road/list/sec' // 根据公路名和方向获取路段'
+    this.codeUrl = '/control/dict/code/list/device/function/code/0' // {codeType} 根据功能类型查询，下拉框字典'
   }
   componentDidMount = () => {
     // 获取用户权限
@@ -85,6 +88,7 @@ class LaneControl extends React.Component {
     this.handlelistDetail('deviceTypeList', 18)
     this.handlelistDetail('deviceSizeList', 27)
     this.handlelistDetail('functionList', 28)
+    this.handleUrlAjax('get', this.codeUrl, 'deviceCodeList') // 查询管控方案详情方案五对应下拉
     // 获取级联方向下拉
     this.handlehwayDirection()
   }
@@ -270,6 +274,14 @@ class LaneControl extends React.Component {
     if (name === 'roadSecId' && type === 'board') {
       this.setState({ roadSecIdItem: value })
     }
+    if (name === 'function' && type === 'board') {
+      const { deviceCodeList } = this.state
+      const currentDisplay = deviceCodeList && deviceCodeList[value - 1][0].dictCode + ''
+      this.props.form.setFieldsValue({
+        currentDisplay,
+      })
+      this.board.currentDisplay = currentDisplay
+    }
   }
   handlehwaySelect = (value, name) => {
     const { hwayList } = this.state
@@ -333,7 +345,7 @@ class LaneControl extends React.Component {
   }
   render() {
     const { getFieldDecorator } = this.props.form
-    const { listByPage, Intelatlng, current, inmainMap, userLimit, boardLatlng, functionList, deviceSizeList, boardData, directionList, roadSecIddata, roadSecIdItem, directions, hwayList, vendorList, deviceTypeList, ControlStatus, hwayDirection } = this.state
+    const { listByPage, Intelatlng, current, deviceCodeList, inmainMap, userLimit, boardLatlng, functionList, deviceSizeList, boardData, directionList, roadSecIddata, roadSecIdItem, directions, hwayList, vendorList, deviceTypeList, ControlStatus, hwayDirection } = this.state
     return (
       <div>
         <SystemMenu />
@@ -654,17 +666,68 @@ class LaneControl extends React.Component {
                               message: '请输入正确的端口'
                             },
                             {
-                              required: this.board.vendor == 1 ? true : false,
+                              required: this.board.vendor == 1,
                               message: '请输入端口号!',
                             },
                             {
-                              max: 5,
+                              max: 8,
                               message: '超出最大长度',
                             },
                           ],
-                          initialValue: boardData.port,
+                          initialValue: boardData.port?(boardData.port + ''):'',
                         })(<Input onChange={(e) => { this.handleInput(e, 'port', 'board') }} />)}
 
+                      </Form.Item>
+                    </div>
+                  </div>
+                  <div className={styles.ItemLine}>
+                    <div className={styles.Item}>
+                      <Form.Item
+                        name="function"
+                        label="设备功能"
+                      >
+                        {getFieldDecorator('function', {
+                          rules: [
+                            {
+                              required: true,
+                              message: '请输入设备功能!',
+                            },
+                          ],
+                          initialValue: boardData.function,
+                        })(
+                          <Select onChange={(e) => { this.handleSelect(e, 'function', 'board') }}>
+                            {
+                              functionList && functionList.map((item) => {
+                                return <Option key={item.name + item.id} value={item.id}>{item.name}</Option>
+                              })
+                            }
+                          </Select>
+                        )}
+                      </Form.Item>
+                    </div>
+                    <div className={styles.Item}>
+                      <Form.Item
+                        name="currentDisplay"
+                        label="默认显示内容"
+                      >
+                        {getFieldDecorator('currentDisplay', {
+                          rules: [
+                            {
+                              required: true,
+                              message: '请输入默认显示内容!',
+                            },
+                          ],
+                          placeholder: '请先选择设备功能',
+                          initialValue: boardData.currentDisplay,
+                        })(
+                          <Select disabled={!this.board.function} onChange={(e) => { this.handleSelect(e, 'currentDisplay', 'board') }}>
+                            {
+                              deviceCodeList && deviceCodeList[(this.board.function || 1) - 1].map((item) => {
+                                return (<Option key={item.dictCode} value={'' + item.dictCode}>{item.codeName}</Option>)
+                              })
+                            }
+                          </Select>
+                        )}
                       </Form.Item>
                     </div>
                   </div>
@@ -683,31 +746,6 @@ class LaneControl extends React.Component {
                           ],
                           initialValue: boardLatlng,
                         })(<Input onClick={(e) => { this.handleIntelatlng(true) }} />)}
-                      </Form.Item>
-                    </div>
-                    <div className={styles.Item}>
-                      <Form.Item
-                        name="function"
-                        label="设备功能"
-                      >
-                        {getFieldDecorator('function', {
-                          rules: [
-                            {
-                              required: true,
-                              message: '请输入设备功能!',
-                            },
-                          ],
-                          initialValue: boardData.function,
-                        })(
-                          <Select onChange={(e) => { this.handleSelect(e, 'function', 'board') }}>
-
-                            {
-                              functionList && functionList.map((item) => {
-                                return <Option key={item.name + item.id} value={item.id}>{item.name}</Option>
-                              })
-                            }
-                          </Select>
-                        )}
                       </Form.Item>
                     </div>
                   </div>

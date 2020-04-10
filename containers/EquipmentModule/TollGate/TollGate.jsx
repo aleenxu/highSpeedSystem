@@ -13,7 +13,7 @@ const formItemLayout = {
   labelCol: { span: 6 },
   wrapperCol: { span: 14 },
 }
-/*         收费站 */
+/*      车道控制器 */
 class TollGate extends React.Component {
   constructor(props) {
     super(props)
@@ -31,7 +31,7 @@ class TollGate extends React.Component {
       roadSecIddata: null,
       roadSecIdItem: null,
       userLimit: [],
-      deviceSizeList: null,
+      deviceSizeList: [],
       inmainMap: null,
       boardLatlng: null,
       Intelatlng: null,
@@ -57,15 +57,16 @@ class TollGate extends React.Component {
       roadSecId: '',
       rowId: '',
       vendor: '',
-      deviceSize: '',
+      laneNum: '',
+      function: '',
     }
-    this.listByPageUrl = '/control/inforBoard/listByPage' // 分页查询设备
+    this.listByPageUrl = '/control/limitingSpeedBord/listByPage' // 分页查询设备
     this.listDetailUrl = '/control/dict/code/list/detail/' // {codeType} 根据字典类型，获取字典详情相关信息'
-    this.deleteUrl = '/control/inforBoard/delete' //  删除情报板'
+    this.deleteUrl = '/control/limitingSpeedBord/delete' //  删除'
     this.hwayUrl = '/control/road/list/hway' //  获取高速编号，用于下拉框'
-    this.updateUrl = '/control/inforBoard/update' // 修改情报板'
-    this.insertUrl = '/control/inforBoard/insert' // 新增情报板'
-    this.Status = '/control/inforBoard/getControlStatus' // 获取情报板状态'
+    this.updateUrl = '/control/limitingSpeedBord/update' // 修改'
+    this.insertUrl = '/control/limitingSpeedBord/insert' // 新增'
+    this.Status = '/control/limitingSpeedBord/getControlStatus' // 获取状态'
     this.directionUrl = '/control/road/list/hway/direction' //  获取高速和方向的级联下拉框，用于下拉框'
     this.secUrl = '/control/road/list/sec' // 根据公路名和方向获取路段'
   }
@@ -82,7 +83,8 @@ class TollGate extends React.Component {
     this.handlelistDetail('directionList', 1)
     this.handlelistDetail('vendorList', 24)
     this.handlelistDetail('deviceTypeList', 18)
-    /*  this.handlelistDetail('deviceSizeList', 25) */
+    this.handlelistDetail('deviceSizeList', 27)
+    
     // 获取级联方向下拉
     this.handlehwayDirection()
   }
@@ -215,7 +217,7 @@ class TollGate extends React.Component {
   handleDelect = (rowId) => {
     const that = this
     confirm({
-      title: '确认要删除当前可变情报板?',
+      title: '确认要删除当前车道控制器?',
       cancelText: '取消',
       okText: '确认',
       onOk() {
@@ -248,7 +250,7 @@ class TollGate extends React.Component {
 
   handledirection = (data, id) => {
     for (let i = 0; i < data.length; i++) {
-      if (data[i].id === id) {
+      if (data[i].id == id) {
         return data[i].name
       }
     }
@@ -331,7 +333,7 @@ class TollGate extends React.Component {
   }
   render() {
     const { getFieldDecorator } = this.props.form
-    const { listByPage, Intelatlng, current, inmainMap, userLimit, boardLatlng, deviceSizeList, boardData, directionList, roadSecIddata, roadSecIdItem, directions, hwayList, vendorList, deviceTypeList, ControlStatus, hwayDirection } = this.state
+    const { listByPage, Intelatlng, current, inmainMap, userLimit, boardLatlng, functionList, deviceSizeList, boardData, directionList, roadSecIddata, roadSecIdItem, directions, hwayList, vendorList, deviceTypeList, ControlStatus, hwayDirection } = this.state
     return (
       <div>
         <SystemMenu />
@@ -356,6 +358,7 @@ class TollGate extends React.Component {
                 {/* <div className={styles.listTd} >型号</div> */}
                 <div className={styles.listTd} >高速公路</div>
                 <div className={styles.listTd} >桩号</div>
+                <div className={styles.listTd} >车道</div>
                 <div className={styles.listTd} >经纬度坐标</div>
                 <div className={styles.listTd} >方向</div>
                 <div className={styles.listTd} >IP地址</div>
@@ -366,12 +369,13 @@ class TollGate extends React.Component {
                 !!listByPage && listByPage.data.map((item) => {
                   return (
                     <div className={styles.listItems}>
-                      <div className={styles.listTd} ><span className={styles.roadName} title={item.deviceId}>{item.deviceId}</span></div>
+                      <div className={styles.listTd} ><span className={styles.roadName}>{item.deviceId}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.deviceName}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{this.handledirection(vendorList, item.vendor)}</span></div>
                       {/* <div className={styles.listTd} ><span className={styles.roadName}>{item.pileNum}</span></div> */}
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.roadName}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.pileNum}</span></div>
+                      <div className={styles.listTd} ><span className={styles.roadName}>{this.handledirection(deviceSizeList, item.laneNum)}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.latlng}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{this.handledirection(directionList, item.direction)}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.deviceIp}</span></div>
@@ -464,27 +468,52 @@ class TollGate extends React.Component {
                           <Select onChange={(e) => { this.handleSelect(e, 'vendor', 'board') }} >
                             {
                               vendorList && vendorList.map((item) => {
-                                return <Option key={item.id} value={item.id}>{item.name}</Option>
+                                return <Option key={item.id} value={'' + item.id}>{item.name}</Option>
                               })
                             }
                           </Select>
                         )}
                       </Form.Item>
                     </div>
+                    {/* <div className={styles.Item}>
+                      <Form.Item
+                        name="deviceTypeId"
+                        label="设备类型"
+                        hasFeedback
+                        rules={[{ required: true, message: 'Please select your country!' }]}
+                      >
+                        <Select disabled onChange={(e) => { this.handleSelect(e, 'deviceTypeId', 'board') }} defaultValue={5}>
+                          {
+                            deviceTypeList && deviceTypeList.map((item) => {
+                              return <Option key={item.id} value={item.id}>{item.name}</Option>
+                            })
+                          }
+                        </Select>
+                      </Form.Item>
+                    </div> */}
                     <div className={styles.Item}>
                       <Form.Item
-                        name="latlng"
-                        label="经&nbsp;纬&nbsp;度"
+                        name="laneNum"
+                        label="车&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;道"
                       >
-                        {getFieldDecorator('latlng', {
+                        {getFieldDecorator('laneNum', {
                           rules: [
                             {
                               required: true,
-                              message: '请输入经纬度!',
+                              message: '请输入车道!',
                             },
                           ],
-                          initialValue: boardLatlng,
-                        })(<Input onClick={(e) => { this.handleIntelatlng(true) }} />)}
+                          initialValue: boardData.laneNum,
+                        })(
+                          <Select onChange={(e) => { this.handleSelect(e, 'laneNum', 'board') }}>
+                            {
+                              deviceSizeList && deviceSizeList.map((item) => {
+                                return <Option key={item.id} value={item.id}>{item.name}</Option>
+                              })
+                            }
+                          </Select>
+                        )}
+
                       </Form.Item>
                     </div>
                   </div>
@@ -582,7 +611,6 @@ class TollGate extends React.Component {
                             }
                           </Select>
                         )}
-                        {/* <Input onChange={(e) => { this.handleInput(e, 'roadSecId', 'board') }} value={roadSecIddata} /> */}
                       </Form.Item>
                     </div>
                   </div>
@@ -624,7 +652,7 @@ class TollGate extends React.Component {
                               message: '请输入正确的端口'
                             },
                             {
-                              required: this.board.vendor == 1 ? true : false,
+                              required: this.board.vendor == 1 ,
                               message: '请输入端口号!',
                             },
                             {
@@ -632,13 +660,13 @@ class TollGate extends React.Component {
                               message: '超出最大长度',
                             },
                           ],
-                          initialValue: boardData.port,
+                          initialValue: boardData.port?(boardData.port + ''):'',
                         })(<Input onChange={(e) => { this.handleInput(e, 'port', 'board') }} />)}
 
                       </Form.Item>
                     </div>
                   </div>
-                  {/* <div className={styles.ItemLine}>
+                  <div className={styles.ItemLine}>
                     <div className={styles.Item}>
                       <Form.Item
                         name="latlng"
@@ -653,11 +681,9 @@ class TollGate extends React.Component {
                           ],
                           initialValue: boardLatlng,
                         })(<Input onClick={(e) => { this.handleIntelatlng(true) }} />)}
-
-
                       </Form.Item>
                     </div>
-                  </div> */}
+                  </div>
                   <div className={classNames(styles.ItemLine, styles.ItemLineList)}>
                     <div className={styles.Item}>
                       <Button onClick={this.handleControlStatus} className={classNames(styles.Button, styles.ItemBt)}>状态查询</Button>
