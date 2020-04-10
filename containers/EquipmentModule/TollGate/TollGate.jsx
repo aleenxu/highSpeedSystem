@@ -32,7 +32,6 @@ class TollGate extends React.Component {
       roadSecIdItem: null,
       userLimit: [],
       deviceSizeList: [],
-      inmainMap: null,
       boardLatlng: null,
       Intelatlng: null,
     }
@@ -84,7 +83,7 @@ class TollGate extends React.Component {
     this.handlelistDetail('vendorList', 24)
     this.handlelistDetail('deviceTypeList', 18)
     this.handlelistDetail('deviceSizeList', 27)
-    
+
     // 获取级联方向下拉
     this.handlehwayDirection()
   }
@@ -302,7 +301,7 @@ class TollGate extends React.Component {
   handleAddData = () => {
     console.log(this.board, this.boardData);
     this.board = JSON.parse(JSON.stringify(this.boardData))
-    this.setState({ boardData: this.board, boardLatlng: null, hwayDirection: null, roadSecIddata: null })
+    this.setState({ boardData: this.board, boardLatlng: null, hwayDirection: null, roadSecIddata: null, Intelatlng: null })
   }
   handlemainMap = (latlng) => {
     this.board.latlng = latlng
@@ -323,7 +322,7 @@ class TollGate extends React.Component {
           const result = res.data
           if (result.code === 200) {
             this.board = JSON.parse(JSON.stringify(this.boardData))
-            this.setState({ boardData: null, boardLatlng: null, directions: null, roadSecIddata: null })
+            this.setState({ boardData: null, boardLatlng: null, directions: null, roadSecIddata: null, Intelatlng: null, })
             this.handleListByPage()
           }
           message.success(result.message)
@@ -333,7 +332,7 @@ class TollGate extends React.Component {
   }
   render() {
     const { getFieldDecorator } = this.props.form
-    const { listByPage, Intelatlng, current, inmainMap, userLimit, boardLatlng, functionList, deviceSizeList, boardData, directionList, roadSecIddata, roadSecIdItem, directions, hwayList, vendorList, deviceTypeList, ControlStatus, hwayDirection } = this.state
+    const { listByPage, Intelatlng, current, userLimit, boardLatlng, functionList, deviceSizeList, boardData, directionList, roadSecIddata, roadSecIdItem, directions, hwayList, vendorList, deviceTypeList, ControlStatus, hwayDirection } = this.state
     return (
       <div>
         <SystemMenu />
@@ -652,7 +651,7 @@ class TollGate extends React.Component {
                               message: '请输入正确的端口'
                             },
                             {
-                              required: this.board.vendor == 1 ,
+                              required: this.board.vendor == 1,
                               message: '请输入端口号!',
                             },
                             {
@@ -660,7 +659,7 @@ class TollGate extends React.Component {
                               message: '超出最大长度',
                             },
                           ],
-                          initialValue: boardData.port?(boardData.port + ''):'',
+                          initialValue: boardData.port ? (boardData.port + '') : '',
                         })(<Input onChange={(e) => { this.handleInput(e, 'port', 'board') }} />)}
 
                       </Form.Item>
@@ -701,21 +700,13 @@ class TollGate extends React.Component {
                   </div>
                   <Form.Item>
                     <div className={styles.Footer} style={{ width: '170%' }}>
-                      <Button className={styles.Button} onClick={this.handleListupdate} htmlType="submit">保&nbsp;&nbsp;存</Button>
+                      <Button className={styles.Button} htmlType="submit">保&nbsp;&nbsp;存</Button>
                       <Button className={styles.Button} onClick={() => { this.handleboardData(null) }}>返&nbsp;&nbsp;回</Button>
                     </div>
                   </Form.Item>
                 </Form>
 
               </div>
-            </div>
-          </div> : null}
-        {inmainMap ?
-          <div className={styles.mainMapBox}>
-            <div id="mapcenter" className={styles.mapcenter}>请点击屏幕</div>
-            <div id="InmainMap" className={styles.mainMap} />
-            <div className={styles.affirm}>
-              <span onClick={this.getinmainMap}>确定</span><span onClick={() => { this.getInmainMap(false) }}>关闭</span>
             </div>
           </div> : null}
       </div>

@@ -31,7 +31,6 @@ class SpeedLimit extends React.Component {
       roadSecIdItem: null,
       userLimit: [],
       deviceSizeList: null,
-      inmainMap: null,
       boardLatlng: null,
       Intelatlng: null,
     }
@@ -288,7 +287,7 @@ class SpeedLimit extends React.Component {
   // 查看当前方案详情
   handleboardData = (data) => {
     this.board = JSON.parse(JSON.stringify(data))
-    this.setState({ boardData: data, boardLatlng: data ? data.latlng : null, directions: data ? data.direction : null, roadSecIdItem: data ? data.roadSecId : null }, () => {
+    this.setState({ boardData: data,Intelatlng:null, boardLatlng: data ? data.latlng : null, directions: data ? data.direction : null, roadSecIdItem: data ? data.roadSecId : null }, () => {
       if (data) {
         // 获取方向下拉
         this.handlehwaySelect(data.roadName)
@@ -321,7 +320,7 @@ class SpeedLimit extends React.Component {
           const result = res.data
           if (result.code === 200) {
             this.board = JSON.parse(JSON.stringify(this.boardData))
-            this.setState({ boardData: null, boardLatlng: null, directions: null, roadSecIddata: null })
+            this.setState({ boardData: null, boardLatlng: null, directions: null, roadSecIddata: null,Intelatlng:null, })
             this.handleListByPage()
           }
           message.success(result.message)
@@ -331,7 +330,7 @@ class SpeedLimit extends React.Component {
   }
   render() {
     const { getFieldDecorator } = this.props.form
-    const { listByPage, Intelatlng, current, currentList, inmainMap, userLimit, boardLatlng, deviceSizeList, boardData, directionList, roadSecIddata, roadSecIdItem, directions, hwayList, vendorList, deviceTypeList, ControlStatus, hwayDirection } = this.state
+    const { listByPage, Intelatlng, current, currentList, userLimit, boardLatlng, deviceSizeList, boardData, directionList, roadSecIddata, roadSecIdItem, directions, hwayList, vendorList, deviceTypeList, ControlStatus, hwayDirection } = this.state
     return (
       <div>
         <SystemMenu />
@@ -708,21 +707,13 @@ class SpeedLimit extends React.Component {
                   </div>
                   <Form.Item>
                     <div className={styles.Footer} style={{ width: '170%' }}>
-                      <Button className={styles.Button} onClick={this.handleListupdate} htmlType="submit">保&nbsp;&nbsp;存</Button>
+                      <Button className={styles.Button}  htmlType="submit">保&nbsp;&nbsp;存</Button>
                       <Button className={styles.Button} onClick={() => { this.handleboardData(null) }}>返&nbsp;&nbsp;回</Button>
                     </div>
                   </Form.Item>
                 </Form>
 
               </div>
-            </div>
-          </div> : null}
-        {inmainMap ?
-          <div className={styles.mainMapBox}>
-            <div id="mapcenter" className={styles.mapcenter}>请点击屏幕</div>
-            <div id="InmainMap" className={styles.mainMap} />
-            <div className={styles.affirm}>
-              <span onClick={this.getinmainMap}>确定</span><span onClick={() => { this.getInmainMap(false) }}>关闭</span>
             </div>
           </div> : null}
       </div>
