@@ -324,7 +324,7 @@ class Intelligence extends React.Component {
             this.setState({ boardData: null, boardLatlng: null, directions: null, roadSecIddata: null })
             this.handleListByPage()
           }
-          message.success(result.message)
+          message.warning(result.message)
         })
       }
     })
@@ -402,6 +402,7 @@ class Intelligence extends React.Component {
                 <Form
                   onSubmit={this.handleSubmit}
                   {...formItemLayout}
+                  autoComplete="off"
                 >
                   <div className={styles.ItemLine}>
                     <div className={styles.Item}>
@@ -415,9 +416,13 @@ class Intelligence extends React.Component {
                               required: true,
                               message: '请输入设备编号!',
                             },
+                            {
+                              max: 50,
+                              message: '超出最大长度',
+                            },
                           ],
                           initialValue: boardData.deviceId,
-                        })(<Input disabled={boardData.rowId} onChange={(e) => { this.handleInput(e, 'deviceId', 'board') }} />)}
+                        })(<Input disabled={Boolean(boardData.rowId)} onChange={(e) => { this.handleInput(e, 'deviceId', 'board') }} />)}
                       </Form.Item>
                     </div>
                     <div className={styles.Item}>
@@ -430,6 +435,10 @@ class Intelligence extends React.Component {
                             {
                               required: true,
                               message: '请输入设备名称!',
+                            },
+                            {
+                              max: 20,
+                              message: '超出最大长度',
                             },
                           ],
                           initialValue: boardData.deviceName,
@@ -541,6 +550,10 @@ class Intelligence extends React.Component {
                               required: true,
                               message: '请输入桩号!',
                             },
+                            {
+                              max: 20,
+                              message: '超出最大长度',
+                            },
                           ],
                           initialValue: boardData.pileNum,
                         })(<Input onChange={(e) => { this.handleInput(e, 'pileNum', 'board') }} />)}
@@ -614,6 +627,10 @@ class Intelligence extends React.Component {
                               required: this.board.vendor == 1 ? true : false,
                               message: '请输入IP地址!',
                             },
+                            {
+                              max: 20,
+                              message: '超出最大长度',
+                            },
                           ],
                           initialValue: boardData.deviceIp,
                         })(<Input onChange={(e) => { this.handleInput(e, 'deviceIp', 'board') }} />)}
@@ -634,6 +651,10 @@ class Intelligence extends React.Component {
                             {
                               required: this.board.vendor == 1 ? true : false,
                               message: '请输入端口号!',
+                            },
+                            {
+                              max: 5,
+                              message: '超出最大长度',
                             },
                           ],
                           initialValue: boardData.port,

@@ -3,12 +3,11 @@
   color: #dcdce6;
   margin-top: 60px;
 }
-:global(.ant-modal-content){
+:global(.ant-modal-content) {
   background: #343a52;
-  
 }
-:global(.ant-modal-confirm-body .ant-modal-confirm-title){
-color: #dcdce6;
+:global(.ant-modal-confirm-body .ant-modal-confirm-title) {
+  color: #dcdce6;
 }
 .EqMain {
   height: calc(100vh - 54.5px);
@@ -291,6 +290,14 @@ color: #dcdce6;
             position: absolute;
             top: 6px;
           }
+        }
+      }
+      .ItemTree {
+        :global(li.ant-tree-treenode-disabled > .ant-tree-node-content-wrapper span) {
+          color: #1890ff;
+        }
+        :global(.ant-tree-checkbox-disabled.ant-tree-checkbox-checked .ant-tree-checkbox-inner::after) {
+          border-color: #1890ff;
         }
       }
     }

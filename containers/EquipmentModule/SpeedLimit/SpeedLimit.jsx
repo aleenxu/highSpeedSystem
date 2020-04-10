@@ -364,7 +364,7 @@ class SpeedLimit extends React.Component {
               {
                 !!listByPage && listByPage.data.map((item) => {
                   return (
-                    <div className={styles.listItems}>
+                    <div className={styles.listItems} key={item.deviceName + item.deviceId}>
                       <div className={styles.listTd} ><span className={styles.roadName} title={item.deviceId}>{item.deviceId}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.deviceName}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{this.handledirection(vendorList, item.vendor)}</span></div>
@@ -401,6 +401,7 @@ class SpeedLimit extends React.Component {
                 <Form
                   onSubmit={this.handleSubmit}
                   {...formItemLayout}
+                  autoComplete="off"
                 >
                   <div className={styles.ItemLine}>
                     <div className={styles.Item}>
@@ -414,9 +415,13 @@ class SpeedLimit extends React.Component {
                               required: true,
                               message: '请输入设备编号!',
                             },
+                            {
+                              max: 50,
+                              message: '超出最大长度',
+                            },
                           ],
                           initialValue: boardData.deviceId,
-                        })(<Input disabled={boardData.rowId} onChange={(e) => { this.handleInput(e, 'deviceId', 'board') }} />)}
+                        })(<Input disabled={Boolean(boardData.rowId)} onChange={(e) => { this.handleInput(e, 'deviceId', 'board') }} />)}
                       </Form.Item>
                     </div>
                     <div className={styles.Item}>
@@ -429,6 +434,10 @@ class SpeedLimit extends React.Component {
                             {
                               required: true,
                               message: '请输入设备名称!',
+                            },
+                            {
+                              max: 20,
+                              message: '超出最大长度',
                             },
                           ],
                           initialValue: boardData.deviceName,
@@ -463,6 +472,22 @@ class SpeedLimit extends React.Component {
                     </div>
                     <div className={styles.Item}>
                       <Form.Item
+                        name="latlng"
+                        label="经&nbsp;纬&nbsp;度"
+                      >
+                        {getFieldDecorator('latlng', {
+                          rules: [
+                            {
+                              required: true,
+                              message: '请输入经纬度!',
+                            },
+                          ],
+                          initialValue: boardLatlng,
+                        })(<Input onClick={(e) => { this.handleIntelatlng(true) }} />)}
+                      </Form.Item>
+                    </div>
+                    {/* <div className={styles.Item}>
+                      <Form.Item
                         name="deviceTypeId"
                         label="设备类型"
                       >
@@ -483,32 +508,8 @@ class SpeedLimit extends React.Component {
                             }
                           </Select>)}
                       </Form.Item>
-                    </div>
-                    {/*  <div className={styles.Item}>
-                      <Form.Item
-                        name="deviceSize"
-                        label="设备尺寸"
-                      >
-                        {getFieldDecorator('deviceSize', {
-                          rules: [
-                            {
-                              required: true,
-                              message: '请输入设备尺寸!',
-                            },
-                          ],
-                          initialValue: boardData.deviceSize,
-                        })(
-                          <Select onChange={(e) => { this.handleSelect(e, 'deviceSize', 'board') }}>
-                            {
-                              deviceSizeList && deviceSizeList.map((item) => {
-                                return <Option key={item.id} value={item.name}>{item.name}</Option>
-                              })
-                            }
-                          </Select>)}
-
-
-                      </Form.Item>
                     </div> */}
+
                   </div>
                   <div className={styles.ItemLine}>
                     <div className={styles.Item}>
@@ -529,7 +530,7 @@ class SpeedLimit extends React.Component {
 
                             {
                               hwayList && hwayList.map((item) => {
-                                return <Option value={item.roadId}>{item.roadName}</Option>
+                                return <Option key={item.roadId} value={item.roadId}>{item.roadName}</Option>
                               })
                             }
                           </Select>
@@ -546,6 +547,10 @@ class SpeedLimit extends React.Component {
                             {
                               required: true,
                               message: '请输入桩号!',
+                            },
+                            {
+                              max: 20,
+                              message: '超出最大长度',
                             },
                           ],
                           initialValue: boardData.pileNum,
@@ -573,7 +578,7 @@ class SpeedLimit extends React.Component {
                           <Select onChange={(e) => { this.handleSelect(e, 'direction', 'board') }}>
                             {
                               hwayDirection && hwayDirection.map((item) => {
-                                return <Option value={item.directionId}>{item.directionName}</Option>
+                                return <Option key={item.directionId} value={item.directionId}>{item.directionName}</Option>
                               })
                             }
                           </Select>
@@ -597,7 +602,7 @@ class SpeedLimit extends React.Component {
                           <Select onChange={(e) => { this.handleSelect(e, 'roadSecId', 'board') }}>
                             {
                               roadSecIddata && roadSecIddata.map((item) => {
-                                return <Option value={item.roadSecId}>{item.secName}</Option>
+                                return <Option key={item.roadSecId} value={item.roadSecId}>{item.secName}</Option>
                               })
                             }
                           </Select>
@@ -622,6 +627,10 @@ class SpeedLimit extends React.Component {
                               required: this.board.vendor == 1 ? true : false,
                               message: '请输入IP地址!',
                             },
+                            {
+                              max: 20,
+                              message: '超出最大长度',
+                            },
                           ],
                           initialValue: boardData.deviceIp,
                         })(<Input onChange={(e) => { this.handleInput(e, 'deviceIp', 'board') }} />)}
@@ -643,6 +652,10 @@ class SpeedLimit extends React.Component {
                               required: this.board.vendor == 1 ? true : false,
                               message: '请输入端口号!',
                             },
+                            {
+                              max: 5,
+                              message: '超出最大长度',
+                            },
                           ],
                           initialValue: boardData.port,
                         })(<Input onChange={(e) => { this.handleInput(e, 'port', 'board') }} />)}
@@ -650,7 +663,7 @@ class SpeedLimit extends React.Component {
                       </Form.Item>
                     </div>
                   </div>
-                  <div className={styles.ItemLine}>
+                  {/* <div className={styles.ItemLine}>
                     <div className={styles.Item}>
                       <Form.Item
                         name="latlng"
@@ -669,7 +682,7 @@ class SpeedLimit extends React.Component {
 
                       </Form.Item>
                     </div>
-                  </div>
+                  </div> */}
                   <div className={classNames(styles.ItemLine, styles.ItemLineList)}>
                     <div className={styles.Item}>
                       <Button onClick={this.handleControlStatus} className={classNames(styles.Button, styles.ItemBt)}>状态查询</Button>
