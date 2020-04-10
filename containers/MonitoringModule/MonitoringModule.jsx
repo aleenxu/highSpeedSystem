@@ -1055,6 +1055,7 @@ class MonitoringModule extends React.Component {
         statusName: "待发布",
         controlDes: this.getDate() + ' ' + this.controlDatas.roadName.split(' ')[1] + this.controlDatas.directionName + this.controlDatas.startPileNum + '米处发生' + (this.state.eventTypes[this.state.eventType - 1].name + this.controlDatas.eventType == 3 ? (',能见度为' + this.controlDatas.situation + 'm,影响道路长度为' + this.controlDatas.eventLength + 'm') : (',平均车速为' + this.controlDatas.situation + 'km/h,拥堵路段长度为' + this.controlDatas.eventLength + 'm')),
       }
+      this.publishPlanVO = JSON.parse(JSON.stringify(this.reservePopup))
       // message.success('发起管控方案成功！')
       // 关闭主动管控
       that.handleEventTag(false)
@@ -1122,6 +1123,7 @@ class MonitoringModule extends React.Component {
         statusName: "待发布",
         controlDes: this.getDate() + ' ' + this.controlDatas.roadName.split(' ')[1] + this.controlDatas.directionName + this.controlDatas.startPileNum + '米处发生' + this.state.eventTypes[this.state.eventType - 1].name + (this.controlDatas.eventType == 3 ? (',能见度为' + this.controlDatas.situation + 'm,影响道路长度为' + this.controlDatas.eventLength + 'm') : (',平均车速为' + this.controlDatas.situation + 'km/h,拥堵路段长度为' + this.controlDatas.eventLength + 'm')),
       }
+      this.publishPlanVO = JSON.parse(JSON.stringify(this.reservePopup))
       // 关闭主动管控
       that.handleEventTag(false)
       // 关闭右侧详情
@@ -1145,11 +1147,11 @@ class MonitoringModule extends React.Component {
   }
   handleMarkControl = () => {
     // debugger
-    const { channel, controlDes } = this.publishPlanVO
+    const { channel, controlDes, list } = this.publishPlanVO
     // console.log(this.publishPlanVO);
     const { reservePopup, startValue, endValue, eventType } = this.state
-    const { list } = reservePopup
-    // console.log(list, '当前有啥东西？')
+    /*  const { list } = reservePopup */
+    console.log(list, '当前有啥东西？', this.publishPlanVO)
     for (let i = 0; i < list.length; i++) {
       if (!list[i].content) {
         message.warning('请填全显示内容')
@@ -1175,22 +1177,22 @@ class MonitoringModule extends React.Component {
     const params = {
       channel,
       controlDes,
-      controlType: reservePopup.controlType,
+      controlType: this.publishPlanVO.controlType,
       devices: list,
-      directionId: reservePopup.directionId,
-      endPileNum: reservePopup.endPileNum,
+      directionId: this.publishPlanVO.directionId,
+      endPileNum: this.publishPlanVO.endPileNum,
       endTime: endValue,
-      eventId: reservePopup.eventId,
-      eventTypeId: reservePopup.eventTypeId,
-      latlngs: reservePopup.latlngs,
-      locationMode: reservePopup.locationMode,
-      roadId: reservePopup.roadId,
-      roadSecId: reservePopup.roadSecId,
-      startPileNum: reservePopup.startPileNum,
+      eventId: this.publishPlanVO.eventId,
+      eventTypeId: this.publishPlanVO.eventTypeId,
+      latlngs: this.publishPlanVO.latlngs,
+      locationMode: this.publishPlanVO.locationMode,
+      roadId: this.publishPlanVO.roadId,
+      roadSecId: this.publishPlanVO.roadSecId,
+      startPileNum: this.publishPlanVO.startPileNum,
       startTime: startValue,
-      update: reservePopup.update,
-      value: reservePopup.situation,
-      originalEventTypeId: reservePopup.originalEventTypeId,
+      update: this.publishPlanVO.update,
+      value: this.publishPlanVO.situation,
+      originalEventTypeId: this.publishPlanVO.originalEventTypeId,
     }
     /* params.controlDes = startValue + ' ' + reservePopup.roadName.split(' ')[1] + reservePopup.directionName + reservePopup.pileNum.split(' ')[0] + '米处,' + controlDes */
     getResponseDatas('post', this.markPublishUrl, params).then((res) => {
@@ -1495,13 +1497,15 @@ class MonitoringModule extends React.Component {
   // 管控方案详情删除
   handleCloseCircle = (indexs, index, data) => {
     const { reservePopup } = this.state
-    reservePopup.devices[indexs].device.splice(index, 1)
-    this.publishPlanVO.list.forEach((item, index) => {
+    const aaa = JSON.parse(JSON.stringify(reservePopup))
+    aaa.devices[indexs].device.splice(index, 1)
+    console.log(aaa, indexs, index)
+    this.publishPlanVO.list.forEach((item, ind) => {
       if (item.deviceId === data.deviceId && item.deviceTypeId === data.deviceTypeId) {
-        this.publishPlanVO.list.splice(index, 1)
+        this.publishPlanVO.list.splice(ind, 1)
       }
     })
-    this.setState({ reservePopup })
+    this.setState({ reservePopup: aaa })
   }
   handlecancelRel = (controllId, operation) => {
     // console.log(operation)
@@ -1528,7 +1532,7 @@ class MonitoringModule extends React.Component {
               // 查询管控方案is
               _this.handleplanList()
               _this.handledetai({ eventType: eventTypeId, eventId })
-              _this.setState({ reservePopup: null })
+              _this.setState({ reservePopup: null, endValue: null })
               resolve()
               message.success(result.message)
             } else {
