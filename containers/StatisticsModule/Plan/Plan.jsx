@@ -10,7 +10,7 @@ import moment from 'moment'
 const { Option } = Select
 const { RangePicker } = DatePicker
 /*        管控统计             */
-class Traffic extends React.Component {
+class Plan extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -252,4 +252,4 @@ class Traffic extends React.Component {
   }
 }
 
-export default Traffic
+export default Plan
