@@ -789,6 +789,8 @@ class MonitoringModule extends React.Component {
   }
   handleBoxSelectList = () => {
     const { checkedListBox, detailsPopup, boxSelectList, oldDevicesList, EventTagPopupTit, deviceTypes } = this.state
+    console.log(boxSelectList,detailsPopup);
+    debugger
     boxSelectList.forEach((item) => {
       checkedListBox.forEach((items) => {
         if (item.appendId === items) {
@@ -2102,19 +2104,19 @@ class MonitoringModule extends React.Component {
                     </div>
                   </div>
                   <div className={styles.ItemBox}>
-                    <span className={styles.ItemName}>情报板编号:</span>
+                    <span className={styles.ItemName}>设&nbsp;备&nbsp;编&nbsp;号&nbsp;:</span>
                     <div className={styles.ItemInput}>
                       <Input onChange={(e) => { this.handleInput(e, 'deviceCode', 'VIboardParameters') }} />
                     </div>
                   </div>
                   <div className={styles.ItemBox}>
-                    <span className={styles.ItemName}>情报板名称:</span>
+                    <span className={styles.ItemName}>设&nbsp;备&nbsp;名&nbsp;称&nbsp;:</span>
                     <div className={styles.ItemInput}>
                       <Input onChange={(e) => { this.handleInput(e, 'deviceName', 'VIboardParameters') }} />
                     </div>
                   </div>
                   <div className={styles.ItemBox}>
-                    <span className={styles.ItemName}>情报板位置:</span>
+                    <span className={styles.ItemName}>设&nbsp;备&nbsp;位&nbsp;置&nbsp;:</span>
                     <div className={styles.ItemInput}>
                       <Input onChange={(e) => { this.handleInput(e, 'deviceLocation', 'VIboardParameters') }} />
                     </div>
