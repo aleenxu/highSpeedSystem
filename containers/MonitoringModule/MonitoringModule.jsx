@@ -7,7 +7,7 @@ import classNames from 'classnames'
 import 'animate.css'
 import getResponseDatas from '../../plugs/HttpData/getResponseData'
 import drags from '../../plugs/drags'
-import { Input, Checkbox, Radio, Icon, Switch, DatePicker, Collapse, Select, Modal, message, Button } from 'antd'
+import { Input, Checkbox, Radio, Icon, Popover, Switch, DatePicker, Collapse, Select, Modal, message, Button } from 'antd'
 import moment from 'moment'
 const { Panel } = Collapse
 const { Search } = Input
@@ -80,6 +80,11 @@ class MonitoringModule extends React.Component {
       directionName: '',
       deviceCodeList: null, // 查询管控方案详情方案五对应下拉
       deviceDetailList: [],
+      deviceTollGate: true, // map中收费站匝道灯图标显示的图层
+      deviceFInfoBoard: true, // map中F情报版显示的图层
+      deviceInfoBoard: true, // map中车道控制器情报版限速显示的图层
+      deviceTurnBoard: true, // map中门架情报板显示的图层
+      carRoadBoard: true, // map中车道控制器显示的图层
     }
     // 修改管控时的参数
     this.controlDatas = {
@@ -175,6 +180,7 @@ class MonitoringModule extends React.Component {
     this.codeUrl = '/control/dict/code/list/device/function/code/0' // {codeType} 根据功能类型查询，下拉框字典'
     this.groupUrl = '/control/dict/code/list/device/control/type/group' // 根据设备类型区分出设备类型下的管控类型，下拉'
   }
+
   componentDidMount = () => {
     // 获取用户权限
     const limitArr = JSON.parse(localStorage.getItem('userLimit')) || []
@@ -183,6 +189,16 @@ class MonitoringModule extends React.Component {
       userLimit.push(item.id)
     })
     this.setState({ userLimit })
+    // 获取设备显示隐藏
+    this.popoverContent = (
+      <div>
+        <p className={this.state.deviceTurnBoard ? styles.true : ''} onClick={()=>{this.mapLayerShowHide(!this.state.deviceTurnBoard, 'deviceTurnBoard')}}>门架情报板</p>
+        <p className={this.state.deviceFInfoBoard ? styles.true : ''} onClick={()=>{this.mapLayerShowHide(!this.state.deviceFInfoBoard, 'deviceFInfoBoard')}}>F屏情报板</p>
+        <p className={this.state.deviceInfoBoard ? styles.true : ''} onClick={()=>{this.mapLayerShowHide(!this.state.deviceInfoBoard, 'deviceInfoBoard')}}>限速牌专用</p>
+        <p className={this.state.deviceTollGate ? styles.true : ''} onClick={()=>{this.mapLayerShowHide(!this.state.deviceTollGate, 'deviceTollGate')}}>收费站匝道灯</p>
+        <p className={this.state.carRoadBoard ? styles.true : ''} onClick={()=>{this.mapLayerShowHide(!this.state.carRoadBoard, 'carRoadBoard')}}>车道控制器</p>
+      </div>
+    )
     // 查询左侧列表数据
     this.handleEventList()
     // 查询饼图数据
@@ -212,6 +228,23 @@ class MonitoringModule extends React.Component {
 
     this.handleUrlAjax(this.codeUrl, 'deviceCodeList') // 查询管控方案详情方案五对应下拉
     this.handlelistDetail('deviceDetailList', 29)
+  }
+  mapLayerShowHide = (flag, name) => {
+    if (flag) {
+      this.setState({
+        [name]: flag,
+      },()=>{
+        window[name].show()
+      })
+      
+    } else {
+      this.setState({
+        [name]: flag,
+      },()=>{
+        window[name].hide()
+      })
+      
+    }
   }
   componentWillUnmount = () => {
     clearInterval(this.timeInterval)
@@ -1633,7 +1666,13 @@ class MonitoringModule extends React.Component {
           {/* <s>框选设备</s> */}
         </div>
         <div id="deviceBox" className={`${styles.mapIconManage} animated ${'bounceInDown'}`}>
-          {controlBtnFlag ? <span onClick={(e) => { this.controlBtnClick(e) }}>{controlBtnFlagText}</span> : null}{/* <span>设备显示</span> */}<span onClick={(e) => { this.handleEventTag(true, e) }}>主动管控</span>
+          {controlBtnFlag ? <span onClick={(e) => { this.controlBtnClick(e) }}>{controlBtnFlagText}</span> : null}
+          <span>
+          <Popover content={this.popoverContent} title="" trigger="hover">
+            设备显示
+          </Popover>
+        </span>
+        <span onClick={(e) => { this.handleEventTag(true, e) }}>主动管控</span>
         </div>
         <div id="roadStateBox" className={`${styles.roadState} animated ${'bounceInUp'}`}>
           <h5><p>路况</p></h5>
@@ -2346,7 +2385,12 @@ class MonitoringModule extends React.Component {
                   {/* <s>框选设备</s> */}
                 </div>
                 <div id="deviceBox" style={{ top: '5px', right: '0' }} className={`${styles.mapIconManage} animated ${'bounceInDown'}`}>
-                  {controlBtnFlag ? <span onClick={(e) => { this.controlBtnClick(e) }}>{controlBtnFlagText}</span> : null}{/* <span>设备显示</span> */}
+                  {controlBtnFlag ? <span onClick={(e) => { this.controlBtnClick(e) }}>{controlBtnFlagText}</span> : null}
+                  <span>
+                  <Popover content={this.popoverContent} title="" trigger="hover">
+                    设备显示
+                  </Popover>
+                  </span>
                 </div>
                 <div id="roadStateBox" className={`${styles.roadState} animated ${'bounceInUp'}`}>
                   <h5><p>路况</p></h5>
