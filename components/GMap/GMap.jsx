@@ -216,7 +216,7 @@ class GMap extends React.Component {
     AMap.event.addListener(autoPop, "select", this.searchKeyWords);//注册监听，当选中某条记录时会触发
     // 点的新建
     // 图标收费站匝道灯
-    this.drawMarkers(this.state.tollGateJson, fBoardIcon, 'deviceTollGate')
+    this.drawMarkers(this.state.tollGateJson, tollStationIcon, 'deviceTollGate')
     // 图标F屏情报版
     this.drawMarkers(this.state.infoFBoardJson, fBoardIcon, 'deviceFInfoBoard')
     // 图标车道控制器
