@@ -354,7 +354,7 @@ class ScrollList extends React.Component {
                   {
                     ProgressData && ProgressData.map((item) => {
                       return (
-                        <div className={styles.ProgressBox}><em>{item.name}</em><Progress strokeColor={this.getColor(item.code)} percent={item.count / this.ProgressLength * 100} format={percent => `${item.count}`} status="active" /></div>
+                        <div key={item.name + item.code} className={styles.ProgressBox}><em>{item.name}</em><Progress strokeColor={this.getColor(item.code)} percent={item.count / this.ProgressLength * 100} format={percent => `${item.count}`} status="active" /></div>
                       )
                     })
                   }

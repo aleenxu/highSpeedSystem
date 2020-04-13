@@ -297,7 +297,6 @@ class GMap extends React.Component {
     }
   }
   drawLine = (path, type) => {
-    debugger
     window['lineLayers'].hide()
     // window['lineLayers'].clearLayer()
     window['lineLayers'].fx = []

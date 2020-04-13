@@ -25,8 +25,8 @@ class IsLogin extends React.Component {
     this.menu = (
       <Menu>
         <Menu.Item key={userInfo.userName + userInfo.id || '--'} >用户：{userInfo ? userInfo.userName : '--'}</Menu.Item>
-        <Menu.Item key="1" onClick={() => { this.handleClose(true) }}>修改密码</Menu.Item>
-        <Menu.Item key="2" onClick={this.handleLogout}>退出系统</Menu.Item>
+        <Menu.Item key="Change Password" onClick={() => { this.handleClose(true) }}>修改密码</Menu.Item>
+        <Menu.Item key="Exit system" onClick={this.handleLogout}>退出系统</Menu.Item>
       </Menu>
     );
   }
@@ -88,7 +88,7 @@ class IsLogin extends React.Component {
   render() {
     const { password } = this.state
     return (
-      [<div className={styles.isLoginBox}>
+      [<div className={styles.isLoginBox} key="isLoginBox">
         <Dropdown overlay={this.menu}>
           <a className="ant-dropdown-link" onClick={e => e.preventDefault()}>
             <Icon className={styles.imgHead} type="user" /> <Icon className={styles.arrow} type="down" />
@@ -96,7 +96,7 @@ class IsLogin extends React.Component {
         </Dropdown>
       </div>,
       password ?
-        <div className={styles.traBox}>
+        <div className={styles.traBox} key="traBox">
           <div className={styles.addListBox}>
             <div className={styles.titleBox}>
               <div className={styles.title} style={{ marginRight: 15 }}><span>修改密码</span></div>
