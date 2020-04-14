@@ -100,10 +100,10 @@ class GMap extends React.Component {
           if (!this.state.detailsPopup.controlStatusType) {
             // window.drawRectangle()
           } else {
-            
-              window.mouseTool.close(true) //关闭，并清除覆盖物
-              $(".amap-maps").attr("style", "")
-            
+
+            window.mouseTool.close(true) //关闭，并清除覆盖物
+            $(".amap-maps").attr("style", "")
+
           }
         } else {
           // console.log("为false 时重载地图")
@@ -246,7 +246,8 @@ class GMap extends React.Component {
   }
   loadLeftModulePoint = () => {
     const _this = this
-    this.state.dataAll.map((leftItem, leftIndex) => {
+    console.log(this.state.dataAll);
+    this.state.dataAll && this.state.dataAll.map((leftItem, leftIndex) => {
       if (leftItem.eventData.length > 0) {
         // markEventType
         leftItem.eventData.map((item, index) => {
@@ -281,7 +282,7 @@ class GMap extends React.Component {
       for (let i = 0; i < positions.length; i++) {
         const latlng = positions[i].latlng
         marker = new AMap.Marker({
-          position: new AMap.LngLat(latlng[0],latlng[1]),
+          position: new AMap.LngLat(latlng[0], latlng[1]),
           offset: new AMap.Pixel(-22.5, -22.5),
           icon: imgIcon,
         });
@@ -306,7 +307,7 @@ class GMap extends React.Component {
       isOutline: true,
       outlineColor: !type ? '#98989a' : 'red',
       borderWeight: !type ? 15 : 8,
-      strokeColor: !type ? '#98989a' : 'red', 
+      strokeColor: !type ? '#98989a' : 'red',
       strokeOpacity: !type ? .6 : .9,
       strokeWeight: 0,
       // 折线样式还支持 'dashed
@@ -331,7 +332,7 @@ class GMap extends React.Component {
       case 3:
         return mapAccidents
       case 4:
-        switch ( item.markEventType ) {
+        switch (item.markEventType) {
           case 1:
             return mapTrafficJam
           case 2:
@@ -352,23 +353,23 @@ class GMap extends React.Component {
 
     }
   }
-    //在指定位置打开信息窗体
-    openInfoWin = (map, dataItem) => {
-      console.log(dataItem, '弹层的相关信息')
-      var info = [];
-      info.push(`<div class='content_box'>`);
-      info.push(`<div class='content_box_title'><h4>设备信息</h4>`);
-      info.push(`<p class='input-item'>设备名称：<span>`+dataItem.deviceName+`</span></p>`);
-      info.push(`<p class='input-item'>设备类型：<span>`+dataItem.deviceTypeName+`</span></p>`);
-      info.push(`<p class='input-item'>桩号：<span>`+dataItem.pileNum+`</span></p>`);
-      info.push(`<p class='input-item'>走向：<span>`+dataItem.directionName+`</span></p>`);
-      info.push(`<p class='input-item'>管控状态：<span>`+(dataItem.controlling ? '已管控' : '未管控') +`</span></p>`);
-      info.push(`<p class='input-item'>所属高速：<span>`+dataItem.roadName+`</span></p></div></div>`);
-      const infoWindow = new AMap.InfoWindow({
-        content: info.join("")  //使用默认信息窗体框样式，显示信息内容
-      });
-      infoWindow.open(map, dataItem.latlng);
-    }
+  //在指定位置打开信息窗体
+  openInfoWin = (map, dataItem) => {
+    console.log(dataItem, '弹层的相关信息')
+    var info = [];
+    info.push(`<div class='content_box'>`);
+    info.push(`<div class='content_box_title'><h4>设备信息</h4>`);
+    info.push(`<p class='input-item'>设备名称：<span>` + dataItem.deviceName + `</span></p>`);
+    info.push(`<p class='input-item'>设备类型：<span>` + dataItem.deviceTypeName + `</span></p>`);
+    info.push(`<p class='input-item'>桩号：<span>` + dataItem.pileNum + `</span></p>`);
+    info.push(`<p class='input-item'>走向：<span>` + dataItem.directionName + `</span></p>`);
+    info.push(`<p class='input-item'>管控状态：<span>` + (dataItem.controlling ? '已管控' : '未管控') + `</span></p>`);
+    info.push(`<p class='input-item'>所属高速：<span>` + dataItem.roadName + `</span></p></div></div>`);
+    const infoWindow = new AMap.InfoWindow({
+      content: info.join("")  //使用默认信息窗体框样式，显示信息内容
+    });
+    infoWindow.open(map, dataItem.latlng);
+  }
   searchKeyWords = e => {
     this.placeSearch.setCity(e.poi.adcode);
     this.placeSearch.search(e.poi.name);  //关键字查询查询

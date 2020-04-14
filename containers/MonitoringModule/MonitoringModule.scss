@@ -1,39 +1,39 @@
 :global(.ant-popover-content) {
-    background: rgba(21, 24, 30, 0.7);
-    border-radius:5px;
-    border-color: #959595;
-    user-select:none;
-    :global(.ant-popover-inner) {
-      width:140px;
-      background: transparent;
-      :global(.ant-popover-inner-content){
-        padding:10px 0;
-        color:#fff;
-        > div {
-          display:flex;
-          justify-content:center;
-          align-items:center;
-          flex-wrap:wrap;
-          > p {
-          width:85%;
-          height:25px;
-          line-height:25px;
-          padding-left:30px;
+  background: rgba(21, 24, 30, 0.7);
+  border-radius: 5px;
+  border-color: #959595;
+  user-select: none;
+  :global(.ant-popover-inner) {
+    width: 140px;
+    background: transparent;
+    :global(.ant-popover-inner-content) {
+      padding: 10px 0;
+      color: #fff;
+      > div {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+        > p {
+          width: 85%;
+          height: 25px;
+          line-height: 25px;
+          padding-left: 30px;
           cursor: pointer;
-          margin-bottom:6px;
+          margin-bottom: 6px;
           background: url(../../imgs/icon_hide.png) no-repeat;
           background-position: left center;
           background-size: 20px 16px;
         }
-          > p.true {
+        > p.true {
           background: url(../../imgs/icon_show.png) no-repeat;
           background-position: left center;
           background-size: 20px 16px;
-          color:green;
-        }
+          color: green;
         }
       }
     }
+  }
 }
 :global(.ant-popover-placement-bottom > .ant-popover-content > .ant-popover-arrow) {
   border-top-color: rgba(21, 24, 30, 0.7);
@@ -46,7 +46,6 @@
   ::-webkit-outer-spin-button {
     -webkit-appearance: none;
   }
-
 
   position: fixed;
   left: 0;
@@ -312,8 +311,8 @@
   .ItemInput {
     width: 100%;
     height: 100%;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    /* text-overflow: ellipsis;
+    white-space: nowrap; */
     // 修改input 框样式
     :global(.ant-input) {
       height: 25px;
@@ -387,7 +386,7 @@
       height: 150px;
       padding: 25px 22px;
       box-sizing: border-box;
-     
+
       // 每一行
       .ItemBox {
         display: flex;
@@ -972,4 +971,26 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  .Title {
+    line-height: 50px !important;
+  }
+}
+:global(.ant-modal-header) {
+  background: #343a52;
+  color: #dcdce6;
+}
+:global(.ant-modal-content) {
+  background-color: #343a52;
+  color: #dcdce6;
+}
+:global(.ant-modal-content) {
+  background: #343a52;
+}
+:global(.ant-modal-confirm-body .ant-modal-confirm-title) {
+  color: #dcdce6;
+}
+:global(.ant-message-notice-content) {
+  background: #343a52;
+  color: #dcdce6;
+  margin-top: 60px;
 }

@@ -73,18 +73,18 @@ class SystemMenu extends React.Component {
             userLimit && userLimit.map((item) => {
               if (item.Children && item.Children.length) {
                 return (
-                  <SubMenu key={"#" + item.path + item.name} title={<span className="submenu-title-wrapper">{item.name}</span>}>
+                  <SubMenu key={"#" + item.path} title={<span className="submenu-title-wrapper">{item.name}</span>}>
                     {
                       item.Children.map((items) => {
                         return (
-                          <Menu.Item key={"#" + items.path + item.name}><a href={"#" + items.path}>{items.name}</a></Menu.Item>
+                          <Menu.Item key={"#" + items.path}><a href={"#" + items.path}>{items.name}</a></Menu.Item>
                         )
                       })
                     }
                   </SubMenu>
                 )
               } else {
-                return item.path === '/monitoringmodule' ? <Menu.Item key={"#" + item.path+item.name}><a href={"#" + item.path}>{item.name}</a></Menu.Item> : <Menu.Item key={"#" + item.path+item.name}>{item.name}</Menu.Item>
+                return item.path === '/monitoringmodule' ? <Menu.Item key={"#" + item.path}><a href={"#" + item.path}>{item.name}</a></Menu.Item> : <Menu.Item key={"#" + item.path}>{item.name}</Menu.Item>
               }
             })
           }
