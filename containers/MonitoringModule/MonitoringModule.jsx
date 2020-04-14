@@ -1580,7 +1580,7 @@ class MonitoringModule extends React.Component {
     getResponseDatas('put', this.endTimeUrl + eventTypeId + '/' + eventId + '/' + controllId + '?endTime=' + endValueTime).then((res) => {
       const result = res.data
       if (result.code === 200) {
-        message.success('延时发布成功')
+        message.success(result.message)
         this.setState({ reservePopup: null, endValueTime: null })
       } else {
         message.warning(result.message)
@@ -1627,7 +1627,7 @@ class MonitoringModule extends React.Component {
     getResponseDatas('put', this.endTimeUrl + eventTypeId + '/' + eventId + '/' + controllId + '?endTime=' + endValueTime).then((res) => {
       const result = res.data
       if (result.code === 200) {
-        message.success('延时发布成功')
+        message.success(result.message)
         const { TimeData } = this.state
         TimeData.splice(this.TimeIndex, 1)
         this.TimeState = null
