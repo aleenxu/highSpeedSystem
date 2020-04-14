@@ -1204,7 +1204,7 @@ class MonitoringModule extends React.Component {
     //   return
     // }
     const params = {
-      channel:'1,2',
+      channel: '1,2',
       controlDes,
       controlType: this.reservePopup.controlType,
       devices: list,
@@ -1227,7 +1227,7 @@ class MonitoringModule extends React.Component {
     getResponseDatas('post', this.markPublishUrl, params).then((res) => {
       const result = res.data
       if (result.code === 200) {
-        message.success('发布成功')
+        message.success(result.message)
         // 查询左侧列表数据
         this.handleEventList()
         // 查询饼图数据
@@ -1496,33 +1496,11 @@ class MonitoringModule extends React.Component {
         this.handleUrlAjax(this.groupStatusUrl, 'groupStatus')
         // 查询管控方案
         this.handleplanList()
-        message.success('发布成功')
+        message.success(result.message)
         this.setState({ reservePopup: null })
       } else {
-        if (result.code === 201) {
-          const dom = []
-          result.data.forEach((item) => {
-            reservePopup.devices.forEach((items) => {
-              const appendId = item.deviceTypeId + '_' + item.deviceId
-              items.device.forEach((itemss) => {
-                if (itemss.appendId === appendId) {
-                  dom.push(<p style={{ color: 'red' }}>{itemss.deviceName + '-' + itemss.directionName + items.codeName}-已管控</p>)
-                }
-              })
-            })
-          })
-
-          confirm({
-            title: '温馨提示',
-            content: dom,
-            okText: '确认',
-            cancelText: '取消',
-          })
-        } else {
-          message.success(result.message)
-        }
+        message.warning(result.message)
       }
-
     })
   }
   // 管控方案详情删除
@@ -1574,8 +1552,7 @@ class MonitoringModule extends React.Component {
               message.success(result.message)
             } else {
               resolve()
-              message.success(result.message)
-
+              message.warning(result.message)
             }
           })
         }).catch(() => message.error('网络错误!'))
@@ -1605,6 +1582,8 @@ class MonitoringModule extends React.Component {
       if (result.code === 200) {
         message.success('延时发布成功')
         this.setState({ reservePopup: null, endValueTime: null })
+      } else {
+        message.warning(result.message)
       }
     })
   }
@@ -1663,7 +1642,7 @@ class MonitoringModule extends React.Component {
     getResponseDatas('put', this.promptUrl + eventId).then((res) => {
       const result = res.data
       if (result.code === 200) {
-        message.success('操作成功')
+        message.success(result.message)
         const { TimeData } = this.state
         TimeData.splice(index, 1)
         this.setState({ endValueTime: null, TimeData: TimeData.length ? TimeData : null })
@@ -1680,22 +1659,23 @@ class MonitoringModule extends React.Component {
       this.timeTimeout = null
     }
     if (!value) {
-      this.timeTimeout = setTimeout(() => {
-        // 查询左侧列表数据
-        this.handleEventList()
-        // 查询饼图数据
-        this.handlegroupType()
-        // 查询右侧柱状图
-        this.handleUrlAjax(this.groupStatusUrl, 'groupStatus')
-        // 查询管控方案
-        this.handleplanList()
-        /* this.handleTimeData() */
-        // 开始下一次执行
-        this.handlesetTimeOut()
-      }, 60000)
+      this.timeTimeout = setTimeout(this.handleOverallSituation, 60000)
     }
   }
 
+  handleOverallSituation = () => {
+    // 查询左侧列表数据
+    this.handleEventList()
+    // 查询饼图数据
+    this.handlegroupType()
+    // 查询右侧柱状图
+    this.handleUrlAjax(this.groupStatusUrl, 'groupStatus')
+    // 查询管控方案
+    this.handleplanList()
+    /* this.handleTimeData() */
+    // 开始下一次执行
+    this.handlesetTimeOut()
+  }
   render() {
     const {
       roadDirection, hwayDirection, MeasuresList, eventsPopup, groupType, planList, EventTagPopup, EventTagPopupTit, roadNumber, endValueTime, conditionList, boxSelect, flagClose, oldDevicesList,
@@ -2437,12 +2417,12 @@ class MonitoringModule extends React.Component {
                   {controlBtnFlag ? <span onClick={(e) => { this.controlBtnClick(e) }}>{controlBtnFlagText}</span> : null}
                   <span>
                     <Popover content={(<div>
-              <p className={this.state.deviceTurnBoard ? styles.true : ''} onClick={() => { this.mapLayerShowHide(!this.state.deviceTurnBoard, 'deviceTurnBoard') }}>门架情报板</p>
-              <p className={this.state.deviceFInfoBoard ? styles.true : ''} onClick={() => { this.mapLayerShowHide(!this.state.deviceFInfoBoard, 'deviceFInfoBoard') }}>F屏情报板</p>
-              <p className={this.state.deviceInfoBoard ? styles.true : ''} onClick={() => { this.mapLayerShowHide(!this.state.deviceInfoBoard, 'deviceInfoBoard') }}>限速牌专用</p>
-              <p className={this.state.deviceTollGate ? styles.true : ''} onClick={() => { this.mapLayerShowHide(!this.state.deviceTollGate, 'deviceTollGate') }}>收费站匝道灯</p>
-              <p className={this.state.carRoadBoard ? styles.true : ''} onClick={() => { this.mapLayerShowHide(!this.state.carRoadBoard, 'carRoadBoard') }}>车道控制器</p>
-            </div>)} title="" trigger="hover">
+                      <p className={this.state.deviceTurnBoard ? styles.true : ''} onClick={() => { this.mapLayerShowHide(!this.state.deviceTurnBoard, 'deviceTurnBoard') }}>门架情报板</p>
+                      <p className={this.state.deviceFInfoBoard ? styles.true : ''} onClick={() => { this.mapLayerShowHide(!this.state.deviceFInfoBoard, 'deviceFInfoBoard') }}>F屏情报板</p>
+                      <p className={this.state.deviceInfoBoard ? styles.true : ''} onClick={() => { this.mapLayerShowHide(!this.state.deviceInfoBoard, 'deviceInfoBoard') }}>限速牌专用</p>
+                      <p className={this.state.deviceTollGate ? styles.true : ''} onClick={() => { this.mapLayerShowHide(!this.state.deviceTollGate, 'deviceTollGate') }}>收费站匝道灯</p>
+                      <p className={this.state.carRoadBoard ? styles.true : ''} onClick={() => { this.mapLayerShowHide(!this.state.carRoadBoard, 'carRoadBoard') }}>车道控制器</p>
+                    </div>)} title="" trigger="hover">
                       设备显示
                   </Popover>
                   </span>
