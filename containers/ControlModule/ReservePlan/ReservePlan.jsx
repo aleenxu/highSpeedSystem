@@ -115,15 +115,15 @@ class ReservePlan extends React.Component {
   }
   componentDidMount = () => {
     // 获取设备显示隐藏
-    this.popoverContent = (
-      <div>
-        <p className={this.state.deviceTurnBoard ? styles.true : ''} onClick={()=>{this.mapLayerShowHide(!this.state.deviceTurnBoard, 'deviceTurnBoard')}}>门架情报板</p>
-        <p className={this.state.deviceFInfoBoard ? styles.true : ''} onClick={()=>{this.mapLayerShowHide(!this.state.deviceFInfoBoard, 'deviceFInfoBoard')}}>F屏情报板</p>
-        <p className={this.state.deviceInfoBoard ? styles.true : ''} onClick={()=>{this.mapLayerShowHide(!this.state.deviceInfoBoard, 'deviceInfoBoard')}}>限速牌专用</p>
-        <p className={this.state.deviceTollGate ? styles.true : ''} onClick={()=>{this.mapLayerShowHide(!this.state.deviceTollGate, 'deviceTollGate')}}>收费站匝道灯</p>
-        <p className={this.state.carRoadBoard ? styles.true : ''} onClick={()=>{this.mapLayerShowHide(!this.state.carRoadBoard, 'carRoadBoard')}}>车道控制器</p>
-      </div>
-    )
+    // this.popoverContent = (
+    //   <div>
+    //     <p className={this.state.deviceTurnBoard ? styles.true : ''} onClick={()=>{this.mapLayerShowHide(!this.state.deviceTurnBoard, 'deviceTurnBoard')}}>门架情报板</p>
+    //     <p className={this.state.deviceFInfoBoard ? styles.true : ''} onClick={()=>{this.mapLayerShowHide(!this.state.deviceFInfoBoard, 'deviceFInfoBoard')}}>F屏情报板</p>
+    //     <p className={this.state.deviceInfoBoard ? styles.true : ''} onClick={()=>{this.mapLayerShowHide(!this.state.deviceInfoBoard, 'deviceInfoBoard')}}>限速牌专用</p>
+    //     <p className={this.state.deviceTollGate ? styles.true : ''} onClick={()=>{this.mapLayerShowHide(!this.state.deviceTollGate, 'deviceTollGate')}}>收费站匝道灯</p>
+    //     <p className={this.state.carRoadBoard ? styles.true : ''} onClick={()=>{this.mapLayerShowHide(!this.state.carRoadBoard, 'carRoadBoard')}}>车道控制器</p>
+    //   </div>
+    // )
     this.handleListByPage()
     // 高速下拉
     this.handleUrlAjax(this.hwayUrl, 'hwayList')
@@ -1030,7 +1030,13 @@ class ReservePlan extends React.Component {
                 <div id="deviceBox" style={{ top: '5px', right: '0' }} className={`${style.mapIconManage} animated ${'bounceInDown'}`}>
                   <span onClick={(e) => { this.controlBtnClick(e) }}>{controlBtnFlagText}</span>
                   <span>
-                  <Popover content={this.popoverContent} title="" trigger="hover">
+                  <Popover content={(<div>
+              <p className={this.state.deviceTurnBoard ? style.true : ''} onClick={() => { this.mapLayerShowHide(!this.state.deviceTurnBoard, 'deviceTurnBoard') }}>门架情报板</p>
+              <p className={this.state.deviceFInfoBoard ? style.true : ''} onClick={() => { this.mapLayerShowHide(!this.state.deviceFInfoBoard, 'deviceFInfoBoard') }}>F屏情报板</p>
+              <p className={this.state.deviceInfoBoard ? style.true : ''} onClick={() => { this.mapLayerShowHide(!this.state.deviceInfoBoard, 'deviceInfoBoard') }}>限速牌专用</p>
+              <p className={this.state.deviceTollGate ? style.true : ''} onClick={() => { this.mapLayerShowHide(!this.state.deviceTollGate, 'deviceTollGate') }}>收费站匝道灯</p>
+              <p className={this.state.carRoadBoard ? style.true : ''} onClick={() => { this.mapLayerShowHide(!this.state.carRoadBoard, 'carRoadBoard') }}>车道控制器</p>
+            </div>)} title="" trigger="hover">
                     设备显示
                   </Popover>
                   </span>
