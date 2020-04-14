@@ -192,16 +192,16 @@ class MonitoringModule extends React.Component {
       userLimit.push(item.id)
     })
     this.setState({ userLimit })
-    // 获取设备显示隐藏
-    this.popoverContent = (
-      <div>
-        <p className={this.state.deviceTurnBoard ? styles.true : ''} onClick={() => { this.mapLayerShowHide(!this.state.deviceTurnBoard, 'deviceTurnBoard') }}>门架情报板</p>
-        <p className={this.state.deviceFInfoBoard ? styles.true : ''} onClick={() => { this.mapLayerShowHide(!this.state.deviceFInfoBoard, 'deviceFInfoBoard') }}>F屏情报板</p>
-        <p className={this.state.deviceInfoBoard ? styles.true : ''} onClick={() => { this.mapLayerShowHide(!this.state.deviceInfoBoard, 'deviceInfoBoard') }}>限速牌专用</p>
-        <p className={this.state.deviceTollGate ? styles.true : ''} onClick={() => { this.mapLayerShowHide(!this.state.deviceTollGate, 'deviceTollGate') }}>收费站匝道灯</p>
-        <p className={this.state.carRoadBoard ? styles.true : ''} onClick={() => { this.mapLayerShowHide(!this.state.carRoadBoard, 'carRoadBoard') }}>车道控制器</p>
-      </div>
-    )
+    // // 获取设备显示隐藏
+    // this.popoverContent = (
+    //   <div>
+    //     <p className={this.state.deviceTurnBoard ? styles.true : ''} onClick={() => { this.mapLayerShowHide(!this.state.deviceTurnBoard, 'deviceTurnBoard') }}>门架情报板</p>
+    //     <p className={this.state.deviceFInfoBoard ? styles.true : ''} onClick={() => { this.mapLayerShowHide(!this.state.deviceFInfoBoard, 'deviceFInfoBoard') }}>F屏情报板</p>
+    //     <p className={this.state.deviceInfoBoard ? styles.true : ''} onClick={() => { this.mapLayerShowHide(!this.state.deviceInfoBoard, 'deviceInfoBoard') }}>限速牌专用</p>
+    //     <p className={this.state.deviceTollGate ? styles.true : ''} onClick={() => { this.mapLayerShowHide(!this.state.deviceTollGate, 'deviceTollGate') }}>收费站匝道灯</p>
+    //     <p className={this.state.carRoadBoard ? styles.true : ''} onClick={() => { this.mapLayerShowHide(!this.state.carRoadBoard, 'carRoadBoard') }}>车道控制器</p>
+    //   </div>
+    // )
     // 查询左侧列表数据
     this.handleEventList()
     // 查询饼图数据
@@ -1712,7 +1712,13 @@ class MonitoringModule extends React.Component {
         <div id="deviceBox" className={`${styles.mapIconManage} animated ${'bounceInDown'}`}>
           {controlBtnFlag ? <span onClick={(e) => { this.controlBtnClick(e) }}>{controlBtnFlagText}</span> : null}
           <span>
-            <Popover content={this.popoverContent} title="" trigger="hover">
+            <Popover content={(<div>
+              <p className={this.state.deviceTurnBoard ? styles.true : ''} onClick={() => { this.mapLayerShowHide(!this.state.deviceTurnBoard, 'deviceTurnBoard') }}>门架情报板</p>
+              <p className={this.state.deviceFInfoBoard ? styles.true : ''} onClick={() => { this.mapLayerShowHide(!this.state.deviceFInfoBoard, 'deviceFInfoBoard') }}>F屏情报板</p>
+              <p className={this.state.deviceInfoBoard ? styles.true : ''} onClick={() => { this.mapLayerShowHide(!this.state.deviceInfoBoard, 'deviceInfoBoard') }}>限速牌专用</p>
+              <p className={this.state.deviceTollGate ? styles.true : ''} onClick={() => { this.mapLayerShowHide(!this.state.deviceTollGate, 'deviceTollGate') }}>收费站匝道灯</p>
+              <p className={this.state.carRoadBoard ? styles.true : ''} onClick={() => { this.mapLayerShowHide(!this.state.carRoadBoard, 'carRoadBoard') }}>车道控制器</p>
+            </div>)} title="" trigger="hover">
               设备显示
           </Popover>
           </span>
@@ -2429,7 +2435,13 @@ class MonitoringModule extends React.Component {
                 <div id="deviceBox" style={{ top: '5px', right: '0' }} className={`${styles.mapIconManage} animated ${'bounceInDown'}`}>
                   {controlBtnFlag ? <span onClick={(e) => { this.controlBtnClick(e) }}>{controlBtnFlagText}</span> : null}
                   <span>
-                    <Popover content={this.popoverContent} title="" trigger="hover">
+                    <Popover content={(<div>
+              <p className={this.state.deviceTurnBoard ? styles.true : ''} onClick={() => { this.mapLayerShowHide(!this.state.deviceTurnBoard, 'deviceTurnBoard') }}>门架情报板</p>
+              <p className={this.state.deviceFInfoBoard ? styles.true : ''} onClick={() => { this.mapLayerShowHide(!this.state.deviceFInfoBoard, 'deviceFInfoBoard') }}>F屏情报板</p>
+              <p className={this.state.deviceInfoBoard ? styles.true : ''} onClick={() => { this.mapLayerShowHide(!this.state.deviceInfoBoard, 'deviceInfoBoard') }}>限速牌专用</p>
+              <p className={this.state.deviceTollGate ? styles.true : ''} onClick={() => { this.mapLayerShowHide(!this.state.deviceTollGate, 'deviceTollGate') }}>收费站匝道灯</p>
+              <p className={this.state.carRoadBoard ? styles.true : ''} onClick={() => { this.mapLayerShowHide(!this.state.carRoadBoard, 'carRoadBoard') }}>车道控制器</p>
+            </div>)} title="" trigger="hover">
                       设备显示
                   </Popover>
                   </span>
