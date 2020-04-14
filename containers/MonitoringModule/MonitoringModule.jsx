@@ -1199,12 +1199,12 @@ class MonitoringModule extends React.Component {
       message.warning('请仔细填写事件详情')
       return
     }
-    if (channel == '' || channel == null) {
-      message.warning('发布渠道至少勾选一个')
-      return
-    }
+    // if (channel == '' || channel == null) {
+    //   message.warning('发布渠道至少勾选一个')
+    //   return
+    // }
     const params = {
-      channel,
+      channel:'1,2',
       controlDes,
       controlType: this.reservePopup.controlType,
       devices: list,
@@ -1478,10 +1478,11 @@ class MonitoringModule extends React.Component {
       message.warning('请仔细填写事件详情')
       return
     }
-    if (channel == '' || channel == null) {
-      message.warning('发布渠道至少勾选一个')
-      return
-    }
+    // if (channel == '' || channel == null) {
+    //   message.warning('发布渠道至少勾选一个')
+    //   return
+    // }
+    this.publishPlanVO.channel = '1,2'
     /*  this.publishPlanVO.controlDes = startValue + ' ' + reservePopup.roadName.split(' ')[1] + reservePopup.directionName + reservePopup.pileNum.split(' ')[0] + '米处,' + controlDes */
     getResponseDatas('put', this.publishUrl, this.publishPlanVO).then((res) => {
       const result = res.data
@@ -2036,7 +2037,7 @@ class MonitoringModule extends React.Component {
                       <div style={{ width: '100%' }} className={styles.ItemInput}><Input defaultValue={reservePopup.controlDes} onChange={(e) => { reservePopup.update == true || reservePopup.update == false ? this.handleInput(e, 'controlDes', 'reservePopup') : this.handleInput(e, 'controlDes', 'publishPlanVO') }} disabled={reservePopup.status > 1 ? true : false} placeholder="事件描述" /></div>
                     </div>
                   </div>
-                  <div className={styles.ItemBox}>
+                  {/* <div className={styles.ItemBox}>
                     <div className={styles.HeadItem}>发布渠道
                       <div style={{ marginLeft: '10px' }} className={styles.ItemInput}>
                         <Checkbox.Group defaultValue={reservePopup.channel} onChange={(e) => { reservePopup.update == true || reservePopup.update == false ? this.handleCheckboxGroup(e, 'channel', 'reservePopup') : this.handleCheckboxGroup(e, 'channel', 'publishPlanVO') }}>
@@ -2045,7 +2046,7 @@ class MonitoringModule extends React.Component {
                         </Checkbox.Group>
                       </div>
                     </div>
-                  </div>
+                  </div> */}
                 </div>
                 <div className={styles.ItemFooter}>
                   {
