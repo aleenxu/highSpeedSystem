@@ -1528,7 +1528,7 @@ class MonitoringModule extends React.Component {
   handleCloseCircle = (indexs, index, data) => {
     const { reservePopup } = this.state
     const reserveData = JSON.parse(JSON.stringify(reservePopup))
-    if (reservePopup.update == true || reservePopup.update == false) {
+    if (reservePopup.update == true || reservePopup.update == false) { // 主动管控 修改管控
       if (this.reservePopup.list.length === 1) {
         message.warning('至少存在一条数据')
         return
