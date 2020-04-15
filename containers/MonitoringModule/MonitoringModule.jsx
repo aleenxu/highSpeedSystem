@@ -1422,8 +1422,10 @@ class MonitoringModule extends React.Component {
     this.setState({
       EventTagPopup: boolean,
       controlBtnFlag: boolean || this.state.detailsPopup && !this.state.detailsPopup.controlStatusType ? true : false,
-      EventTagPopupTit: e ? $(e.target).text() : this.state.EventTagPopupTit,
+      EventTagPopupTit: e ? $(e.target).text() : '标题',
     }, () => {
+      debugger
+      console.log(this.state.EventTagPopupTit)
       if (this.controlDatas.latlng) {
         const latlngArr = JSON.parse(JSON.stringify(this.controlDatas.latlng))
         setTimeout(() => {
