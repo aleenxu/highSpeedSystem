@@ -360,7 +360,6 @@ class GMap extends React.Component {
   }
   equipmentSystem = () => {
     console.log(window.dataItem );
-    alert(5555)
   }
   //在指定位置打开信息窗体
   openInfoWin = (map, dataItem) => {
