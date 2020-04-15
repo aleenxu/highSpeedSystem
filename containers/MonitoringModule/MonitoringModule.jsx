@@ -1499,7 +1499,28 @@ class MonitoringModule extends React.Component {
         message.success(result.message)
         this.setState({ reservePopup: null })
       } else {
-        message.warning(result.message)
+        if (result.code === 201) {
+          const dom = []
+          result.data.forEach((item) => {
+            reservePopup.devices.forEach((items) => {
+              const appendId = item.deviceTypeId + '_' + item.deviceId
+              items.device.forEach((itemss) => {
+                if (itemss.appendId === appendId) {
+                  dom.push(<p style={{ color: 'red' }}>{itemss.deviceName + '-' + itemss.directionName + items.codeName}-已管控</p>)
+                }
+              })
+            })
+          })
+  
+          confirm({
+            title: '温馨提示',
+            content: dom,
+            okText: '确认',
+            cancelText: '取消',
+          })
+        }else{
+          message.warning(result.message)
+        }  
       }
     })
   }
@@ -2036,7 +2057,7 @@ class MonitoringModule extends React.Component {
                     userLimit.includes(101) && reservePopup.status === 2 ? <span onClick={() => { this.handlecancelRel(reservePopup.controllId, 'submit') }}>审&nbsp;&nbsp;核</span> : null
                   }
                   {
-                    reservePopup.status === 3 || reservePopup.status === 2 ? <span onClick={() => { this.handlecancelRel(reservePopup.controllId, 'cancel') }}>撤&nbsp;&nbsp;销</span> : null
+                    reservePopup.status === 3 || reservePopup.status === 2 || reservePopup.status === 1 ? <span onClick={() => { this.handlecancelRel(reservePopup.controllId, 'cancel') }}>撤&nbsp;&nbsp;销</span> : null
                   }
                   {
                     reservePopup.status === 3 ? <span onClick={() => { this.handleEndValueTime(true) }}>延&nbsp;&nbsp;时</span> : null

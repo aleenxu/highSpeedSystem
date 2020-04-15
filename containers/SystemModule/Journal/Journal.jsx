@@ -79,7 +79,7 @@ class Journal extends React.Component {
             </div>
             <div className={styles.ContetList}>
               <div className={styles.listItems}>
-                <div className={styles.listTd} >用户编号</div>
+                <div className={styles.listTd} >日志编号</div>
                 <div className={styles.listTd} >用户名称</div>
                 <div className={styles.listTd} >操作内容</div>
                 <div className={styles.listTd} >ip</div>
