@@ -1511,37 +1511,46 @@ class MonitoringModule extends React.Component {
               })
             })
           })
-  
+
           confirm({
             title: '温馨提示',
             content: dom,
             okText: '确认',
             cancelText: '取消',
           })
-        }else{
+        } else {
           message.warning(result.message)
-        }  
+        }
       }
     })
   }
   // 管控方案详情删除
   handleCloseCircle = (indexs, index, data) => {
     const { reservePopup } = this.state
-    const aaa = JSON.parse(JSON.stringify(reservePopup))
-    aaa.devices[indexs].device.splice(index, 1)
-    console.log(aaa, indexs, index)
-    this.publishPlanVO.list.forEach((item, ind) => {
-      if (item.deviceId === data.deviceId && item.deviceTypeId === data.deviceTypeId) {
-        this.publishPlanVO.list.splice(ind, 1)
+    const reserveData = JSON.parse(JSON.stringify(reservePopup))
+    if (reservePopup.update == true || reservePopup.update == false) {
+      if (this.reservePopup.list.length === 1) {
+        message.warning('至少存在一条数据')
+        return
       }
-    })
-    this.reservePopup.list.forEach((item, ind) => {
-      if (item.deviceId === data.deviceId && item.deviceTypeId === data.deviceTypeId) {
-        this.reservePopup.list.splice(ind, 1)
+      this.reservePopup.list.forEach((item, ind) => {
+        if (item.deviceId === data.deviceId && item.deviceTypeId === data.deviceTypeId) {
+          this.reservePopup.list.splice(ind, 1)
+        }
+      })
+    } else {
+      if (this.publishPlanVO.list.length === 1) {
+        message.warning('至少存在一条数据')
+        return
       }
-    })
-
-    this.setState({ reservePopup: aaa })
+      this.publishPlanVO.list.forEach((item, ind) => {
+        if (item.deviceId === data.deviceId && item.deviceTypeId === data.deviceTypeId) {
+          this.publishPlanVO.list.splice(ind, 1)
+        }
+      })
+    }
+    reserveData.devices[indexs].device.splice(index, 1)
+    this.setState({ reservePopup: reserveData })
   }
   handlecancelRel = (controllId, operation) => {
     // console.log(operation)
