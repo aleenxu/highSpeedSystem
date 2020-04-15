@@ -1,4 +1,5 @@
 import React from 'react'
+import { Button } from 'antd'
 import tollStationIcon from '../../imgs/tollStation_s.png'
 import fBoardIcon from '../../imgs/fBoard_s.png'
 import speedLimitIcon from '../../imgs/speedLimit_s.png'
@@ -41,6 +42,7 @@ class GMap extends React.Component {
       EventTagPopup: this.props.EventTagPopup, // 弹层地图后更新下原来地图
       linePoint: null,
       updatePoint: this.props.updatePoint, // 更新的点
+      detailsPopup:this.props.detailsPopup, // 事件详情
     }
     this.styles = {
       position: 'fixed',
@@ -84,6 +86,9 @@ class GMap extends React.Component {
     }
     if (this.props.roadLatlng !== nextProps.roadLatlng) {
       this.setState({ roadLatlng: nextProps.roadLatlng })
+    }
+     if (this.props.detailsPopup !== nextProps.detailsPopup) {
+      this.setState({ detailsPopup: nextProps.detailsPopup })
     }
     if (this.props.boxSelect !== nextProps.boxSelect) {
       this.setState({ boxSelect: nextProps.boxSelect }, () => {
@@ -353,8 +358,14 @@ class GMap extends React.Component {
 
     }
   }
+  equipmentSystem = () => {
+    console.log(window.dataItem );
+    alert(5555)
+  }
   //在指定位置打开信息窗体
   openInfoWin = (map, dataItem) => {
+    window.equipmentSystem = this.equipmentSystem
+    const {detailsPopup}=this.state
     console.log(dataItem, '弹层的相关信息')
     var info = [];
     info.push(`<div class='content_box'>`);
@@ -364,10 +375,14 @@ class GMap extends React.Component {
     info.push(`<p class='input-item'>桩号：<span>` + dataItem.pileNum + `</span></p>`);
     info.push(`<p class='input-item'>走向：<span>` + dataItem.directionName + `</span></p>`);
     info.push(`<p class='input-item'>管控状态：<span>` + (dataItem.controlling ? '已管控' : '未管控') + `</span></p>`);
-    info.push(`<p class='input-item'>所属高速：<span>` + dataItem.roadName + `</span></p></div></div>`);
+    info.push(`<p class='input-item'>所属高速：<span>` + dataItem.roadName + `</span></p>`);
+    if(detailsPopup&&detailsPopup.controlStatusType === 0){
+      info.push(`<p class='input-item input_button'><Button onclick='window.equipmentSystem()' type="primary" class='input-item-button'>修改默认内容</Button></p>`);
+    }
     const infoWindow = new AMap.InfoWindow({
       content: info.join("")  //使用默认信息窗体框样式，显示信息内容
     });
+    window.dataItem = dataItem
     infoWindow.open(map, dataItem.latlng);
   }
   searchKeyWords = e => {

@@ -383,7 +383,7 @@
     // 内容
     .Centent {
       width: 100%;
-      height: 150px;
+      /* height: 150px; */
       padding: 25px 22px;
       box-sizing: border-box;
 
@@ -741,11 +741,11 @@
   }
 }
 .VIboardPopup {
-  height: 475px !important;
+  height: auto !important;
   width: 421px !important;
   background: url(../../imgs/popup_four.png) center center no-repeat !important;
   background-size: 100% 100%;
-  left: 27% !important;
+  /* left: 27% !important; */
   margin-top: -238px !important;
   .Centent {
     padding: 4px 22px !important;
@@ -754,8 +754,8 @@
     margin-top: 26px !important;
   }
   .ItemFooter {
-    position: absolute;
-    bottom: 10px !important;
+   /*  position: absolute;
+    bottom: 10px !important; */
   }
 }
 .conditionPopup {

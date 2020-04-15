@@ -544,6 +544,7 @@ class MonitoringModule extends React.Component {
           this.controlDatas.eventTypeName = this.state.eventTypes[typeNum].name
         })
       } else if (value instanceof Array) {
+        console.log(data);
         const nowZoom = window.map.getZoom()
         window.map.setZoomAndCenter(nowZoom, value)
         this.setState({
@@ -637,7 +638,7 @@ class MonitoringModule extends React.Component {
         if (eventType) {
           const { SidePopLeft } = this.state
           window.dataAll = SidePopLeft
-          SidePopLeft.forEach((item, index) => {
+          SidePopLeft && SidePopLeft.forEach((item, index) => {
             if (item.eventType === eventType) {
               SidePopLeft[index].eventData = result.data
               SidePopLeft[index].eventLength = result.data.length
@@ -1718,7 +1719,7 @@ class MonitoringModule extends React.Component {
         <SystemMenu />
         {<SidePop left="5px" groupType={groupType} SidePopLeft={SidePopLeft} handleEventPopup={this.handleEventPopup} />}
         {!!detailsPopup || <SidePop SidplanList={planList} groupStatus={groupStatus} right="5px" handleEventPopup={this.handleEventPopup} />}
-        <GMap mapID={'container'} dataAll={SidePopLeft} roadLatlng={detailsLatlng} updatePoint={updatePoint} handledetai={this.handledetai} detailsPopup={detailsPopup} boxSelect={boxSelect} flagClose={flagClose} EventTagPopup={EventTagPopup} />
+        <GMap mapID={'container'} dataAll={SidePopLeft} roadLatlng={detailsLatlng} updatePoint={updatePoint} handledetai={this.handledetai} detailsPopup={detailsPopup} boxSelect={boxSelect} flagClose={flagClose} EventTagPopup={EventTagPopup} detailsPopup={detailsPopup}/>
         <div id="searchBox" className={`${styles.searchBox} animated ${'bounceInDown'}`}><Search id="tipinput" placeholder="请输入内容" enterButton />
           {/* <s>框选设备</s> */}
         </div>
@@ -2174,7 +2175,7 @@ class MonitoringModule extends React.Component {
         {
           VIboardPopup ?
             <div className={styles.MaskBox}>
-              <div className={classNames(styles.EventPopup, styles.VIboardPopup)}>
+              <div className={classNames(styles.EventPopup, styles.VIboardPopup)} style={{ left: '27%' }}>
                 <div className={styles.Title}>添加{VIboardPopup}<Icon className={styles.Close} onClick={() => { this.handleEventPopup('VIboard', false) }} type="close" /></div>
                 <div className={styles.Centent}>
                   <div className={styles.ItemBox}>
@@ -2262,11 +2263,12 @@ class MonitoringModule extends React.Component {
                     }
 
                   </Checkbox.Group>
-                  <div className={styles.ItemFooter} style={{ bottom: '-15px' }}>
+                  
+                </div>
+                <div className={styles.ItemFooter} style={{ bottom: '-15px' }}>
                     <span onClick={this.handleBoxSelectList}>确&nbsp;&nbsp;认</span>
                     <span onClick={() => { this.handleEventPopup('boxSelect', false) }}>返&nbsp;&nbsp;回</span>
                   </div>
-                </div>
               </div>
             </div> : null
         }
@@ -2297,11 +2299,12 @@ class MonitoringModule extends React.Component {
                     }
 
                   </Checkbox.Group>
-                  <div className={styles.ItemFooter} style={{ bottom: '-15px' }}>
+                  
+                </div>
+                <div className={styles.ItemFooter} style={{ bottom: '-15px' }}>
                     <span onClick={this.handledetailsPopupList}>确&nbsp;&nbsp;认</span>
                     <span onClick={() => { this.handleEventPopup('condition', false) }}>返&nbsp;&nbsp;回</span>
                   </div>
-                </div>
               </div>
             </div> : null
         }
@@ -2486,7 +2489,39 @@ class MonitoringModule extends React.Component {
               </div>
             </div> : null
         }
-      </div >
+
+       {/*  <div className={styles.MaskBox}>
+          <div className={classNames(styles.EventPopup, styles.VIboardPopup)}>
+            <div className={styles.Title}>修改默认显示<Icon className={styles.Close} type="close" /></div>
+            <div className={styles.Centent}>
+              <div className={styles.ItemBox}>
+                <span className={styles.ItemName}>道&nbsp;路&nbsp;名&nbsp;称&nbsp;:</span>
+                <div className={styles.ItemInput}>
+                  <Input />
+                </div>
+              </div>
+              <div className={styles.ItemBox}>
+                <span className={styles.ItemName}>道&nbsp;路&nbsp;方&nbsp;向&nbsp;:</span>
+                <div className={styles.ItemInput}>
+                  <Select style={{ width: '100%' }}  >
+                    <Option value="">请选择</Option>
+                    {
+                      MeasuresList[0] && MeasuresList[0].map((itemss) => {
+                        return <Option key={itemss.controlTypeId} value={itemss.controlTypeId}>{itemss.controlTypeName}</Option>
+                      })
+                    }
+                  </Select>
+                </div>
+              </div>
+              <div className={styles.ItemFooter} style={{ bottom: '-15px' }}>
+                <span>确&nbsp;&nbsp;认</span>
+                <span>返&nbsp;&nbsp;回</span>
+              </div>
+            </div>
+          </div>
+        </div> */}
+
+      </div>
     )
   }
 }
