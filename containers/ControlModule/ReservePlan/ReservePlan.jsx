@@ -1151,7 +1151,7 @@ class ReservePlan extends React.Component {
                                             <Select defaultValue={item.showContent ? item.showContent : ''} style={{ width: '85%' }} onChange={(e) => { this.handleSelect(e, 'content', 'controlDatas', item) }}>
                                               <Option value={''}>请选择</Option>
                                               {
-                                                deviceCodeList && deviceCodeList[1].map((itemss) => {
+                                                deviceCodeList && deviceCodeList[0].map((itemss) => {
                                                   return <Option key={itemss.dictCode} value={''+itemss.dictCode}>{itemss.codeName}</Option>
                                                 })
                                               }

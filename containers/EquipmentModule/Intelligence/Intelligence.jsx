@@ -253,6 +253,9 @@ class Intelligence extends React.Component {
     }
   }
   handleInput = (e, name, type) => {
+    if (name === 'latlng') {
+      this.setState({ boardLatlng: e.target.value })
+    }
     this[type][name] = e.target.value
   }
   handleSelect = (value, name, type) => {
@@ -287,7 +290,7 @@ class Intelligence extends React.Component {
   // 查看当前方案详情
   handleboardData = (data) => {
     this.board = JSON.parse(JSON.stringify(data))
-    this.setState({ boardData: data,Intelatlng:null, boardLatlng: data ? data.latlng : null, directions: data ? data.direction : null, roadSecIdItem: data ? data.roadSecId : null }, () => {
+    this.setState({ boardData: data, Intelatlng: null, boardLatlng: data ? data.latlng : null, directions: data ? data.direction : null, roadSecIdItem: data ? data.roadSecId : null }, () => {
       if (data) {
         // 获取方向下拉
         this.handlehwaySelect(data.roadName)
@@ -320,7 +323,7 @@ class Intelligence extends React.Component {
           const result = res.data
           if (result.code === 200) {
             this.board = JSON.parse(JSON.stringify(this.boardData))
-            this.setState({ boardData: null, boardLatlng: null, directions: null, roadSecIddata: null,Intelatlng:null, })
+            this.setState({ boardData: null, boardLatlng: null, directions: null, roadSecIddata: null, Intelatlng: null, })
             this.handleListByPage()
           }
           message.warning(result.message)
@@ -656,7 +659,7 @@ class Intelligence extends React.Component {
                               message: '超出最大长度',
                             },
                           ],
-                          initialValue: boardData.port?(boardData.port + ''):'',
+                          initialValue: boardData.port ? (boardData.port + '') : '',
                         })(<Input onChange={(e) => { this.handleInput(e, 'port', 'board') }} />)}
 
                       </Form.Item>
@@ -676,7 +679,7 @@ class Intelligence extends React.Component {
                             },
                           ],
                           initialValue: boardLatlng,
-                        })(<Input onClick={(e) => { this.handleIntelatlng(true) }} />)}
+                        })(<Input onChange={(e) => { this.handleInput(e, 'latlng', 'board') }} onClick={(e) => { this.handleIntelatlng(true) }} />)}
 
 
                       </Form.Item>
@@ -719,7 +722,7 @@ class Intelligence extends React.Component {
                   </div>
                   <Form.Item>
                     <div className={styles.Footer} style={{ width: '170%' }}>
-                      <Button className={styles.Button}  htmlType="submit">保&nbsp;&nbsp;存</Button>
+                      <Button className={styles.Button} htmlType="submit">保&nbsp;&nbsp;存</Button>
                       <Button className={styles.Button} onClick={() => { this.handleboardData(null) }}>返&nbsp;&nbsp;回</Button>
                     </div>
                   </Form.Item>

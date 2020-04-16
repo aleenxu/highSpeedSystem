@@ -253,6 +253,9 @@ class SpeedLimit extends React.Component {
     }
   }
   handleInput = (e, name, type) => {
+    if (name === 'latlng') {
+      this.setState({ boardLatlng: e.target.value })
+    }
     this[type][name] = e.target.value
   }
   handleSelect = (value, name, type) => {
@@ -483,7 +486,7 @@ class SpeedLimit extends React.Component {
                             },
                           ],
                           initialValue: boardLatlng,
-                        })(<Input onClick={(e) => { this.handleIntelatlng(true) }} />)}
+                        })(<Input onChange={(e) => { this.handleInput(e, 'latlng', 'board') }} onClick={(e) => { this.handleIntelatlng(true) }} />)}
                       </Form.Item>
                     </div>
                     {/* <div className={styles.Item}>

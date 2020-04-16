@@ -1,6 +1,6 @@
 import React from 'react'
 import CryptoJS from 'crypto-js'
-import { Icon, Checkbox, message, Input, Button ,Form} from 'antd'
+import { Icon, Checkbox, message, Input, Button, Form } from 'antd'
 
 import styles from './Login.scss'
 import getResponseDatas from '../../plugs/HttpData/getResponseData'
@@ -27,7 +27,7 @@ class Login extends React.Component {
         console.log(e, e.keCode)
         this.handleLogin()
       }
-    }) 
+    })
     //在componentDidMount中执行读取cookie
     this.loadAccountInfo()
   }
@@ -67,33 +67,33 @@ class Login extends React.Component {
   }
   loadAccountInfo = () => {
     //读取cookie
-        let arr,reg=new RegExp("(^| )"+'accountInfo'+"=([^;]*)(;|$)");
-        let accountInfo =''
-        if(arr=document.cookie.match(reg)){
-            accountInfo =  unescape(arr[2]);
-        }
-        else{
-            accountInfo = null;
-        }
-        if(Boolean(accountInfo) == false){
-            return false;
-        }else{
-            let userName = "";
-            let passWord = "";
-            let i=new Array()
-            i = accountInfo.split("&");
-            userName = i[0],
-            passWord = this.decrypt(i[1])
-            this.setState({
-              rememberPassword : true,
-              loginName: userName,
-              password: passWord,
-            }, ()=>{
-              this.loginParams.loginName = userName
-              this.loginParams.password = passWord
-            })
-        }
-      }        
+    let arr, reg = new RegExp("(^| )" + 'accountInfo' + "=([^;]*)(;|$)");
+    let accountInfo = ''
+    if (arr = document.cookie.match(reg)) {
+      accountInfo = unescape(arr[2]);
+    }
+    else {
+      accountInfo = null;
+    }
+    if (Boolean(accountInfo) == false) {
+      return false;
+    } else {
+      let userName = "";
+      let passWord = "";
+      let i = new Array()
+      i = accountInfo.split("&");
+      userName = i[0],
+        passWord = this.decrypt(i[1])
+      this.setState({
+        rememberPassword: true,
+        loginName: userName,
+        password: passWord,
+      }, () => {
+        this.loginParams.loginName = userName
+        this.loginParams.password = passWord
+      })
+    }
+  }
   getUserLimit = (id) => {
     getResponseDatas('post', `${this.limitUrl}${id}`).then((res) => {
       const { code, data } = res.data
@@ -121,25 +121,25 @@ class Login extends React.Component {
     //记住密码
     this.setState({
       rememberPassword: e.target.checked,
-    }, ()=> {
-      if(this.state.rememberPassword){   //是否保存密码
-        let accountInfo = this.loginParams.loginName+ '&' + this.encrypt(this.loginParams.password) + '&' + this.state.rememberPassword;
-  
+    }, () => {
+      if (this.state.rememberPassword) {   //是否保存密码
+        let accountInfo = this.loginParams.loginName + '&' + this.encrypt(this.loginParams.password) + '&' + this.state.rememberPassword;
+
         let Days = 1;  //cookie保存时间
         let exp = new Date();
-        exp.setTime(exp.getTime() + Days*24*60*60*1000);
-        document.cookie = 'accountInfo' + "="+ escape (accountInfo) + ";expires=" + exp.toGMTString();
-  
-      }else {
+        exp.setTime(exp.getTime() + Days * 24 * 60 * 60 * 1000);
+        document.cookie = 'accountInfo' + "=" + escape(accountInfo) + ";expires=" + exp.toGMTString();
+
+      } else {
         let exp = new Date();
         exp.setTime(exp.getTime() - 1);
         let accountInfo = document.cookie
         var cookie_pos = accountInfo.indexOf('accountInfo');
-  
-        if(cookie_pos!=-1){
-            document.cookie= 'accountInfo' + "="+' '+";expires="+exp.toGMTString();
+
+        if (cookie_pos != -1) {
+          document.cookie = 'accountInfo' + "=" + ' ' + ";expires=" + exp.toGMTString();
         }
-  
+
         this.loginParams.loginName = '';
         this.loginParams.password = '';
       }
@@ -161,7 +161,11 @@ class Login extends React.Component {
             passWord: '',
           }
         } else {
-          message.warning(msg)
+          if (code === 1000) {
+            message.warning('系统异常,请联系管理员')
+          } else {
+            message.warning(msg)
+          }
         }
       })
     }

@@ -255,6 +255,9 @@ class TollGate extends React.Component {
     }
   }
   handleInput = (e, name, type) => {
+    if (name === 'latlng') {
+      this.setState({ boardLatlng: e.target.value })
+    }
     this[type][name] = e.target.value
   }
   handleSelect = (value, name, type) => {
@@ -679,11 +682,11 @@ class TollGate extends React.Component {
                             },
                           ],
                           initialValue: boardLatlng,
-                        })(<Input onClick={(e) => { this.handleIntelatlng(true) }} />)}
+                        })(<Input onChange={(e) => { this.handleInput(e, 'latlng', 'board') }} onClick={(e) => { this.handleIntelatlng(true) }} />)}
                       </Form.Item>
                     </div>
                   </div>
-                  <div className={classNames(styles.ItemLine, styles.ItemLineList)}>
+                  {/* <div className={classNames(styles.ItemLine, styles.ItemLineList)}>
                     <div className={styles.Item}>
                       <Button onClick={this.handleControlStatus} className={classNames(styles.Button, styles.ItemBt)}>状态查询</Button>
                       <div className={styles.ItemGuan}>
@@ -697,7 +700,7 @@ class TollGate extends React.Component {
                         <span className={styles.anttext}>{ControlStatus && ControlStatus.showContent}</span>
                       </Form.Item>
                     </div>
-                  </div>
+                  </div> */}
                   <Form.Item>
                     <div className={styles.Footer} style={{ width: '170%' }}>
                       <Button className={styles.Button} htmlType="submit">保&nbsp;&nbsp;存</Button>
