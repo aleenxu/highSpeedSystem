@@ -2434,7 +2434,7 @@ class MonitoringModule extends React.Component {
                       </div>
                     </div>
                   </div>
-                  <div className={styles.Title} style={{ background: '#132334', lineHeight: '20px', height: '20px', fontSize: '12px' }}>当前车速</div>
+                  {/* <div className={styles.Title} style={{ background: '#132334', lineHeight: '20px', height: '20px', fontSize: '12px' }}>当前车速</div>
                   {
                     this.state.eventType === 3 ? <div className={styles.Centent}>
                       <div className={styles.ItemBox}>
@@ -2452,7 +2452,7 @@ class MonitoringModule extends React.Component {
                       </div>
                         </div>
                       </div>
-                  }
+                  } */}
                   <div className={styles.Title} style={{ background: '#132334', lineHeight: '20px', height: '20px', fontSize: '12px' }}>选择交通管控类型</div>
                   <div className={styles.Centent}>
                     <div className={styles.ItemBox}>
