@@ -1238,7 +1238,7 @@ class MonitoringModule extends React.Component {
         this.handleUrlAjax(this.groupStatusUrl, 'groupStatus')
         // 查询管控方案
         this.handleplanList()
-        this.handledetai({ eventType: this.reservePopup.eventTypeId, eventId:this.reservePopup.eventId })
+        this.handledetai({ eventType: this.reservePopup.eventTypeId, eventId: this.reservePopup.eventId })
         if (this.ChildPage) {
           this.ChildPage.loadPoint() //调用子组件的handleAMap方法
         }
@@ -1735,7 +1735,6 @@ class MonitoringModule extends React.Component {
                 value.deviceControlType = items.deviceControlType
               }
             })
-
           }
         })
         this.handleUrlAjax(this.groupUrl, 'MeasuresList')
@@ -1754,24 +1753,33 @@ class MonitoringModule extends React.Component {
     })
   }
   handleInfoWinPopup = () => {
-    const { InfoWinPopup, detailsPopup } = this.state
-    detailsPopup.devices.forEach((item, index) => {
+    const { InfoWinPopup, detailsPopup, deviceTypes, EventTagPopupTit } = this.state
+    let data = detailsPopup.devices
+    if (EventTagPopupTit === '主动管控') {
+      data = deviceTypes
+    }
+
+    data.forEach((item, index) => {
       if (item.dictCode === InfoWinPopup.deviceTypeId) {
         let bool = true
         item.device.forEach((items, indexs) => {
           if (items.deviceId === InfoWinPopup.deviceId) {
-            detailsPopup.devices[index].device[indexs] = InfoWinPopup
+            data[index].device[indexs] = InfoWinPopup
             bool = false
           }
         })
         if (bool) {
-          detailsPopup.devices[index].device.push(InfoWinPopup)
+          data[index].device.push(InfoWinPopup)
         }
       }
     })
-    console.log(InfoWinPopup, detailsPopup);
-
-    this.setState({ InfoWinPopup: null, detailsPopup, })
+    console.log(data, EventTagPopupTit);
+    if (EventTagPopupTit === '主动管控') {
+      this.setState({ InfoWinPopup: null, deviceTypes: data, })
+    } else {
+      detailsPopup.devices = data
+      this.setState({ InfoWinPopup: null, detailsPopup, })
+    }
   }
   render() {
     const {
@@ -1783,7 +1791,7 @@ class MonitoringModule extends React.Component {
         <SystemMenu />
         {<SidePop left="5px" groupType={groupType} SidePopLeft={SidePopLeft} handleEventPopup={this.handleEventPopup} />}
         {!!detailsPopup || <SidePop SidplanList={planList} groupStatus={groupStatus} right="5px" handleEventPopup={this.handleEventPopup} />}
-        <GMap  onRef={el => this.ChildPage = el} mapID={'container'} dataAll={SidePopLeft} roadLatlng={detailsLatlng} updatePoint={updatePoint} handledetai={this.handledetai} detailsPopup={detailsPopup} boxSelect={boxSelect} flagClose={flagClose} EventTagPopup={EventTagPopup} detailsPopup={detailsPopup} equipmentInfoWin={this.equipmentInfoWin} />
+        <GMap onRef={el => this.ChildPage = el} mapID={'container'} dataAll={SidePopLeft} roadLatlng={detailsLatlng} updatePoint={updatePoint} handledetai={this.handledetai} detailsPopup={detailsPopup} boxSelect={boxSelect} flagClose={flagClose} EventTagPopup={EventTagPopup} detailsPopup={detailsPopup} equipmentInfoWin={this.equipmentInfoWin} />
         <div id="searchBox" className={`${styles.searchBox} animated ${'bounceInDown'}`}><Search id="tipinput" placeholder="请输入内容" enterButton />
           {/* <s>框选设备</s> */}
         </div>
@@ -2186,11 +2194,11 @@ class MonitoringModule extends React.Component {
                     </div>
                     <div className={styles.ItemBox}>
                       <div className={styles.HeadItem}>基本信息</div>
-                      <div className={styles.RowBox}>道路编号&nbsp;:&nbsp;&nbsp;{detailsPopup.roadName.split(' ')[0]}</div>
-                      <div className={styles.RowBox}>道路名称&nbsp;:&nbsp;&nbsp;{detailsPopup.roadName.split(' ')[1]}</div>
+                      <div className={styles.RowBox}>道路编号&nbsp;:&nbsp;&nbsp;{detailsPopup.roadName && detailsPopup.roadName.split(' ')[0]}</div>
+                      <div className={styles.RowBox}>道路名称&nbsp;:&nbsp;&nbsp;{detailsPopup.roadName && detailsPopup.roadName.split(' ')[1]}</div>
                       <div className={styles.RowBox}>
                         <p>行驶方向&nbsp;:&nbsp;&nbsp;{detailsPopup.directionName}</p>
-                        <p>起始桩号&nbsp;:&nbsp;&nbsp;<span style={{ color: '#c67f03' }}>{detailsPopup.pileNum.split(' ')[0]}</span></p>
+                        <p>起始桩号&nbsp;:&nbsp;&nbsp;<span style={{ color: '#c67f03' }}>{detailsPopup.pileNum && detailsPopup.pileNum.split(' ')[0]}</span></p>
                       </div>
                       <div className={styles.RowBox}>
                         {

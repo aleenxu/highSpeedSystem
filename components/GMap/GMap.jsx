@@ -452,9 +452,9 @@ class GMap extends React.Component {
     info.push(`<p class='input-item'>走向：<span>` + dataItem.directionName + `</span></p>`);
     info.push(`<p class='input-item'>管控状态：<span>` + (dataItem.controlling ? '已管控' : '未管控') + `</span></p>`);
     info.push(`<p class='input-item'>所属高速：<span>` + dataItem.roadName + `</span></p>`);
-   /*  if ((detailsPopup && detailsPopup.controlStatusType === 0)||EventTagPopup) {
+    if ((detailsPopup && detailsPopup.controlStatusType === 0)||EventTagPopup) {
       info.push(`<p class='input-item input_button'><Button onclick='window.equipmentInfoWin()' type="primary" class='input-item-button'>编辑管控内容</Button></p>`);
-    } */
+    }
     const infoWindow = new AMap.InfoWindow({
       content: info.join("")  //使用默认信息窗体框样式，显示信息内容
     });
