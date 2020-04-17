@@ -43,7 +43,7 @@ class GMap extends React.Component {
       linePoint: null,
       updatePoint: this.props.updatePoint, // 更新的点
       detailsPopup: this.props.detailsPopup, // 事件详情
-      EventTagPopup:this.props.EventTagPopup // 主动管控
+      EventTagPopup: this.props.EventTagPopup // 主动管控
     }
     this.styles = {
       position: 'fixed',
@@ -237,14 +237,14 @@ class GMap extends React.Component {
     })
   }
   loadingMap = () => {
-     const _this = this;
-     window.map = new AMap.Map(_this.state.mapID, {
-       resizeEnable: true, //是否监控地图容器尺寸变化
-       center: [120.0105285600, 32.3521228100], //初始化地图中心点
-       mapStyle: "amap://styles/c3fa565f6171961e94b37c4cc2815ef8",
-       zoom: 11
-     });
-     this.map = window.map
+    const _this = this;
+    window.map = new AMap.Map(_this.state.mapID, {
+      resizeEnable: true, //是否监控地图容器尺寸变化
+      center: [120.0105285600, 32.3521228100], //初始化地图中心点
+      mapStyle: "amap://styles/c3fa565f6171961e94b37c4cc2815ef8",
+      zoom: 11
+    });
+    this.map = window.map
     window.map.on('mousemove')
     window.mouseTool = new AMap.MouseTool(map);
     //监听draw事件可获取画好的覆盖物
@@ -441,8 +441,8 @@ class GMap extends React.Component {
   //在指定位置打开信息窗体
   openInfoWin = (map, dataItem) => {
     window.equipmentInfoWin = this.equipmentInfoWin
-    const { detailsPopup,EventTagPopup } = this.state
-    console.log(dataItem,EventTagPopup, '弹层的相关信息')
+    const { detailsPopup, EventTagPopup } = this.state
+    console.log(map,dataItem, EventTagPopup, '弹层的相关信息')
     var info = [];
     info.push(`<div class='content_box'>`);
     info.push(`<div class='content_box_title'><h4>设备信息</h4>`);
@@ -452,7 +452,7 @@ class GMap extends React.Component {
     info.push(`<p class='input-item'>走向：<span>` + dataItem.directionName + `</span></p>`);
     info.push(`<p class='input-item'>管控状态：<span>` + (dataItem.controlling ? '已管控' : '未管控') + `</span></p>`);
     info.push(`<p class='input-item'>所属高速：<span>` + dataItem.roadName + `</span></p>`);
-    if ((detailsPopup && detailsPopup.controlStatusType === 0)||EventTagPopup) {
+    if ((detailsPopup && detailsPopup.controlStatusType === 0) || EventTagPopup) {
       info.push(`<p class='input-item input_button'><Button onclick='window.equipmentInfoWin()' type="primary" class='input-item-button'>编辑管控内容</Button></p>`);
     }
     const infoWindow = new AMap.InfoWindow({
