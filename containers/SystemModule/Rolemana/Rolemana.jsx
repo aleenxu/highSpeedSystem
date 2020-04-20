@@ -360,7 +360,7 @@ class Rolemana extends React.Component {
                                 },
                               ],
                               initialValue: listItems && listItems.name,
-                            })(<Input onChange={(e) => { this.handleGroupMsgChange(e, 'name') }} />)}
+                            })(<Input maxLength={18} onChange={(e) => { this.handleGroupMsgChange(e, 'name') }} />)}
                           </Form.Item>
                         </div>
                       </div>
@@ -378,7 +378,7 @@ class Rolemana extends React.Component {
                                 },
                               ],
                               initialValue: listItems && listItems.remark,
-                            })(<Input onChange={(e) => { this.handleGroupMsgChange(e, 'remark') }} />)}
+                            })(<Input maxLength={50} onChange={(e) => { this.handleGroupMsgChange(e, 'remark') }} />)}
                           </Form.Item>
                         </div>
                       </div>

@@ -147,10 +147,16 @@ class Login extends React.Component {
     console.log(`checked = ${e.target.checked}`)
   }
   handleLogin = () => {
-    const { loginName, passWord } = this.loginParams
-    console.log(loginName, passWord);
-
-    if (loginName !== '' && passWord !== '') {
+    const { loginName, password } = this.loginParams
+    if (!loginName) {
+      message.warning('请输入用户名！')
+      return
+    }
+    if (!password) {
+      message.warning('请输入密码！')
+      return
+    }
+    if (loginName !== '' && password !== '') {
       getResponseDatas('post', this.loginUrl, this.getFormData(this.loginParams)).then((res) => {
         const { code, data, msg } = res.data
         if (code === 0) {
@@ -176,7 +182,7 @@ class Login extends React.Component {
         <div className={styles.cententBox}>
           <div className={styles.earthBox} />
           <div className={styles.loginBox}>
-            <h1 className={styles.title}>智慧高速管控系统</h1>
+            <h1 className={styles.title}>高速公路车路协同管控系统</h1>
             <div className={styles.login}>
               <div className={styles.loginTitle}>用户登录</div>
               <div className={styles.loginInput}><Input value={this.state.loginName} onChange={(e) => { this.handleUserName(e, 'loginName') }} placeholder="请输入用户名" prefix={<Icon className={styles.IconLogin} type="user" />} /></div>

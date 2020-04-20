@@ -379,9 +379,13 @@ class Institution extends React.Component {
                                   required: true,
                                   message: '请输入备注!',
                                 },
+                                {
+                                  max: 50,
+                                  message: '超出最大长度',
+                                },
                               ],
                               initialValue: listItems && listItems.remark,
-                            })(<Input onChange={(e) => { this.handleGroupMsgChange(e, 'remark') }} />)}
+                            })(<Input maxLength={50} onChange={(e) => { this.handleGroupMsgChange(e, 'remark') }} />)}
                           </Form.Item>
                         </div>
                         <div className={styles.Item}>

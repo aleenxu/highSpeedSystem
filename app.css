@@ -114,5 +114,7 @@ a {
     &:hover {
         display: block;
     }
-
 }
+:gloabl(.ant-modal-confirm-content) {
+    color: #fff !important;
+  }

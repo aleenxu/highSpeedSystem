@@ -206,8 +206,8 @@ class GMap extends React.Component {
      }); */
     this.loadPoint()
   }
-  loadPoint = () => {
-    getResponseDatas('get', this.mapPointUrl + '?searchKey=' + this.state.keyWords).then((res) => {
+  loadPoint = (deviceString) => { // 预案库通过不同类型来筛选地图点位
+    getResponseDatas('get', this.mapPointUrl + '?searchKey=' + this.state.keyWords + (deviceString ? `&controlTypes=${deviceString}` : '')).then((res) => {
       const jsonData = res.data
       // console.log(jsonData, '地图点的数据')
       if (jsonData.code == 200 && jsonData.data.length > 0) {
@@ -256,27 +256,34 @@ class GMap extends React.Component {
       mouseTool.rectangle({
         fillColor: '#00b0ff',
         strokeColor: '#80d8ff'
-        //同Polygon的Option设置
-      });
+        // 同Polygon的Option设置
+      })
     }
     window.drawRectangle = draw
-    //实时路况图层
+    // 实时路况图层
     var trafficLayer = new AMap.TileLayer.Traffic({
-      zIndex: 10
-    });
+      zIndex: 10,
+    })
     trafficLayer.setMap(window.map)
+
     this.createLayerGroup('leftModule0') // 交通拥堵选中复选框显示的图层
     this.createLayerGroup('leftModule1') // 道路施工选中复选框显示的图层
     this.createLayerGroup('leftModule2') // 极端天气选中复选框显示的图层
     this.createLayerGroup('leftModule3') // 交通事故选中复选框显示的图层
     this.createLayerGroup('leftModule4') // 主动管控选中复选框显示的图层
+    /* const LayerGroup = ['deviceTollGate', 'deviceFInfoBoard', 'deviceInfoBoard', 'deviceTurnBoard', 'carRoadBoard']
+    LayerGroup.forEach((item) => {
+      if (!window[item]) {
+        this.createLayerGroup(item)
+      }
+    }) */
     this.createLayerGroup('deviceTollGate') // map中收费站匝道灯图标显示的图层
     this.createLayerGroup('deviceFInfoBoard') // map中F情报版显示的图层
     this.createLayerGroup('deviceInfoBoard') // map中车道控制器情报版限速显示的图层
     this.createLayerGroup('deviceTurnBoard') // map中门架情报板显示的图层
     this.createLayerGroup('carRoadBoard') // map中车道控制器显示的图层
     this.createLayerGroup('lineLayers') // map中绘制线显示的图层
-    //输入提示
+    // 输入提示
     const autoOptions = {
       city: "泰州",
       input: "tipinput"
@@ -355,7 +362,7 @@ class GMap extends React.Component {
   drawMarkers = (positions, imgIcon, layer) => {
     const map = this.map
     let marker;
-    this.markers = []
+    this[layer] = []
     if (this.infoWindow) {
       this.infoWindow.close()
     }
@@ -372,9 +379,13 @@ class GMap extends React.Component {
           map.setZoomAndCenter(nowZoom, positions[i].latlng); //同时设置地图层级与中心点
           this.openInfoWin(map, positions[i])
         })
-        this.markers.push(marker)
+        this[layer].push(marker)
       }
-      window[layer].addLayer(this.markers) //把点添加到层组中
+
+      /* if (window[layer]) {
+        window[layer].removeLayers(this[layer])
+      } */
+      window[layer].addLayers(this[layer]) // 把点添加到层组中
       window[layer].setMap(map) // 层组渲染到地图中
     }
   }
@@ -400,7 +411,7 @@ class GMap extends React.Component {
       zIndex: 50,
     })
     window['lineLayers'].addLayer(polyline)
-    window['lineLayers'].setMap(map)
+    window['lineLayers'].setMap(this.map)
   }
   returnMapIcon = (index, item) => {
     switch (index) {
@@ -442,7 +453,7 @@ class GMap extends React.Component {
   openInfoWin = (map, dataItem) => {
     window.equipmentInfoWin = this.equipmentInfoWin
     const { detailsPopup, EventTagPopup } = this.state
-    console.log(map,dataItem, EventTagPopup, '弹层的相关信息')
+    console.log(map, dataItem, EventTagPopup, '弹层的相关信息')
     var info = [];
     info.push(`<div class='content_box'>`);
     info.push(`<div class='content_box_title'><h4>设备信息</h4>`);
