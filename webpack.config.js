@@ -11,13 +11,13 @@ const webpackConfig = {
   entry: ['babel-polyfill', './main.jsx'],
   output: {
     path: path.resolve(__dirname, 'build'),
-    filename: httpENV ? 'js/[name].js' : '[name].[Hash:8].js',
-    chunkFilename: httpENV ? 'js/[name].js' : '[name].[Hash:8].js',
+    filename: httpENV ? 'js/[name].[Hash:8].js' : '[name].[Hash:8].js',
+    chunkFilename: httpENV ? 'js/[name].[Hash:8].js' : '[name].[Hash:8].js',
   },
   module: {
     rules: [
       {
-        test: /\.(png|jpg|jpeg|mp4|gif|mov)$/,
+        test: /\.(png|jpg|jpeg|mp4|mp3|gif|mov)$/,
         use: [
           {
             loader: 'url-loader',
@@ -107,8 +107,8 @@ const webpackConfig = {
       hash: false,
     }),
     new MiniCssExtractPlugin({
-      filename: httpENV ? 'css/[name].css' : '[name].[hash].css',
-      chunkFilename: httpENV ? 'css/[id].css' : '[id].[hash].css',
+      filename: httpENV ? 'css/[name].[hash].css' : '[name].[hash].css',
+      chunkFilename: httpENV ? 'css/[id].[hash].css' : '[id].[hash].css',
     }),
     new CleanWebpackPlugin(),
   ],
@@ -117,7 +117,7 @@ if (!httpENV) { // 如果是开发环境
   webpackConfig.devServer = {
     proxy: {
       '/app': {
-        target: 'http://192.168.1.4:3000/',// http://221.13.10.30:20199/
+        target: 'http://192.168.1.124:20203/',
         // pathRewrite: { '^/api': '' },
         // changeOrigion: true, // 这个参数可以让target参数是域名。
         secure: false, // 设置后，可以接受运行在 HTTPS 上，可以使用无效证书的后端服务器

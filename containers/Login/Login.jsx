@@ -117,34 +117,29 @@ class Login extends React.Component {
       [name]: e.target.value,
     })
   }
-  handleCheckbox = (e) => {
-    //记住密码
+  handleCheckbox = (e) => { // 记住密码
     this.setState({
       rememberPassword: e.target.checked,
-    }, () => {
-      if (this.state.rememberPassword) {   //是否保存密码
-        let accountInfo = this.loginParams.loginName + '&' + this.encrypt(this.loginParams.password) + '&' + this.state.rememberPassword;
-
-        let Days = 1;  //cookie保存时间
-        let exp = new Date();
-        exp.setTime(exp.getTime() + Days * 24 * 60 * 60 * 1000);
-        document.cookie = 'accountInfo' + "=" + escape(accountInfo) + ";expires=" + exp.toGMTString();
-
-      } else {
-        let exp = new Date();
-        exp.setTime(exp.getTime() - 1);
-        let accountInfo = document.cookie
-        var cookie_pos = accountInfo.indexOf('accountInfo');
-
-        if (cookie_pos != -1) {
-          document.cookie = 'accountInfo' + "=" + ' ' + ";expires=" + exp.toGMTString();
-        }
-
-        this.loginParams.loginName = '';
-        this.loginParams.password = '';
-      }
     })
-    console.log(`checked = ${e.target.checked}`)
+  }
+  handlerememberPassword = () => {
+    if (this.state.rememberPassword) {   //是否保存密码
+      let accountInfo = this.loginParams.loginName + '&' + this.encrypt(this.loginParams.password) + '&' + this.state.rememberPassword;
+      let Days = 1;  //cookie保存时间
+      let exp = new Date();
+      exp.setTime(exp.getTime() + Days * 24 * 60 * 60 * 1000);
+      document.cookie = 'accountInfo' + "=" + escape(accountInfo) + ";expires=" + exp.toGMTString();
+    } else {
+      let exp = new Date();
+      exp.setTime(exp.getTime() - 1);
+      let accountInfo = document.cookie
+      var cookie_pos = accountInfo.indexOf('accountInfo');
+      if (cookie_pos != -1) {
+        document.cookie = 'accountInfo' + "=" + ' ' + ";expires=" + exp.toGMTString();
+      }
+      /* this.loginParams.loginName = '';
+      this.loginParams.password = ''; */
+    }
   }
   handleLogin = () => {
     const { loginName, password } = this.loginParams
@@ -156,6 +151,7 @@ class Login extends React.Component {
       message.warning('请输入密码！')
       return
     }
+    this.handlerememberPassword()
     if (loginName !== '' && password !== '') {
       getResponseDatas('post', this.loginUrl, this.getFormData(this.loginParams)).then((res) => {
         const { code, data, msg } = res.data

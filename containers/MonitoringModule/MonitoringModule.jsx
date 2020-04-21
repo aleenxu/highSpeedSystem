@@ -88,6 +88,7 @@ class MonitoringModule extends React.Component {
       hwayDirection: [],
       roadDirection: '',
       InfoWinPopup: false,
+      contingencyData: null, // 控制管控条件弹窗
     }
     // 修改管控时的参数
     this.controlDatas = {
@@ -183,6 +184,7 @@ class MonitoringModule extends React.Component {
     this.promptUrl = '/control/plan/add/no/prompt/' // {eventId} 添加不再提示案件'
     this.codeUrl = '/control/dict/code/list/device/function/code/0' // {codeType} 根据功能类型查询，下拉框字典'
     this.groupUrl = '/control/dict/code/list/device/control/type/group' // 根据设备类型区分出设备类型下的管控类型，下拉'
+    this.planFastUrl = '/control/plan/fast/publish/control/' // {eventTypeId}/{contingencyId}/{eventId} 交警快速发布管控方案（1.从地图页面提示框点入 2.从预案库点入）'
   }
 
   componentDidMount = () => {
@@ -232,6 +234,13 @@ class MonitoringModule extends React.Component {
 
     this.handleUrlAjax(this.codeUrl, 'deviceCodeList') // 查询管控方案详情方案五对应下拉
     this.handlelistDetail('deviceDetailList', 29)
+
+    // 预案库一键发布调管控方案详情页面
+    if (window.contingency) {
+      const { eventType, eventId } = window.contingency
+      this.handleViewControl(eventType, eventId)
+      window.contingency = null
+    }
   }
   mapLayerShowHide = (flag, name) => {
     if (flag) {
@@ -636,7 +645,16 @@ class MonitoringModule extends React.Component {
       const result = res.data
       if (result.code === 200) {
         const { eventType } = this.eventQuery
-        if (eventType) {
+        const contingencyData = []
+        result.data && result.data.forEach((item) => {
+          item.eventData.forEach((items) => {
+            if (items.contingencyId && items.controlStatusType === 0) {
+              contingencyData.push({ ...items, eventName: item.eventName })
+            }
+          })
+        })
+        this.setState({ contingencyData: contingencyData.length ? contingencyData : null })
+        if (eventType) { // 查询时候
           const { SidePopLeft } = this.state
           window.dataAll = SidePopLeft
           SidePopLeft && SidePopLeft.forEach((item, index) => {
@@ -645,11 +663,11 @@ class MonitoringModule extends React.Component {
               SidePopLeft[index].eventLength = result.data.length
             }
           })
-          // console.log(SidePopLeft);
           this.setState({ eventsPopup: null, SidePopLeft })
-        } else {
+        } else { // 正常加载
           this.setState({ eventsPopup: null, SidePopLeft: result.data })
         }
+
       }
     })
   }
@@ -1343,6 +1361,8 @@ class MonitoringModule extends React.Component {
     const { detailsPopup } = this.state
     getResponseDatas('get', this.getInfoUrl + eventType + '/' + eventId).then((res) => {
       const result = res.data
+      console.log(eventType, eventId)
+      debugger
       if (result.code === 200) {
         $('#searchBox').attr('style', 'transition:all .5s;')
         $('#roadStateBox').attr('style', 'transition:all .5s;')
@@ -1586,7 +1606,10 @@ class MonitoringModule extends React.Component {
               _this.handleUrlAjax(_this.groupStatusUrl, 'groupStatus')
               // 查询管控方案is
               _this.handleplanList()
-              _this.handledetai({ eventType: eventTypeId, eventId })
+              /* _this.handledetai({ eventType: eventTypeId, eventId }) */
+              if (operation == 'cancel') {
+                _this.setState({ detailsPopup: null })
+              }
               _this.setState({ reservePopup: null, endValue: null })
               if (_this.ChildPage && operation == 'cancel') {
                 _this.ChildPage.loadPoint() //调用子组件的handleAMap方法
@@ -1792,9 +1815,27 @@ class MonitoringModule extends React.Component {
       this.ChildPage.openInfoWin(window.map, items) //调用子组件的openInfoWin方法
     }
   }
+  handlecontingency = (index) => {
+    const { contingencyData } = this.state
+    contingencyData.splice(index, 1)
+    this.setState({ contingencyData: contingencyData.length ? contingencyData : null })
+  }
+  handleconplanFast = (data) => {
+    const { contingencyId, eventId, eventType } = data
+    getResponseDatas('post', this.planFastUrl + `${eventType}/${contingencyId}/${eventId}`).then((res) => {
+      const result = res.data
+      if (result.code === 200) {
+        message.success(result.message)
+        this.handleOverallSituation()
+        this.setState({ contingencyData: null, })
+      } else {
+        message.warning(result.message)
+      }
+    })
+  }
   render() {
     const {
-      InfoWinPopup, roadDirection, hwayDirection, MeasuresList, eventsPopup, groupType, planList, EventTagPopup, EventTagPopupTit, roadNumber, endValueTime, conditionList, boxSelect, flagClose, oldDevicesList,
+      contingencyData, InfoWinPopup, roadDirection, hwayDirection, MeasuresList, eventsPopup, groupType, planList, EventTagPopup, EventTagPopupTit, roadNumber, endValueTime, conditionList, boxSelect, flagClose, oldDevicesList,
       boxSelectList, hwayList, directionList, VIboardPopup, groupStatus, controlPopup, controlBtnFlag, controlBtnFlagText, detailsPopup, whethePopup, reservePopup, startValue, endValue, endOpen, SidePopLeft, detailsLatlng
       , controlTypes, eventTypes, deviceTypes, updatePoint, userLimit, TimeData, deviceCodeList, deviceDetailList, checkedListBox } = this.state
     return (
@@ -1911,6 +1952,34 @@ class MonitoringModule extends React.Component {
                           <div className={styles.RowBox}>
                             <div className={styles.left}>{index + 1}.{item.eventId}P方案-{item.secName}-{item.eventTypeName}</div>
                             <div className={styles.right}><Button onClick={() => { this.handleNoneTimeState(item, index) }} className={styles.Button}>不再提示</Button><Button className={styles.Button} onClick={() => { this.handleEndValueTimeState(item, index) }}>延时</Button></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )
+                })
+              }
+            </div>
+          </div> : null
+        }
+        {contingencyData ?
+          <div className={styles.MaskBox}>
+            <audio controls style='display:none' autoplay='true'>
+              <source src={require('../../ppxmu.mp3')} type="audio/mpeg" />
+            </audio>
+            <div className={styles.MaskCenterBox}>
+              {
+                contingencyData.map((item, index) => {
+                  return (
+                    <div className={classNames(styles.TimeData)} key={item.eventId + item.eventTypeId + item.contingencyId}>
+                      <div className={styles.Title}>{item.eventName}-{item.eventId}P-管控提醒<Icon className={styles.Close} onClick={() => { this.handlecontingency(index) }} type="close" /></div>
+                      <div className={styles.Content}>
+                        <div className={styles.ItemBox}>
+                          <div className={styles.RowBox}>
+                            <div className={styles.left}>{index + 1}.{item.roadSection}-{item.directionName}-{item.eventName}-已达到{item.contingencyName}预案的管控条件，是否立即管控？</div>
+                            <div className={styles.right}>
+                              <Button className={styles.Button} onClick={() => { this.handleconplanFast(item) }}>确认</Button>
+                              <Button className={styles.Button} onClick={() => { this.handlecontingency(index) }}>取消</Button></div>
                           </div>
                         </div>
                       </div>
@@ -2296,7 +2365,7 @@ class MonitoringModule extends React.Component {
                   <div className={styles.ItemBox}>
                     <span className={styles.ItemName}>设&nbsp;备&nbsp;编&nbsp;号&nbsp;:</span>
                     <div className={styles.ItemInput}>
-                      <Input  maxLength={50}placeholder='如 878bbced-a937-4159-8245-9dd4d3a20f2a' onChange={(e) => { this.handleInput(e, 'deviceCode', 'VIboardParameters') }} />
+                      <Input maxLength={50} placeholder='如 878bbced-a937-4159-8245-9dd4d3a20f2a' onChange={(e) => { this.handleInput(e, 'deviceCode', 'VIboardParameters') }} />
                     </div>
                   </div>
                   <div className={styles.ItemBox}>
@@ -2437,7 +2506,7 @@ class MonitoringModule extends React.Component {
                           <Option value="1">里程桩</Option>
                         </Select>
                         <Input maxLength={50} id="startInt" style={{ width: '34%', height: '32px', margin: '8px 1%' }} placeholder='起始桩号如:k1' defaultValue={this.controlDatas.startPileNum} onBlur={(e) => { this.handleInput(e, 'startPileNum', 'controlDatas'); this.handSecUrl() }} />
-                        <Input  maxLength={50} id='endInt' style={{ width: '34%', height: '32px', margin: '8px 1%' }} placeholder='结束桩号如:k30' defaultValue={this.controlDatas.endPileNum} onBlur={(e) => { this.handleInput(e, 'endPileNum', 'controlDatas'); this.handSecUrl() }} />
+                        <Input maxLength={50} id='endInt' style={{ width: '34%', height: '32px', margin: '8px 1%' }} placeholder='结束桩号如:k30' defaultValue={this.controlDatas.endPileNum} onBlur={(e) => { this.handleInput(e, 'endPileNum', 'controlDatas'); this.handSecUrl() }} />
                       </div>
                     </div>
                   </div>

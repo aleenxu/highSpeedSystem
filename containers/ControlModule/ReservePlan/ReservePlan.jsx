@@ -83,6 +83,7 @@ class ReservePlan extends React.Component {
       directionName: '',
       locationMode: '1',
       situation: 0, // 
+      planName: '',
     }
     this.mapStyles = {
       position: 'absolute',
@@ -115,6 +116,7 @@ class ReservePlan extends React.Component {
     this.getListPlanUrl = '/control/contingencyPlan/getDeviceNameList'//    根据设备ID和设备类型查询设备名称
     this.listByPageUrl = '/control/contingencyPlan/listByPage' // 分页查询设备
     this.groupUrl = '/control/dict/code/list/device/control/type/group' // 根据设备类型区分出设备类型下的管控类型，下拉'
+    this.controlUrl = '/control/plan/fast/publish/control/' // {eventTypeId}/{contingencyId}  交警快速发布管控方案（1.从地图页面提示框点入 2.从预案库点入）'
   }
   componentDidMount = () => {
     // 获取设备显示隐藏
@@ -187,7 +189,6 @@ class ReservePlan extends React.Component {
     })
   }
   handleInput = (e, name, type, data) => {
-
     if (type === 'publishPlanVO' && name === 'content') {
       this.publishPlanVO.list.forEach((item, index) => {
         if (item.deviceId === data.deviceId && data.deviceTypeId === item.deviceTypeId) {
@@ -544,14 +545,11 @@ class ReservePlan extends React.Component {
             })
           })
         }
-
       }
     })
-
   }
   handleBoxSelectList = () => {
     const { checkedListBox, detailsPopup, boxSelectList, oldDevicesList, EventTagPopupTit, deviceTypes } = this.state
-
     boxSelectList.forEach((item) => {
       checkedListBox.forEach((items) => {
         if (item.appendId === items) {
@@ -560,7 +558,6 @@ class ReservePlan extends React.Component {
               deviceTypes[index].device.push(item)
             }
           })
-
         }
       })
     })
@@ -685,9 +682,8 @@ class ReservePlan extends React.Component {
         message.warning('请选择设备控制类型')
         return
       }
-
     }
-    const paramStr = '?deviceControlType=' + deviceString.join() + '&controlEventType=' + eventType
+    const paramStr = '?deviceControlType=' + deviceString.join() + '&controlEventType=' + eventType + '&planName=' + this.controlDatas.planName
       + '&roadName=' + plan.roadName + '&direction=' + plan.directionId + '&locationMode=' + plan.locationMode
       + '&startEndPileNum=' + this.controlDatas.startPileNum + ' ' + this.controlDatas.endPileNum
     getResponseDatas('post', this.addPlanUrl + paramStr, newItemArr).then((res) => {
@@ -708,7 +704,6 @@ class ReservePlan extends React.Component {
   }
   handleUpdatePlan = (deviceList, plan) => {
     const { eventType, deviceString } = this.state
-
     const itemArr = []
     const newItemArr = []
     console.log(deviceList, this.controlDatas, 'look at here')
@@ -725,7 +720,6 @@ class ReservePlan extends React.Component {
         content: this.controlDatas.list[i].content
       })
     })
-
     for (let i = 0; i < this.controlDatas.list.length; i++) {
       // if (this.controlDatas.list[i].deviceTypeId === 1 || this.controlDatas.list[i].deviceTypeId === 2 ||  this.controlDatas.list[i].deviceTypeId === 4) {
       if (!this.controlDatas.list[i].content) {
@@ -738,7 +732,7 @@ class ReservePlan extends React.Component {
         return
       }
     }
-    const paramStr = '?deviceControlType=' + deviceString + '&controlEventType=' + eventType
+    const paramStr = '?deviceControlType=' + deviceString + '&controlEventType=' + eventType + '&planName=' + this.controlDatas.planName
       + '&roadName=' + plan.roadName + '&rowId=' + plan.rowId + '&direction=' + plan.directionId + '&locationMode=' + plan.locationMode
       + '&startEndPileNum=' + this.controlDatas.startPileNum + ' ' + this.controlDatas.endPileNum
     getResponseDatas('post', this.updatePlanUrl + paramStr, newItemArr).then((res) => {
@@ -764,7 +758,6 @@ class ReservePlan extends React.Component {
       onOk: () => {
         getResponseDatas('get', this.delPlanUrl, { planId: planId }).then((res) => {
           const result = res.data
-
           const arr = JSON.parse(JSON.stringify(this.state.listByPage))
           arr.data.splice(nowIndex, 1)
           this.setState({ listByPage: arr })
@@ -776,7 +769,6 @@ class ReservePlan extends React.Component {
         })
       }
     })
-
   }
   handleDetailPlan = (rowId) => {
     getResponseDatas('get', this.detailPlanUrl, { planId: rowId }).then((res) => {
@@ -786,7 +778,6 @@ class ReservePlan extends React.Component {
           deviceTypes: result.data,
           EventTagPopup: true,
         }, () => {
-
           console.log(this.state.deviceTypes, this.controlDatas, '修改时查看全部设备')
         })
         // this.handleUpdatePlan(result.data, plan)
@@ -827,6 +818,7 @@ class ReservePlan extends React.Component {
         directionName: '',
         locationMode: '1',
         situation: 0, // 
+        planName: '',
       }
       this.setState({
         EventTagPopup: true,
@@ -838,11 +830,12 @@ class ReservePlan extends React.Component {
       })
     } else if (name == 'update') {
       this.controlDatas = listByPage.data[nowIndex]
-      console.log(this.controlDatas, 'this.controlDatas')
       this.controlDatas.startPileNum = listByPage.data[nowIndex].startEndPileNum.split(" ")[0]
       this.controlDatas.endPileNum = listByPage.data[nowIndex].startEndPileNum.split(" ")[1]
       this.controlDatas.directionId = listByPage.data[nowIndex].direction
       this.controlDatas.directionName = listByPage.data[nowIndex].directionName
+      this.controlDatas.planName = listByPage.data[nowIndex].planName
+      console.log(this.controlDatas, 'this.controlDatas')
       this.setState({
         eventType: listByPage.data[nowIndex].controlEventType,
         deviceString: listByPage.data[nowIndex].deviceControlType,
@@ -874,6 +867,10 @@ class ReservePlan extends React.Component {
           })
         })
       })
+      if (!this.controlDatas.planName) {
+        message.warning('请填全预案名称')
+        return
+      }
       if (deviceAry.length === 0) {
         message.warning('请添加设备')
         return
@@ -955,6 +952,21 @@ class ReservePlan extends React.Component {
     console.log(deviceTypes, EventTagPopupTit);
     this.setState({ InfoWinPopup: null, deviceTypes, })
   }
+  handlepublish = (item) => {
+    const { controlEventType, rowId } = item
+    getResponseDatas('post', this.controlUrl + `${controlEventType}/${rowId}`).then((res) => {
+      const result = res.data
+      if (result.code === 200) {
+        window.contingency = { eventType: 5, eventId: result.data }
+        message.success('操作成功! 将要开始跳转页面！')
+        setTimeout(() => {
+          this.props.history.push('/monitoringmodule')
+        }, 1000)
+      } else {
+        message.warning(result.message)
+      }
+    })
+  }
   render() {
     const {
       InfoWinPopup, MeasuresList, listByPage, current, EventTagPopup, EventTagPopupTit, roadNumber, boxSelect, flagClose, boxSelectList, hwayList, controlBtnFlagText, reservePopup, detailsLatlng,
@@ -976,7 +988,7 @@ class ReservePlan extends React.Component {
             </div>
             <div className={styles.ContetList}>
               <div className={styles.listItems}>
-                <div className={styles.listTd} >预案ID</div>
+                <div className={styles.listTd} >预案名称</div>
                 <div className={styles.listTd} >道路名称</div>
                 <div className={styles.listTd} >路段名称</div>
                 <div className={styles.listTd} >管控事件类型</div>
@@ -987,14 +999,15 @@ class ReservePlan extends React.Component {
               {
                 !!listByPage && listByPage.data.map((item, index) => {
                   return (
-                    <div className={styles.listItems}>
-                      <div className={styles.listTd} ><span className={styles.roadName}>{item.rowId}</span></div>
+                    <div className={styles.listItems} key={item.roadName + item.rowId}>
+                      <div className={styles.listTd} ><span className={styles.roadName}>{item.planName}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.roadName}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.secName}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.controlEventTypeName}</span></div>
-                      <div className={styles.listTd} ><span className={styles.roadName}>{item.deviceControlTypeName}</span></div>
+                      <div className={styles.listTd} ><span className={styles.roadName} title={item.controlDeviceTypeName}>{item.controlDeviceTypeName}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.quoteNum}</span></div>
                       <div className={styles.listTd} >
+                        <Button className={styles.Button} onClick={() => { this.handlepublish(item) }}>一键发布</Button>
                         <Button className={styles.Button} onClick={() => { this.handlePlanPublic('update', index) }}>修&nbsp;&nbsp;改</Button>
                         <Button className={styles.Button} onClick={() => { this.handlePlanPublic('del', index) }}>删&nbsp;&nbsp;除</Button>
                       </div>
@@ -1138,7 +1151,7 @@ class ReservePlan extends React.Component {
                   <div className={style.Centent}>
                     <div className={style.ItemBox}>
                       <div className={style.ItemInput}>
-                        <Input maxLength={50} />
+                        <Input defaultValue={this.controlDatas.planName} onChange={(e) => { this.handleInput(e, 'planName', 'controlDatas') }} maxLength={50} />
                       </div>
                     </div>
                   </div>
