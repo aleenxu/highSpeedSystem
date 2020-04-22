@@ -29,7 +29,7 @@ class ScrollList extends React.Component {
       three: false,
       four: false,
       five: false,
-      userLimit:[],
+      userLimit: [],
     }
     this.eachartLength = 0
     this.ProgressLength = 0
@@ -306,7 +306,7 @@ class ScrollList extends React.Component {
   }
 
   render() {
-    const { typeNow, listType, listTit, listTitle, ProgressData, data, eachartData, sideachart,userLimit } = this.state
+    const { typeNow, listType, listTit, listTitle, ProgressData, data, eachartData, sideachart, userLimit } = this.state
     return (
       <div className={styles.scrollBox}>
         {listType === '1' &&
@@ -430,7 +430,7 @@ class ScrollList extends React.Component {
               <Panel header={listTit} key="2" extra={this.genExtra(listTitle, 'Control')}>
                 <div className={styles.listBox}>
                   {listTitle &&
-                    <div className={styles.listItem}>
+                    <div className={classNames(styles.listItem)}>
                       <span className={styles.tit}>{listTitle.id}</span>
                       <span className={styles.tit}>{listTitle.roadName}</span>
                       <span className={styles.tit}>{listTitle.upTime}</span>
@@ -439,17 +439,19 @@ class ScrollList extends React.Component {
                       <span className={styles.tit}>{listTitle.state}</span>
                     </div>
                   }
-                  {data.length > 0 ? data.map((item, index) => (
-                    <div key={item.eventId + item.roadName} className={classNames(styles.listItem, 'listItem')} onClick={(e) => { this.handleEventPopup(e, 'controldet', item) }} >
-                      <span>{item.roadName}</span>
-                      <span>{item.startPileNum}</span>
-                      <span>{item.directionName}</span>
-                      <span>{item.endTime ? this.formatDuring(new Date(item.endTime).getTime() - new Date().getTime()) : item.planStatusName}</span>
-                      <span>{item.endTime ? this.formatDuring(new Date(item.endTime).getTime() - new Date(item.startTime).getTime()) : item.planStatusName}</span>
-                      <span style={{ color: this.getColor(item.status) }}>{item.planStatusName}</span>
-                    </div>
-                  )) : <p className={styles.PanelItemNone}>暂无数据</p>
-                  }
+                  <div style={{maxHeight:'calc(100vh - 385px)',overflow:'auto'}}>
+                    {data.length > 0 ? data.map((item, index) => (
+                      <div key={item.eventId + item.roadName} className={classNames(styles.listItem, 'listItem')} onClick={(e) => { this.handleEventPopup(e, 'controldet', item) }} >
+                        <span>{item.roadName}</span>
+                        <span>{item.startPileNum}</span>
+                        <span>{item.directionName}</span>
+                        <span>{item.endTime ? this.formatDuring(new Date(item.endTime).getTime() - new Date().getTime()) : item.planStatusName}</span>
+                        <span>{item.endTime ? this.formatDuring(new Date(item.endTime).getTime() - new Date(item.startTime).getTime()) : item.planStatusName}</span>
+                        <span style={{ color: this.getColor(item.status) }}>{item.planStatusName}</span>
+                      </div>
+                    )) : <p className={styles.PanelItemNone}>暂无数据</p>
+                    }
+                  </div>
                 </div>
               </Panel>
             </Collapse>

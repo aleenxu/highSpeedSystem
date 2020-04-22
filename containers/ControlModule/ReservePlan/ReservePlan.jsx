@@ -347,7 +347,6 @@ class ReservePlan extends React.Component {
   }
   // 获取所有框选设备
   getDevice = (item) => {
-
     const existsDevices = []
     const listDevices = []
     if (item && item.devices.length > 0) {
@@ -646,14 +645,15 @@ class ReservePlan extends React.Component {
     this.setState({ deviceTypes })
   }
   handleEventTag = (boolean, e) => {
-
+    if (!boolean) {
+      this.handleListByPage()
+    }
     this.setState({
       EventTagPopup: boolean,
     })
   }
   handleAddPlan = (deviceList, plan) => {
     const { eventType, deviceString } = this.state
-
     const itemArr = []
     const newItemArr = []
     console.log(deviceList, this.controlDatas, 'look at here')
@@ -796,7 +796,6 @@ class ReservePlan extends React.Component {
     getResponseDatas('get', this.listByPageUrl, this.Parameters).then((res) => {
       const result = res.data
       if (result.code === 200) {
-
         this.setState({ listByPage: result.data, current: Number(this.Parameters.pageNo) }, () => {
           console.log(this.state.listByPage, '看结构')
         })
@@ -1210,7 +1209,7 @@ class ReservePlan extends React.Component {
                     </div>
                   </div>
                   <div className={style.Title} style={{ background: '#132334', lineHeight: '20px', height: '20px', fontSize: '12px' }}>选择交通管控设施</div>
-                  <div className={style.Centent}>
+                  <div className={style.Centent} style={{ maxHeight: '245px' }}>
                     <Collapse
                       defaultActiveKey={[1]}
                       expandIconPosition="right"

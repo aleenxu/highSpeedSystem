@@ -13,7 +13,7 @@
 :global(.ant-collapse) {
   background: unset;
   border: unset;
-  border-bottom: 1px solid #ccc;
+  /* border-bottom: 1px solid #ccc; */
   color: #fff;
   border-radius: 0;
   position: relative;
@@ -104,7 +104,7 @@
       background: #0d2645;
     }
   }
-  .listItem:first-child {
+  >.listItem:first-child {
     border-bottom: unset;
     &:hover {
       background: unset;

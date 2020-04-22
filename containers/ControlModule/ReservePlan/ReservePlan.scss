@@ -496,9 +496,9 @@
 }
 :global(.ant-collapse) {
   width: 100%;
-  border: none !important;
-  max-height: calc(100% - 45px);
-  overflow-y: auto;
+  /* border: none !important; */
+  /* max-height: calc(100% - 45px);
+  overflow-y: auto; */
 }
 :global(.ant-collapse > .ant-collapse-item > .ant-collapse-header) {
   background: rgba(19, 27, 37, 0.8);
@@ -524,9 +524,9 @@
     font-size: 18px;
   }
 }
-:global(.ant-collapse > .ant-collapse-item) {
+/* :global(.ant-collapse > .ant-collapse-item) {
   border: none !important;
-}
+} */
 .EventTagging {
   position: fixed;
   top: 55px;
@@ -550,7 +550,7 @@
     padding-bottom: 30px;
     overflow-y: auto;
     :global(.ant-collapse) {
-      border-bottom: none;
+      /* border-bottom: none; */
       background-color: transparent;
     }
     .Centent {

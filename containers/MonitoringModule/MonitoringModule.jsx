@@ -90,6 +90,7 @@ class MonitoringModule extends React.Component {
       roadDirection: '',
       InfoWinPopup: false,
       contingencyData: null, // 控制管控条件弹窗
+      showFrameData: null, // 控制待审核条件弹窗
     }
     // 修改管控时的参数
     this.controlDatas = {
@@ -190,12 +191,7 @@ class MonitoringModule extends React.Component {
 
   componentDidMount = () => {
     // 获取用户权限
-    const limitArr = JSON.parse(localStorage.getItem('userLimit')) || []
-    const userLimit = []
-    limitArr.forEach((item) => {
-      userLimit.push(item.id)
-    })
-    this.setState({ userLimit })
+    this.handlelimitArr()
     // // 获取设备显示隐藏
     // this.popoverContent = (
     //   <div>
@@ -206,14 +202,7 @@ class MonitoringModule extends React.Component {
     //     <p className={this.state.carRoadBoard ? styles.true : ''} onClick={() => { this.mapLayerShowHide(!this.state.carRoadBoard, 'carRoadBoard') }}>车道控制器</p>
     //   </div>
     // )
-    // 查询左侧列表数据
-    this.handleEventList()
-    // 查询饼图数据
-    this.handlegroupType()
-    // 查询右侧柱状图
-    this.handleUrlAjax(this.groupStatusUrl, 'groupStatus')
-    // 查询管控方案
-    this.handleplanList()
+    this.handleOverallSituation()
     // 高速下拉
     this.handleUrlAjax(this.hwayUrl, 'hwayList')
     // 方向下拉
@@ -228,36 +217,14 @@ class MonitoringModule extends React.Component {
     this.getDeviceEventList()
     // 主动管控里的修改 高速、方向、桩号的起始和结束
     // this.handSecUrl()
-    this.timeInterval = setInterval(() => {
-      this.handleTimeData()
-    }, 60000)
     this.handlesetTimeOut(false)
-
     this.handleUrlAjax(this.codeUrl, 'deviceCodeList') // 查询管控方案详情方案五对应下拉
     this.handlelistDetail('deviceDetailList', 29)
-
     // 预案库一键发布调管控方案详情页面
     if (window.contingency) {
       const { eventType, eventId } = window.contingency
       this.handleViewControl(eventType, eventId)
       window.contingency = null
-    }
-  }
-  mapLayerShowHide = (flag, name) => {
-    if (flag) {
-      this.setState({
-        [name]: flag,
-      }, () => {
-        window[name].show()
-      })
-
-    } else {
-      this.setState({
-        [name]: flag,
-      }, () => {
-        window[name].hide()
-      })
-
     }
   }
   componentWillUnmount = () => {
@@ -424,6 +391,35 @@ class MonitoringModule extends React.Component {
       }}
     />
   )
+  mapLayerShowHide = (flag, name) => {
+    if (flag) {
+      this.setState({
+        [name]: flag,
+      }, () => {
+        window[name].show()
+      })
+    } else {
+      this.setState({
+        [name]: flag,
+      }, () => {
+        window[name].hide()
+      })
+    }
+  }
+  handlelimitArr = () => {
+    const limitArr = JSON.parse(localStorage.getItem('userLimit')) || []
+    const userLimit = []
+    limitArr.forEach((item) => {
+      userLimit.push(item.id)
+    })
+    // 有发布权限的用户才可以有延时操作
+    if (userLimit.includes(100)) {
+      this.timeInterval = setInterval(() => {
+        this.handleTimeData()
+      }, 60000)
+    }
+    this.setState({ userLimit })
+  }
   genExtraAdd = (item, data) => (
     <Icon
       type="plus"
@@ -646,24 +642,29 @@ class MonitoringModule extends React.Component {
       const result = res.data
       if (result.code === 200) {
         const { eventType } = this.eventQuery
-        const contingencyData = []
-        result.data && result.data.forEach((item) => {
-          item.eventData.forEach((items) => {
-            if (items.contingencyId && items.controlStatusType === 0) {
-              contingencyData.push({ ...items, eventName: item.eventName })
-            }
+        const { userLimit } = this.state
+        if (userLimit.includes(100) && result.data) { // 具有发布权限才会进行执行管控弹窗
+          const contingencyData = []
+          result.data.forEach((item) => {
+            item.eventData.forEach((items) => {
+              if (items.contingencyId && items.controlStatusType === 0) {
+                contingencyData.push({ ...items, eventName: item.eventName })
+              }
+            })
           })
-        })
-        this.setState({ contingencyData: contingencyData.length ? contingencyData : null })
+          this.setState({ contingencyData: contingencyData.length ? contingencyData : null })
+        }
         if (eventType) { // 查询时候
           const { SidePopLeft } = this.state
           window.dataAll = SidePopLeft
-          SidePopLeft && SidePopLeft.forEach((item, index) => {
-            if (item.eventType === eventType) {
-              SidePopLeft[index].eventData = result.data
-              SidePopLeft[index].eventLength = result.data.length
-            }
-          })
+          if (SidePopLeft) {
+            SidePopLeft.forEach((item, index) => {
+              if (item.eventType === eventType) {
+                SidePopLeft[index].eventData = result.data
+                SidePopLeft[index].eventLength = result.data.length
+              }
+            })
+          }
           this.setState({ eventsPopup: null, SidePopLeft })
         } else { // 正常加载
           this.setState({ eventsPopup: null, SidePopLeft: result.data })
@@ -687,6 +688,16 @@ class MonitoringModule extends React.Component {
     getResponseDatas('get', this.planListUrl + this.planStatus).then((res) => {
       const result = res.data
       if (result.code === 200) {
+        const { userLimit } = this.state
+        if (this.planStatus == 0 && userLimit.includes(101)) {
+          const showFrameData = []
+          result.data.forEach((item) => {
+            if (item.status === 2) {
+              showFrameData.push(item)
+            }
+          })
+          this.setState({ showFrameData: showFrameData.length ? showFrameData : null })
+        }
         this.setState({ planList: result.data, controlPopup: false })
         this.handleEventPopup('Control', false)
       }
@@ -694,7 +705,6 @@ class MonitoringModule extends React.Component {
   }
   // 框选按钮点击
   controlBtnClick = (event) => {
-    debugger
     const _this = this;
     const textFlag = $(event.target).text() === '框选设备'
     this.setState({
@@ -1101,22 +1111,12 @@ class MonitoringModule extends React.Component {
         statusName: "待发布",
         controlDes: this.getDate() + ' ' + this.controlDatas.roadName.split(' ')[1] + this.controlDatas.directionName + this.controlDatas.startPileNum + '米处发生' + (this.state.eventTypes[this.state.eventType - 1].name + this.controlDatas.eventType == 3 ? (',能见度为' + this.controlDatas.situation + 'm,影响道路长度为' + this.controlDatas.eventLength + 'm') : (',平均车速为' + this.controlDatas.situation + 'km/h,拥堵路段长度为' + this.controlDatas.eventLength + 'm')),
       }
-      console.log(this.reservePopup);
-      debugger
       this.publishPlanVO = JSON.parse(JSON.stringify(this.reservePopup))
-      // message.success('发起管控方案成功！')
       // 关闭主动管控
       that.handleEventTag(false)
       // 关闭右侧详情
       that.handleEventPopup('Details', false)
-      // 查询左侧列表数据
-      this.handleEventList()
-      // 查询饼图数据
-      this.handlegroupType()
-      // 查询右侧柱状图
-      this.handleUrlAjax(this.groupStatusUrl, 'groupStatus')
-      // 查询管控方案
-      this.handleplanList()
+      this.handleOverallSituation()
       // 获取方案详情
       // that.handleViewControl(that.controlDatas.eventType, that.controlDatas.eventId)
       this.setState({
@@ -1178,14 +1178,7 @@ class MonitoringModule extends React.Component {
       that.handleEventTag(false)
       // 关闭右侧详情
       that.handleEventPopup('Details', false)
-      // 查询左侧列表数据
-      this.handleEventList()
-      // 查询饼图数据
-      this.handlegroupType()
-      // 查询右侧柱状图
-      this.handleUrlAjax(this.groupStatusUrl, 'groupStatus')
-      // 查询管控方案
-      this.handleplanList()
+      that.handleOverallSituation()
       // 获取方案详情
       // that.handleViewControl(that.controlDatas.eventType, that.controlDatas.eventId)
       this.setState({
@@ -1249,16 +1242,9 @@ class MonitoringModule extends React.Component {
       const result = res.data
       if (result.code === 200) {
         message.success(result.message)
-        // 查询左侧列表数据
-        this.handleEventList()
-        // 查询饼图数据
-        this.handlegroupType()
-        // 查询右侧柱状图
-        this.handleUrlAjax(this.groupStatusUrl, 'groupStatus')
-        // 查询管控方案
-        this.handleplanList()
+        this.handleOverallSituation()
         if (this.ChildPage) {
-          this.ChildPage.loadPoint() //调用子组件的handleAMap方法
+          this.ChildPage.loadPoint() // 调用子组件的handleAMap方法
         }
         this.setState({ reservePopup: null })
       } else {
@@ -1346,10 +1332,7 @@ class MonitoringModule extends React.Component {
       if (result.code === 200) {
         that.handledetai({ eventType, eventId })
         /*   message.success('发起管控方案成功！') */
-        that.handleEventList()
-        that.handlegroupType()
-        that.handleUrlAjax(that.groupStatusUrl, 'groupStatus')
-        that.handleplanList()
+        that.handleOverallSituation()
         // 获取方案详情
         that.handleViewControl(eventType, eventId)
         /* that.handleEventPopup('Reserve', true) */
@@ -1358,16 +1341,12 @@ class MonitoringModule extends React.Component {
       }
     })
   }
-  handleViewControl = (eventType, eventId) => {
-    const { detailsPopup } = this.state
+  handleViewControl = (eventType, eventId, index) => {
     getResponseDatas('get', this.getInfoUrl + eventType + '/' + eventId).then((res) => {
       const result = res.data
-      console.log(eventType, eventId)
-      debugger
       if (result.code === 200) {
         $('#searchBox').attr('style', 'transition:all .5s;')
         $('#roadStateBox').attr('style', 'transition:all .5s;')
-        /* this.detailsPopupData = detailsPopup */
         const list = []
         result.data.devices.forEach((item) => {
           item.device.forEach((items) => {
@@ -1392,6 +1371,9 @@ class MonitoringModule extends React.Component {
         this.handleUrlAjax(this.groupUrl, 'MeasuresList')
         this.setState({ reservePopup: result.data, /* detailsPopup: null, */ startValue: this.publishPlanVO.startTime, endValue: this.publishPlanVO.endTime }, () => {
           // console.log(this.state.reservePopup, '要这个结构')
+          if (index != null) {
+            this.handleshowFrame(index)
+          }
         })
       }
     })
@@ -1515,14 +1497,7 @@ class MonitoringModule extends React.Component {
       const result = res.data
       if (result.code === 200) {
         /* this.detailsPopupData = '' // 清空方案详情 */
-        // 查询左侧列表数据
-        this.handleEventList()
-        // 查询饼图数据
-        this.handlegroupType()
-        // 查询右侧柱状图
-        this.handleUrlAjax(this.groupStatusUrl, 'groupStatus')
-        // 查询管控方案
-        this.handleplanList()
+        this.handleOverallSituation()
         this.handledetai({ eventType: reservePopup.eventTypeId, eventId: reservePopup.eventId })
         if (this.ChildPage) {
           this.ChildPage.loadPoint() //调用子组件的handleAMap方法
@@ -1599,14 +1574,7 @@ class MonitoringModule extends React.Component {
             const result = res.data
             if (result.code === 200) {
               /*  this.detailsPopupData = '' // 清空方案详情 */
-              // 查询左侧列表数据
-              _this.handleEventList()
-              // 查询饼图数据
-              _this.handlegroupType()
-              // 查询右侧柱状图
-              _this.handleUrlAjax(_this.groupStatusUrl, 'groupStatus')
-              // 查询管控方案is
-              _this.handleplanList()
+              _this.handleOverallSituation()
               /* _this.handledetai({ eventType: eventTypeId, eventId }) */
               if (operation == 'cancel') {
                 _this.setState({ detailsPopup: null })
@@ -1657,7 +1625,6 @@ class MonitoringModule extends React.Component {
   handleTimeData = () => {
     getResponseDatas('get', this.timeoutUrl).then((res) => {
       const result = res.data
-      // console.log(result)
       if (result.code === 200 && result.data.length) {
         this.setState({ TimeData: result.data })
         setTimeout(() => {
@@ -1726,11 +1693,21 @@ class MonitoringModule extends React.Component {
       this.timeTimeout = null
     }
     if (!value) {
-      this.timeTimeout = setTimeout(this.handleOverallSituation, 60000)
+      this.timeTimeout = setTimeout(() => {
+        this.handleOverallSituation() // 页面初始加载数据
+        // 开始下一次执行
+        this.handlesetTimeOut()
+      }, 60000)
     }
   }
 
   handleOverallSituation = () => {
+    // 查询查全部
+    this.planStatus = 0
+    this.eventQuery = {
+      eventType: '',
+      searchKey: '',
+    }
     // 查询左侧列表数据
     this.handleEventList()
     // 查询饼图数据
@@ -1739,9 +1716,6 @@ class MonitoringModule extends React.Component {
     this.handleUrlAjax(this.groupStatusUrl, 'groupStatus')
     // 查询管控方案
     this.handleplanList()
-    /* this.handleTimeData() */
-    // 开始下一次执行
-    this.handlesetTimeOut()
   }
   equipmentInfoWin = (value) => {
     if (value) {
@@ -1821,6 +1795,11 @@ class MonitoringModule extends React.Component {
     contingencyData.splice(index, 1)
     this.setState({ contingencyData: contingencyData.length ? contingencyData : null })
   }
+  handleshowFrame = (index) => {
+    const { showFrameData } = this.state
+    showFrameData.splice(index, 1)
+    this.setState({ showFrameData: showFrameData.length ? showFrameData : null })
+  }
   handleconplanFast = (data) => {
     const { contingencyId, eventId, eventType } = data
     getResponseDatas('post', this.planFastUrl + `${eventType}/${contingencyId}/${eventId}`).then((res) => {
@@ -1828,6 +1807,7 @@ class MonitoringModule extends React.Component {
       if (result.code === 200) {
         message.success(result.message)
         this.handleOverallSituation()
+        this.handleViewControl(eventType, eventId)
         this.setState({ contingencyData: null, })
       } else {
         message.warning(result.message)
@@ -1836,7 +1816,7 @@ class MonitoringModule extends React.Component {
   }
   render() {
     const {
-      contingencyData, InfoWinPopup, roadDirection, hwayDirection, MeasuresList, eventsPopup, groupType, planList, EventTagPopup, EventTagPopupTit, roadNumber, endValueTime, conditionList, boxSelect, flagClose, oldDevicesList,
+      showFrameData, contingencyData, InfoWinPopup, roadDirection, hwayDirection, MeasuresList, eventsPopup, groupType, planList, EventTagPopup, EventTagPopupTit, roadNumber, endValueTime, conditionList, boxSelect, flagClose, oldDevicesList,
       boxSelectList, hwayList, directionList, VIboardPopup, groupStatus, controlPopup, controlBtnFlag, controlBtnFlagText, detailsPopup, whethePopup, reservePopup, startValue, endValue, endOpen, SidePopLeft, detailsLatlng
       , controlTypes, eventTypes, deviceTypes, updatePoint, userLimit, TimeData, deviceCodeList, deviceDetailList, checkedListBox } = this.state
     return (
@@ -1947,11 +1927,11 @@ class MonitoringModule extends React.Component {
                 TimeData.map((item, index) => {
                   return (
                     <div className={classNames(styles.TimeData)} key={item.eventId + item.eventTypeId}>
-                      <div className={styles.Title}>{item.eventId}P管控方案超时提醒<Icon className={styles.Close} onClick={() => { this.handleTimeDataState(index) }} type="close" /></div>
+                      <div className={styles.Title}>{item.eventTypeName}-{item.eventId}P-管控方案超时提醒<Icon className={styles.Close} onClick={() => { this.handleTimeDataState(index) }} type="close" /></div>
                       <div className={styles.Content}>
                         <div className={styles.ItemBox}>
                           <div className={styles.RowBox}>
-                            <div className={styles.left}>{index + 1}.{item.eventId}P方案-{item.secName}-{item.eventTypeName}</div>
+                            <div className={styles.left}>{item.eventId}P方案-{item.secName}-{item.eventTypeName}方案将要超时,请及时操作!</div>
                             <div className={styles.right}><Button onClick={() => { this.handleNoneTimeState(item, index) }} className={styles.Button}>不再提示</Button><Button className={styles.Button} onClick={() => { this.handleEndValueTimeState(item, index) }}>延时</Button></div>
                           </div>
                         </div>
@@ -1963,24 +1943,52 @@ class MonitoringModule extends React.Component {
             </div>
           </div> : null
         }
+        {
+          showFrameData ?
+            <div className={styles.MaskBox}>
+              <audio autoPlay >
+                <source src={audioSrc} type="audio/mpeg" />
+              </audio>
+              <div className={styles.MaskCenterBox}>
+                {
+                  showFrameData.map((item, index) => {
+                    return (
+                      <div className={classNames(styles.TimeData)} key={item.eventId + item.eventTypeId + item.contingencyId}>
+                        <div className={styles.Title}>{item.eventTypeName}-{item.eventId}-待审核提醒<Icon className={styles.Close} onClick={() => { this.handleshowFrame(index) }} type="close" /></div>
+                        <div className={styles.Content}>
+                          <div className={styles.ItemBox}>
+                            <div className={styles.RowBox}>
+                              <div className={styles.left}>{item.secName}-{item.directionName}-{item.eventTypeName}-待审核,是否立即审核?</div>
+                              <div className={styles.right}>
+                                <Button className={styles.Button} onClick={() => { this.handleViewControl(item.eventTypeId, item.eventId, index) }}>查看</Button>
+                                <Button className={styles.Button} onClick={() => { this.handleshowFrame(index) }}>取消</Button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )
+                  })
+                }
+              </div>
+            </div> : null
+        }
         {contingencyData ?
           <div className={styles.MaskBox}>
-            {/* <audio autoPlay key={new Date().getTime()}>
-              <source src={audioSrc} type="audio/mpeg" />
-            </audio> */}
             <div className={styles.MaskCenterBox}>
               {
                 contingencyData.map((item, index) => {
                   return (
                     <div className={classNames(styles.TimeData)} key={item.eventId + item.eventTypeId + item.contingencyId}>
-                      <div className={styles.Title}>{item.eventName}-{item.eventId}P-管控提醒<Icon className={styles.Close} onClick={() => { this.handlecontingency(index) }} type="close" /></div>
+                      <div className={styles.Title}>{item.eventName}-{item.eventId}-管控提醒<Icon className={styles.Close} onClick={() => { this.handlecontingency(index) }} type="close" /></div>
                       <div className={styles.Content}>
                         <div className={styles.ItemBox}>
                           <div className={styles.RowBox}>
-                            <div className={styles.left}>{index + 1}.{item.roadSection}-{item.directionName}-{item.eventName}-已达到{item.contingencyName}预案的管控条件，是否立即管控？</div>
+                            <div className={styles.left}>{item.roadSection}-{item.directionName}-{item.eventName}-已达到{item.contingencyName}预案的管控条件，是否立即管控?</div>
                             <div className={styles.right}>
                               <Button className={styles.Button} onClick={() => { this.handleconplanFast(item) }}>确认</Button>
-                              <Button className={styles.Button} onClick={() => { this.handlecontingency(index) }}>取消</Button></div>
+                              <Button className={styles.Button} onClick={() => { this.handlecontingency(index) }}>取消</Button>
+                            </div>
                           </div>
                         </div>
                       </div>
