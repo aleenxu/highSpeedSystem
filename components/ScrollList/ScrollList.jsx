@@ -11,12 +11,6 @@ import iconWeather from '../../imgs/icon_weather.png'
 import iconAccidents from '../../imgs/icon_accidents.png'
 import iconTagging from '../../imgs/icon_tagging.png'
 const { Panel } = Collapse
-// 获取用户权限
-const limitArr = JSON.parse(localStorage.getItem('userLimit')) || []
-const userLimit = []
-limitArr.forEach((item) => {
-  userLimit.push(item.id)
-})
 class ScrollList extends React.Component {
   constructor(props) {
     super(props)
@@ -35,12 +29,19 @@ class ScrollList extends React.Component {
       three: false,
       four: false,
       five: false,
+      userLimit:[],
     }
     this.eachartLength = 0
     this.ProgressLength = 0
     this.examineLength = 0
   }
   componentDidMount = () => {
+    const limitArr = JSON.parse(localStorage.getItem('userLimit')) || []
+    const userLimit = []
+    limitArr.forEach((item) => {
+      userLimit.push(item.id)
+    })
+    this.setState({ userLimit })
     const { eachartData, ProgressData } = this.props
     if (eachartData) {
       const data = []
@@ -305,7 +306,7 @@ class ScrollList extends React.Component {
   }
 
   render() {
-    const { typeNow, listType, listTit, listTitle, ProgressData, data, eachartData, sideachart } = this.state
+    const { typeNow, listType, listTit, listTitle, ProgressData, data, eachartData, sideachart,userLimit } = this.state
     return (
       <div className={styles.scrollBox}>
         {listType === '1' &&
@@ -443,8 +444,8 @@ class ScrollList extends React.Component {
                       <span>{item.roadName}</span>
                       <span>{item.startPileNum}</span>
                       <span>{item.directionName}</span>
-                      <span>{item.endTime ? this.formatDuring(new Date(item.endTime).getTime() - new Date(item.startTime).getTime()) : item.planStatusName}</span>
                       <span>{item.endTime ? this.formatDuring(new Date(item.endTime).getTime() - new Date().getTime()) : item.planStatusName}</span>
+                      <span>{item.endTime ? this.formatDuring(new Date(item.endTime).getTime() - new Date(item.startTime).getTime()) : item.planStatusName}</span>
                       <span style={{ color: this.getColor(item.status) }}>{item.planStatusName}</span>
                     </div>
                   )) : <p className={styles.PanelItemNone}>暂无数据</p>

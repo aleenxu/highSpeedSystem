@@ -158,10 +158,6 @@ class Login extends React.Component {
         if (code === 0) {
           this.getUserLimit(data.id)
           localStorage.setItem('userInfo', JSON.stringify(data))
-          this.loginParams = {
-            loginName: '',
-            passWord: '',
-          }
         } else {
           if (code === 1000) {
             message.warning('系统异常,请联系管理员')

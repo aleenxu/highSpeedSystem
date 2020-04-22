@@ -5,6 +5,7 @@ import SidePop from '../../components/SidePop/SidePop'
 import styles from './MonitoringModule.scss'
 import classNames from 'classnames'
 import 'animate.css'
+import audioSrc from '../../imgs/ppxmu.mp3'
 import getResponseDatas from '../../plugs/HttpData/getResponseData'
 import drags from '../../plugs/drags'
 import { Input, Checkbox, Radio, Icon, Popover, Switch, DatePicker, Collapse, Select, Modal, message, Button } from 'antd'
@@ -1964,9 +1965,9 @@ class MonitoringModule extends React.Component {
         }
         {contingencyData ?
           <div className={styles.MaskBox}>
-            <audio controls style='display:none' autoplay='true'>
-              <source src={require('../../ppxmu.mp3')} type="audio/mpeg" />
-            </audio>
+            {/* <audio autoPlay key={new Date().getTime()}>
+              <source src={audioSrc} type="audio/mpeg" />
+            </audio> */}
             <div className={styles.MaskCenterBox}>
               {
                 contingencyData.map((item, index) => {

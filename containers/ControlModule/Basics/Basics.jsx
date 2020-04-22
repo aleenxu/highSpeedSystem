@@ -235,7 +235,7 @@ class Basics extends React.Component {
               {
                 !!listByPage && listByPage.data.map((item) => {
                   return (
-                    <div className={styles.listItems}>
+                    <div className={styles.listItems} key={item.eventTypeName + item.eventId}>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.eventId}P</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.eventTypeName}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.controlTypeName}</span></div>
@@ -247,7 +247,7 @@ class Basics extends React.Component {
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.publishTime && item.endTime ? this.formatDuring(new Date(item.endTime).getTime() - new Date(item.publishTime).getTime()) : '-'}</span></div>
                       <div className={styles.listTd} style={{ flex: 1.8 }}>
                         <Button className={styles.Button} onClick={() => { this.handlehistory(item) }}>管控详情</Button>
-                        <Button className={styles.Button} onClick={() => { this.handlecontrol(item) }}>添加至预案库</Button>
+                        <Button className={item.publishTime ? styles.Button : styles.Buttondeb} disabled={!item.publishTime} onClick={() => { this.handlecontrol(item) }}>添加至预案库</Button>
                       </div>
                     </div>
                   )
@@ -313,7 +313,7 @@ class Basics extends React.Component {
                           operationData && operationData.map((item, index) => {
                             return (
                               <div className={styles.listItems}>
-                                <div className={styles.listTd} >{index+1}</div>
+                                <div className={styles.listTd} >{index + 1}</div>
                                 <div className={styles.listTd} >{item.operationUser}</div>
                                 <div className={styles.listTd} >{item.operationName}</div>
                                 <div className={styles.listTd} >{item.operationTime && item.endTime ? this.formatDuring(new Date(item.endTime).getTime() - new Date(item.operationTime).getTime()) : '-'}</div>
