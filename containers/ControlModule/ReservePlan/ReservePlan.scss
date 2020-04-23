@@ -494,17 +494,18 @@
     }
   }
 }
-:global(.ant-collapse) {
-  width: 100%;
-  /* border: none !important; */
-  /* max-height: calc(100% - 45px);
-  overflow-y: auto; */
+.EventTagging {
+  :global(.ant-collapse) {
+    width: 100%;
+    border: none !important;
+    /* max-height: calc(100% - 45px);
+    overflow-y: auto; */
+  }
+  :global(.ant-collapse > .ant-collapse-item > .ant-collapse-header) {
+    background: rgba(19, 27, 37, 0.8);
+    color: #fff;
+  }
 }
-:global(.ant-collapse > .ant-collapse-item > .ant-collapse-header) {
-  background: rgba(19, 27, 37, 0.8);
-  color: #fff;
-}
-
 :global(.anticon-setting svg) {
   color: #2d81ad;
   &:hover {
@@ -666,4 +667,3 @@
     }
   }
 }
-

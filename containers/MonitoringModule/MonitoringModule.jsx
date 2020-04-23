@@ -181,7 +181,7 @@ class MonitoringModule extends React.Component {
     this.endTimeUrl = '/control/plan/update/end/time/' // {eventTypeId}/{eventId}/{controllId} 修改管控方案结束时间'
     this.deviceUrl = '/control/event/get/control/type/by/device' // 根据管控类型，获取管控设备集合（去重）
     this.markPublishUrl = '/control/event/mark/publish/' // 标注事件发起管控 和修改管控方案同一个接口
-    this.secUrl = '/control/road/get/latlngs/sec/' // 根据道路、方向、起止桩号，计算经纬度和最后一个点所在的道路id
+    this.secUrl = '/control/road/get/latlngs/sec' // 根据道路、方向、起止桩号，计算经纬度和最后一个点所在的道路id
     this.timeoutUrl = '/control/plan/list/soon/timeout' // 获取即将超时的管控方案'
     this.promptUrl = '/control/plan/add/no/prompt/' // {eventId} 添加不再提示案件'
     this.codeUrl = '/control/dict/code/list/device/function/code/0' // {codeType} 根据功能类型查询，下拉框字典'
@@ -590,20 +590,26 @@ class MonitoringModule extends React.Component {
   }
   // 更新设备及交通管控类型
   updateControlTypes = (controlId) => {
-    const nowIndex = this.state.deviceString.indexOf(controlId) > -1 ? this.state.deviceString.indexOf(controlId) : -1
-    if (nowIndex > -1 && this.state.deviceString.length > 0) {
-      this.state.deviceString.splice(nowIndex, 1)
-      if (this.state.deviceString.length == 0) {
+    const { deviceString, EventTagPopup } = this.state
+    const nowIndex = deviceString.indexOf(controlId) > -1 ? deviceString.indexOf(controlId) : -1
+    if (nowIndex > -1 && deviceString.length > 0) {
+      deviceString.splice(nowIndex, 1)
+      if (deviceString.length == 0) {
         message.info('管控类型至少选中一个')
-        this.state.deviceString.push(controlId)
+        deviceString.push(controlId)
       }
     } else {
-      this.state.deviceString.push(controlId)
+      deviceString.push(controlId)
     }
     this.setState({
-      deviceString: this.state.deviceString,
+      deviceString,
     }, () => {
       this.getDeviceEventList(true)
+      this.handSecUrl()
+      console.log(deviceString, EventTagPopup);
+      /* if (this.ChildPage) {
+        this.ChildPage.loadPoint()
+      } */
     })
   }
   // 获取全部交通管控类型
@@ -632,7 +638,6 @@ class MonitoringModule extends React.Component {
             })
           })
         }
-
       }
     })
   }
@@ -1276,7 +1281,7 @@ class MonitoringModule extends React.Component {
       direction: this.controlDatas.directionId,
       roadId: this.controlDatas.roadName,
       startPileNum: this.controlDatas.startPileNum,
-      endPileNum: this.controlDatas.endPileNum
+      endPileNum: this.controlDatas.endPileNum,
     }
     getResponseDatas('get', this.secUrl, params).then((res) => {
       const result = res.data
@@ -1398,9 +1403,9 @@ class MonitoringModule extends React.Component {
             directionId: this.controlDatas.driverDirection,
             directionName: this.controlDatas.directionName,
           })
-
         }
       })
+      window.drawLine(this.controlDatas.latlng, true)
       // this.handlelistDetail('controlTypes', 22)
     } else {
       this.getDeviceEventList() // 清空交通管控设施
@@ -1422,6 +1427,7 @@ class MonitoringModule extends React.Component {
         boxFlag: null,
         controlBtnFlagText: '框选设备',
         directionName: '',
+        deviceString:[],
         // EventTagPopupTit: '标题',
       })
       $(".amap-maps").attr("style", "")
@@ -1440,9 +1446,9 @@ class MonitoringModule extends React.Component {
         }, 3000)
       }
       // 加载ID、和经纬度
-      if (boolean && this.state.EventTagPopupTit !== '主动管控') {
+      /* if (boolean && this.state.EventTagPopupTit !== '主动管控') {
         this.handSecUrl()
-      }
+      } */
       // 刷新首页数据
       if (boolean && this.state.EventTagPopupTit !== '标题') {
         this.handlesetTimeOut(boolean)
@@ -2410,7 +2416,7 @@ class MonitoringModule extends React.Component {
                       checked={this.state.checkAllBox}
                     >
                       全选
-                  </Checkbox>
+                    </Checkbox>
                   </div>
                   <br />
                   <Checkbox.Group
@@ -2473,7 +2479,7 @@ class MonitoringModule extends React.Component {
           EventTagPopup ?
             <div className={styles.MaskBox} style={{ zIndex: '996' }}>
               <div className={styles.EventTagging}>
-                <GMap EventTagPopup={EventTagPopup} equipmentInfoWin={this.equipmentInfoWin} styles={this.mapStyles} mapID={'popMap'} dataAll={SidePopLeft} roadLatlng={detailsLatlng} handledetai={this.handledetai} detailsPopup={detailsPopup} boxSelect={boxSelect} flagClose={flagClose} />
+                <GMap deviceString={this.state.deviceString.join()} EventTagPopup={EventTagPopup} equipmentInfoWin={this.equipmentInfoWin} styles={this.mapStyles} mapID={'popMap'} dataAll={SidePopLeft} roadLatlng={detailsLatlng} handledetai={this.handledetai} detailsPopup={detailsPopup} boxSelect={boxSelect} flagClose={flagClose} />
                 <div className={styles.EventTaggingLeft}>
                   <div className={styles.Title} style={{ background: '#132334', position: 'fixed', top: '61px', left: 'calc(5% + 6px)', zIndex: '999', width: 'calc(21.6% - 2px)' }}>{EventTagPopupTit}<Icon className={styles.Close} onClick={() => { this.handleEventTag(false) }} type="close" /></div>
                   {
@@ -2563,7 +2569,7 @@ class MonitoringModule extends React.Component {
                     </div>
                   </div>
                   <div className={styles.Title} style={{ background: '#132334', lineHeight: '20px', height: '20px', fontSize: '12px' }}>选择交通管控设施</div>
-                  <div className={styles.Centent}>
+                  <div className={styles.Centent} style={{ maxHeight: '330px' }}>
                     <Collapse
                       defaultActiveKey={[1]}
                       expandIconPosition="right"

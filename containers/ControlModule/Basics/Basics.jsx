@@ -105,6 +105,7 @@ class Basics extends React.Component {
     getResponseDatas('put', this.controlUrl + eventTypeId + '/' + eventId).then((res) => {
       const result = res.data
       if (result.code === 200) {
+        this.handleListByPage()
         message.success(result.message)
       } else {
         message.error(result.message)
