@@ -162,13 +162,15 @@ class ScrollList extends React.Component {
   }
   callback = (key) => {
     console.log(key);
-
   }
   handleEventPopup = (e, type, boolean) => {
     // console.log($(e.target).parent().attr("latlng"), '当前')
     window.centerPoint = $(e.target).parent().attr("latlng");
     const { handleEventPopup } = this.props
     if (type === 'Details') {
+      if (window.infoWindowClose) {
+        window.infoWindowClose.close()
+      }
       const listItem = document.getElementsByClassName('listItem')
       if (e.currentTarget.style.background === '#0d2645') {
         e.currentTarget.style.background = ''
@@ -179,7 +181,6 @@ class ScrollList extends React.Component {
         $('#deviceBox').attr('style', 'transition:all .5s;')
         e.currentTarget.style.background = '#0d2645'
         window.listItemDom = e.currentTarget
-
         /* handleEventPopup('setTimeOut', boolean) */
       }
     }
@@ -439,7 +440,7 @@ class ScrollList extends React.Component {
                       <span className={styles.tit}>{listTitle.state}</span>
                     </div>
                   }
-                  <div style={{maxHeight:'calc(100vh - 385px)',overflow:'auto'}}>
+                  <div style={{ maxHeight: 'calc(100vh - 385px)', overflow: 'auto' }}>
                     {data.length > 0 ? data.map((item, index) => (
                       <div key={item.eventId + item.roadName} className={classNames(styles.listItem, 'listItem')} onClick={(e) => { this.handleEventPopup(e, 'controldet', item) }} >
                         <span>{item.roadName}</span>

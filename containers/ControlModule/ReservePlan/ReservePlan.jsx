@@ -292,12 +292,10 @@ class ReservePlan extends React.Component {
           }, () => {
             this.controlDatas.roadId = item.roadId
             this.controlDatas.roadName = item.roadName
-
             this.controlDatas.directionName = this.state.roadNumber[0].directionName
             this.controlDatas.directionId = this.state.roadNumber[0].directionId
             this.handSecUrl()
           })
-
         }
       })
     } else if (type === 'controlDatas' && name === 'directionId') {
@@ -340,7 +338,6 @@ class ReservePlan extends React.Component {
           })
         })
       } else {
-
         this[type][name] = value
       }
     }
@@ -988,10 +985,10 @@ class ReservePlan extends React.Component {
                 !!listByPage && listByPage.data.map((item, index) => {
                   return (
                     <div className={styles.listItems} key={item.roadName + item.rowId}>
-                      <div className={styles.listTd} ><span className={styles.roadName}>{item.planName}</span></div>
-                      <div className={styles.listTd} ><span className={styles.roadName}>{item.roadName}</span></div>
-                      <div className={styles.listTd} ><span className={styles.roadName}>{item.secName}</span></div>
-                      <div className={styles.listTd} ><span className={styles.roadName}>{item.controlEventTypeName}</span></div>
+                      <div className={styles.listTd} ><span className={styles.roadName} title={item.planName}>{item.planName}</span></div>
+                      <div className={styles.listTd} ><span className={styles.roadName} title={item.roadName}>{item.roadName}</span></div>
+                      <div className={styles.listTd} ><span className={styles.roadName} title={item.secName}>{item.secName}</span></div>
+                      <div className={styles.listTd} ><span className={styles.roadName} title={item.controlEventTypeName}>{item.controlEventTypeName}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName} title={item.controlDeviceTypeName}>{item.controlDeviceTypeName}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.quoteNum}</span></div>
                       <div className={styles.listTd} >

@@ -120,7 +120,6 @@ class GMap extends React.Component {
           if (!this.state.detailsPopup.controlStatusType) {
             // window.drawRectangle()
           } else {
-
             window.mouseTool.close(true) //关闭，并清除覆盖物
             $(".amap-maps").attr("style", "")
 
@@ -400,7 +399,6 @@ class GMap extends React.Component {
           case 8:
             return mapWarning
         }
-
     }
   }
   equipmentInfoWin = () => {
@@ -434,6 +432,7 @@ class GMap extends React.Component {
     this.dataItem = JSON.parse(JSON.stringify(dataItem))
     infoWindow.open(map, dataItem.latlng);
     this.infoWindow = infoWindow
+    window.infoWindowClose=infoWindow
     map.on('click', (e) => {
       infoWindow.close()
     })

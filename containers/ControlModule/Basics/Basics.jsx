@@ -25,7 +25,7 @@ class Basics extends React.Component {
       pageNo: 1,
       eventTypeId: 0,
       pageSize: 10,
-      roadSecId: '',
+      roadName: '',
       startTime: '',
       endTime: '',
     }
@@ -191,7 +191,7 @@ class Basics extends React.Component {
                 </Select>
               </div>
               <div className={styles.OperationItem}>
-                <Input onChange={(e) => { this.handleInput(e, 'roadSecId', 'Parameters') }} placeholder="道路编号" />
+                <Input onChange={(e) => { this.handleInput(e, 'roadName', 'Parameters') }} placeholder="道路名称" />
               </div>
               <div className={styles.OperationItem}>
                 <DatePicker
@@ -238,10 +238,10 @@ class Basics extends React.Component {
                   return (
                     <div className={styles.listItems} key={item.eventTypeName + item.eventId}>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.eventId}P</span></div>
-                      <div className={styles.listTd} ><span className={styles.roadName}>{item.eventTypeName}</span></div>
-                      <div className={styles.listTd} ><span className={styles.roadName}>{item.controlTypeName}</span></div>
-                      <div className={styles.listTd} ><span className={styles.roadName}>{item.roadName}</span></div>
-                      <div className={styles.listTd} ><span className={styles.roadName}>{item.secName}</span></div>
+                      <div className={styles.listTd} ><span className={styles.roadName} title={item.eventTypeName}>{item.eventTypeName}</span></div>
+                      <div className={styles.listTd} ><span className={styles.roadName} title={item.controlTypeName}>{item.controlTypeName}</span></div>
+                      <div className={styles.listTd} ><span className={styles.roadName} title={item.roadName}>{item.roadName}</span></div>
+                      <div className={styles.listTd} ><span className={styles.roadName} title={item.secName}>{item.secName}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.pileNum && item.pileNum.split(' ')[0]}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.pileNum && item.pileNum.split(' ')[1]}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.publishTime ? this.getDate(item.publishTime) : '-'}</span></div>
@@ -282,13 +282,13 @@ class Basics extends React.Component {
                   <div className={styles.RowBox}>
                     <p>起始桩号&nbsp;:&nbsp;&nbsp;<span style={{ color: '#c67f03' }}>{reservePopup.pileNum && reservePopup.pileNum.split(' ')[0]}</span></p>
                     {
-                      reservePopup.eventTypeId === 1 ? [<p>平均车速&nbsp;:&nbsp;&nbsp;<sapn style={{ color: '#c67f03' }}>{reservePopup.situation}km/h</sapn> </p>,
-                      <p>拥堵路段长度&nbsp;:&nbsp;&nbsp;<sapn style={{ color: '#f31113' }}>{reservePopup.eventLength}m</sapn></p>] :
-                        [<p>能见度&nbsp;:&nbsp;&nbsp;<sapn style={{ color: '#c67f03' }}>{reservePopup.situation}km/h</sapn> </p>,
-                        <p>影响道路长度&nbsp;:&nbsp;&nbsp;<sapn style={{ color: '#f31113' }}>{reservePopup.eventLength}m</sapn></p>]
+                      reservePopup.eventTypeId === 1 ? [<p>平均车速&nbsp;:&nbsp;&nbsp;<span style={{ color: '#c67f03' }}>{reservePopup.situation}km/h</span> </p>,
+                      <p>拥堵路段长度&nbsp;:&nbsp;&nbsp;<span style={{ color: '#f31113' }}>{reservePopup.eventLength}m</span></p>] :
+                        [<p>能见度&nbsp;:&nbsp;&nbsp;<span style={{ color: '#c67f03' }}>{reservePopup.situation}km/h</span> </p>,
+                        <p>影响道路长度&nbsp;:&nbsp;&nbsp;<span style={{ color: '#f31113' }}>{reservePopup.eventLength}m</span></p>]
                     }
                   </div>
-                  <div className={styles.RowBox}>数据来源&nbsp;:&nbsp;&nbsp;<sapn style={{ color: '#03af01' }}>{reservePopup.dataSourceName}</sapn></div>
+                  <div className={styles.RowBox}>数据来源&nbsp;:&nbsp;&nbsp;<span style={{ color: '#03af01' }}>{reservePopup.dataSourceName}</span></div>
                 </div>
 
                 {operationData ?

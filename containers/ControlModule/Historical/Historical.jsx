@@ -26,7 +26,7 @@ class Historical extends React.Component {
       pageNo: 1,
       eventTypeId: 0,
       pageSize: 10,
-      roadSecId: '',
+      roadName: '',
       startTime: '',
       endTime: '',
     }
@@ -192,7 +192,7 @@ class Historical extends React.Component {
                 </Select>
               </div>
               <div className={styles.OperationItem}>
-                <Input onChange={(e) => { this.handleInput(e, 'roadSecId', 'Parameters') }} placeholder="道路编号" />
+                <Input onChange={(e) => { this.handleInput(e, 'roadName', 'Parameters') }} placeholder="道路名称" />
               </div>
               <div className={styles.OperationItem}>
                 <DatePicker
@@ -239,9 +239,9 @@ class Historical extends React.Component {
                   return (
                     <div className={styles.listItems}>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.eventId}</span></div>
-                      <div className={styles.listTd} ><span className={styles.roadName}>{item.eventTypeName}</span></div>
-                      <div className={styles.listTd} ><span className={styles.roadName}>{item.roadName}</span></div>
-                      <div className={styles.listTd} ><span className={styles.roadName}>{item.secName}</span></div>
+                      <div className={styles.listTd} ><span className={styles.roadName} title={item.eventTypeName}>{item.eventTypeName}</span></div>
+                      <div className={styles.listTd} ><span className={styles.roadName} title={item.roadName}>{item.roadName}</span></div>
+                      <div className={styles.listTd} ><span className={styles.roadName} title={item.secName}>{item.secName}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.pileNum && item.pileNum.split(' ')[0]}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.pileNum && item.pileNum.split(' ')[1]}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.startTime ? this.getDate(item.startTime) : '-'}</span></div>
@@ -249,7 +249,7 @@ class Historical extends React.Component {
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.controllId ? '是' : '否'}</span></div>
                       <div className={styles.listTd} >
                         <Button className={styles.Button} onClick={() => { this.handlehistory(item, false) }}>事件详情</Button>
-                        <Button className={styles.Button} onClick={() => { this.handlehistory(item, true) }}>管控详情</Button>
+                        <Button className={item.controllId ? styles.Button : styles.Buttondeb} disabled={!item.controllId} onClick={() => { this.handlehistory(item, true) }}>管控详情</Button>
                       </div>
                     </div>
                   )
@@ -283,13 +283,13 @@ class Historical extends React.Component {
                   <div className={styles.RowBox}>
                     <p>起始桩号&nbsp;:&nbsp;&nbsp;<span style={{ color: '#c67f03' }}>{reservePopup.pileNum && reservePopup.pileNum.split(' ')[0]}</span></p>
                     {
-                      reservePopup.eventTypeId === 1 ? [<p>平均车速&nbsp;:&nbsp;&nbsp;<sapn style={{ color: '#c67f03' }}>{reservePopup.situation}km/h</sapn> </p>,
-                      <p>拥堵路段长度&nbsp;:&nbsp;&nbsp;<sapn style={{ color: '#f31113' }}>{reservePopup.eventLength}m</sapn></p>] :
-                        [<p>能见度&nbsp;:&nbsp;&nbsp;<sapn style={{ color: '#c67f03' }}>{reservePopup.situation}km/h</sapn> </p>,
-                        <p>影响道路长度&nbsp;:&nbsp;&nbsp;<sapn style={{ color: '#f31113' }}>{reservePopup.eventLength}m</sapn></p>]
+                      reservePopup.eventTypeId === 1 ? [<p>平均车速&nbsp;:&nbsp;&nbsp;<span style={{ color: '#c67f03' }}>{reservePopup.situation}km/h</span> </p>,
+                      <p>拥堵路段长度&nbsp;:&nbsp;&nbsp;<span style={{ color: '#f31113' }}>{reservePopup.eventLength}m</span></p>] :
+                        [<p>能见度&nbsp;:&nbsp;&nbsp;<span style={{ color: '#c67f03' }}>{reservePopup.situation}km/h</span> </p>,
+                        <p>影响道路长度&nbsp;:&nbsp;&nbsp;<span style={{ color: '#f31113' }}>{reservePopup.eventLength}m</span></p>]
                     }
                   </div>
-                  <div className={styles.RowBox}>数据来源&nbsp;:&nbsp;&nbsp;<sapn style={{ color: '#03af01' }}>{reservePopup.dataSourceName}</sapn></div>
+                  <div className={styles.RowBox}>数据来源&nbsp;:&nbsp;&nbsp;<span style={{ color: '#03af01' }}>{reservePopup.dataSourceName}</span></div>
                 </div>
 
                 {operationData
@@ -315,7 +315,7 @@ class Historical extends React.Component {
                           operationData && operationData.map((item, index) => {
                             return (
                               <div className={styles.listItems}>
-                                <div className={styles.listTd} >{index+1}</div>
+                                <div className={styles.listTd} >{index + 1}</div>
                                 <div className={styles.listTd} >{item.operationUser}</div>
                                 <div className={styles.listTd} >{item.operationName}</div>
                                 <div className={styles.listTd} >{item.operationTime && item.endTime ? this.formatDuring(new Date(item.endTime).getTime() - new Date(item.operationTime).getTime()) : '-'}</div>

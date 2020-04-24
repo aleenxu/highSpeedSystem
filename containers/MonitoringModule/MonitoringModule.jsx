@@ -605,7 +605,29 @@ class MonitoringModule extends React.Component {
       deviceString,
     }, () => {
       this.getDeviceEventList(true)
-      this.handSecUrl()
+      /* this.handSecUrl() */
+      if (!this.controlDatas.roadName) {
+        message.info('请选择高速！')
+        return
+      }
+      if (!this.controlDatas.directionId) {
+        message.info('请选择方向！')
+        return
+      }
+      if (!this.controlDatas.startPileNum) {
+        message.info('请输入起始桩号！')
+        // $('#startInt').focus()
+        return
+      }
+      if (!this.controlDatas.endPileNum) {
+        message.info('请输入结束桩号！')
+        // $('#endInt').focus()
+        return
+      }
+      const latlngArr = JSON.parse(JSON.stringify(this.state.lineLatlngArr))
+      setTimeout(() => {
+        window.drawLine(latlngArr, this.controlDatas.eventType != 3)
+      }, 1000)
       console.log(deviceString, EventTagPopup);
       /* if (this.ChildPage) {
         this.ChildPage.loadPoint()
@@ -1395,6 +1417,7 @@ class MonitoringModule extends React.Component {
         eventType: this.state.detailsPopup.eventType,
         directionName: this.state.detailsPopup.directionName,
         controlBtnFlagText: '框选设备',
+        lineLatlngArr: this.controlDatas.latlng,
       })
       this.state.directionList.forEach((item, index) => {
         if (item.roadId === this.controlDatas.roadName) {
@@ -1405,7 +1428,7 @@ class MonitoringModule extends React.Component {
           })
         }
       })
-      window.drawLine(this.controlDatas.latlng, true)
+      window.drawLine(this.controlDatas.latlng, this.controlDatas.eventType != 3)
       // this.handlelistDetail('controlTypes', 22)
     } else {
       this.getDeviceEventList() // 清空交通管控设施
@@ -1427,7 +1450,7 @@ class MonitoringModule extends React.Component {
         boxFlag: null,
         controlBtnFlagText: '框选设备',
         directionName: '',
-        deviceString:[],
+        deviceString: [],
         // EventTagPopupTit: '标题',
       })
       $(".amap-maps").attr("style", "")
@@ -2361,7 +2384,7 @@ class MonitoringModule extends React.Component {
                   <div className={styles.ItemBox}>
                     <span className={styles.ItemName}>道&nbsp;路&nbsp;名&nbsp;称&nbsp;:</span>
                     <div className={styles.ItemInput}>
-                      <Input maxLength={50} placeholder='如 泰州大桥主线' onChange={(e) => { this.handleInput(e, 'roadName', 'VIboardParameters') }} />
+                      <Input maxLength={50} placeholder="如 泰州大桥主线" onChange={(e) => { this.handleInput(e, 'roadName', 'VIboardParameters') }} />
                     </div>
                   </div>
                   <div className={styles.ItemBox}>
@@ -2380,19 +2403,19 @@ class MonitoringModule extends React.Component {
                   <div className={styles.ItemBox}>
                     <span className={styles.ItemName}>设&nbsp;备&nbsp;编&nbsp;号&nbsp;:</span>
                     <div className={styles.ItemInput}>
-                      <Input maxLength={50} placeholder='如 878bbced-a937-4159-8245-9dd4d3a20f2a' onChange={(e) => { this.handleInput(e, 'deviceCode', 'VIboardParameters') }} />
+                      <Input maxLength={50} placeholder="如 878bbced-a937-4159-8245-9dd4d3a20f2a" onChange={(e) => { this.handleInput(e, 'deviceCode', 'VIboardParameters') }} />
                     </div>
                   </div>
                   <div className={styles.ItemBox}>
                     <span className={styles.ItemName}>设&nbsp;备&nbsp;名&nbsp;称&nbsp;:</span>
                     <div className={styles.ItemInput}>
-                      <Input maxLength={50} placeholder='如 CMS20' onChange={(e) => { this.handleInput(e, 'deviceName', 'VIboardParameters') }} />
+                      <Input maxLength={50} placeholder="如 CMS20" onChange={(e) => { this.handleInput(e, 'deviceName', 'VIboardParameters') }} />
                     </div>
                   </div>
                   <div className={styles.ItemBox}>
                     <span className={styles.ItemName}>设&nbsp;备&nbsp;位&nbsp;置&nbsp;:</span>
                     <div className={styles.ItemInput}>
-                      <Input maxLength={50} placeholder='如 K14+680' onChange={(e) => { this.handleInput(e, 'deviceLocation', 'VIboardParameters') }} />
+                      <Input maxLength={50} placeholder="如 K14+680" onChange={(e) => { this.handleInput(e, 'deviceLocation', 'VIboardParameters') }} />
                     </div>
                   </div>
                   <div className={styles.ItemFooter} style={{ bottom: '-15px' }}>
@@ -2452,7 +2475,7 @@ class MonitoringModule extends React.Component {
                       checked={this.state.checkAll}
                     >
                       全选
-                  </Checkbox>
+                    </Checkbox>
                   </div>
                   <br />
                   <Checkbox.Group
@@ -2516,7 +2539,7 @@ class MonitoringModule extends React.Component {
                             })
                           }
                         </Select>
-                        <Select defaultValue={"1"} style={{ width: '26%', margin: '8px 1%' }} disabled={true} onChange={(e) => { this.handleSelect(e, 'locationMode', 'controlDatas') }} >
+                        <Select defaultValue="1" style={{ width: '26%', margin: '8px 1%' }} disabled={true} onChange={(e) => { this.handleSelect(e, 'locationMode', 'controlDatas') }} >
                           <Option value="0">收费站</Option>
                           <Option value="1">里程桩</Option>
                         </Select>
@@ -2606,7 +2629,6 @@ class MonitoringModule extends React.Component {
                       }
                     </Collapse>
                   </div>
-
                   <div className={styles.ItemFooter}>
                     <span onClick={() => { this.handleMarkControlPop(EventTagPopupTit) }}>发起管控</span>
                   </div>
@@ -2676,7 +2698,13 @@ class MonitoringModule extends React.Component {
                         <Option value="">请选择</Option>
                         {
                           MeasuresList[InfoWinPopup.deviceTypeId - 1] && MeasuresList[InfoWinPopup.deviceTypeId - 1].map((itemss) => {
-                            return <Option key={itemss.controlTypeId} value={itemss.controlTypeId}>{itemss.controlTypeName}</Option>
+                            if (EventTagPopup && this.state.deviceString.length) {
+                              if (this.state.deviceString.includes(itemss.controlTypeId)) {
+                                return <Option key={itemss.controlTypeId} value={itemss.controlTypeId}>{itemss.controlTypeName}</Option>
+                              }
+                            } else {
+                              return <Option key={itemss.controlTypeId} value={itemss.controlTypeId}>{itemss.controlTypeName}</Option>
+                            }
                           })
                         }
                       </Select>
@@ -2702,9 +2730,20 @@ class MonitoringModule extends React.Component {
                       <div className={styles.ItemInput}>
                         <Select style={{ width: '100%' }} defaultValue={(InfoWinPopup.deviceControlType && InfoWinPopup.deviceControlType) || ''} onChange={(e) => { this.handleInfoWinChange(e, 'deviceControlType') }} >
                           <Option value="">请选择</Option>
-                          {
+                          {/* {
                             MeasuresList[InfoWinPopup.deviceTypeId - 1] && MeasuresList[InfoWinPopup.deviceTypeId - 1].map((itemss) => {
                               return <Option key={itemss.controlTypeId} value={itemss.controlTypeId}>{itemss.controlTypeName}</Option>
+                            })
+                          } */}
+                          {
+                            MeasuresList[InfoWinPopup.deviceTypeId - 1] && MeasuresList[InfoWinPopup.deviceTypeId - 1].map((itemss) => {
+                              if (EventTagPopup && this.state.deviceString.length) {
+                                if (this.state.deviceString.includes(itemss.controlTypeId)) {
+                                  return <Option key={itemss.controlTypeId} value={itemss.controlTypeId}>{itemss.controlTypeName}</Option>
+                                }
+                              } else {
+                                return <Option key={itemss.controlTypeId} value={itemss.controlTypeId}>{itemss.controlTypeName}</Option>
+                              }
                             })
                           }
                         </Select>
@@ -2730,9 +2769,20 @@ class MonitoringModule extends React.Component {
                         <div className={styles.ItemInput}>
                           <Select style={{ width: '100%' }} defaultValue={(InfoWinPopup.deviceControlType && InfoWinPopup.deviceControlType) || ''} onChange={(e) => { this.handleInfoWinChange(e, 'deviceControlType') }} >
                             <Option value="">请选择</Option>
-                            {
+                            {/* {
                               MeasuresList[InfoWinPopup.deviceTypeId - 1] && MeasuresList[InfoWinPopup.deviceTypeId - 1].map((itemss) => {
                                 return <Option key={itemss.controlTypeId} value={itemss.controlTypeId}>{itemss.controlTypeName}</Option>
+                              })
+                            } */}
+                            {
+                              MeasuresList[InfoWinPopup.deviceTypeId - 1] && MeasuresList[InfoWinPopup.deviceTypeId - 1].map((itemss) => {
+                                if (EventTagPopup && this.state.deviceString.length) {
+                                  if (this.state.deviceString.includes(itemss.controlTypeId)) {
+                                    return <Option key={itemss.controlTypeId} value={itemss.controlTypeId}>{itemss.controlTypeName}</Option>
+                                  }
+                                } else {
+                                  return <Option key={itemss.controlTypeId} value={itemss.controlTypeId}>{itemss.controlTypeName}</Option>
+                                }
                               })
                             }
                           </Select>
@@ -2758,9 +2808,20 @@ class MonitoringModule extends React.Component {
                           <div className={styles.ItemInput}>
                             <Select style={{ width: '100%' }} defaultValue={(InfoWinPopup.deviceControlType && InfoWinPopup.deviceControlType) || ''} onChange={(e) => { this.handleInfoWinChange(e, 'deviceControlType') }} >
                               <Option value="">请选择</Option>
-                              {
+                              {/* {
                                 MeasuresList[InfoWinPopup.deviceTypeId - 1] && MeasuresList[InfoWinPopup.deviceTypeId - 1].map((itemss) => {
                                   return <Option key={itemss.controlTypeId} value={itemss.controlTypeId}>{itemss.controlTypeName}</Option>
+                                })
+                              } */}
+                              {
+                                MeasuresList[InfoWinPopup.deviceTypeId - 1] && MeasuresList[InfoWinPopup.deviceTypeId - 1].map((itemss) => {
+                                  if (EventTagPopup && this.state.deviceString.length) {
+                                    if (this.state.deviceString.includes(itemss.controlTypeId)) {
+                                      return <Option key={itemss.controlTypeId} value={itemss.controlTypeId}>{itemss.controlTypeName}</Option>
+                                    }
+                                  } else {
+                                    return <Option key={itemss.controlTypeId} value={itemss.controlTypeId}>{itemss.controlTypeName}</Option>
+                                  }
                                 })
                               }
                             </Select>
