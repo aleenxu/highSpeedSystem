@@ -210,6 +210,8 @@ class ReservePlan extends React.Component {
   }
   handSecUrl = () => {
     const that = this
+    console.log(this.controlDatas);
+
     if (!this.controlDatas.roadName) {
       message.info('请选择高速！')
       return
@@ -220,12 +222,16 @@ class ReservePlan extends React.Component {
     }
     if (!this.controlDatas.startPileNum) {
       message.info('请输入起始桩号！')
-      // $('#startInt').focus()
+      return
+    } else if (!(/^[kK](0|([1-9]\d*))(\+\d{1,3})?$/.test(this.controlDatas.startPileNum))) {
+      message.info('请输入正确起始桩号！')
       return
     }
     if (!this.controlDatas.endPileNum) {
       message.info('请输入结束桩号！')
-      // $('#endInt').focus()
+      return
+    } else if (!(/^[kK](0|([1-9]\d*))(\+\d{1,3})?$/.test(this.controlDatas.endPileNum))) {
+      message.info('请输入正确结束桩号！')
       return
     }
     const params = {
@@ -242,9 +248,12 @@ class ReservePlan extends React.Component {
           lineLatlngArr: result.data.latlng,
         }, () => {
           if (that.state.lineLatlngArr) {
-            const latlngArr = JSON.parse(JSON.stringify(that.state.lineLatlngArr))
-            const colorFlag = that.state.eventType === 3 ? false : true
-            window.drawLine(latlngArr, colorFlag)
+            setTimeout(() => {
+              const latlngArr = JSON.parse(JSON.stringify(that.state.lineLatlngArr))
+              const colorFlag = that.state.eventType === 3 ? false : true
+              window.drawLine(latlngArr, colorFlag)
+              this.getLineCenterPoint(latlngArr)
+            }, 1000)
           }
         })
       } else {
@@ -459,28 +468,59 @@ class ReservePlan extends React.Component {
       }
     })
   }
+  getLineCenterPoint = (latlng) => {
+    let newCenter = []
+    if (latlng.length > 1) {
+      const startPoint = Math.abs(latlng[0].lng - latlng[latlng.length - 1].lng) / 2
+      const endPoint = Math.abs(latlng[0].lat - latlng[latlng.length - 1].lat) / 2
+      if (latlng[0].lng > latlng[latlng.length - 1].lng) {
+        newCenter[0] = startPoint + Number(latlng[latlng.length - 1].lng)
+      } else {
+        newCenter[0] = startPoint + Number(latlng[0].lng)
+      }
+      if (latlng[1].lat > latlng[latlng.length - 1].lat) {
+        newCenter[1] = endPoint + Number(latlng[latlng.length - 1][1])
+      } else {
+        newCenter[1] = endPoint + Number(latlng[0].lat)
+      }
+    }
+    console.log(latlng, newCenter);
+    debugger
+    const nowZoom = window.map.getZoom()
+    window.map.setZoomAndCenter(nowZoom, newCenter)
+  }
   // 更新设备及交通管控类型
   updateControlTypes = (controlId) => {
     console.log(controlId, '============', this.state.deviceString);
-    if (typeof (this.state.deviceString) == 'string') {
+    const { deviceString } = this.state
+    if (typeof (deviceString) == 'string') {
       this.setState({
-        deviceString: this.state.deviceString.split(','),
+        deviceString: deviceString.split(','),
       }, () => {
-        const nowIndex = this.state.deviceString.indexOf(controlId) > -1 ? this.state.deviceString.indexOf(controlId) : -1
-        if (nowIndex > -1 && this.state.deviceString.length > 0) {
-          this.state.deviceString.splice(nowIndex, 1)
-          if (this.state.deviceString.length == 0) {
+        const nowIndex = deviceString.indexOf(controlId) > -1 ? deviceString.indexOf(controlId) : -1
+        if (nowIndex > -1 && deviceString.length > 0) {
+          deviceString.splice(nowIndex, 1)
+          if (deviceString.length == 0) {
             message.info('管控类型至少选中一个')
-            this.state.deviceString.push(controlId)
+            deviceString.push(controlId)
           }
         } else {
-          this.state.deviceString.push(controlId)
+          deviceString.push(controlId)
         }
         this.setState({
-          deviceString: this.state.deviceString,
+          deviceString,
         }, () => {
           this.getDeviceEventList(true)
-          this.handSecUrl()
+          const latlngArr = JSON.parse(JSON.stringify(this.state.lineLatlngArr))
+          console.log(latlngArr);
+
+          if (latlngArr && latlngArr.length > 1) {
+            setTimeout(() => {
+              window.drawLine(latlngArr, this.controlDatas.eventType != 3)
+              this.getLineCenterPoint(latlngArr)
+            }, 1000)
+          }
+          /* this.handSecUrl() */
           /*  if (this.ChildPage) {
              this.ChildPage.loadPoint()
            } */
@@ -750,6 +790,7 @@ class ReservePlan extends React.Component {
           arr.data.splice(nowIndex, 1)
           this.setState({ listByPage: arr })
           if (result.code === 200) {
+            this.handleListByPage()
             message.info(res.data.message)
           } else {
             message.info(res.message)
@@ -828,6 +869,7 @@ class ReservePlan extends React.Component {
         eventType: listByPage.data[nowIndex].controlEventType,
         deviceString: listByPage.data[nowIndex].deviceControlType.split(),
         directionName: listByPage.data[nowIndex].directionName,
+
       })
       this.state.directionList.forEach((item, index) => {
         if (item.roadId === this.controlDatas.roadName) {
@@ -838,12 +880,9 @@ class ReservePlan extends React.Component {
           })
         }
       })
-      console.log(this.ChildPage, listByPage.data[nowIndex].deviceControlType.length, '==================');
-      debugger
       this.handleDetailPlan(listByPage.data[nowIndex].rowId) // 根据rowId获取全部设备
     } else if (name == 'edit') {
       console.log('编辑')
-
       deviceTypes.forEach((item) => {
         item.device.forEach((items) => {
           deviceAry.push({
@@ -856,6 +895,28 @@ class ReservePlan extends React.Component {
           })
         })
       })
+      if (!this.controlDatas.roadName) {
+        message.info('请选择高速！')
+        return
+      }
+      if (!this.controlDatas.directionId) {
+        message.info('请选择方向！')
+        return
+      }
+      if (!this.controlDatas.startPileNum) {
+        message.info('请输入起始桩号！')
+        return
+      } else if (!(/^[kK](0|([1-9]\d*))(\+\d{1,3})?$/.test(this.controlDatas.startPileNum))) {
+        message.info('请输入正确起始桩号！')
+        return
+      }
+      if (!this.controlDatas.endPileNum) {
+        message.info('请输入结束桩号！')
+        return
+      } else if (!(/^[kK](0|([1-9]\d*))(\+\d{1,3})?$/.test(this.controlDatas.endPileNum))) {
+        message.info('请输入正确结束桩号！')
+        return
+      }
       if (!this.controlDatas.planName) {
         message.warning('请填全预案名称')
         return

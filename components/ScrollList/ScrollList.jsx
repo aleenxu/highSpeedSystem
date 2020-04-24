@@ -113,7 +113,6 @@ class ScrollList extends React.Component {
       }
     }
     return newCenter
-
   }
   getOption = (data) => {
     const option = {

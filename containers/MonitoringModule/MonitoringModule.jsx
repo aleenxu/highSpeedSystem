@@ -275,6 +275,27 @@ class MonitoringModule extends React.Component {
   handleEndOpenChange = (open) => {
     this.setState({ endOpen: open })
   }
+  getLineCenterPoint = (latlng) => {
+    let newCenter = []
+    if (latlng.length > 1) {
+      const startPoint = Math.abs(latlng[0].lng - latlng[latlng.length - 1].lng) / 2
+      const endPoint = Math.abs(latlng[0].lat - latlng[latlng.length - 1].lat) / 2
+      if (latlng[0].lng > latlng[latlng.length - 1].lng) {
+        newCenter[0] = startPoint + Number(latlng[latlng.length - 1].lng)
+      } else {
+        newCenter[0] = startPoint + Number(latlng[0].lng)
+      }
+      if (latlng[1].lat > latlng[latlng.length - 1].lat) {
+        newCenter[1] = endPoint + Number(latlng[latlng.length - 1][1])
+      } else {
+        newCenter[1] = endPoint + Number(latlng[0].lat)
+      }
+    }
+    console.log(latlng, newCenter);
+    debugger
+    const nowZoom = window.map.getZoom()
+    window.map.setZoomAndCenter(nowZoom, newCenter)
+  }
   // 控制事件检测过滤设置弹窗
   handleEventPopup = (type, boolean) => {
     // debugger
@@ -286,8 +307,13 @@ class MonitoringModule extends React.Component {
       })
       if (!boolean) {
         this.setState({
+          flagClose: null,
+          boxFlag: null,
           checkedListBox: null,
+          controlBtnFlagText: '框选设备',
         })
+        $(".amap-maps").attr("style", "")
+        window.mouseTool.close(true) //关闭，并清除覆盖物
       }
     }
     if (type === 'Event') {
@@ -606,28 +632,32 @@ class MonitoringModule extends React.Component {
     }, () => {
       this.getDeviceEventList(true)
       /* this.handSecUrl() */
-      if (!this.controlDatas.roadName) {
-        message.info('请选择高速！')
-        return
-      }
-      if (!this.controlDatas.directionId) {
-        message.info('请选择方向！')
-        return
-      }
-      if (!this.controlDatas.startPileNum) {
-        message.info('请输入起始桩号！')
-        // $('#startInt').focus()
-        return
-      }
-      if (!this.controlDatas.endPileNum) {
-        message.info('请输入结束桩号！')
-        // $('#endInt').focus()
-        return
-      }
+      /*  if (!this.controlDatas.roadName) {
+         message.info('请选择高速！')
+         return
+       }
+       if (!this.controlDatas.directionId) {
+         message.info('请选择方向！')
+         return
+       }
+       if (!this.controlDatas.startPileNum) {
+         message.info('请输入起始桩号！')
+         // $('#startInt').focus()
+         return
+       }
+       if (!this.controlDatas.endPileNum) {
+         message.info('请输入结束桩号！')
+         // $('#endInt').focus()
+         return
+       } */
       const latlngArr = JSON.parse(JSON.stringify(this.state.lineLatlngArr))
-      setTimeout(() => {
-        window.drawLine(latlngArr, this.controlDatas.eventType != 3)
-      }, 1000)
+      if (latlngArr && latlngArr.length > 1) {
+        setTimeout(() => {
+          window.drawLine(latlngArr, this.controlDatas.eventType != 3)
+          this.getLineCenterPoint(latlngArr)
+        }, 1000)
+      }
+
       console.log(deviceString, EventTagPopup);
       /* if (this.ChildPage) {
         this.ChildPage.loadPoint()
@@ -1082,12 +1112,30 @@ class MonitoringModule extends React.Component {
         message.info('请输入起始桩号！')
         $('#startInt').focus()
         return
+      } else if (!(/^[kK](0|([1-9]\d*))(\+\d{1,3})?$/.test(this.controlDatas.startPileNum))) {
+        message.info('请输入正确起始桩号！')
+        $('#startInt').focus()
+        return
       }
       if (!this.controlDatas.endPileNum) {
         message.info('请输入结束桩号！')
         $('#endInt').focus()
         return
+      } else if (!(/^[kK](0|([1-9]\d*))(\+\d{1,3})?$/.test(this.controlDatas.endPileNum))) {
+        message.info('请输入正确结束桩号！')
+        $('#endInt').focus()
+        return
       }
+      /*  if (!this.controlDatas.startPileNum) {
+         message.info('请输入起始桩号！')
+        
+         return
+       } */
+      /* if (!this.controlDatas.endPileNum) {
+        message.info('请输入结束桩号！')
+        $('#endInt').focus()
+        return
+      } */
       if (this.controlDatas.situation === '' || this.controlDatas.situation < 0) {
         this.controlDatas.situation = 0
         if (eventType !== 3) {
@@ -1291,12 +1339,16 @@ class MonitoringModule extends React.Component {
     }
     if (!this.controlDatas.startPileNum) {
       message.info('请输入起始桩号！')
-      // $('#startInt').focus()
+      return
+    } else if (!(/^[kK](0|([1-9]\d*))(\+\d{1,3})?$/.test(this.controlDatas.startPileNum))) {
+      message.info('请输入正确起始桩号！')
       return
     }
     if (!this.controlDatas.endPileNum) {
       message.info('请输入结束桩号！')
-      // $('#endInt').focus()
+      return
+    } else if (!(/^[kK](0|([1-9]\d*))(\+\d{1,3})?$/.test(this.controlDatas.endPileNum))) {
+      message.info('请输入正确结束桩号！')
       return
     }
     const params = {
@@ -1428,7 +1480,10 @@ class MonitoringModule extends React.Component {
           })
         }
       })
-      window.drawLine(this.controlDatas.latlng, this.controlDatas.eventType != 3)
+      setTimeout(() => {
+        window.drawLine(this.controlDatas.latlng, this.controlDatas.eventType != 3)
+        this.getLineCenterPoint(this.controlDatas.latlng)
+      }, 1000)
       // this.handlelistDetail('controlTypes', 22)
     } else {
       this.getDeviceEventList() // 清空交通管控设施
