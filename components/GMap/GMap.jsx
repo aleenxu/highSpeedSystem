@@ -33,7 +33,7 @@ class GMap extends React.Component {
       speedLimitJson: [], //车道控制器限速版
       carRoadJson: [], //车道控制器
       roadLatlng: this.props.roadLatlng, // 路段的经纬度
-      detailsPopup: this.props.detailsPopup, // 右侧详情显示
+     /*  detailsPopup: this.props.detailsPopup, // 右侧详情显示 */
       boxSelect: this.props.boxSelect, // 框选弹层
       flagClose: this.props.flagClose, // 框选是否清除绘制
       centerPoint: null, // 地图中心点
@@ -75,7 +75,9 @@ class GMap extends React.Component {
     if (this.props.deviceString !== nextProps.deviceString) {
       console.log(this.props.deviceString, nextProps.deviceString, 'nextProps.deviceStringnextProps.deviceString');
       this.setState({ deviceString: nextProps.deviceString }, () => {
-        this.loadPoint()
+        console.log(nextProps.deviceString)
+        debugger
+        this.loadPoint(true)
       })
     }
     if (this.props.linePoint !== nextProps.linePoint) {
@@ -99,9 +101,9 @@ class GMap extends React.Component {
     if (this.props.roadLatlng !== nextProps.roadLatlng) {
       this.setState({ roadLatlng: nextProps.roadLatlng })
     }
-    if (this.props.detailsPopup !== nextProps.detailsPopup) {
+    /* if (this.props.detailsPopup !== nextProps.detailsPopup) {
       this.setState({ detailsPopup: nextProps.detailsPopup })
-    }
+    } */
     if (this.props.EventTagPopup !== nextProps.EventTagPopup) {
       this.setState({ EventTagPopup: nextProps.EventTagPopup })
     }
@@ -126,7 +128,7 @@ class GMap extends React.Component {
           }
         } else {
           // console.log("为false 时重载地图")
-          this.loadPoint()
+          this.loadPoint(true)
           this.map.remove(window.overlays)
           window.overlays = []
         }
@@ -134,7 +136,7 @@ class GMap extends React.Component {
     }
     if (window.centerPoint && window.centerPoint != this.state.centerPoint) {
       this.setState({
-        centerPoint: window.centerPoint
+        centerPoint: window.centerPoint,
       }, () => {
         const nowZoom = window.map.getZoom()
         window.map.setZoomAndCenter(nowZoom, [this.state.centerPoint.split(",")[0], this.state.centerPoint.split(",")[1]])
@@ -150,7 +152,7 @@ class GMap extends React.Component {
   handleAMap = () => {
     this.loadPoint()
   }
-  loadPoint = () => { // 预案库通过不同类型来筛选地图点位
+  loadPoint = (value) => { // 预案库通过不同类型来筛选地图点位
     const { deviceString, keyWords } = this.state
     getResponseDatas('get', this.mapPointUrl + '?searchKey=' + keyWords + (deviceString ? `&controlTypes=${deviceString}` : '')).then((res) => {
       const jsonData = res.data
@@ -182,73 +184,77 @@ class GMap extends React.Component {
         this.setState({
           infoBoardJson, infoFBoardJson, speedLimitJson, tollGateJson, carRoadJson,
         })
-        this.loadingMap()
+        this.loadingMap(value)
       }
     })
   }
-  loadingMap = () => {
+  loadingMap = (value) => {
     const _this = this;
-    const map = new AMap.Map(_this.state.mapID, {
-      resizeEnable: true, //是否监控地图容器尺寸变化
-      center: [120.0105285600, 32.3521228100], //初始化地图中心点
-      mapStyle: "amap://styles/c3fa565f6171961e94b37c4cc2815ef8",
-      zoom: 11,
-    })
-    window.map = map
-    this.map = window.map
-    window.map.on('mousemove')
-    window.mouseTool = new AMap.MouseTool(map)
-    //监听draw事件可获取画好的覆盖物
-    window.overlays = []
-    mouseTool.on('draw', function (e) {
-      overlays.push(e.obj);
-    })
-    function draw() {
-      mouseTool.rectangle({
-        fillColor: '#00b0ff',
-        strokeColor: '#80d8ff'
-        // 同Polygon的Option设置
+    if (!value) {
+      const map = new AMap.Map(_this.state.mapID, {
+        resizeEnable: true, //是否监控地图容器尺寸变化
+        center: [120.0105285600, 32.3521228100], //初始化地图中心点
+        mapStyle: "amap://styles/c3fa565f6171961e94b37c4cc2815ef8",
+        zoom: 11,
       })
-    }
-    window.drawRectangle = draw
-    // 实时路况图层
-    const trafficLayer = new AMap.TileLayer.Traffic({
-      zIndex: 10,
-    });
-    trafficLayer.setMap(window.map)
-    this.createLayerGroup('leftModule0') // 交通拥堵选中复选框显示的图层
-    this.createLayerGroup('leftModule1') // 道路施工选中复选框显示的图层
-    this.createLayerGroup('leftModule2') // 极端天气选中复选框显示的图层
-    this.createLayerGroup('leftModule3') // 交通事故选中复选框显示的图层
-    this.createLayerGroup('leftModule4') // 主动管控选中复选框显示的图层
-    /* const LayerGroup = ['deviceTollGate', 'deviceFInfoBoard', 'deviceInfoBoard', 'deviceTurnBoard', 'carRoadBoard']
-    LayerGroup.forEach((item) => {
-      if (!window[item]) {
-        this.createLayerGroup(item)
+      window.map = map
+      this.map = window.map
+      window.map.on('mousemove')
+      window.mouseTool = new AMap.MouseTool(map)
+      //监听draw事件可获取画好的覆盖物
+      window.overlays = []
+      mouseTool.on('draw', function (e) {
+        overlays.push(e.obj);
+      })
+      function draw() {
+        mouseTool.rectangle({
+          fillColor: '#00b0ff',
+          strokeColor: '#80d8ff'
+          // 同Polygon的Option设置
+        })
       }
-    }) */
-    this.createLayerGroup('deviceTollGate') // map中收费站匝道灯图标显示的图层
-    this.createLayerGroup('deviceFInfoBoard') // map中F情报版显示的图层
-    this.createLayerGroup('deviceInfoBoard') // map中车道控制器情报版限速显示的图层
-    this.createLayerGroup('deviceTurnBoard') // map中门架情报板显示的图层
-    this.createLayerGroup('carRoadBoard') // map中车道控制器显示的图层
-    this.createLayerGroup('lineLayers') // map中绘制线显示的图层
-    // 输入提示
-    const autoOptions = {
-      city: '泰州',
-      input: 'tipinput',
+      window.drawRectangle = draw
+      // 实时路况图层
+      const trafficLayer = new AMap.TileLayer.Traffic({
+        zIndex: 10,
+      });
+      trafficLayer.setMap(window.map)
+      this.createLayerGroup('leftModule0') // 交通拥堵选中复选框显示的图层
+      this.createLayerGroup('leftModule1') // 道路施工选中复选框显示的图层
+      this.createLayerGroup('leftModule2') // 极端天气选中复选框显示的图层
+      this.createLayerGroup('leftModule3') // 交通事故选中复选框显示的图层
+      this.createLayerGroup('leftModule4') // 主动管控选中复选框显示的图层
+      /* const LayerGroup = ['deviceTollGate', 'deviceFInfoBoard', 'deviceInfoBoard', 'deviceTurnBoard', 'carRoadBoard']
+      LayerGroup.forEach((item) => {
+        if (!window[item]) {
+          this.createLayerGroup(item)
+        }
+      }) */
+      this.createLayerGroup('deviceTollGate') // map中收费站匝道灯图标显示的图层
+      this.createLayerGroup('deviceFInfoBoard') // map中F情报版显示的图层
+      this.createLayerGroup('deviceInfoBoard') // map中车道控制器情报版限速显示的图层
+      this.createLayerGroup('deviceTurnBoard') // map中门架情报板显示的图层
+      this.createLayerGroup('carRoadBoard') // map中车道控制器显示的图层
+      this.createLayerGroup('lineLayers') // map中绘制线显示的图层
+      // 输入提示
+      const autoOptions = {
+        city: '泰州',
+        input: 'tipinput',
+      }
+      const autoOptionsPop = {
+        city: '泰州',
+        input: 'tipinputPop',
+      }
+      const auto = new AMap.Autocomplete(autoOptions)
+      const autoPop = new AMap.Autocomplete(autoOptionsPop)
+      this.placeSearch = new AMap.PlaceSearch({
+        map: map,
+      })  //构造地点查询类
+      AMap.event.addListener(auto, 'select', this.searchKeyWords) // 注册监听，当选中某条记录时会触发
+      AMap.event.addListener(autoPop, 'select', this.searchKeyWords) // 注册监听，当选中某条记录时会触发
     }
-    const autoOptionsPop = {
-      city: '泰州',
-      input: 'tipinputPop',
-    }
-    const auto = new AMap.Autocomplete(autoOptions)
-    const autoPop = new AMap.Autocomplete(autoOptionsPop)
-    this.placeSearch = new AMap.PlaceSearch({
-      map: map,
-    })  //构造地点查询类
-    AMap.event.addListener(auto, 'select', this.searchKeyWords) // 注册监听，当选中某条记录时会触发
-    AMap.event.addListener(autoPop, 'select', this.searchKeyWords) // 注册监听，当选中某条记录时会触发
+
+
     // 点的新建
     // 图标收费站匝道灯
     this.drawMarkers(this.state.tollGateJson, tollStationIcon, 'deviceTollGate')
@@ -411,8 +417,8 @@ class GMap extends React.Component {
     const { detailsPopup, EventTagPopup } = this.state
     console.log(map, dataItem, EventTagPopup, '弹层的相关信息')
     var info = [];
-    console.log(dataItem.controlling , this.props.mapID);
-    
+    console.log(dataItem.controlling, this.props.mapID,detailsPopup);
+
     info.push(`<div class='content_box'>`);
     info.push(`<div class='content_box_title'><h4>设备信息</h4>`);
     info.push(`<p class='input-item'>设备名称：<span>` + dataItem.deviceName + `</span></p>`);
@@ -432,7 +438,7 @@ class GMap extends React.Component {
     this.dataItem = JSON.parse(JSON.stringify(dataItem))
     infoWindow.open(map, dataItem.latlng);
     this.infoWindow = infoWindow
-    window.infoWindowClose=infoWindow
+    window.infoWindowClose = infoWindow
     map.on('click', (e) => {
       infoWindow.close()
     })

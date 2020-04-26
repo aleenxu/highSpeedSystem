@@ -511,19 +511,13 @@ class ReservePlan extends React.Component {
           deviceString,
         }, () => {
           this.getDeviceEventList(true)
-          const latlngArr = JSON.parse(JSON.stringify(this.state.lineLatlngArr))
-          console.log(latlngArr);
-
-          if (latlngArr && latlngArr.length > 1) {
-            setTimeout(() => {
-              window.drawLine(latlngArr, this.controlDatas.eventType != 3)
-              this.getLineCenterPoint(latlngArr)
-            }, 1000)
-          }
-          /* this.handSecUrl() */
-          /*  if (this.ChildPage) {
-             this.ChildPage.loadPoint()
-           } */
+          /*   const latlngArr = JSON.parse(JSON.stringify(this.state.lineLatlngArr))
+            if (latlngArr && latlngArr.length > 1) {
+              setTimeout(() => {
+                window.drawLine(latlngArr, this.controlDatas.eventType != 3)
+                this.getLineCenterPoint(latlngArr)
+              }, 1000)
+            } */
         })
       })
     } else {
@@ -532,19 +526,16 @@ class ReservePlan extends React.Component {
         this.state.deviceString.splice(nowIndex, 1)
         if (this.state.deviceString.length == 0) {
           message.info('管控类型至少选中一个')
-          this.state.deviceString.push(controlId)
+          this.state.deviceString.push(Number(controlId))
         }
       } else {
-        this.state.deviceString.push(controlId)
+        this.state.deviceString.push(Number(controlId))
       }
       this.setState({
         deviceString: this.state.deviceString,
       }, () => {
         this.getDeviceEventList(true)
-        this.handSecUrl()
-        /* if (this.ChildPage) {
-          this.ChildPage.loadPoint()
-        } */
+        /* this.handSecUrl() */
       })
     }
   }
@@ -556,14 +547,18 @@ class ReservePlan extends React.Component {
     getResponseDatas('get', this.deviceUrl, params).then((res) => {
       const result = res.data
       if (result.code === 200) {
-        if (!flag) {
+        if (flag) {
+          this.setState({
+            deviceTypes: result.data.deviceTypes,
+          })
+        } else {
           this.setState({
             controlTypes: result.data.controlTypes,
             deviceTypes: result.data.deviceTypes,
           }, () => {
             const arrId = []
             this.state.controlTypes.map((item) => {
-              arrId.push(item.controlTypeId)
+              arrId.push(Number(item.controlTypeId))
             })
             this.setState({
               deviceString: arrId,
@@ -578,7 +573,7 @@ class ReservePlan extends React.Component {
   handleBoxSelectList = () => {
     const { checkedListBox, detailsPopup, boxSelectList, oldDevicesList, EventTagPopupTit, deviceTypes } = this.state
     boxSelectList.forEach((item) => {
-      checkedListBox.forEach((items) => {
+      checkedListBox && checkedListBox.forEach((items) => {
         if (item.appendId === items) {
           deviceTypes.forEach((itemss, index) => {
             if (itemss.dictCode === item.deviceTypeId) {
@@ -602,10 +597,20 @@ class ReservePlan extends React.Component {
       this.setState({
         boxSelect: false,
       })
-      if (!boolean) {
+      /* if (!boolean) {
         this.setState({
           checkedListBox: null,
         })
+      } */
+      if (!boolean) {
+        this.setState({
+          flagClose: null,
+          boxFlag: null,
+          checkedListBox: null,
+          controlBtnFlagText: '框选设备',
+        })
+        $(".amap-maps").attr("style", "")
+        window.mouseTool.close(true) //关闭，并清除覆盖物
       }
     }
     if (type === 'Details') {
@@ -867,9 +872,8 @@ class ReservePlan extends React.Component {
       console.log(this.controlDatas, 'this.controlDatas')
       this.setState({
         eventType: listByPage.data[nowIndex].controlEventType,
-        deviceString: listByPage.data[nowIndex].deviceControlType.split(),
+        deviceString: listByPage.data[nowIndex].deviceControlType.split(',').map((item) => { return Number(item) }),
         directionName: listByPage.data[nowIndex].directionName,
-
       })
       this.state.directionList.forEach((item, index) => {
         if (item.roadId === this.controlDatas.roadName) {
@@ -880,6 +884,8 @@ class ReservePlan extends React.Component {
           })
         }
       })
+      console.log(listByPage.data[nowIndex].deviceControlType.split(','));
+
       this.handleDetailPlan(listByPage.data[nowIndex].rowId) // 根据rowId获取全部设备
     } else if (name == 'edit') {
       console.log('编辑')
@@ -964,6 +970,9 @@ class ReservePlan extends React.Component {
           })
         }
       })
+      if (this.state.deviceString.length === 1) {
+        value.deviceControlType = this.state.deviceString[0]
+      }
       this.handleUrlAjax(this.groupUrl, 'MeasuresList')
     }
     this.setState({
@@ -1085,11 +1094,22 @@ class ReservePlan extends React.Component {
                   <div className={styles.ItemBox}>
                     <span className={styles.ItemName}>管&nbsp;控&nbsp;类&nbsp;型&nbsp;:</span>
                     <div className={styles.ItemInput}>
-                      <Select style={{ width: '100%' }} defaultValue={(InfoWinPopup.deviceControlType && InfoWinPopup.deviceControlType) || ''} onChange={(e) => { this.handleInfoWinChange(e, 'deviceControlType') }}>
+                      <Select style={{ width: '100%' }} defaultValue={(InfoWinPopup.deviceControlType && InfoWinPopup.deviceControlType) || (this.state.deviceString.length === 1 && this.state.deviceString[0]) || ''} onChange={(e) => { this.handleInfoWinChange(e, 'deviceControlType') }}>
                         <Option value="">请选择</Option>
-                        {
+                        {/* {
                           MeasuresList[InfoWinPopup.deviceTypeId - 1] && MeasuresList[InfoWinPopup.deviceTypeId - 1].map((itemss) => {
                             return <Option key={itemss.controlTypeId} value={itemss.controlTypeId}>{itemss.controlTypeName}</Option>
+                          })
+                        } */}
+                        {
+                          MeasuresList[InfoWinPopup.deviceTypeId - 1] && MeasuresList[InfoWinPopup.deviceTypeId - 1].map((itemss) => {
+                            if (this.state.deviceString.length) {
+                              if (this.state.deviceString.includes(itemss.controlTypeId)) {
+                                return <Option key={itemss.controlTypeId} value={itemss.controlTypeId}>{itemss.controlTypeName}</Option>
+                              }
+                            } else {
+                              return <Option key={itemss.controlTypeId} value={itemss.controlTypeId}>{itemss.controlTypeName}</Option>
+                            }
                           })
                         }
                       </Select>
@@ -1113,11 +1133,22 @@ class ReservePlan extends React.Component {
                     <div className={styles.ItemBox}>
                       <span className={styles.ItemName}>管&nbsp;控&nbsp;类&nbsp;型&nbsp;:</span>
                       <div className={styles.ItemInput}>
-                        <Select style={{ width: '100%' }} defaultValue={(InfoWinPopup.deviceControlType && InfoWinPopup.deviceControlType) || ''} onChange={(e) => { this.handleInfoWinChange(e, 'deviceControlType') }} >
+                        <Select style={{ width: '100%' }} defaultValue={(InfoWinPopup.deviceControlType && InfoWinPopup.deviceControlType) || (this.state.deviceString.length === 1 && this.state.deviceString[0]) || ''} onChange={(e) => { this.handleInfoWinChange(e, 'deviceControlType') }} >
                           <Option value="">请选择</Option>
-                          {
+                          {/* {
                             MeasuresList[InfoWinPopup.deviceTypeId - 1] && MeasuresList[InfoWinPopup.deviceTypeId - 1].map((itemss) => {
                               return <Option key={itemss.controlTypeId} value={itemss.controlTypeId}>{itemss.controlTypeName}</Option>
+                            })
+                          } */}
+                          {
+                            MeasuresList[InfoWinPopup.deviceTypeId - 1] && MeasuresList[InfoWinPopup.deviceTypeId - 1].map((itemss) => {
+                              if (this.state.deviceString.length) {
+                                if (this.state.deviceString.includes(itemss.controlTypeId)) {
+                                  return <Option key={itemss.controlTypeId} value={itemss.controlTypeId}>{itemss.controlTypeName}</Option>
+                                }
+                              } else {
+                                return <Option key={itemss.controlTypeId} value={itemss.controlTypeId}>{itemss.controlTypeName}</Option>
+                              }
                             })
                           }
                         </Select>
@@ -1143,9 +1174,20 @@ class ReservePlan extends React.Component {
                         <div className={styles.ItemInput}>
                           <Select style={{ width: '100%' }} defaultValue={(InfoWinPopup.deviceControlType && InfoWinPopup.deviceControlType) || ''} onChange={(e) => { this.handleInfoWinChange(e, 'deviceControlType') }} >
                             <Option value="">请选择</Option>
-                            {
+                            {/* {
                               MeasuresList[InfoWinPopup.deviceTypeId - 1] && MeasuresList[InfoWinPopup.deviceTypeId - 1].map((itemss) => {
                                 return <Option key={itemss.controlTypeId} value={itemss.controlTypeId}>{itemss.controlTypeName}</Option>
+                              })
+                            } */}
+                            {
+                              MeasuresList[InfoWinPopup.deviceTypeId - 1] && MeasuresList[InfoWinPopup.deviceTypeId - 1].map((itemss) => {
+                                if (this.state.deviceString.length) {
+                                  if (this.state.deviceString.includes(itemss.controlTypeId)) {
+                                    return <Option key={itemss.controlTypeId} value={itemss.controlTypeId}>{itemss.controlTypeName}</Option>
+                                  }
+                                } else {
+                                  return <Option key={itemss.controlTypeId} value={itemss.controlTypeId}>{itemss.controlTypeName}</Option>
+                                }
                               })
                             }
                           </Select>
@@ -1156,7 +1198,7 @@ class ReservePlan extends React.Component {
                         <div className={styles.ItemBox}>
                           <span className={styles.ItemName}>显&nbsp;示&nbsp;内&nbsp;容&nbsp;:</span>
                           <div className={styles.ItemInput}>
-                            <Select style={{ width: '100%' }} defaultValue={(InfoWinPopup.content && InfoWinPopup.content) || ''} onChange={(e) => { this.handleInfoWinChange(e, 'content') }}>
+                            <Select style={{ width: '100%' }} defaultValue={(InfoWinPopup.content && InfoWinPopup.content) || (this.state.deviceString.length === 1 && this.state.deviceString[0]) || ''} onChange={(e) => { this.handleInfoWinChange(e, 'content') }}>
                               <Option value=''>请选择</Option>
                               {
                                 deviceCodeList && deviceCodeList[(InfoWinPopup['function'] || 1) - 1].map((itemss) => {
@@ -1169,11 +1211,22 @@ class ReservePlan extends React.Component {
                         <div className={styles.ItemBox}>
                           <span className={styles.ItemName}>管&nbsp;控&nbsp;类&nbsp;型&nbsp;:</span>
                           <div className={styles.ItemInput}>
-                            <Select style={{ width: '100%' }} defaultValue={(InfoWinPopup.deviceControlType && InfoWinPopup.deviceControlType) || ''} onChange={(e) => { this.handleInfoWinChange(e, 'deviceControlType') }} >
+                            <Select style={{ width: '100%' }} defaultValue={(InfoWinPopup.deviceControlType && InfoWinPopup.deviceControlType) || (this.state.deviceString.length === 1 && this.state.deviceString[0]) || ''} onChange={(e) => { this.handleInfoWinChange(e, 'deviceControlType') }} >
                               <Option value="">请选择</Option>
-                              {
+                              {/* {
                                 MeasuresList[InfoWinPopup.deviceTypeId - 1] && MeasuresList[InfoWinPopup.deviceTypeId - 1].map((itemss) => {
                                   return <Option key={itemss.controlTypeId} value={itemss.controlTypeId}>{itemss.controlTypeName}</Option>
+                                })
+                              } */}
+                              {
+                                MeasuresList[InfoWinPopup.deviceTypeId - 1] && MeasuresList[InfoWinPopup.deviceTypeId - 1].map((itemss) => {
+                                  if (this.state.deviceString.length) {
+                                    if (this.state.deviceString.includes(itemss.controlTypeId)) {
+                                      return <Option key={itemss.controlTypeId} value={itemss.controlTypeId}>{itemss.controlTypeName}</Option>
+                                    }
+                                  } else {
+                                    return <Option key={itemss.controlTypeId} value={itemss.controlTypeId}>{itemss.controlTypeName}</Option>
+                                  }
                                 })
                               }
                             </Select>
@@ -1191,7 +1244,7 @@ class ReservePlan extends React.Component {
             <div className={style.MaskBox} style={{ zIndex: '996' }}>
               <div className={style.EventTagging}>
                 <GMap deviceString={this.state.deviceString.join()} equipmentInfoWin={this.equipmentInfoWin} onRef={el => this.ChildPage = el} styles={this.mapStyles} mapID={'RpopMap'} roadLatlng={detailsLatlng} handledetai={this.handledetai} detailsPopup={this.controlDatas} boxSelect={boxSelect} flagClose={flagClose} EventTagPopup={EventTagPopup} />
-                <div className={style.EventTaggingLeft}>
+                <div className={style.EventTaggingLeft} style={{ zIndex: '999' }}>
                   <div className={style.Title} style={{ background: '#132334', position: 'fixed', top: '61px', left: 'calc(5% + 6px)', zIndex: '999', width: 'calc(21.6% - 2px)' }}>{'修改预案库'}<Icon className={style.Close} onClick={() => { this.handleEventTag(false) }} type="close" /></div>
                   <div className={style.Title} style={{ background: '#132334', lineHeight: '20px', height: '20px', marginTop: '60px', fontSize: '12px' }}>预案名称</div>
                   <div className={style.Centent}>
@@ -1325,9 +1378,9 @@ class ReservePlan extends React.Component {
         }
         {reservePopup ?
           <div className={styles.MaskBox} style={{ zIndex: '1000' }}>
-            <div className={styles.AddBox}>
+            <div className={styles.AddBox} style={{ height: '88%' }}>
               <div className={styles.Title}>{'预案详情'}<Icon onClick={() => { this.handleEventPopup('Reserve', false) }} className={styles.Close} type="close" /></div>
-              <div className={styles.Conten}>
+              <div className={styles.Conten} style={{ overflowY: 'auto', height: 'calc(100% - 140px)' }}>
                 <div className={styles.Header}>
                   <span>管控措施：</span>
                 </div>
@@ -1343,14 +1396,20 @@ class ReservePlan extends React.Component {
                                 return (
                                   <div key={item.deviceId + item.deviceTypeId}>
                                     <div className={style.InputBox}>
-                                      <div className={style.ItemInput} style={{ width: '30%', textAlign: 'right', lineHeight: '30px', paddingRight: '8px' }} title={index + 1 + '.' + item.deviceName + '-' + item.directionName + items.codeName}>{deviceTypes.status === 1 ? <Icon type="close-circle" className={styles.CloneItem} onClick={() => { this.handleCloseCircle(indexs, index, item.deviceId) }} /> : null}{index + 1}.{item.deviceName + '-' + item.directionName + items.codeName}&nbsp;:</div>
+                                      <div className={style.ItemInput} style={{ width: '30%', textAlign: 'left', lineHeight: '30px', paddingRight: '8px' }} title={index + 1 + '.' + item.deviceName + '-' + item.directionName + items.codeName}>{deviceTypes.status === 1 ? <Icon type="close-circle" className={styles.CloneItem} onClick={() => { this.handleCloseCircle(indexs, index, item.deviceId) }} /> : null}{index + 1}.{item.deviceName + '-' + item.directionName + items.codeName}&nbsp;:</div>
                                       <div className={style.ItemInput} style={{ width: '50%' }}><Input style={{ textAlign: 'center', color: 'red' }} placeholder='请输入描述' onChange={(e) => { this.handleInput(e, 'content', 'controlDatas', item) }} defaultValue={item.content} /></div>
                                       <div className={style.ItemInput} style={{ width: '20%' }}>
                                         <Select disabled={deviceTypes.status > 1 ? true : ''} defaultValue={item.deviceControlType ? item.deviceControlType : 0} style={{ width: '80%' }} onChange={(e) => { this.handleSelect(e, 'deviceControlType', 'controlDatas', item) }}>
                                           <Option value={0}>请选择</Option>
                                           {
                                             controlTypes && controlTypes.map((itemss) => {
-                                              return <Option key={itemss.controlTypeId} value={itemss.controlTypeId}>{itemss.controlTypeName}</Option>
+                                              if (this.state.deviceString.length) {
+                                                if (this.state.deviceString.includes(itemss.controlTypeId)) {
+                                                  return <Option key={itemss.controlTypeId} value={itemss.controlTypeId}>{itemss.controlTypeName}</Option>
+                                                }
+                                              } else {
+                                                return <Option key={itemss.controlTypeId} value={itemss.controlTypeId}>{itemss.controlTypeName}</Option>
+                                              }
                                             })
                                           }
                                         </Select>
@@ -1371,7 +1430,7 @@ class ReservePlan extends React.Component {
                                   return (
 
                                     <div className={style.InputBox} key={item.deviceId + item.deviceTypeId}>
-                                      <div className={style.ItemInput} style={{ width: '30%', textAlign: 'right', lineHeight: '30px', paddingRight: '8px' }} title={index + 1 + '.' + item.deviceName + '-' + item.directionName + items.codeName}>{index + 1}.{item.deviceName + '-' + item.directionName + items.codeName}&nbsp;:</div>
+                                      <div className={style.ItemInput} style={{ width: '30%', textAlign: 'left', lineHeight: '30px', paddingRight: '8px' }} title={index + 1 + '.' + item.deviceName + '-' + item.directionName + items.codeName}>{index + 1}.{item.deviceName + '-' + item.directionName + items.codeName}&nbsp;:</div>
                                       <div className={style.ItemInput} style={{ width: '30%' }}>
                                         <Select defaultValue={item.content ? item.content : ''} style={{ width: '85%' }} onChange={(e) => { this.handleSelect(e, 'content', 'controlDatas', item) }}>
                                           <Option value={''}>请选择</Option>
@@ -1385,15 +1444,25 @@ class ReservePlan extends React.Component {
                                       <div className={style.ItemInput} style={{ width: '30%' }}>
                                         <Select disabled={deviceTypes.status > 1 ? true : ''} defaultValue={item.deviceControlType ? item.deviceControlType : 0} style={{ width: '80%' }} onChange={(e) => { this.handleSelect(e, 'deviceControlType', 'controlDatas', item) }}>
                                           <Option value={0}>请选择</Option>
-                                          {
+                                          {/* {
                                             controlTypes && controlTypes.map((itemss) => {
                                               return <Option key={itemss.controlTypeId} value={itemss.controlTypeId}>{itemss.controlTypeName}</Option>
+                                            })
+                                          } */}
+                                          {
+                                            controlTypes && controlTypes.map((itemss) => {
+                                              if (this.state.deviceString.length) {
+                                                if (this.state.deviceString.includes(itemss.controlTypeId)) {
+                                                  return <Option key={itemss.controlTypeId} value={itemss.controlTypeId}>{itemss.controlTypeName}</Option>
+                                                }
+                                              } else {
+                                                return <Option key={itemss.controlTypeId} value={itemss.controlTypeId}>{itemss.controlTypeName}</Option>
+                                              }
                                             })
                                           }
                                         </Select>
                                       </div>
                                     </div>
-
                                   )
                                 })
                               }
@@ -1407,7 +1476,7 @@ class ReservePlan extends React.Component {
                                   items.device && items.device.map((item, index) => {
                                     return (
                                       <div className={style.InputBox} key={item.deviceId + item.deviceTypeId}>
-                                        <div className={style.ItemInput} style={{ width: '30%', textAlign: 'right', lineHeight: '30px', paddingRight: '8px' }} title={index + 1 + '.' + item.deviceName + '-' + item.directionName + items.codeName}>{index + 1}.{item.deviceName + '-' + item.directionName + items.codeName}&nbsp;:</div>
+                                        <div className={style.ItemInput} style={{ width: '30%', textAlign: 'left', lineHeight: '30px', paddingRight: '8px' }} title={index + 1 + '.' + item.deviceName + '-' + item.directionName + items.codeName}>{index + 1}.{item.deviceName + '-' + item.directionName + items.codeName}&nbsp;:</div>
                                         <div className={style.ItemInput} style={{ width: '30%' }}>
                                           <Select defaultValue={item.content ? item.content : ''} style={{ width: '85%' }} onChange={(e) => { this.handleSelect(e, 'content', 'controlDatas', item) }}>
                                             <Option value={''}>请选择</Option>
@@ -1421,9 +1490,20 @@ class ReservePlan extends React.Component {
                                         <div className={style.ItemInput} style={{ width: '30%' }}>
                                           <Select disabled={deviceTypes.status > 1 ? true : ''} defaultValue={item.deviceControlType ? item.deviceControlType : 0} style={{ width: '80%' }} onChange={(e) => { this.handleSelect(e, 'deviceControlType', 'controlDatas', item) }}>
                                             <Option value={0}>请选择</Option>
-                                            {
+                                            {/* {
                                               controlTypes && controlTypes.map((itemss) => {
                                                 return <Option key={itemss.controlTypeId} value={itemss.controlTypeId}>{itemss.controlTypeName}</Option>
+                                              })
+                                            } */}
+                                            {
+                                              controlTypes && controlTypes.map((itemss) => {
+                                                if (this.state.deviceString.length) {
+                                                  if (this.state.deviceString.includes(itemss.controlTypeId)) {
+                                                    return <Option key={itemss.controlTypeId} value={itemss.controlTypeId}>{itemss.controlTypeName}</Option>
+                                                  }
+                                                } else {
+                                                  return <Option key={itemss.controlTypeId} value={itemss.controlTypeId}>{itemss.controlTypeName}</Option>
+                                                }
                                               })
                                             }
                                           </Select>
@@ -1442,7 +1522,7 @@ class ReservePlan extends React.Component {
                                     items.device && items.device.map((item, index) => {
                                       return (
                                         <div className={style.InputBox} key={item.deviceId + item.deviceTypeId}>
-                                          <div className={style.ItemInput} style={{ width: '30%', textAlign: 'right', lineHeight: '30px', paddingRight: '8px' }} title={index + 1 + '.' + item.deviceName + '-' + item.directionName + items.codeName}>{index + 1}.{item.deviceName + '-' + item.directionName + items.codeName}&nbsp;:</div>
+                                          <div className={style.ItemInput} style={{ width: '30%', textAlign: 'left', lineHeight: '30px', paddingRight: '8px' }} title={index + 1 + '.' + item.deviceName + '-' + item.directionName + items.codeName}>{index + 1}.{item.deviceName + '-' + item.directionName + items.codeName}&nbsp;:</div>
                                           <div className={style.ItemInput} style={{ width: '30%' }}>
                                             <Select defaultValue={item.content ? item.content : ''} style={{ width: '85%' }} onChange={(e) => { this.handleSelect(e, 'content', 'controlDatas', item) }}>
                                               <Option value={''}>请选择</Option>
@@ -1456,9 +1536,20 @@ class ReservePlan extends React.Component {
                                           <div className={style.ItemInput} style={{ width: '30%' }}>
                                             <Select disabled={deviceTypes.status > 1 ? true : ''} defaultValue={item.deviceControlType ? item.deviceControlType : 0} style={{ width: '80%' }} onChange={(e) => { this.handleSelect(e, 'deviceControlType', 'controlDatas', item) }}>
                                               <Option value={0}>请选择</Option>
-                                              {
+                                              {/* {
                                                 controlTypes && controlTypes.map((itemss) => {
                                                   return <Option key={itemss.controlTypeId} value={itemss.controlTypeId}>{itemss.controlTypeName}</Option>
+                                                })
+                                              } */}
+                                              {
+                                                controlTypes && controlTypes.map((itemss) => {
+                                                  if (this.state.deviceString.length) {
+                                                    if (this.state.deviceString.includes(itemss.controlTypeId)) {
+                                                      return <Option key={itemss.controlTypeId} value={itemss.controlTypeId}>{itemss.controlTypeName}</Option>
+                                                    }
+                                                  } else {
+                                                    return <Option key={itemss.controlTypeId} value={itemss.controlTypeId}>{itemss.controlTypeName}</Option>
+                                                  }
                                                 })
                                               }
                                             </Select>
@@ -1474,10 +1565,11 @@ class ReservePlan extends React.Component {
                     )
                   })
                 }
-                <div className={style.ItemFooter}>
-                  <span onClick={() => { addFlag ? this.handleAddPlan(deviceTypes, this.controlDatas) : this.handleUpdatePlan(deviceTypes, this.controlDatas) }}>保&nbsp;&nbsp;存</span>
-                  <span onClick={() => { this.handleEventPopup('Reserve', false) }}>返&nbsp;&nbsp;回</span>
-                </div>
+
+              </div>
+              <div className={style.ItemFooter}>
+                <span onClick={() => { addFlag ? this.handleAddPlan(deviceTypes, this.controlDatas) : this.handleUpdatePlan(deviceTypes, this.controlDatas) }}>保&nbsp;&nbsp;存</span>
+                <span onClick={() => { this.handleEventPopup('Reserve', false) }}>返&nbsp;&nbsp;回</span>
               </div>
             </div>
 
