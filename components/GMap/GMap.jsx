@@ -341,6 +341,8 @@ class GMap extends React.Component {
         })
         marker.on('click', (event) => {
           const nowZoom = map.getZoom()
+          console.log(positions[i],positions);
+          
           map.setZoomAndCenter(nowZoom, positions[i].latlng); //同时设置地图层级与中心点
           this.openInfoWin(map, positions[i])
         })
@@ -417,8 +419,8 @@ class GMap extends React.Component {
     const { detailsPopup, EventTagPopup } = this.state
     console.log(map, dataItem, EventTagPopup, '弹层的相关信息')
     var info = [];
-    console.log(dataItem.controlling, this.props.mapID,detailsPopup);
-
+    console.log(dataItem);
+    this.dataItem = JSON.parse(JSON.stringify(dataItem))
     info.push(`<div class='content_box'>`);
     info.push(`<div class='content_box_title'><h4>设备信息</h4>`);
     info.push(`<p class='input-item'>设备名称：<span>` + dataItem.deviceName + `</span></p>`);
@@ -435,7 +437,7 @@ class GMap extends React.Component {
     const infoWindow = new AMap.InfoWindow({
       content: info.join("")  //使用默认信息窗体框样式，显示信息内容
     });
-    this.dataItem = JSON.parse(JSON.stringify(dataItem))
+    
     infoWindow.open(map, dataItem.latlng);
     this.infoWindow = infoWindow
     window.infoWindowClose = infoWindow

@@ -271,6 +271,8 @@ class ReservePlan extends React.Component {
   }
   onCheckBoxSelect = (e) => {
     const { oldDevicesList } = this.state
+    console.log(oldDevicesList);
+
     this.setState({
       checkedListBox: e.target.checked ? oldDevicesList : [],
       indeterminateBox: false,
@@ -294,15 +296,15 @@ class ReservePlan extends React.Component {
     } else if (type === 'controlDatas' && name === 'roadId') {
       this.state.directionList.forEach((item, index) => {
         if (item.roadId === value) {
+          this.controlDatas.roadId = item.roadId
+          this.controlDatas.roadName = item.roadName
+          this.controlDatas.directionName = item.directions[0].directionName
+          this.controlDatas.directionId = item.directions[0].directionId
           this.setState({
             roadNumber: item.directions,
             directionId: '',
             directionName: item.directions[0].directionName ? item.directions[0].directionName : '',
           }, () => {
-            this.controlDatas.roadId = item.roadId
-            this.controlDatas.roadName = item.roadName
-            this.controlDatas.directionName = this.state.roadNumber[0].directionName
-            this.controlDatas.directionId = this.state.roadNumber[0].directionId
             this.handSecUrl()
           })
         }
@@ -360,24 +362,26 @@ class ReservePlan extends React.Component {
         // console.log(devicesArr, "00001")
         devicesArr[i].device && devicesArr[i].device.map((item) => {
           existsDevices.push(item.appendId)
-          listDevices.push(item.deviceId)
+          listDevices.push(item.appendId)
         })
       }
     }
+    const { deviceString } = this.state
     let params = {
-      "area": window.newPoint,
-      "control": false,
-      "eventPileNum": item.roadPileNum,
-      "eventTypeId": item.eventType,
-      "existsDevices": existsDevices
+      area: window.newPoint,
+      control: false,
+      eventPileNum: item.roadPileNum,
+      eventTypeId: item.eventType,
+      existsDevices: existsDevices,
+      controlType: deviceString.join(),
     }
     getResponseDatas('post', this.getDeviceAllUrl, params).then((res) => {
       const result = res.data
       if (result.code === 200) {
         const noDevices = []
         result.data.map((item) => {
-          if (!(listDevices.includes(item.deviceId))) {
-            noDevices.push(item.deviceId)
+          if (!listDevices.includes(item.appendId)) {
+            noDevices.push(item.appendId)
           }
         })
         if (result.data.length > 0) {
@@ -606,6 +610,7 @@ class ReservePlan extends React.Component {
         this.setState({
           flagClose: null,
           boxFlag: null,
+          checkAllBox: null,
           checkedListBox: null,
           controlBtnFlagText: '框选设备',
         })
@@ -1007,11 +1012,11 @@ class ReservePlan extends React.Component {
     this.setState({ InfoWinPopup: null, deviceTypes, })
   }
   handlepublish = (item) => {
-    const { controlEventType, rowId } = item
+    const { controlEventType, rowId, deviceControlType } = item
     getResponseDatas('post', this.controlUrl + `${controlEventType}/${rowId}`).then((res) => {
       const result = res.data
       if (result.code === 200) {
-        window.contingency = { eventType: 5, eventId: result.data }
+        window.contingency = { eventType: 5, eventId: result.data, controlType: deviceControlType, }
         message.success('操作成功! 将要开始跳转页面！')
         setTimeout(() => {
           this.props.history.push('/monitoringmodule')
@@ -1198,7 +1203,7 @@ class ReservePlan extends React.Component {
                         <div className={styles.ItemBox}>
                           <span className={styles.ItemName}>显&nbsp;示&nbsp;内&nbsp;容&nbsp;:</span>
                           <div className={styles.ItemInput}>
-                            <Select style={{ width: '100%' }} defaultValue={(InfoWinPopup.content && InfoWinPopup.content) || (this.state.deviceString.length === 1 && this.state.deviceString[0]) || ''} onChange={(e) => { this.handleInfoWinChange(e, 'content') }}>
+                            <Select style={{ width: '100%' }} defaultValue={(InfoWinPopup.content && InfoWinPopup.content) || ''} onChange={(e) => { this.handleInfoWinChange(e, 'content') }}>
                               <Option value=''>请选择</Option>
                               {
                                 deviceCodeList && deviceCodeList[(InfoWinPopup['function'] || 1) - 1].map((itemss) => {
@@ -1401,8 +1406,19 @@ class ReservePlan extends React.Component {
                                       <div className={style.ItemInput} style={{ width: '20%' }}>
                                         <Select disabled={deviceTypes.status > 1 ? true : ''} defaultValue={item.deviceControlType ? item.deviceControlType : 0} style={{ width: '80%' }} onChange={(e) => { this.handleSelect(e, 'deviceControlType', 'controlDatas', item) }}>
                                           <Option value={0}>请选择</Option>
-                                          {
+                                          {/*  {
                                             controlTypes && controlTypes.map((itemss) => {
+                                              if (this.state.deviceString.length) {
+                                                if (this.state.deviceString.includes(itemss.controlTypeId)) {
+                                                  return <Option key={itemss.controlTypeId} value={itemss.controlTypeId}>{itemss.controlTypeName}</Option>
+                                                }
+                                              } else {
+                                                return <Option key={itemss.controlTypeId} value={itemss.controlTypeId}>{itemss.controlTypeName}</Option>
+                                              }
+                                            })
+                                          } */}
+                                          {
+                                            MeasuresList[indexs] && MeasuresList[indexs].map((itemss) => {
                                               if (this.state.deviceString.length) {
                                                 if (this.state.deviceString.includes(itemss.controlTypeId)) {
                                                   return <Option key={itemss.controlTypeId} value={itemss.controlTypeId}>{itemss.controlTypeName}</Option>
@@ -1428,12 +1444,11 @@ class ReservePlan extends React.Component {
                               {
                                 items.device && items.device.map((item, index) => {
                                   return (
-
                                     <div className={style.InputBox} key={item.deviceId + item.deviceTypeId}>
                                       <div className={style.ItemInput} style={{ width: '30%', textAlign: 'left', lineHeight: '30px', paddingRight: '8px' }} title={index + 1 + '.' + item.deviceName + '-' + item.directionName + items.codeName}>{index + 1}.{item.deviceName + '-' + item.directionName + items.codeName}&nbsp;:</div>
                                       <div className={style.ItemInput} style={{ width: '30%' }}>
                                         <Select defaultValue={item.content ? item.content : ''} style={{ width: '85%' }} onChange={(e) => { this.handleSelect(e, 'content', 'controlDatas', item) }}>
-                                          <Option value={''}>请选择</Option>
+                                          <Option value="">请选择</Option>
                                           {
                                             deviceDetailList && deviceDetailList.map((itemss) => {
                                               return <Option key={itemss.id} value={itemss.id}>{itemss.name}</Option>
@@ -1444,13 +1459,8 @@ class ReservePlan extends React.Component {
                                       <div className={style.ItemInput} style={{ width: '30%' }}>
                                         <Select disabled={deviceTypes.status > 1 ? true : ''} defaultValue={item.deviceControlType ? item.deviceControlType : 0} style={{ width: '80%' }} onChange={(e) => { this.handleSelect(e, 'deviceControlType', 'controlDatas', item) }}>
                                           <Option value={0}>请选择</Option>
-                                          {/* {
-                                            controlTypes && controlTypes.map((itemss) => {
-                                              return <Option key={itemss.controlTypeId} value={itemss.controlTypeId}>{itemss.controlTypeName}</Option>
-                                            })
-                                          } */}
                                           {
-                                            controlTypes && controlTypes.map((itemss) => {
+                                            MeasuresList[indexs] && MeasuresList[indexs].map((itemss) => {
                                               if (this.state.deviceString.length) {
                                                 if (this.state.deviceString.includes(itemss.controlTypeId)) {
                                                   return <Option key={itemss.controlTypeId} value={itemss.controlTypeId}>{itemss.controlTypeName}</Option>
@@ -1490,13 +1500,9 @@ class ReservePlan extends React.Component {
                                         <div className={style.ItemInput} style={{ width: '30%' }}>
                                           <Select disabled={deviceTypes.status > 1 ? true : ''} defaultValue={item.deviceControlType ? item.deviceControlType : 0} style={{ width: '80%' }} onChange={(e) => { this.handleSelect(e, 'deviceControlType', 'controlDatas', item) }}>
                                             <Option value={0}>请选择</Option>
-                                            {/* {
-                                              controlTypes && controlTypes.map((itemss) => {
-                                                return <Option key={itemss.controlTypeId} value={itemss.controlTypeId}>{itemss.controlTypeName}</Option>
-                                              })
-                                            } */}
+
                                             {
-                                              controlTypes && controlTypes.map((itemss) => {
+                                              MeasuresList[indexs] && MeasuresList[indexs].map((itemss) => {
                                                 if (this.state.deviceString.length) {
                                                   if (this.state.deviceString.includes(itemss.controlTypeId)) {
                                                     return <Option key={itemss.controlTypeId} value={itemss.controlTypeId}>{itemss.controlTypeName}</Option>
@@ -1536,13 +1542,9 @@ class ReservePlan extends React.Component {
                                           <div className={style.ItemInput} style={{ width: '30%' }}>
                                             <Select disabled={deviceTypes.status > 1 ? true : ''} defaultValue={item.deviceControlType ? item.deviceControlType : 0} style={{ width: '80%' }} onChange={(e) => { this.handleSelect(e, 'deviceControlType', 'controlDatas', item) }}>
                                               <Option value={0}>请选择</Option>
-                                              {/* {
-                                                controlTypes && controlTypes.map((itemss) => {
-                                                  return <Option key={itemss.controlTypeId} value={itemss.controlTypeId}>{itemss.controlTypeName}</Option>
-                                                })
-                                              } */}
+
                                               {
-                                                controlTypes && controlTypes.map((itemss) => {
+                                                MeasuresList[indexs] && MeasuresList[indexs].map((itemss) => {
                                                   if (this.state.deviceString.length) {
                                                     if (this.state.deviceString.includes(itemss.controlTypeId)) {
                                                       return <Option key={itemss.controlTypeId} value={itemss.controlTypeId}>{itemss.controlTypeName}</Option>
@@ -1597,7 +1599,7 @@ class ReservePlan extends React.Component {
                   >
                     {
                       boxSelectList.map((item) => {
-                        return <Checkbox key={item.appendId} disabled={item.exists === true || item.controlling === true ? true : false} value={item.appendId}>{item.deviceName + '-' + item.directionName}<b style={{ color: 'yellow' }}>{item.exists === true ? " ( 已存在 )" : " "}</b></Checkbox>
+                        return <Checkbox key={item.appendId} disabled={item.exists === true} value={item.appendId}>{item.deviceName + '-' + item.directionName}<b style={{ color: 'yellow' }}>{item.exists === true ? " ( 已存在 )" : " "}</b></Checkbox>
                       })
                     }
 

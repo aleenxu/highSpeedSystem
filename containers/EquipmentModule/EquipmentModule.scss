@@ -44,7 +44,7 @@
       color: #ccc;
       text-align: center;
       line-height: 25px;
-      border-radius: 0;  
+      border-radius: 0;
     }
     .Operation {
       width: 100%;
@@ -193,6 +193,9 @@
         }
         :global(.ant-pagination-jump-next .ant-pagination-item-container .ant-pagination-item-ellipsis) {
           color: #ccc;
+        }
+        :global(.ant-pagination-item-ellipsis) {
+          color: #ccc !important;
         }
         .count {
           height: 32px;

@@ -1,3 +1,8 @@
+.scrollBox{
+  :global(.ant-collapse-item:last-child > .ant-collapse-content) {
+    overflow: initial !important;
+  }
+}
 // 折叠面板
 :global(.ant-collapse-icon-position-right > .ant-collapse-item > .ant-collapse-header) {
   background: rgba(19, 27, 37, 0.8);
@@ -7,9 +12,7 @@
 :global(.ant-collapse > .ant-collapse-item:last-child) {
   border-radius: unset;
 }
-:global(.ant-collapse-item:last-child > .ant-collapse-content) {
-  overflow: initial !important;
-}
+
 :global(.ant-collapse) {
   background: unset;
   border: unset;
