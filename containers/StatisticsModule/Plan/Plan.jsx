@@ -104,7 +104,7 @@ class Plan extends React.Component {
     getResponseDatas('get', this.StatisticsUrl, data).then((res) => {
       const result = res.data
       if (result.code === 200) {
-        console.log(result.data)
+        // console.log(result.data)
         const dataX = []
         const dataY = []
         result.data.forEach((item) => {
@@ -121,7 +121,7 @@ class Plan extends React.Component {
     getResponseDatas('get', this.MessageUrl).then((res) => {
       const result = res.data
       if (result.code === 200) {
-        console.log(result.data)
+        // console.log(result.data)
         this.setState({
           RoadMessage: result.data,
           Jurisdiction: result.data[0].key,
@@ -148,14 +148,14 @@ class Plan extends React.Component {
     }
   }
   handleDatastring = (value, dateString) => {
-    console.log('Selected Time: ', value)
-    console.log('Formatted Selected Time: ', dateString);
+    // console.log('Selected Time: ', value)
+    // console.log('Formatted Selected Time: ', dateString);
     this.Parameters.startTime = dateString[0]
     this.Parameters.endTime = dateString[1]
   }
 
   handleDataonOk = (value) => {
-    console.log('onOk: ', value)
+    // console.log('onOk: ', value)
   }
   render() {
     const {
@@ -231,7 +231,7 @@ class Plan extends React.Component {
                   onOk={this.handleDataonOk}
                 />
               </div>
-              <div className={styles.OperationItem} style={{ 'min-width': 'auto' }}>
+              <div className={styles.OperationItem} style={{ minWidth: 'auto' }}>
                 <Button className={styles.Button} onClick={this.geteventStatistics}>搜&nbsp;&nbsp;索</Button>
               </div>
             </div>

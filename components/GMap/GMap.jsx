@@ -1,5 +1,6 @@
 import React from 'react'
 import { Button } from 'antd'
+import './GMap.scss'
 import tollStationIcon from '../../imgs/tollStation_s.png'
 import fBoardIcon from '../../imgs/fBoard_s.png'
 import speedLimitIcon from '../../imgs/speedLimit_s.png'
@@ -33,7 +34,7 @@ class GMap extends React.Component {
       speedLimitJson: [], //车道控制器限速版
       carRoadJson: [], //车道控制器
       roadLatlng: this.props.roadLatlng, // 路段的经纬度
-     /*  detailsPopup: this.props.detailsPopup, // 右侧详情显示 */
+      /*  detailsPopup: this.props.detailsPopup, // 右侧详情显示 */
       boxSelect: this.props.boxSelect, // 框选弹层
       flagClose: this.props.flagClose, // 框选是否清除绘制
       centerPoint: null, // 地图中心点
@@ -73,10 +74,7 @@ class GMap extends React.Component {
   }
   componentWillReceiveProps = (nextProps) => {
     if (this.props.deviceString !== nextProps.deviceString) {
-      console.log(this.props.deviceString, nextProps.deviceString, 'nextProps.deviceStringnextProps.deviceString');
       this.setState({ deviceString: nextProps.deviceString }, () => {
-        console.log(nextProps.deviceString)
-        debugger
         this.loadPoint(true)
       })
     }
@@ -156,10 +154,8 @@ class GMap extends React.Component {
     const { deviceString, keyWords } = this.state
     getResponseDatas('get', this.mapPointUrl + '?searchKey=' + keyWords + (deviceString ? `&controlTypes=${deviceString}` : '')).then((res) => {
       const jsonData = res.data
-      // console.log(jsonData, '地图点的数据')
       if (jsonData.code == 200 && jsonData.data.length > 0) {
         window.mapPointArr = jsonData.data
-        console.log(window.mapPointArr, '=====daianweo ');
         const infoBoardJson = [], infoFBoardJson = [], carRoadJson = [], speedLimitJson = [], tollGateJson = []
         jsonData.data.map((item) => {
           // 根据类型划分图标类型 1、可变情报板;2、F屏情报版;3、可变限速板;4、收费站; 5、车道控制器;
@@ -287,7 +283,6 @@ class GMap extends React.Component {
   }
   loadLeftModulePoint = () => {
     const _this = this
-    console.log(this.state.dataAll);
     this.state.dataAll && this.state.dataAll.map((leftItem, leftIndex) => {
       if (leftItem.eventData.length > 0) {
         // markEventType
@@ -341,15 +336,11 @@ class GMap extends React.Component {
         })
         marker.on('click', (event) => {
           const nowZoom = map.getZoom()
-          console.log(positions[i],positions);
-          
           map.setZoomAndCenter(nowZoom, positions[i].latlng); //同时设置地图层级与中心点
           this.openInfoWin(map, positions[i])
         })
         this[layer].push(marker)
       }
-
-      console.log(this[layer], window[layer], '=============');
       window[layer].addLayers(this[layer]) // 把点添加到层组中
       window[layer].setMap(map) // 层组渲染到地图中
     }
@@ -410,16 +401,13 @@ class GMap extends React.Component {
     }
   }
   equipmentInfoWin = () => {
-    console.log(this.dataItem);
     this.props.equipmentInfoWin(this.dataItem)
   }
   //在指定位置打开信息窗体
   openInfoWin = (map, dataItem) => {
     window.equipmentInfoWin = this.equipmentInfoWin
     const { detailsPopup, EventTagPopup } = this.state
-    console.log(map, dataItem, EventTagPopup, '弹层的相关信息')
     var info = [];
-    console.log(dataItem);
     this.dataItem = JSON.parse(JSON.stringify(dataItem))
     info.push(`<div class='content_box'>`);
     info.push(`<div class='content_box_title'><h4>设备信息</h4>`);
@@ -437,7 +425,7 @@ class GMap extends React.Component {
     const infoWindow = new AMap.InfoWindow({
       content: info.join("")  //使用默认信息窗体框样式，显示信息内容
     });
-    
+
     infoWindow.open(map, dataItem.latlng);
     this.infoWindow = infoWindow
     window.infoWindowClose = infoWindow

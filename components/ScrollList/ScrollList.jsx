@@ -160,7 +160,6 @@ class ScrollList extends React.Component {
     this.setState({ sideachart: option })
   }
   callback = (key) => {
-    console.log(key);
   }
   handleEventPopup = (e, type, boolean) => {
     // console.log($(e.target).parent().attr("latlng"), '当前')
@@ -186,7 +185,7 @@ class ScrollList extends React.Component {
     if (handleEventPopup) {
       handleEventPopup(type, boolean)
       // this.checkBoxClick()
-      console.log($($('.ant-checkbox-input')), '多少个')
+      // console.log($($('.ant-checkbox-input')), '多少个')
 
     }
   }
@@ -245,8 +244,7 @@ class ScrollList extends React.Component {
         onClick={(event) => {
           event.stopPropagation()
           let boolean = false
-          console.log($('.BadgeIcon').css("color"))
-          if ($('.BadgeIcon').css("color") == 'rgb(53, 186, 255)') {
+          if ($('.BadgeIcon').css('color') == 'rgb(53, 186, 255)') {
             $('.BadgeIcon').css({ color: 'rgb(255, 255, 255)' })
             boolean = false
           } else {
@@ -264,7 +262,7 @@ class ScrollList extends React.Component {
     setTimeout(() => {
       checkArr.map((item) => {
         // item.target.checked = false
-        console.log(item, '看看效果')
+        // console.log(item, '看看效果')
       })
       // this.setState({
       //   one: false,
@@ -275,7 +273,7 @@ class ScrollList extends React.Component {
       // })
     }, 3000)
     // debugger
-    console.log(event, this.state.listTitle, event.target.checked)
+    // console.log(event, this.state.listTitle, event.target.checked)
     this.setState({
       typeNow: event.target.nowtype
     }, () => {
@@ -312,7 +310,7 @@ class ScrollList extends React.Component {
         {listType === '1' &&
           <div>
             <div className={styles.settingTitle}><span><i />未管控</span><span><i />已管控</span></div>
-            <Icon style={{ left: '10px', top: '15px', position: "absolute", zIndex: '999', color: 'white' }} type="pie-chart" />
+            <Icon style={{ left: '10px', top: '15px', position: 'absolute', zIndex: '999', color: 'white' }} type="pie-chart" />
             <Collapse
               defaultActiveKey={['1']}
               onChange={this.callback}
@@ -343,7 +341,7 @@ class ScrollList extends React.Component {
         }
         {listType === '2' &&
           <div>
-            <Icon style={{ left: '10px', top: '15px', position: "absolute", zIndex: '999', color: 'white' }} type="appstore" />
+            <Icon style={{ left: '10px', top: '15px', position: 'absolute', zIndex: '999', color: 'white' }} type="appstore" />
             <Collapse
               defaultActiveKey={['1']}
               onChange={this.callback}

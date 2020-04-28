@@ -87,14 +87,14 @@ class User extends React.Component {
     Object.keys(obj).forEach((item) => {
       formData.append(item, obj[item])
     })
-    console.log(formData)
+    // console.log(formData)
     return formData
   }
   getSystemList = () => {
     getResponseDatas('post', this.listUrl, this.getFormData(this.sysUser)).then((res) => {
       const result = res.data
       if (result.code === 0) {
-        console.log(result.data)
+        // console.log(result.data)
         this.setState({ systemList: result.data, current: Number(this.sysUser.pageNo) })
       } else {
         message.error('网络异常，请稍后再试!')
@@ -142,7 +142,6 @@ class User extends React.Component {
     })
   }
   /*   getAddUserList = () => {
-      console.log(this.dataList);
       const url = this.dataList.id ? this.updateUrl : this.saveUrl
       if (!this.dataList.userName) {
         message.error('请填写用户名称!')
@@ -190,7 +189,7 @@ class User extends React.Component {
         const result = res.data
         if (result.code === 0) {
           if (Object.keys(result.data).length) {
-            console.log(this.dataList);
+            // console.log(this.dataList);
             this.dataList = result.data
             this.dataList.deptIds = [result.data.deptId]
             this.dataList.roleIds = [result.data.roleId]
@@ -215,7 +214,7 @@ class User extends React.Component {
     this[type][name] = e.target.value
   }
   handleSelect = (value, name, type) => {
-    console.log(value, name, type);
+    // console.log(value, name, type);
     this[type][name] = value
   }
   handleSubmit = (e) => {

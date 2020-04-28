@@ -302,7 +302,6 @@ class TollGate extends React.Component {
     })
   }
   handleAddData = () => {
-    console.log(this.board, this.boardData);
     this.board = JSON.parse(JSON.stringify(this.boardData))
     this.setState({ boardData: this.board, boardLatlng: null, hwayDirection: null, roadSecIddata: null, Intelatlng: null })
   }
@@ -370,7 +369,7 @@ class TollGate extends React.Component {
               {
                 !!listByPage && listByPage.data.map((item) => {
                   return (
-                    <div className={styles.listItems}>
+                    <div className={styles.listItems} key={item.deviceName + item.deviceId}>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.deviceId}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.deviceName}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{this.handledirection(vendorList, item.vendor)}</span></div>
@@ -538,7 +537,7 @@ class TollGate extends React.Component {
 
                             {
                               hwayList && hwayList.map((item) => {
-                                return <Option value={item.roadId}>{item.roadName}</Option>
+                                return <Option key={item.roadId} value={item.roadId}>{item.roadName}</Option>
                               })
                             }
                           </Select>
@@ -584,7 +583,7 @@ class TollGate extends React.Component {
                           <Select onChange={(e) => { this.handleSelect(e, 'direction', 'board') }}>
                             {
                               hwayDirection && hwayDirection.map((item) => {
-                                return <Option value={item.directionId}>{item.directionName}</Option>
+                                return <Option key={item.directionId} value={item.directionId}>{item.directionName}</Option>
                               })
                             }
                           </Select>
@@ -608,7 +607,7 @@ class TollGate extends React.Component {
                           <Select onChange={(e) => { this.handleSelect(e, 'roadSecId', 'board') }}>
                             {
                               roadSecIddata && roadSecIddata.map((item) => {
-                                return <Option value={item.roadSecId}>{item.secName}</Option>
+                                return <Option key={item.roadSecId} value={item.roadSecId}>{item.secName}</Option>
                               })
                             }
                           </Select>

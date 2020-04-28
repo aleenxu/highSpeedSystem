@@ -154,7 +154,7 @@ class Historical extends React.Component {
   handlepage = (pageNumber) => {
     this.Parameters.pageNo = pageNumber
     this.handleListByPage()
-    console.log(pageNumber);
+    // console.log(pageNumber);
   }
   // input
   handleInput = (e, name, type) => {
@@ -186,7 +186,7 @@ class Historical extends React.Component {
                   <Option value={0}>请选择</Option>
                   {
                     eventTypeData && eventTypeData.map((item) => {
-                      return <Option value={item.id}>{item.name}</Option>
+                      return <Option key={item.id} value={item.id}>{item.name}</Option>
                     })
                   }
                 </Select>
@@ -237,7 +237,7 @@ class Historical extends React.Component {
               {
                 !!listByPage && listByPage.data.map((item) => {
                   return (
-                    <div className={styles.listItems}>
+                    <div className={styles.listItems} key={item.eventTypeName + item.eventId}>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.eventId}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName} title={item.eventTypeName}>{item.eventTypeName}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName} title={item.roadName}>{item.roadName}</span></div>
@@ -283,50 +283,52 @@ class Historical extends React.Component {
                   <div className={styles.RowBox}>
                     <p>起始桩号&nbsp;:&nbsp;&nbsp;<span style={{ color: '#c67f03' }}>{reservePopup.pileNum && reservePopup.pileNum.split(' ')[0]}</span></p>
                     {
-                      reservePopup.eventTypeId === 1 ? [<p>平均车速&nbsp;:&nbsp;&nbsp;<span style={{ color: '#c67f03' }}>{reservePopup.situation}km/h</span> </p>,
-                      <p>拥堵路段长度&nbsp;:&nbsp;&nbsp;<span style={{ color: '#f31113' }}>{reservePopup.eventLength}m</span></p>] :
-                        [<p>能见度&nbsp;:&nbsp;&nbsp;<span style={{ color: '#c67f03' }}>{reservePopup.situation}km/h</span> </p>,
-                        <p>影响道路长度&nbsp;:&nbsp;&nbsp;<span style={{ color: '#f31113' }}>{reservePopup.eventLength}m</span></p>]
+                      reservePopup.eventTypeId === 1 ?
+                        [<p key="situation">平均车速&nbsp;:&nbsp;&nbsp;<span style={{ color: '#c67f03' }}>{reservePopup.situation}km/h</span> </p>,
+                         <p key="eventLength">拥堵路段长度&nbsp;:&nbsp;&nbsp;<span style={{ color: '#f31113' }}>{reservePopup.eventLength}m</span></p>] :
+                        [<p key="situation">能见度&nbsp;:&nbsp;&nbsp;<span style={{ color: '#c67f03' }}>{reservePopup.situation}km/h</span> </p>,
+                         <p key="eventLength">影响道路长度&nbsp;:&nbsp;&nbsp;<span style={{ color: '#f31113' }}>{reservePopup.eventLength}m</span></p>]
                     }
                   </div>
                   <div className={styles.RowBox}>数据来源&nbsp;:&nbsp;&nbsp;<span style={{ color: '#03af01' }}>{reservePopup.dataSourceName}</span></div>
                 </div>
 
-                {operationData
-                  ? <div>
-                    <div className={styles.guanBox}>
-                      <Button className={styles.Button}>管控方案评估</Button>
-                    </div>
-                    <div className={styles.guanBox}>
-                      <span className={styles.guanTitle}>操作记录</span>
-                    </div>
-                    <div className={styles.listBox}>
-                      <div className={styles.listBoxHead}>
-                        <div className={styles.listItems}>
-                          <div className={styles.listTd} >序号</div>
-                          <div className={styles.listTd} >操作人</div>
-                          <div className={styles.listTd} >操作</div>
-                          <div className={styles.listTd} >剩余管控时常</div>
-                          <div className={styles.listTd} >操作时间</div>
+                {
+                  operationData ?
+                    <div>
+                      <div className={styles.guanBox}>
+                        <Button className={styles.Button}>管控方案评估</Button>
+                      </div>
+                      <div className={styles.guanBox}>
+                        <span className={styles.guanTitle}>操作记录</span>
+                      </div>
+                      <div className={styles.listBox}>
+                        <div className={styles.listBoxHead}>
+                          <div className={styles.listItems}>
+                            <div className={styles.listTd} >序号</div>
+                            <div className={styles.listTd} >操作人</div>
+                            <div className={styles.listTd} >操作</div>
+                            <div className={styles.listTd} >剩余管控时常</div>
+                            <div className={styles.listTd} >操作时间</div>
+                          </div>
+                        </div>
+                        <div className={styles.listBoxBody}>
+                          {
+                            operationData && operationData.map((item, index) => {
+                              return (
+                                <div className={styles.listItems} key={item.operationUser}>
+                                  <div className={styles.listTd} >{index + 1}</div>
+                                  <div className={styles.listTd} >{item.operationUser}</div>
+                                  <div className={styles.listTd} >{item.operationName}</div>
+                                  <div className={styles.listTd} >{item.operationTime && item.endTime ? this.formatDuring(new Date(item.endTime).getTime() - new Date(item.operationTime).getTime()) : '-'}</div>
+                                  <div className={styles.listTd} >{item.operationTime}</div>
+                                </div>
+                              )
+                            })
+                          }
                         </div>
                       </div>
-                      <div className={styles.listBoxBody}>
-                        {
-                          operationData && operationData.map((item, index) => {
-                            return (
-                              <div className={styles.listItems}>
-                                <div className={styles.listTd} >{index + 1}</div>
-                                <div className={styles.listTd} >{item.operationUser}</div>
-                                <div className={styles.listTd} >{item.operationName}</div>
-                                <div className={styles.listTd} >{item.operationTime && item.endTime ? this.formatDuring(new Date(item.endTime).getTime() - new Date(item.operationTime).getTime()) : '-'}</div>
-                                <div className={styles.listTd} >{item.operationTime}</div>
-                              </div>
-                            )
-                          })
-                        }
-                      </div>
-                    </div>
-                  </div> : null}
+                    </div> : null}
               </div>
             </div>
           </div> : null}

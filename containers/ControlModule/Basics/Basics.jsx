@@ -185,7 +185,7 @@ class Basics extends React.Component {
                   <Option value={0}>请选择</Option>
                   {
                     eventTypeData && eventTypeData.map((item) => {
-                      return <Option value={item.id}>{item.name}</Option>
+                      return <Option key={item.id} value={item.id}>{item.name}</Option>
                     })
                   }
                 </Select>
@@ -282,10 +282,11 @@ class Basics extends React.Component {
                   <div className={styles.RowBox}>
                     <p>起始桩号&nbsp;:&nbsp;&nbsp;<span style={{ color: '#c67f03' }}>{reservePopup.pileNum && reservePopup.pileNum.split(' ')[0]}</span></p>
                     {
-                      reservePopup.eventTypeId === 1 ? [<p>平均车速&nbsp;:&nbsp;&nbsp;<span style={{ color: '#c67f03' }}>{reservePopup.situation}km/h</span> </p>,
-                      <p>拥堵路段长度&nbsp;:&nbsp;&nbsp;<span style={{ color: '#f31113' }}>{reservePopup.eventLength}m</span></p>] :
-                        [<p>能见度&nbsp;:&nbsp;&nbsp;<span style={{ color: '#c67f03' }}>{reservePopup.situation}km/h</span> </p>,
-                        <p>影响道路长度&nbsp;:&nbsp;&nbsp;<span style={{ color: '#f31113' }}>{reservePopup.eventLength}m</span></p>]
+                      reservePopup.eventTypeId === 1 ?
+                        [<p key="situation">平均车速&nbsp;:&nbsp;&nbsp;<span style={{ color: '#c67f03' }}>{reservePopup.situation}km/h</span> </p>,
+                         <p key="eventLength">拥堵路段长度&nbsp;:&nbsp;&nbsp;<span style={{ color: '#f31113' }}>{reservePopup.eventLength}m</span></p>] :
+                        [<p key="situation">能见度&nbsp;:&nbsp;&nbsp;<span style={{ color: '#c67f03' }}>{reservePopup.situation}km/h</span> </p>,
+                         <p key="eventLength">影响道路长度&nbsp;:&nbsp;&nbsp;<span style={{ color: '#f31113' }}>{reservePopup.eventLength}m</span></p>]
                     }
                   </div>
                   <div className={styles.RowBox}>数据来源&nbsp;:&nbsp;&nbsp;<span style={{ color: '#03af01' }}>{reservePopup.dataSourceName}</span></div>
@@ -313,7 +314,7 @@ class Basics extends React.Component {
                         {
                           operationData && operationData.map((item, index) => {
                             return (
-                              <div className={styles.listItems}>
+                              <div className={styles.listItems} key={item.operationUser}>
                                 <div className={styles.listTd} >{index + 1}</div>
                                 <div className={styles.listTd} >{item.operationUser}</div>
                                 <div className={styles.listTd} >{item.operationName}</div>

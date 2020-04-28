@@ -26,7 +26,7 @@ class SystemMenu extends React.Component {
       }
       path.push('#' + item.path) // 所有路由权限
     })
-    console.log(path, window.location.hash);
+    // console.log(path, window.location.hash);
 
     if (!path.includes(window.location.hash)) { // 判断当前是否有当前路由权限
       window.location.hash = '#/login'

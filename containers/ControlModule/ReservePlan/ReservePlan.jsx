@@ -210,7 +210,7 @@ class ReservePlan extends React.Component {
   }
   handSecUrl = () => {
     const that = this
-    console.log(this.controlDatas);
+    // console.log(this.controlDatas);
 
     if (!this.controlDatas.roadName) {
       message.info('请选择高速！')
@@ -271,7 +271,7 @@ class ReservePlan extends React.Component {
   }
   onCheckBoxSelect = (e) => {
     const { oldDevicesList } = this.state
-    console.log(oldDevicesList);
+    // console.log(oldDevicesList);
 
     this.setState({
       checkedListBox: e.target.checked ? oldDevicesList : [],
@@ -385,7 +385,7 @@ class ReservePlan extends React.Component {
           }
         })
         if (result.data.length > 0) {
-          console.log(result.data, '框选后的数据')
+          // console.log(result.data, '框选后的数据')
           this.setState({ boxSelect: true, boxSelectList: result.data, oldDevicesList: noDevices })
         } else {
           message.info('没有选中相应的硬件设备！')
@@ -488,14 +488,11 @@ class ReservePlan extends React.Component {
         newCenter[1] = endPoint + Number(latlng[0].lat)
       }
     }
-    console.log(latlng, newCenter);
-    debugger
     const nowZoom = window.map.getZoom()
     window.map.setZoomAndCenter(nowZoom, newCenter)
   }
   // 更新设备及交通管控类型
   updateControlTypes = (controlId) => {
-    console.log(controlId, '============', this.state.deviceString);
     const { deviceString } = this.state
     if (typeof (deviceString) == 'string') {
       this.setState({
@@ -567,7 +564,7 @@ class ReservePlan extends React.Component {
             this.setState({
               deviceString: arrId,
             }, () => {
-              console.log('新增时全选', this.state.controlTypes, this.state.deviceString)
+              // console.log('新增时全选', this.state.controlTypes, this.state.deviceString)
             })
           })
         }
@@ -694,7 +691,7 @@ class ReservePlan extends React.Component {
     const { eventType, deviceString } = this.state
     const itemArr = []
     const newItemArr = []
-    console.log(deviceList, this.controlDatas, 'look at here')
+    // console.log(deviceList, this.controlDatas, 'look at here')
     deviceList.map((item, i) => {
       item.device.map((items, index) => {
         itemArr.push(items)
@@ -708,7 +705,7 @@ class ReservePlan extends React.Component {
         content: this.controlDatas.list[i].content
       })
     })
-    console.log(newItemArr, '是不是呢？')
+    // console.log(newItemArr, '是不是呢？')
     for (let i = 0; i < this.controlDatas.list.length; i++) {
       // if (this.controlDatas.list[i].deviceTypeId === 1 || this.controlDatas.list[i].deviceTypeId === 2 ||  this.controlDatas.list[i].deviceTypeId === 4) {
       if (!this.controlDatas.list[i].content) {
@@ -744,7 +741,7 @@ class ReservePlan extends React.Component {
     const { eventType, deviceString } = this.state
     const itemArr = []
     const newItemArr = []
-    console.log(deviceList, this.controlDatas, 'look at here')
+    // console.log(deviceList, this.controlDatas, 'look at here')
     deviceList.map((item, i) => {
       item.device.map((items, index) => {
         itemArr.push(items)
@@ -818,7 +815,7 @@ class ReservePlan extends React.Component {
           EventTagPopup: true,
         }, () => {
           this.handSecUrl()
-          console.log(this.state.deviceTypes, this.controlDatas, '修改时查看全部设备')
+          // console.log(this.state.deviceTypes, this.controlDatas, '修改时查看全部设备')
         })
         // this.handleUpdatePlan(result.data, plan)
       }
@@ -837,7 +834,7 @@ class ReservePlan extends React.Component {
       const result = res.data
       if (result.code === 200) {
         this.setState({ listByPage: result.data, current: Number(this.Parameters.pageNo) }, () => {
-          console.log(this.state.listByPage, '看结构')
+          // console.log(this.state.listByPage, '看结构')
         })
       }
     })
@@ -874,7 +871,7 @@ class ReservePlan extends React.Component {
       this.controlDatas.directionId = listByPage.data[nowIndex].direction
       this.controlDatas.directionName = listByPage.data[nowIndex].directionName
       this.controlDatas.planName = listByPage.data[nowIndex].planName
-      console.log(this.controlDatas, 'this.controlDatas')
+      // console.log(this.controlDatas, 'this.controlDatas')
       this.setState({
         eventType: listByPage.data[nowIndex].controlEventType,
         deviceString: listByPage.data[nowIndex].deviceControlType.split(',').map((item) => { return Number(item) }),
@@ -889,11 +886,11 @@ class ReservePlan extends React.Component {
           })
         }
       })
-      console.log(listByPage.data[nowIndex].deviceControlType.split(','));
+      // console.log(listByPage.data[nowIndex].deviceControlType.split(','));
 
       this.handleDetailPlan(listByPage.data[nowIndex].rowId) // 根据rowId获取全部设备
     } else if (name == 'edit') {
-      console.log('编辑')
+      // console.log('编辑')
       deviceTypes.forEach((item) => {
         item.device.forEach((items) => {
           deviceAry.push({
@@ -940,11 +937,11 @@ class ReservePlan extends React.Component {
         reservePopup: true,
       }, () => {
         this.controlDatas.list = deviceAry
-        console.log('编辑管控内容后：查看当前', this.controlDatas)
+        // console.log('编辑管控内容后：查看当前', this.controlDatas)
       })
     } else {
       this.handleDelPlan(listByPage.data[nowIndex].rowId, nowIndex)
-      console.log(listByPage.data[nowIndex].rowId)
+      // console.log(listByPage.data[nowIndex].rowId)
     }
   }
   handlepage = (pageNumber) => {
@@ -959,7 +956,6 @@ class ReservePlan extends React.Component {
     }
   }
   equipmentInfoWin = (value) => {
-    console.log(value, value.latlng);
     if (value) {
       const { detailsPopup, EventTagPopupTit, deviceTypes } = this.state
       if (value.deviceType) {
@@ -1008,7 +1004,7 @@ class ReservePlan extends React.Component {
         }
       }
     })
-    console.log(deviceTypes, EventTagPopupTit);
+    // console.log(deviceTypes, EventTagPopupTit);
     this.setState({ InfoWinPopup: null, deviceTypes, })
   }
   handlepublish = (item) => {

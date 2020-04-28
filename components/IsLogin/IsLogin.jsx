@@ -36,7 +36,6 @@ class IsLogin extends React.Component {
     Object.keys(obj).forEach((item) => {
       formData.append(item, obj[item])
     })
-    console.log(formData)
     return formData
   }
   getupdatePwd = () => {
@@ -57,7 +56,6 @@ class IsLogin extends React.Component {
     getResponseDatas('post', this.updatePassUrl, this.getFormData(this.loginKeys)).then((res) => {
       const result = res.data
       if (result.code === 0) {
-        console.log(result.data)
         this.handleClose(null)
         message.error('密码修改成功,3秒后返回登录页面！')
         setTimeout(() => {

@@ -29,14 +29,14 @@ class Journal extends React.Component {
     Object.keys(obj).forEach((item) => {
       formData.append(item, obj[item])
     })
-    console.log(formData)
+    // console.log(formData)
     return formData
   }
   getSystemList = () => {
     getResponseDatas('post', this.listUrl, this.getFormData(this.sysUser)).then((res) => {
       const result = res.data
       if (result.code === 0) {
-        console.log(result.data)
+        // console.log(result.data)
         this.setState({ systemList: result.data, current: Number(this.sysUser.pageNo) })
       } else {
         message.error('网络异常，请稍后再试!')
@@ -56,7 +56,7 @@ class Journal extends React.Component {
     return navtime + navmse
   }
   handlePagination = (pageNumber) => {
-    console.log('Page: ', pageNumber)
+    // console.log('Page: ', pageNumber)
     this.sysUser.pageNo = pageNumber
     this.getSystemList()
   }
@@ -88,7 +88,7 @@ class Journal extends React.Component {
               {
                 systemList && systemList.list.map((item) => {
                   return (
-                    <div className={styles.listItems}>
+                    <div className={styles.listItems} key={item.username + item.id}>
                       <div className={styles.listTd} ><span className={styles.username}>{item.id}</span></div>
                       <div className={styles.listTd} ><span className={styles.username}>{item.username}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.operation}</span></div>

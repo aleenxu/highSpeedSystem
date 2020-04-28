@@ -28,7 +28,6 @@ class Navigation extends React.Component {
 
   }
   handleClick = (e) => {
-    console.log('click ', e, e.key, e.key.slice(1))
     if (e.key) {
       window.location.href = e.key
     }

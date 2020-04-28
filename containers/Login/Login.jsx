@@ -24,7 +24,6 @@ class Login extends React.Component {
   componentDidMount = () => {
     document.addEventListener('keydown', (e) => {
       if (e.keyCode === 13) {
-        console.log(e, e.keCode)
         this.handleLogin()
       }
     })

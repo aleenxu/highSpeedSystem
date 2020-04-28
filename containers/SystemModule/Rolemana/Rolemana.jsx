@@ -70,12 +70,12 @@ class Rolemana extends React.Component {
     })
   }
   handlePagination = (pageNumber) => {
-    console.log('Page: ', pageNumber)
+    // console.log('Page: ', pageNumber)
     this.listParams.pageNo = pageNumber
     this.getDeptList()
   }
   onExpand = (expandedKeys) => {
-    console.log('onExpand', expandedKeys)
+    // console.log('onExpand', expandedKeys)
     this.setState({
       expandedKeys,
       autoExpandParent: false,
@@ -83,14 +83,14 @@ class Rolemana extends React.Component {
   }
 
   onCheck = (checkedKeys, e) => {
-    console.log('onCheck', checkedKeys, e)
+    // console.log('onCheck', checkedKeys, e)
     this.defaultparams.menuIds = checkedKeys.checked
     /*  this.defaultparams.menuIds = [...e.halfCheckedKeys, ...checkedKeys] */
     this.setState({ checkedKeys: checkedKeys.checked })
   }
 
   onSelect = (selectedKeys, info) => {
-    console.log('onSelect', info)
+    // console.log('onSelect', info)
     this.setState({ selectedKeys })
   }
   getSystemMenu = () => {
@@ -137,7 +137,7 @@ class Rolemana extends React.Component {
     Object.keys(obj).forEach((item) => {
       formData.append(item, obj[item])
     })
-    console.log(formData)
+    // console.log(formData)
     return formData
   }
   handleAddGroup = () => {
@@ -160,7 +160,7 @@ class Rolemana extends React.Component {
     this.isAdd = false
     let menuId = []
     const listItem = (this.state.listDatas.filter(item => item.id === id))[0]
-    console.log(listItem)
+    // console.log(listItem)
     if (listItem.menuId) {
       menuId = listItem.menuId.split(',')
     }
@@ -309,7 +309,7 @@ class Rolemana extends React.Component {
               {
                 listDatas && listDatas.map((item) => {
                   return (
-                    <div className={styles.listItems}>
+                    <div className={styles.listItems} key={item.name + item.id}>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.id}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.name}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.remark}</span></div>

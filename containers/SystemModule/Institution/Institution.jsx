@@ -83,7 +83,7 @@ class Institution extends React.Component {
     Object.keys(obj).forEach((item) => {
       formData.append(item, obj[item])
     })
-    console.log(formData)
+    // console.log(formData)
     return formData
   }
   handleAddGroup = () => {
@@ -110,7 +110,7 @@ class Institution extends React.Component {
   handleGroupMsgChange = (e, itemname) => {
     const value = typeof (e) === 'object' ? e.target.value : e
     this.defaultparams[itemname] = value
-    console.log(this.defaultparams)
+    // console.log(this.defaultparams)
   }
   /* handleAddEdit = () => {
     if (this.isAdd) {

@@ -17,7 +17,7 @@ class Analysis extends React.Component {
 
   }
   handlepage = (pageNumber) => {
-    console.log('Page: ', pageNumber);
+    // console.log('Page: ', pageNumber);
   }
   render() {
     return (

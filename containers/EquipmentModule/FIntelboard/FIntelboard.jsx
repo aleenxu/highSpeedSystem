@@ -13,7 +13,7 @@ const formItemLayout = {
   labelCol: { span: 6 },
   wrapperCol: { span: 14 },
 }
-class Intelligence extends React.Component {
+class FIntelboard extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -299,7 +299,6 @@ class Intelligence extends React.Component {
     })
   }
   handleAddData = () => {
-    console.log(this.board, this.boardData);
     this.board = JSON.parse(JSON.stringify(this.boardData))
     this.setState({ boardData: this.board, boardLatlng: null, hwayDirection: null, roadSecIddata: null })
   }
@@ -322,7 +321,7 @@ class Intelligence extends React.Component {
           const result = res.data
           if (result.code === 200) {
             this.board = JSON.parse(JSON.stringify(this.boardData))
-            this.setState({ boardData: null, boardLatlng: null, directions: null, roadSecIddata: null,Intelatlng:null, })
+            this.setState({ boardData: null, boardLatlng: null, directions: null, roadSecIddata: null, Intelatlng: null, })
             this.handleListByPage()
           }
           message.success(result.message)
@@ -366,7 +365,7 @@ class Intelligence extends React.Component {
               {
                 !!listByPage && listByPage.data.map((item) => {
                   return (
-                    <div className={styles.listItems}>
+                    <div className={styles.listItems} key={item.deviceName + item.deviceId}>
                       <div className={styles.listTd} ><span className={styles.roadName} title={item.deviceId}>{item.deviceId}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.deviceName}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{this.handledirection(vendorList, item.vendor)}</span></div>
@@ -603,7 +602,7 @@ class Intelligence extends React.Component {
                           <Select onChange={(e) => { this.handleSelect(e, 'roadSecId', 'board') }}>
                             {
                               roadSecIddata && roadSecIddata.map((item) => {
-                                return <Option value={item.roadSecId}>{item.secName}</Option>
+                                return <Option key={item.roadSecId} value={item.roadSecId}>{item.secName}</Option>
                               })
                             }
                           </Select>
@@ -736,4 +735,4 @@ class Intelligence extends React.Component {
   }
 }
 
-export default Form.create()(Intelligence)
+export default Form.create()(FIntelboard)

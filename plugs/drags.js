@@ -1,7 +1,6 @@
 
-export function fnDown(event) {
-    console.log(event.currentTarget);
-    
+export function fnDown(event) { // 拖拽
+    // console.log(event.currentTarget); 
     event = event || window.event;
     var oBox = event.currentTarget
     // 光标按下时光标和页面之间的距离

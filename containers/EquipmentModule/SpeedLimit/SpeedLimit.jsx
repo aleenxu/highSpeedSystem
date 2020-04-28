@@ -300,7 +300,6 @@ class SpeedLimit extends React.Component {
     })
   }
   handleAddData = () => {
-    console.log(this.board, this.boardData);
     this.board = JSON.parse(JSON.stringify(this.boardData))
     this.setState({ boardData: this.board, boardLatlng: null, hwayDirection: null, roadSecIddata: null })
   }
