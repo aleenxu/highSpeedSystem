@@ -141,6 +141,7 @@ class ReservePlan extends React.Component {
 
     this.handleUrlAjax(this.codeUrl, 'deviceCodeList') // 查询管控方案详情方案五对应下拉
     this.handlelistDetail('deviceDetailList', 29)
+    this.handleUrlAjax(this.groupUrl, 'MeasuresList')
   }
   mapLayerShowHide = (flag, name) => {
     if (flag) {

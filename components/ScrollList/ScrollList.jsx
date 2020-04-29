@@ -54,11 +54,12 @@ class ScrollList extends React.Component {
     }
     if (ProgressData) {
       this.ProgressLength = 0
+      this.examineLength = 0
       ProgressData.forEach((item) => {
         this.ProgressLength += item.count
         // 获取待审核数量
-        if (item.code === 2) {
-          this.examineLength = item.count
+        if (item.code === 2 || item.code === 4) {
+          this.examineLength += item.count
         }
       })
     }
@@ -219,13 +220,14 @@ class ScrollList extends React.Component {
     } else if (index === 3) {
       return '#f3ea29'
     } else if (index === 4) {
-      return '#619540'
+      return '#35bb'
     } else if (index === 5) {
-      return '#6d6f6e'
+      return '#619540'
     } else if (index === 6) {
+      return '#6d6f6e'
+    } else if (index === 7) {
       return '#f06c79'
     }
-
   }
   genExtra = (data, name) => (
     <Icon
@@ -237,7 +239,7 @@ class ScrollList extends React.Component {
     />
   )
   genExtraexamine = () => (
-    <Badge count={this.examineLength} title="待审核总数">
+    <Badge count={this.examineLength} title="待审核与待撤销总数">
       <Icon
         type="solution"
         className="BadgeIcon"
@@ -419,7 +421,7 @@ class ScrollList extends React.Component {
             </Collapse>
           </div>
         }
-        {listType === "4" &&
+        {listType === '4' &&
           <div>
             <Collapse
               onChange={this.callback}

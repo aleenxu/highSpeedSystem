@@ -22,13 +22,12 @@ class Login extends React.Component {
     this.limitUrl = '/control/sys/menu/getUserMentList?userId='
   }
   componentDidMount = () => {
-    document.addEventListener('keydown', (e) => {
-      if (e.keyCode === 13) {
-        this.handleLogin()
-      }
-    })
-    //在componentDidMount中执行读取cookie
+    document.addEventListener('keydown', this.handleEnter)
+    // 在componentDidMount中执行读取cookie
     this.loadAccountInfo()
+  }
+  componentWillUnmount = () => {
+    document.removeEventListener('keydown', this.handleEnter)
   }
   //aes加密
   encrypt = (word) => {
@@ -110,6 +109,11 @@ class Login extends React.Component {
     })
     return formData
   }
+  handleEnter = (e) => {
+    if (e.keyCode === 13) {
+      this.handleLogin()
+    }
+  }
   handleUserName = (e, name) => {
     this.loginParams[name] = e.target.value
     this.setState({
@@ -142,6 +146,8 @@ class Login extends React.Component {
   }
   handleLogin = () => {
     const { loginName, password } = this.loginParams
+    console.log(this.loginParams);
+
     if (!loginName) {
       message.warning('请输入用户名！')
       return

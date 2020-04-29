@@ -629,7 +629,7 @@
           }
         }
         .AddItem {
-          width: 23%;
+          min-width: 23%;
           height: 30px;
           line-height: 30px;
           color: #fff;
@@ -639,6 +639,7 @@
           text-align: center;
           cursor: pointer;
           margin: 1%;
+          padding: 0 5px;
         }
         .currentSel {
           background: #143757;
