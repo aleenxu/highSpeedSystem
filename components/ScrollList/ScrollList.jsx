@@ -80,11 +80,12 @@ class ScrollList extends React.Component {
     if (this.props.ProgressData !== nextProps.ProgressData) {
       if (nextProps.ProgressData) {
         this.ProgressLength = 0
+        this.examineLength = 0
         nextProps.ProgressData.forEach((item) => {
           this.ProgressLength += item.count
           // 获取待审核数量
-          if (item.code === 2) {
-            this.examineLength = item.count
+          if (item.code === 2 || item.code === 4) {
+            this.examineLength += item.count
           }
         })
       }

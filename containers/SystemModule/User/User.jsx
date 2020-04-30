@@ -180,7 +180,8 @@ class User extends React.Component {
     } */
   getAddUser = () => {
     const boardData = JSON.parse(JSON.stringify(this.dataListData))
-    this.boardData = boardData
+    this.dataList = boardData
+    console.log(boardData);
     this.setState({ boardData })
   }
   handleDataLists = (id) => {
@@ -202,7 +203,7 @@ class User extends React.Component {
         }
       })
     } else {
-      this.dataList = this.dataListData
+      this.dataList = JSON.parse(JSON.stringify(this.dataListData))
       this.setState({ boardData: null })
     }
   }

@@ -1666,7 +1666,7 @@ class MonitoringModule extends React.Component {
     })
   }
   handlecanrevoke = (controllId, eventId) => {
-    console.log(controllId, eventId, '新接口撤销');
+    // console.log(controllId, eventId, '新接口撤销');
     const _this = this
     confirm({
       title: '确认要撤销管控方案',
@@ -1855,7 +1855,7 @@ class MonitoringModule extends React.Component {
     if (!value) {
       this.timeTimeout = setTimeout(() => {
         this.TimingTime -= 1
-        console.log(this.TimingTime);
+        // console.log(this.TimingTime);
         if (this.TimingTime === 0) {
           this.handleOverallSituation(true) // 页面初始加载数据
         }
@@ -2176,7 +2176,7 @@ class MonitoringModule extends React.Component {
                   showFrameFourData.map((item, index) => {
                     return (
                       <div className={classNames(styles.TimeData)} key={item.eventId + item.eventTypeId + item.contingencyId}>
-                        <div className={styles.Title}>{item.eventTypeName}-{item.eventId}-待撤销提醒<Icon className={styles.Close} onClick={() => { this.handleshowFrame(index) }} type="close" /></div>
+                        <div className={styles.Title}>{item.eventTypeName}-{item.eventId}-待撤销提醒<Icon className={styles.Close} onClick={() => { this.handleshowFrameFour(index) }} type="close" /></div>
                         <div className={styles.Content}>
                           <div className={styles.ItemBox}>
                             <div className={styles.RowBox}>
@@ -2259,6 +2259,7 @@ class MonitoringModule extends React.Component {
                       reservePopup.eventId ?
                         <span>方案编号&nbsp;:&nbsp;&nbsp;{reservePopup.eventId}P</span> : null
                     }
+                    <span style={{ width: '30%' }}>方案状态&nbsp;:&nbsp;&nbsp;{reservePopup.statusName}</span>
                     <span>事件类型&nbsp;:&nbsp;&nbsp;<span style={{ color: '#f31113' }}>{reservePopup.eventTypeName}</span></span>
                   </div>
                   <div className={styles.ItemBox}>
