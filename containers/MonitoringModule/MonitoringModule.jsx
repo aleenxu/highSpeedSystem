@@ -105,24 +105,24 @@ class MonitoringModule extends React.Component {
       eventType: 1, // 事件类型
       directionName: '',
       locationMode: '1',
-      situation: 0, // 
+      situation: 0, 
     }
     // 主动管控所需要显示的数据
     this.reservePopup = {
-      dataSourceName: "平台数据",
+      dataSourceName: '平台数据',
       devices: [],
-      directionName: "",
-      eventId: "",
+      directionName: '',
+      eventId: '',
       eventTypeId: null,
-      eventTypeName: "",
+      eventTypeName: '',
       latlng: [],
-      pileNum: "",
-      roadName: "",
+      pileNum: '',
+      roadName: '',
       userLimit: [],
       situation: 0,
       startTime: this.getDate(),
       status: 1,
-      statusName: "待发布",
+      statusName: '待发布',
       list: [],
     }
     this.eventQuery = {
