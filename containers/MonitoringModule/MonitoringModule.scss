@@ -986,6 +986,18 @@
   padding-left: 8px;
   margin: 5px 0;
 }
+.proposalPlus {
+  float: right;
+  margin: 2px 15px 0 0;
+  font-size: 16px;
+  cursor: pointer;
+  color: #2d81ad;
+  & svg:hover {
+    transition: all 0.5s;
+    transform: rotate(180deg);
+    color: #26ff6d;
+  }
+}
 :global(.ant-modal-header) {
   background: #343a52;
   color: #dcdce6;

@@ -8,6 +8,7 @@ import 'animate.css'
 import audioSrc from '../../imgs/ppxmu.mp3'
 import getResponseDatas from '../../plugs/HttpData/getResponseData'
 import drags from '../../plugs/drags'
+import SearchInput from '../../components/SearchInput/SearchInput'
 import { Input, Checkbox, Radio, Icon, Popover, Switch, DatePicker, Collapse, Select, Modal, message, Button } from 'antd'
 import moment from 'moment'
 const { Panel } = Collapse
@@ -93,6 +94,7 @@ class MonitoringModule extends React.Component {
       showFrameData: null, // 控制待审核条件弹窗
       revokePlanData: null, // 撤销弹窗
       showFrameFourData: null, // 带撤销
+      SearchInputCity: null,
     }
     // 修改管控时的参数
     this.controlDatas = {
@@ -2042,7 +2044,7 @@ class MonitoringModule extends React.Component {
   }
   render() {
     const {
-      showFrameFourData, revokePlanData, showFrameData, contingencyData, InfoWinPopup, roadDirection, hwayDirection, MeasuresList, eventsPopup, groupType, planList, EventTagPopup, EventTagPopupTit, roadNumber, endValueTime, conditionList, boxSelect, flagClose, oldDevicesList,
+      SearchInputCity, showFrameFourData, revokePlanData, showFrameData, contingencyData, InfoWinPopup, roadDirection, hwayDirection, MeasuresList, eventsPopup, groupType, planList, EventTagPopup, EventTagPopupTit, roadNumber, endValueTime, conditionList, boxSelect, flagClose, oldDevicesList,
       boxSelectList, hwayList, directionList, VIboardPopup, groupStatus, controlPopup, controlBtnFlag, controlBtnFlagText, detailsPopup, whethePopup, reservePopup, startValue, endValue, endOpen, SidePopLeft, detailsLatlng
       , controlTypes, eventTypes, deviceTypes, updatePoint, userLimit, TimeData, deviceCodeList, deviceDetailList, checkedListBox } = this.state
     return (
@@ -2819,8 +2821,8 @@ class MonitoringModule extends React.Component {
                   {
                     EventTagPopupTit !== '道路封闭' ?
                       [
-                        <div className={styles.Title} style={{ background: '#132334', lineHeight: '20px', height: '20px', marginTop: '60px', fontSize: '12px' }}>管控名称</div>,
-                        <div className={styles.Centent}>
+                        <div key="TagPopupTitone" className={styles.Title} style={{ background: '#132334', lineHeight: '20px', height: '20px', marginTop: '60px', fontSize: '12px' }}>管控名称</div>,
+                        <div key="TagPopupTittwo" className={styles.Centent}>
                           <div className={styles.ItemBox}>
                             <div className={styles.ItemInput}>
                               <Input maxLength={50} />
@@ -2873,8 +2875,8 @@ class MonitoringModule extends React.Component {
                   {
                     EventTagPopupTit !== '道路封闭' ?
                       [
-                        <div className={styles.Title} style={{ background: '#132334', lineHeight: '20px', height: '20px', fontSize: '12px' }}>选择事件类型</div>,
-                        <div className={styles.Centent}>
+                        <div key="PopupTitOne" className={styles.Title} style={{ background: '#132334', lineHeight: '20px', height: '20px', fontSize: '12px' }}>选择事件类型</div>,
+                        <div key="PopupTitTwo" className={styles.Centent}>
                           <div className={styles.ItemBox}>
                             <div className={styles.ItemInput}>
                               {
@@ -2885,8 +2887,8 @@ class MonitoringModule extends React.Component {
                             </div>
                           </div>
                         </div>,
-                        <div className={styles.Title} style={{ background: '#132334', lineHeight: '20px', height: '20px', fontSize: '12px' }}>选择交通管控类型</div>,
-                        <div className={styles.Centent}>
+                        <div key="PopupTitThree" className={styles.Title} style={{ background: '#132334', lineHeight: '20px', height: '20px', fontSize: '12px' }}>选择交通管控类型</div>,
+                        <div key="PopupTitFoue" className={styles.Centent}>
                           <div className={styles.ItemBox}>
                             <div className={styles.ItemInput}>
                               {
@@ -2898,8 +2900,8 @@ class MonitoringModule extends React.Component {
                           </div>
                         </div>,
                       ] : [
-                        <div className={styles.Title} style={{ background: '#132334', lineHeight: '20px', height: '20px', fontSize: '12px' }}>绕行方案&nbsp;&nbsp;(目的地) <Icon type="plus" style={{ float: 'right', margin: '2px 15px 0 0', fontSize: '16px' }} /></div>,
-                        <div className={styles.Centent} style={{ maxHeight: '120px' }}>
+                        <div key="PopupTitOne" className={styles.Title} style={{ background: '#132334', lineHeight: '20px', height: '20px', fontSize: '12px' }}>绕行方案&nbsp;&nbsp;(目的地) <Icon type="plus" className={styles.proposalPlus} onClick={() => { this.setState({ SearchInputCity: true }) }} /></div>,
+                        <div key="PopupTitTwo" className={styles.Centent} style={{ maxHeight: '120px' }}>
                           <div className={styles.ItemBox} style={{ marginTop: '5px' }}>
                             <div className={styles.ItemInput}>
                               {
@@ -2910,13 +2912,13 @@ class MonitoringModule extends React.Component {
                             </div>
                           </div>
                         </div>,
-                        <div className={styles.Title} style={{ background: '#132334', lineHeight: '20px', height: '20px', fontSize: '12px' }}>绕行建议</div>,
-                        <div className={styles.Centent} style={{ maxHeight: '200px' }}>
+                        <div key="PopupTitThree" className={styles.Title} style={{ background: '#132334', lineHeight: '20px', height: '20px', fontSize: '12px' }}>绕行建议</div>,
+                        <div key="PopupTitOFour" className={styles.Centent} style={{ maxHeight: '200px' }}>
                           <div className={styles.ItemBox} style={{ marginTop: '5px' }}>
                             <div className={styles.ItemInput}>
                               {
                                 eventTypes && eventTypes.map((item, i) => {
-                                  return <div className={styles.Proposal}>{i}</div>
+                                  return <div className={styles.Proposal} key={i}>{i}</div>
                                 })
                               }
                             </div>
@@ -3011,7 +3013,26 @@ class MonitoringModule extends React.Component {
               </div>
             </div> : null
         }
-
+        {
+          SearchInputCity ?
+            <div className={styles.MaskBox}>
+              <div className={classNames(styles.EventPopup, styles.VIboardPopup)}>
+                <div className={styles.Title}>添加城市<Icon className={styles.Close} type="close" onClick={() => { this.setState({ SearchInputCity: null }) }} /></div>
+                <div className={styles.Centent} style={{ height: '75px' }}>
+                  <div className={styles.ItemBox}>
+                    <span className={styles.ItemName}>城&nbsp;市&nbsp;搜&nbsp;索&nbsp;:&nbsp;</span>
+                    <div className={styles.ItemInput}>
+                      <SearchInput OpenInforItem={(e) => { this.SearchInputValue = e }} />
+                    </div>
+                  </div>
+                </div>
+                <div className={styles.ItemFooter} style={{ bottom: '-15px' }}>
+                  <span>确&nbsp;&nbsp;认</span>
+                  <span onClick={() => { this.setState({ SearchInputCity: null }) }}>返&nbsp;&nbsp;回</span>
+                </div>
+              </div>
+            </div> : null
+        }
         {InfoWinPopup ?
           <div className={styles.MaskBox}>
             <div className={classNames(styles.EventPopup, styles.VIboardPopup)}>

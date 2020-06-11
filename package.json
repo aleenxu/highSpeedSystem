@@ -1,7 +1,7 @@
 {
   "name": "high-speed-system",
   "version": "1.0.0",
-  "description": "",
+  "description": "* 车路协同智慧管控系统",
   "main": "index.js",
   "scripts": {
     "build": "cross-env http_ENV=production webpack -p --color --progress",
@@ -82,5 +82,14 @@
     "> 1%",
     "iOS 7",
     "last 3 iOS versions"
-  ]
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aleenxu/highSpeedSystem.git"
+  },
+  "keywords": [],
+  "bugs": {
+    "url": "https://github.com/aleenxu/highSpeedSystem/issues"
+  },
+  "homepage": "https://github.com/aleenxu/highSpeedSystem#readme"
 }
