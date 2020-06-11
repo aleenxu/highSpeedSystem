@@ -195,21 +195,22 @@ class ScrollList extends React.Component {
     if (mss <= 0) {
       return '已超时'
     } else {
-      var days = parseInt(mss / (1000 * 60 * 60 * 24));
-      const hours = parseInt((mss % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const minutes = parseInt((mss % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = (mss % (1000 * 60)) / 1000;
-      return days + '天' + hours + "时" + minutes + "分"
+      // var days = parseInt(mss / (1000 * 60 * 60 * 24));
+      // const hours = parseInt((mss % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const hours = parseInt((mss / (1000 * 60 * 60)))
+      const minutes = parseInt((mss % (1000 * 60 * 60)) / (1000 * 60))
+      // const seconds = (mss % (1000 * 60)) / 1000;
+      return  hours + "时" + minutes + "分"
     }
   }
   getDate = (time) => {
     const today = new Date(time)
-    const year = today.getFullYear()
-    const month = ('0' + (today.getMonth() + 1)).slice(-2)
+    // const year = today.getFullYear()
+    // const month = ('0' + (today.getMonth() + 1)).slice(-2)
     const day = ('0' + (today.getDate())).slice(-2)
     const hour = ('0' + (today.getHours())).slice(-2)
     const minutes = ('0' + (today.getMinutes())).slice(-2)
-    const seconds = ('0' + (today.getSeconds())).slice(-2)
+    // const seconds = ('0' + (today.getSeconds())).slice(-2)
     const navtime = day + '日' + hour + '时' + minutes + '分'
     return navtime
   }

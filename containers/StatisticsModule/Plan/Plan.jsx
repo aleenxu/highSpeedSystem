@@ -236,7 +236,7 @@ class Plan extends React.Component {
               </div>
             </div>
             {chartsData &&
-              <div className={styles.ContetList}>
+              <div className={styles.ContetList} style={{ height: 'calc(100% - 100px)' }}>
                 <div className={styles.SystemCharts}>
                   <div className={styles.chartsBox}>
                     <SystemCharts height="100%" chartsItems={chartsData} />

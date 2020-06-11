@@ -297,7 +297,7 @@ class Historical extends React.Component {
                   operationData ?
                     <div>
                       <div className={styles.guanBox}>
-                        <Button className={styles.Button}>管控方案评估</Button>
+                        <Button className={styles.Button}>管控效果评估</Button>
                       </div>
                       <div className={styles.guanBox}>
                         <span className={styles.guanTitle}>操作记录</span>
@@ -308,7 +308,7 @@ class Historical extends React.Component {
                             <div className={styles.listTd} >序号</div>
                             <div className={styles.listTd} >操作人</div>
                             <div className={styles.listTd} >操作</div>
-                            <div className={styles.listTd} >剩余管控时常</div>
+                            <div className={styles.listTd} >剩余管控时长</div>
                             <div className={styles.listTd} >操作时间</div>
                           </div>
                         </div>
@@ -316,7 +316,7 @@ class Historical extends React.Component {
                           {
                             operationData && operationData.map((item, index) => {
                               return (
-                                <div className={styles.listItems} key={item.operationUser}>
+                                <div className={styles.listItems} key={item.row_id}>
                                   <div className={styles.listTd} >{index + 1}</div>
                                   <div className={styles.listTd} >{item.operationUser}</div>
                                   <div className={styles.listTd} >{item.operationName}</div>

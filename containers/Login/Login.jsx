@@ -146,8 +146,6 @@ class Login extends React.Component {
   }
   handleLogin = () => {
     const { loginName, password } = this.loginParams
-    console.log(this.loginParams);
-
     if (!loginName) {
       message.warning('请输入用户名！')
       return

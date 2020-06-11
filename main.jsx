@@ -27,6 +27,11 @@ const Basics = Loadable({
   loading: Loading,
   delay: 0,
 })
+const AnalysisEchart = Loadable({
+  loader: () => import('./containers/ControlModule/analysisEchart/analysisEchart'),
+  loading: Loading,
+  delay: 0,
+})
 const SimulationModule = Loadable({
   loader: () => import('./containers/SimulationModule/SimulationModule'),
   loading: Loading,
@@ -59,6 +64,11 @@ const User = Loadable({
 })
 const Institution = Loadable({
   loader: () => import('./containers/SystemModule/Institution/Institution'),
+  loading: Loading,
+  delay: 0,
+})
+const Organization = Loadable({
+  loader: () => import('./containers/SystemModule/Organization/Organization'),
   loading: Loading,
   delay: 0,
 })
@@ -108,6 +118,7 @@ const Parent = () => (
     <Route exact path="/monitoringmodule" component={MonitoringModule} />
     <Route exact path="/reserveplan" component={ReservePlan} />
     <Route exact path="/basics" component={Basics} />
+    <Route exact path="/analysisEchart" component={AnalysisEchart} />
     <Route exact path="/simulationmodule" component={SimulationModule} />
     <Route exact path="/traffic" component={Traffic} />
     <Route exact path="/plan" component={Plan} />
@@ -115,6 +126,7 @@ const Parent = () => (
     <Route exact path="/tollgate" component={TollGate} />
     <Route exact path="/user" component={User} />
     <Route exact path="/institution" component={Institution} />
+    <Route exact path="/organization" component={Organization} />
     <Route exact path="/rolemana" component={Rolemana} />
     <Route exact path="/journal" component={Journal} />
     <Route exact path="/speedLimit" component={SpeedLimit} />

@@ -8,11 +8,11 @@ import { Pagination, Input, message, Modal, Icon, Form, Select, Button } from 'a
 const { confirm } = Modal
 const { Option } = Select
 const formItemLayout = {
-  labelCol: { span: 6 },
+  labelCol: { span: 8 },
   wrapperCol: { span: 14 },
 }
-/* 部门方案管理 */
-class Institution extends React.Component {
+/* 组织方案管理 */
+class Organization extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -228,24 +228,16 @@ class Institution extends React.Component {
             </div>
             <div className={styles.ContetList}>
               <div className={styles.listItems}>
-                <div className={styles.listTd} >序号</div>
-                <div className={styles.listTd} >部门编号</div>
-                <div className={styles.listTd} >部门名称</div>
-                <div className={styles.listTd} >描述</div>
-                <div className={styles.listTd} >上级部门</div>
-                <div className={styles.listTd} >部门负责人</div>
+                <div className={styles.listTd} >组织机构</div>
+                <div className={styles.listTd} >描述</div> 
                 {userLimit.includes(30) || userLimit.includes(29) ? <div className={styles.listTd} >操作</div> : null}
               </div>
               {
                 listDatas && listDatas.list.map((item, index) => {
                   return (
                     <div className={styles.listItems} key={item.id + index}>
-                      <div className={styles.listTd} ><span className={styles.roadName}>{item['sort']}</span></div>
-                      <div className={styles.listTd} ><span className={styles.roadName}>{item.deptCode}</span></div>
-                      <div className={styles.listTd} ><span className={styles.roadName}>{item.deptName}</span></div>
-                      <div className={styles.listTd} ><span className={styles.roadName}>{item.remark}</span></div>
-                      <div className={styles.listTd} ><span className={styles.roadName}>{item.parentName}</span></div>
-                      <div className={styles.listTd} ><span className={styles.roadName}>{item.leaderName}</span></div>
+                      <div className={styles.listTd} ><span className={styles.roadName}>{item.deptCode}</span></div>     
+                      <div className={styles.listTd} ><span className={styles.roadName}>{item.remark}</span></div>                
                       {userLimit.includes(30) || userLimit.includes(29) ?
                         <div className={styles.listTd} >
                           {userLimit.includes(30) && <Button className={styles.Button} onClick={() => { this.handleEditItems(item.id) }}>修&nbsp;&nbsp;改</Button>}
@@ -278,13 +270,13 @@ class Institution extends React.Component {
                         <div className={styles.Item}>
                           <Form.Item
                             name="deptCode"
-                            label="部门编号"
+                            label="组织机构名称"
                           >
                             {getFieldDecorator('deptCode', {
                               rules: [
                                 {
                                   required: true,
-                                  message: '请输入部门编号!',
+                                  message: '请输入组织机构名称!',
                                 },
                                 {
                                   validator: this.validateNoChinese,
@@ -294,78 +286,6 @@ class Institution extends React.Component {
                             })(<Input onChange={(e) => { this.handleGroupMsgChange(e, 'deptCode') }} />)}
                           </Form.Item>
                         </div>
-                        <div className={styles.Item}>
-                          <Form.Item
-                            name="deptName"
-                            label="部门名称"
-                          >
-                            {getFieldDecorator('deptName', {
-                              rules: [
-                                {
-                                  required: true,
-                                  message: '请输入部门名称!',
-                                },
-                                {
-                                  max: 18,
-                                  message: '超出最大长度',
-                                },
-                              ],
-                              initialValue: listItems && listItems.deptName,
-                            })(<Input onChange={(e) => { this.handleGroupMsgChange(e, 'deptName') }} />)}
-                          </Form.Item>
-                        </div>
-                      </div>
-                      <div className={styles.ItemLine}>
-                        <div className={styles.Item}>
-                          <Form.Item
-                            name="leaderName"
-                            label="负责人"
-                          >
-                            {getFieldDecorator('leaderName', {
-                              rules: [
-                                {
-                                  required: true,
-                                  message: '请输入负责人!',
-                                },
-                                {
-                                  max: 18,
-                                  message: '超出最大长度',
-                                },
-                              ],
-                              initialValue: listItems && listItems.leaderName,
-                            })(<Input onChange={(e) => { this.handleGroupMsgChange(e, 'leaderName') }} />)}
-
-                          </Form.Item>
-                        </div>
-                        <div className={styles.Item}>
-                          <Form.Item
-                            name="parentId"
-                            label="上级部门"
-                          >
-                            {getFieldDecorator('parentId', {
-                              rules: [
-                                {
-                                  required: true,
-                                  message: '请输入上级部门!',
-                                },
-                              ],
-                              initialValue: listItems ? listItems.parentId : 0,
-                            })(
-                              <Select onChange={(e) => { this.handleGroupMsgChange(e, 'parentId') }}>
-                                <Option value={0} key={0}>无</Option>
-                                {
-                                  !!parentGroup && parentGroup.map((item) => {
-                                    return (
-                                      <Option value={item.id} key={item.id}>{item.deptName}</Option>
-                                    )
-                                  })
-                                }
-                              </Select>
-                            )}
-                          </Form.Item>
-                        </div>
-                      </div>
-                      <div className={styles.ItemLine}>
                         <div className={styles.Item}>
                           <Form.Item
                             name="remark"
@@ -386,58 +306,9 @@ class Institution extends React.Component {
                             })(<Input maxLength={50} onChange={(e) => { this.handleGroupMsgChange(e, 'remark') }} />)}
                           </Form.Item>
                         </div>
-                        <div className={styles.Item}>
-                          <Form.Item
-                            name="sort"
-                            label="序号"
-                          >
-                            {getFieldDecorator('sort', {
-                              rules: [
-                                {
-                                  required: true,
-                                  message: '请输入序号!',
-                                },
-                                {
-                                  pattern: new RegExp(/^[1-9]\d*$/, 'g'),
-                                  message: '请输入正确的部门编号',
-                                },
-                              ],
-                              initialValue: listItems && listItems['sort'],
-                            })(<Input onChange={(e) => { this.handleGroupMsgChange(e, 'sort') }} />)}
-                          </Form.Item>
-                        </div>
-                        {/* 
-                        <div className={styles.Item}>
-                          <Form.Item
-                            name="parentId"
-                            label="所属组织机构"
-                          >
-                            {getFieldDecorator('parentId', {
-                              rules: [
-                                {
-                                  required: true,
-                                  message: '请输入所属组织机构!',
-                                },
-                              ],
-                              initialValue: listItems ? listItems.parentId : 0,
-                            })(
-                              <Select onChange={(e) => { this.handleGroupMsgChange(e, 'parentId') }}>
-                                <Option value={0} key={0}>无</Option>
-                                {
-                                  !!parentGroup && parentGroup.map((item) => {
-                                    return (
-                                      <Option value={item.id} key={item.id}>{item.deptName}</Option>
-                                    )
-                                  })
-                                }
-                              </Select>
-                            )}
-
-
-                          </Form.Item>
-                        </div>
-                         */}
                       </div>
+
+
                       <Form.Item >
                         <div className={styles.Footer} style={{ width: '170%' }}>
                           <Button className={styles.Button} type="primary" htmlType="submit">保&nbsp;&nbsp;存</Button>
@@ -456,4 +327,4 @@ class Institution extends React.Component {
   }
 }
 
-export default Form.create()(Institution)
+export default Form.create()(Organization)

@@ -160,6 +160,7 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  text-align: left;
   // 修改input 框样式
   :global(.ant-input) {
     height: 32px;

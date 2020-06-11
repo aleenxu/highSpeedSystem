@@ -167,6 +167,10 @@ class Basics extends React.Component {
   handleClose = (name, value) => {
     this.setState({ [name]: value, operationData: null })
   }
+  handleanalysisEchart = () => {
+    // const analysisEchart = JSON.parse(localStorage.getItem('analysisEchart'))
+    window.open('#/analysisEchart')
+  }
   render() {
     const { eventTypeData, operationData, reservePopup, listByPage, current, endOpen, endValue, startValue } = this.state
     return (
@@ -284,9 +288,9 @@ class Basics extends React.Component {
                     {
                       reservePopup.eventTypeId === 1 ?
                         [<p key="situation">平均车速&nbsp;:&nbsp;&nbsp;<span style={{ color: '#c67f03' }}>{reservePopup.situation}km/h</span> </p>,
-                         <p key="eventLength">拥堵路段长度&nbsp;:&nbsp;&nbsp;<span style={{ color: '#f31113' }}>{reservePopup.eventLength}m</span></p>] :
+                        <p key="eventLength">拥堵路段长度&nbsp;:&nbsp;&nbsp;<span style={{ color: '#f31113' }}>{reservePopup.eventLength}m</span></p>] :
                         [<p key="situation">能见度&nbsp;:&nbsp;&nbsp;<span style={{ color: '#c67f03' }}>{reservePopup.situation}km/h</span> </p>,
-                         <p key="eventLength">影响道路长度&nbsp;:&nbsp;&nbsp;<span style={{ color: '#f31113' }}>{reservePopup.eventLength}m</span></p>]
+                        <p key="eventLength">影响道路长度&nbsp;:&nbsp;&nbsp;<span style={{ color: '#f31113' }}>{reservePopup.eventLength}m</span></p>]
                     }
                   </div>
                   <div className={styles.RowBox}>数据来源&nbsp;:&nbsp;&nbsp;<span style={{ color: '#03af01' }}>{reservePopup.dataSourceName}</span></div>
@@ -295,7 +299,7 @@ class Basics extends React.Component {
                 {operationData ?
                   <div>
                     <div className={styles.guanBox}>
-                      <Button className={styles.Button}>管控方案评估</Button>
+                      <Button className={styles.Button} onClick={this.handleanalysisEchart}>管控效果评估</Button>
                     </div>
                     <div className={styles.guanBox}>
                       <span className={styles.guanTitle}>操作记录</span>
@@ -306,7 +310,7 @@ class Basics extends React.Component {
                           <div className={styles.listTd} >序号</div>
                           <div className={styles.listTd} >操作人</div>
                           <div className={styles.listTd} >操作</div>
-                          <div className={styles.listTd} >剩余管控时常</div>
+                          <div className={styles.listTd} >剩余管控时长</div>
                           <div className={styles.listTd} >操作时间</div>
                         </div>
                       </div>
@@ -314,7 +318,7 @@ class Basics extends React.Component {
                         {
                           operationData && operationData.map((item, index) => {
                             return (
-                              <div className={styles.listItems} key={item.operationUser}>
+                              <div className={styles.listItems} key={item.row_id}>
                                 <div className={styles.listTd} >{index + 1}</div>
                                 <div className={styles.listTd} >{item.operationUser}</div>
                                 <div className={styles.listTd} >{item.operationName}</div>

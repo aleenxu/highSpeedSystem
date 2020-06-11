@@ -10,11 +10,11 @@ class Navigation extends React.Component {
     this.state = {
       CatalogList: [], // 目录 
     }
-    this.limitArr = JSON.parse(localStorage.getItem('userLimit'))||[]
+    this.limitArr = JSON.parse(localStorage.getItem('userLimit')) || []
   }
 
   componentDidMount = () => {
-    const CatalogList = []
+    const CatalogList = [] // { path: '/organization', name: '组织机构管理' }
     this.limitArr.forEach((item) => {
       if (item.path === window.location.hash.slice(1)) { // 找到当前路由的数据
         this.limitArr.forEach((items) => {
@@ -25,7 +25,6 @@ class Navigation extends React.Component {
       }
     })
     this.setState({ CatalogList })
-
   }
   handleClick = (e) => {
     if (e.key) {

@@ -197,7 +197,7 @@ class Traffic extends React.Component {
                   onChange={this.getRoadData}
                   style={{ width: '100%' }}
                   value={RoadValue}
-                  disabled={Jurisdiction == ""}
+                  disabled={!Jurisdiction}
                 >
                   <Option value="">全部</Option>
                   {
@@ -211,7 +211,7 @@ class Traffic extends React.Component {
                 <Select
                   style={{ width: '100%' }}
                   value={Roadsection}
-                  disabled={RoadValue == ""}
+                  disabled={!RoadValue}
                   onChange={(e) => { this.onSecondChange(e, 'Roadsection') }}
                 >
                   <Option value="">全部</Option>
@@ -236,7 +236,7 @@ class Traffic extends React.Component {
               </div>
             </div>
             {chartsData &&
-              <div className={styles.ContetList}>
+              <div className={styles.ContetList} style={{ height: 'calc(100% - 100px)' }}>
                 <div className={styles.SystemCharts}>
                   <div className={styles.chartsBox}>
                     <SystemCharts height="100%" chartsItems={chartsData} />

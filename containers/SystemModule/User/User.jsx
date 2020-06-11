@@ -403,13 +403,13 @@ class User extends React.Component {
                       <div className={styles.Item}>
                         <Form.Item
                           name="deptId"
-                          label="组织机构"
+                          label="所属部门"
                         >
                           {getFieldDecorator('deptId', {
                             rules: [
                               {
                                 required: true,
-                                message: '请输入组织机构!',
+                                message: '请输入所属部门!',
                               },
                             ],
                             initialValue: boardData.deptId,
