@@ -1,6 +1,7 @@
 import React from 'react'
 import { Select } from 'antd'
 import styles from './SearchInput.scss'
+import $ from 'jquery'
 
 const { Option } = Select
 let timeout
@@ -12,6 +13,7 @@ class SearchInput extends React.Component {
       data: [],
       value: undefined,
     }
+    this.key = '931cce038c6e2e206f941225fbb9c0fd' // web服务
     this.mapurl = 'https://restapi.amap.com/v3/config/district?'
     this.mapurl2 = '//restapi.amap.com/v3/config/district?key=e9c21a13b9e2994799069908c9f56f9b&subdistrict=2&extensions=base&keywords='
     this.mapurl1 = 'https://restapi.amap.com/v3/config/district?subdistrict=2&extensions=base&key=e9c21a13b9e2994799069908c9f56f9b&keywords='
@@ -28,7 +30,10 @@ class SearchInput extends React.Component {
 
   }
 
-  fake = (value) => {
+  handleFake = (value) => {
+    /* $.getJSON('//restapi.amap.com/v3/direction/driving?key=931cce038c6e2e206f941225fbb9c0fd&origin=116.481028,39.989643&destination=116.434446,39.90816&originid=&destinationid=&extensions=base&strategy=0&waypoints=116.357483,39.907234&avoidpolygons=&avoidroad=', function (data) {
+      console.log(data);
+    }); */
     AMap.service('AMap.DistrictSearch', () => { // 回调函数
       const opts = {
         subdistrict: 2,   // 返回下一级行政区
@@ -45,12 +50,13 @@ class SearchInput extends React.Component {
         if (result.info === 'OK') {
           this.handlecityData(result.districtList)
         }
+        // console.log( this.cityData) 
         this.setState({ data: this.cityData })
       })
     })
   }
   handlecityData = (data) => {
-    data.map((item) => {
+    data.forEach((item) => {
       if (item.level === 'city' || item.level === 'province') {
         this.cityData.push(item)
       } else {
@@ -60,9 +66,6 @@ class SearchInput extends React.Component {
       }
     })
   }
-  /* $.getJSON(this.mapurl2 + value, (data) => {
-     console.log(data);
-   }) */
   handleonFocus = () => {
     const { value } = this.state
     if (value == null || value == '') {
@@ -77,7 +80,7 @@ class SearchInput extends React.Component {
     }
     currentValue = value
     this.mapData.keywords = value
-    timeout = setTimeout(this.fake.bind(null, value), 300)
+    timeout = setTimeout(this.handleFake.bind(null, value), 300)
   }
   handleChange = (value) => {
     this.setState({ value })
