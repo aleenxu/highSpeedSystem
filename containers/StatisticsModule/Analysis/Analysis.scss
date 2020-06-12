@@ -4,7 +4,7 @@
     float: left;
     margin-top: 18px;
     .listCont {
-        height: 716px;
+        height: calc(100% - 45px);
         width: 100%;
         background: #0d141c;
     }
