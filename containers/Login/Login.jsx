@@ -177,7 +177,7 @@ class Login extends React.Component {
         <div className={styles.cententBox}>
           <div className={styles.earthBox} />
           <div className={styles.loginBox}>
-            <h1 className={styles.title}>车路协同智慧管控系统</h1>
+            <h1 className={styles.title}>智慧高速管控系统</h1>
             <div className={styles.login}>
               <div className={styles.loginTitle}>用户登录</div>
               <div className={styles.loginInput}><Input value={this.state.loginName} onChange={(e) => { this.handleUserName(e, 'loginName') }} placeholder="请输入用户名" prefix={<Icon className={styles.IconLogin} type="user" />} /></div>

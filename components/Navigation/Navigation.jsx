@@ -11,6 +11,7 @@ class Navigation extends React.Component {
       CatalogList: [], // 目录 
     }
     this.limitArr = JSON.parse(localStorage.getItem('userLimit')) || []
+    // console.log(props)
   }
 
   componentDidMount = () => {

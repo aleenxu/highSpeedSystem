@@ -1,5 +1,6 @@
 import React from 'react'
-import { Menu, Icon, message } from 'antd';
+import { withRouter } from 'react-router-dom'
+import { Menu, Icon, message } from 'antd'
 import styles from './SystemMenu.scss'
 import Times from '../DateTime/DateTime'
 import IsLogin from '../IsLogin/IsLogin'
@@ -13,6 +14,7 @@ class SystemMenu extends React.Component {
       userLimit: null,
     }
     this.limitArr = []
+    // console.log(props)
   }
 
   componentDidMount = () => {
@@ -29,7 +31,8 @@ class SystemMenu extends React.Component {
     // console.log(path, window.location.hash);
 
     if (!path.includes(window.location.hash)) { // 判断当前是否有当前路由权限
-      window.location.hash = '#/login'
+      // window.location.hash = '#/login'
+      this.props.history.push('login')
       localStorage.clear()
     }
     userLimit.forEach((item) => { // 获取当前一级目录下子级目录
@@ -94,4 +97,4 @@ class SystemMenu extends React.Component {
   }
 }
 
-export default SystemMenu
+export default withRouter(SystemMenu)

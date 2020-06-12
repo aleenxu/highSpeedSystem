@@ -1,5 +1,5 @@
 # high-speed-system
-* 车路协同智慧管控系统
+* 智慧高速管控系统
 
 # 安装
 * npm install 
