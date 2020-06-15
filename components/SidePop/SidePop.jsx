@@ -6,7 +6,7 @@ import ROpenIcon from '../../imgs/icon_r_open.png'
 import LCloseIcon from '../../imgs/icon_left_close.png'
 import LOpenIcon from '../../imgs/icon_left_open.png'
 import $ from 'jquery'
-const rdom = require('react-dom'); 
+const rdom = require('react-dom');
 class SidePop extends React.Component {
   constructor(props) {
     super(props)
@@ -163,33 +163,33 @@ class SidePop extends React.Component {
     if (e.nativeEvent.deltaY < 0) {
       /* scrolling up */
       // console.log( '往上滚动',ele.scrollTop)
-      this.state.boxRight === 'unset' ? this.setState({scrollLength: ele.scrollTop}) : this.setState({scrollLengthR: ele.scrollTop})
-      
+      this.state.boxRight === 'unset' ? this.setState({ scrollLength: ele.scrollTop }) : this.setState({ scrollLengthR: ele.scrollTop })
+
     } else {
       /* scrolling down */
       // console.log('往下滚动',ele.scrollTop)
-      this.state.boxRight === 'unset' ? this.setState({scrollLength: ele.scrollTop}) : this.setState({scrollLengthR: ele.scrollTop})
+      this.state.boxRight === 'unset' ? this.setState({ scrollLength: ele.scrollTop }) : this.setState({ scrollLengthR: ele.scrollTop })
     }
   }
   render() {
     const { boxLeft, boxRight, SidplanList, SidePopLeft, groupType, groupStatus, scrollLength, scrollLengthR } = this.state
-    const eachartsData = {} //eacharts数据
-    const progressData = {} //进度条数据
+    const eachartsData = {} // eacharts数据
+    const progressData = {} // 进度条数据
     const listData = [
       {
         id: '1001',
         roadName: 'G2京沪高速江阴大桥北向南',
         upTime: '18:14:02',
         traffic: '严重',
-        state: '未管控'
+        state: '未管控',
       },
       {
         id: '1002',
         roadName: 'G2京沪高速江阴大桥北向南',
         upTime: '18:14:02',
         traffic: '严重',
-        state: '未管控'
-      }
+        state: '未管控',
+      },
     ]
     const listTit = {
       id: '道路编号',
@@ -197,38 +197,38 @@ class SidePop extends React.Component {
       upTime: '方向',
       traffic: '管控时长',
       time: '剩余时间',
-      state: '状态'
+      state: '状态',
     }
-    //列表数据
+    // 列表数据
     const listTitData = {
       id: '道路编号',
       roadName: '路段',
       upTime: '方向',
       traffic: '路况(km/h)',
-      state: '上报时间'
-    } //标题数据
+      state: '上报时间',
+    } // 标题数据
     return (
       <div style={this.styles} className={`animated ${this.state.transition}`}>
         {boxRight === 'unset' &&
-          <div style={{ width: '100%' }} onWheel={(e)=>{this.handleScroll(e)}}>
+          <div style={{ width: '100%' }} onWheel={(e) => { this.handleScroll(e) }}>
             {!!groupType && <ScrollList eachartData={groupType} type="1" dataRes="eacharts" handleEventPopup={this.handleEventPopup}></ScrollList>}
             {!!SidePopLeft && SidePopLeft.map((item, index) => {
               const listTit = {
                 id: '道路编号',
                 roadName: '路段',
                 upTime: '方向',
-                traffic: item.eventName === '交通拥堵' ? '路况(km/h)' : item.eventName === '极端天气' ? '能见度(m)' : item.eventName === '主动管控' ? '事件类型' : '影响车道',
+                traffic: item.eventTypeName === '交通拥堵' ? '路况(km/h)' : item.eventTypeName === '极端天气' ? '能见度(m)' : item.eventTypeName === '主动管控' ? '事件类型' : '影响车道',
                 state: '上报时间',
                 type: item.eventType,
-                name: item.eventName,
+                name: item.eventTypeName,
               }
-              return <ScrollList type="3" key={item.eventName + item.eventLength} Tit={item.eventName + ' (' + item.eventLength + ')'} Title={listTit} dataAll={SidePopLeft} dataRes={item.eventData} handleEventPopup={this.handleEventPopup}></ScrollList>
+              return <ScrollList type="3" key={item.eventTypeName } Tit={item.eventTypeName } Title={listTit} dataAll={SidePopLeft} dataRes={item} handleEventPopup={this.handleEventPopup}></ScrollList>
             })}
           </div>
         }
         {
           boxLeft === 'unset' &&
-          <div style={{ width: '100%' }} onWheel={(e)=>{this.handleScroll(e)}}>
+          <div style={{ width: '100%' }} onWheel={(e) => { this.handleScroll(e) }}>
             {groupStatus && <ScrollList type="2" ProgressData={groupStatus} dataRes="进度条" handleEventPopup={this.handleEventPopup}></ScrollList>}
             {SidplanList && <ScrollList type="4" Tit="管控方案" Title={listTit} dataRes={SidplanList} handleEventPopup={this.handleEventPopup}></ScrollList>}
           </div>

@@ -148,7 +148,8 @@ class GMap extends React.Component {
     }
   }
   handleAMap = () => {
-    this.loadPoint()
+    // this.loadPoint() 渲染点
+    this.loadingMap()
   }
   loadPoint = (value) => { // 预案库通过不同类型来筛选地图点位
     const { deviceString, keyWords } = this.state
@@ -220,12 +221,6 @@ class GMap extends React.Component {
       this.createLayerGroup('leftModule2') // 极端天气选中复选框显示的图层
       this.createLayerGroup('leftModule3') // 交通事故选中复选框显示的图层
       this.createLayerGroup('leftModule4') // 主动管控选中复选框显示的图层
-      /* const LayerGroup = ['deviceTollGate', 'deviceFInfoBoard', 'deviceInfoBoard', 'deviceTurnBoard', 'carRoadBoard']
-      LayerGroup.forEach((item) => {
-        if (!window[item]) {
-          this.createLayerGroup(item)
-        }
-      }) */
       this.createLayerGroup('deviceTollGate') // map中收费站匝道灯图标显示的图层
       this.createLayerGroup('deviceFInfoBoard') // map中F情报版显示的图层
       this.createLayerGroup('deviceInfoBoard') // map中车道控制器情报版限速显示的图层
@@ -313,13 +308,7 @@ class GMap extends React.Component {
   drawMarkers = (positions, imgIcon, layer) => {
     const map = this.map
     if (window[layer]) {
-      /* window[layer].hide()
-      window[layer].fx = []
-      window[layer].show() */
       window[layer].removeLayers(this[layer])
-      /* if (this[layer] && this[layer].length) {
-        map.remove(this[layer])
-      } */
     }
 
     this[layer] = []
@@ -336,7 +325,7 @@ class GMap extends React.Component {
         })
         marker.on('click', (event) => {
           const nowZoom = map.getZoom()
-          map.setZoomAndCenter(nowZoom, positions[i].latlng); //同时设置地图层级与中心点
+          map.setZoomAndCenter(nowZoom, positions[i].latlng) // 同时设置地图层级与中心点
           this.openInfoWin(map, positions[i])
         })
         this[layer].push(marker)

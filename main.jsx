@@ -143,8 +143,8 @@ reactDom.render(
       {/* //<Provider> */}
       <HashRouter basename="" history={BrowserHistory}>
         <Switch>
-          <Redirect exact from="/" to="/login" />
           <Route path="/" component={Parent} />
+          <Redirect exact from="/" to="/login" />
         </Switch>
       </HashRouter>
       {/* //</Provider> */}

@@ -8,8 +8,8 @@ import { Pagination, Input, message, Modal, Icon, Form, Select, Button } from 'a
 const { confirm } = Modal
 const { Option } = Select
 const formItemLayout = {
-  labelCol: { span: 6 },
-  wrapperCol: { span: 14 },
+  labelCol: { span: 7 },
+  wrapperCol: { span: 13 },
 }
 /* 部门方案管理 */
 class Institution extends React.Component {
@@ -22,14 +22,16 @@ class Institution extends React.Component {
       parentGroup: null,
       userLimit: [],
       current: 1,
+      organizationList: [],
     }
     this.deptListUrl = '/control/sys/dept/listPage'
     this.addListUrl = '/control/sys/dept/save'
     this.updateUrl = '/control/sys/dept/update'
     this.deleteUrl = '/control/sys/dept/delete'
     this.listUrl = '/control/sys/dept/list'
+    this.listDetailUrl = '/control/dict/code/list/detail/'
     this.deleteParams = {
-      deptIds: []
+      deptIds: [],
     }
     this.listParams = {
       keyword: '',
@@ -40,12 +42,14 @@ class Institution extends React.Component {
       deptCode: '',
       deptName: '',
       leaderName: '',
-      parentId: '',
+      parentId: 0,
       remark: '',
-      sort: '',
+      organization: '',
+      // sort: '',
     }
   }
   componentDidMount = () => {
+    this.handlelistDetail('organizationList', 6)
     this.getDeptList()
     this.getparentGroup()
     // 获取用户权限
@@ -54,6 +58,7 @@ class Institution extends React.Component {
     limitArr.forEach((item) => {
       userLimit.push(item.id)
     })
+    this.defaultparamsData = JSON.parse(JSON.stringify(this.defaultparams))
     this.setState({ userLimit })
   }
   getDeptList = () => {
@@ -86,6 +91,23 @@ class Institution extends React.Component {
     // console.log(formData)
     return formData
   }
+  // 字典查询
+  handlelistDetail = (name, value) => {
+    getResponseDatas('get', this.listDetailUrl + value).then((res) => {
+      const result = res.data
+      if (result.code === 200) {
+        this.setState({ [name]: result.data })
+      }
+    })
+  }
+  hanlecheckAdult = (id) => {
+    const { organizationList } = this.state
+    const Ary = organizationList.find(item => item.id === id)
+    console.log(Ary)
+    if (Ary) {
+      return Ary.name
+    }
+  }
   handleAddGroup = () => {
     this.isAdd = true
     this.setState({
@@ -94,6 +116,7 @@ class Institution extends React.Component {
     })
   }
   handleCloseGroupMsg = () => {
+    this.defaultparams = JSON.parse(JSON.stringify(this.defaultparamsData))
     this.setState({ showGroupMsg: false })
   }
   handleEditItems = (id) => {
@@ -210,7 +233,9 @@ class Institution extends React.Component {
   }
   render() {
     const { getFieldDecorator } = this.props.form
-    const { listItems, listDatas, showGroupMsg, parentGroup, userLimit, current } = this.state
+    const {
+      listItems, listDatas, organizationList, showGroupMsg, parentGroup, userLimit, current
+    } = this.state
     return (
       <div>
         <SystemMenu />
@@ -228,24 +253,25 @@ class Institution extends React.Component {
             </div>
             <div className={styles.ContetList}>
               <div className={styles.listItems}>
-                <div className={styles.listTd} >序号</div>
                 <div className={styles.listTd} >部门编号</div>
                 <div className={styles.listTd} >部门名称</div>
-                <div className={styles.listTd} >描述</div>
+                <div className={styles.listTd} >组织机构</div>
                 <div className={styles.listTd} >上级部门</div>
                 <div className={styles.listTd} >部门负责人</div>
+                <div className={styles.listTd} >描述</div>
                 {userLimit.includes(30) || userLimit.includes(29) ? <div className={styles.listTd} >操作</div> : null}
               </div>
               {
-                listDatas && listDatas.list.map((item, index) => {
+                listDatas && listDatas.list.map((item) => {
                   return (
-                    <div className={styles.listItems} key={item.id + index}>
-                      <div className={styles.listTd} ><span className={styles.roadName}>{item['sort']}</span></div>
+                    <div className={styles.listItems} key={item.id}>
+                      {/* <div className={styles.listTd} ><span className={styles.roadName}>{}</span></div> */}
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.deptCode}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.deptName}</span></div>
-                      <div className={styles.listTd} ><span className={styles.roadName}>{item.remark}</span></div>
-                      <div className={styles.listTd} ><span className={styles.roadName}>{item.parentName}</span></div>
+                      <div className={styles.listTd} ><span className={styles.roadName}>{this.hanlecheckAdult(item.organization)}</span></div>
+                      <div className={styles.listTd} ><span className={styles.roadName}>{item.parentName || '顶级'}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.leaderName}</span></div>
+                      <div className={styles.listTd} ><span className={styles.roadName}>{item.remark}</span></div>
                       {userLimit.includes(30) || userLimit.includes(29) ?
                         <div className={styles.listTd} >
                           {userLimit.includes(30) && <Button className={styles.Button} onClick={() => { this.handleEditItems(item.id) }}>修&nbsp;&nbsp;改</Button>}
@@ -352,7 +378,7 @@ class Institution extends React.Component {
                               initialValue: listItems ? listItems.parentId : 0,
                             })(
                               <Select onChange={(e) => { this.handleGroupMsgChange(e, 'parentId') }}>
-                                <Option value={0} key={0}>无</Option>
+                                <Option value={0} key={0}>顶级</Option>
                                 {
                                   !!parentGroup && parentGroup.map((item) => {
                                     return (
@@ -386,7 +412,7 @@ class Institution extends React.Component {
                             })(<Input maxLength={50} onChange={(e) => { this.handleGroupMsgChange(e, 'remark') }} />)}
                           </Form.Item>
                         </div>
-                        <div className={styles.Item}>
+                        {/* <div className={styles.Item}>
                           <Form.Item
                             name="sort"
                             label="序号"
@@ -405,28 +431,26 @@ class Institution extends React.Component {
                               initialValue: listItems && listItems['sort'],
                             })(<Input onChange={(e) => { this.handleGroupMsgChange(e, 'sort') }} />)}
                           </Form.Item>
-                        </div>
-                        {/* 
+                        </div> */}
                         <div className={styles.Item}>
                           <Form.Item
-                            name="parentId"
+                            name="organization"
                             label="所属组织机构"
                           >
-                            {getFieldDecorator('parentId', {
+                            {getFieldDecorator('organization', {
                               rules: [
                                 {
                                   required: true,
                                   message: '请输入所属组织机构!',
                                 },
                               ],
-                              initialValue: listItems ? listItems.parentId : 0,
+                              initialValue: listItems ? listItems.organization : '',
                             })(
-                              <Select onChange={(e) => { this.handleGroupMsgChange(e, 'parentId') }}>
-                                <Option value={0} key={0}>无</Option>
+                              <Select onChange={(e) => { this.handleGroupMsgChange(e, 'organization') }}>
                                 {
-                                  !!parentGroup && parentGroup.map((item) => {
+                                  !!organizationList && organizationList.map((item) => {
                                     return (
-                                      <Option value={item.id} key={item.id}>{item.deptName}</Option>
+                                      <Option value={item.id} key={item.id}>{item.name}</Option>
                                     )
                                   })
                                 }
@@ -436,7 +460,7 @@ class Institution extends React.Component {
 
                           </Form.Item>
                         </div>
-                         */}
+
                       </div>
                       <Form.Item >
                         <div className={styles.Footer} style={{ width: '170%' }}>

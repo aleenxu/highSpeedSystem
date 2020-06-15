@@ -25,6 +25,11 @@ class Login extends React.Component {
     document.addEventListener('keydown', this.handleEnter)
     // 在componentDidMount中执行读取cookie
     this.loadAccountInfo()
+    // var storage = window.localStorage;
+    // for (var i = 0; i < storage.length; i++) {
+    //   var key = storage.key(i);
+    //   console.log(key);
+    // }
   }
   componentWillUnmount = () => {
     document.removeEventListener('keydown', this.handleEnter)

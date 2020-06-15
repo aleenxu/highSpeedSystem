@@ -48,8 +48,10 @@ class ScrollList extends React.Component {
       this.eachartLength = 0
       eachartData.forEach((item) => {
         this.eachartLength += item.total
-        data.push({ value: item.total, name: item.name })
+        window[item.eventTypeName] = item.total
+        data.push({ value: item.total, name: item.eventTypeName })
       })
+
       this.getOption(data)
     }
     if (ProgressData) {
@@ -69,9 +71,10 @@ class ScrollList extends React.Component {
       if (nextProps.eachartData) {
         const data = []
         this.eachartLength = 0
+
         nextProps.eachartData.forEach((item) => {
           this.eachartLength += item.total
-          data.push({ value: item.total, name: item.name })
+          data.push({ value: item.total, name: item.eventTypeName })
         })
         this.getOption(data)
       }
@@ -155,9 +158,7 @@ class ScrollList extends React.Component {
             }
           }
         },
-
       ],
-
     }
     this.setState({ sideachart: option })
   }
@@ -200,7 +201,7 @@ class ScrollList extends React.Component {
       const hours = parseInt((mss / (1000 * 60 * 60)))
       const minutes = parseInt((mss % (1000 * 60 * 60)) / (1000 * 60))
       // const seconds = (mss % (1000 * 60)) / 1000;
-      return  hours + "时" + minutes + "分"
+      return hours + "时" + minutes + "分"
     }
   }
   getDate = (time) => {
@@ -329,7 +330,7 @@ class ScrollList extends React.Component {
                     <p>重大事件 {this.eachartLength}起 </p>
                     <p>
                       {!!eachartData && eachartData.map((item) => {
-                        return <span key={item.total + item.name}>{item.total}<br />{item.name}</span>
+                        return <span key={item.total + item.eventTypeName}>{item.total}<br />{item.eventTypeName}</span>
                       })}
                       {/* <span>30<br />交通拥堵</span>
                       <span>80<br />道路施工</span>
@@ -395,30 +396,51 @@ class ScrollList extends React.Component {
               onChange={this.callback}
               expandIconPosition="right"
             >
-              <Panel style={{ paddingLeft: '40px' }} header={listTit} key="1" extra={this.genExtra(listTitle, 'Event')}>
-                <div style={{ marginLeft: '-40px' }} className={styles.listBox}>
-                  {listTitle &&
-                    <div className={styles.listItem}>
-                      <i />
-                      <span className={styles.tit}>{listTitle.id}</span>
-                      <span className={styles.tit}>{listTitle.roadName}</span>
-                      <span className={styles.tit}>{listTitle.upTime}</span>
-                      <span className={styles.tit}>{listTitle.traffic}</span>
-                      <span className={styles.tit}>{listTitle.state}</span>
-                    </div>
-                  }
-                  {data.length > 0 ? data.map((item, index) => (
-                    <div key={item.roadCode + item.locs} className={classNames(styles.listItem, 'listItem')} latlng={this.getLineCenterPoint(item.latlng)} onClick={(e) => { this.handleEventPopup(e, 'Details', item) }}>
-                      <i style={{ background: item.controlStatusType > 0 ? 'green' : 'red', boxShadow: item.controlStatusType > 0 ? 'green 0px 0px 20px' : 'red 0px 0px 20px' }} />
-                      <span>{item.roadCode}</span>
-                      <span title={item.roadSection}>{item.roadSection}</span>
-                      <span>{item.eventType === 3 ? '双方向' : item.directionName}</span>
-                      <span>{item.eventType === 5 ? item.eventTypeName : item.situation}</span>
-                      <span>{this.getDate(item.updateTime)}</span>
-                    </div>
-                  )) : <p className={styles.PanelItemNone}>暂无数据</p>
-                  }
-                </div>
+              <Panel style={{ paddingLeft: '40px' }} header={listTit + ' (' + (window[listTit] || 0) + ')'} key="1" extra={this.genExtra(listTitle, 'Event')}>
+                {data.systemEnabled ?
+                  <div style={{ marginLeft: '-40px' }} className={styles.listBox}>
+                    {listTitle &&
+                      <div className={styles.listItem}>
+                        <i />
+                        <span className={styles.tit}>{listTitle.id}</span>
+                        <span className={styles.tit}>{listTitle.roadName}</span>
+                        <span className={styles.tit}>{listTitle.upTime}</span>
+                        <span className={styles.tit}>{listTitle.traffic}</span>
+                        <span className={styles.tit}>{listTitle.state}</span>
+                      </div>
+                    }
+                    {data.eventInfos.length > 0 ? data.eventInfos.map((item, index) => (
+                      <div key={item.roadCode + item.locs} className={classNames(styles.listItem, 'listItem')} latlng={this.getLineCenterPoint(item.latlng)} onClick={(e) => { this.handleEventPopup(e, 'Details', item) }}>
+                        <i style={{ background: item.controlStatusType > 0 ? 'green' : 'red', boxShadow: item.controlStatusType > 0 ? 'green 0px 0px 20px' : 'red 0px 0px 20px' }} />
+                        <span>{item.roadCode}</span>
+                        <span title={item.roadSection}>{item.roadSection}</span>
+                        <span>{item.eventType === 3 ? '双方向' : item.directionName}</span>
+                        <span>{item.eventType === 5 ? item.eventTypeName : item.situation}</span>
+                        <span>{this.getDate(item.updateTime)}</span>
+                      </div>
+                    )) : <p className={styles.PanelItemNone}>暂无数据</p>
+                    }
+                  </div> :
+                  data.childs.map((item) => {
+                    return (
+                      <Collapse >
+                        <Panel header={item.eventTypeName}>
+                          {item.eventInfos.length > 0 ? item.eventInfos.map((item, index) => (
+                            <div key={item.roadCode + item.locs} className={classNames(styles.listItem, 'listItem')} latlng={this.getLineCenterPoint(item.latlng)} onClick={(e) => { this.handleEventPopup(e, 'Details', item) }}>
+                              <i style={{ background: item.controlStatusType > 0 ? 'green' : 'red', boxShadow: item.controlStatusType > 0 ? 'green 0px 0px 20px' : 'red 0px 0px 20px' }} />
+                              <span>{item.roadCode}</span>
+                              <span title={item.roadSection}>{item.roadSection}</span>
+                              <span>{item.eventType === 3 ? '双方向' : item.directionName}</span>
+                              <span>{item.eventType === 5 ? item.eventTypeName : item.situation}</span>
+                              <span>{this.getDate(item.updateTime)}</span>
+                            </div>
+                          )) : <p className={styles.PanelItemNone}>暂无数据</p>
+                          }
+                        </Panel>
+                      </Collapse>
+                    )
+                  })
+                }
               </Panel>
             </Collapse>
           </div>

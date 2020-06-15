@@ -1,6 +1,9 @@
-.scrollBox{
+.scrollBox {
   :global(.ant-collapse-item:last-child > .ant-collapse-content) {
     overflow: initial !important;
+  }
+  :global(.ant-collapse > .ant-collapse-item > .ant-collapse-header) {
+    color: #fff;
   }
 }
 // 折叠面板
@@ -107,7 +110,7 @@
       background: #0d2645;
     }
   }
-  >.listItem:first-child {
+  > .listItem:first-child {
     border-bottom: unset;
     &:hover {
       background: unset;

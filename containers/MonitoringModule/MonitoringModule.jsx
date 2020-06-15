@@ -95,6 +95,7 @@ class MonitoringModule extends React.Component {
       revokePlanData: null, // 撤销弹窗
       showFrameFourData: null, // 带撤销
       SearchInputCity: null,
+      unitText:null,
     }
     // 修改管控时的参数
     this.controlDatas = {
@@ -169,8 +170,8 @@ class MonitoringModule extends React.Component {
     }
     this.deviceReserve = []
     this.planStatus = 0
-    this.eventListUrl = '/control/event/list/events' // 根据条件查询所有事件
-    this.groupTypeUrl = '/control/event/total/number/group/type' //  统计事件数量，根据事件状态分组
+    this.eventListUrl = '/control//event/list' // 根据条件查询所有事件
+    this.groupTypeUrl = '/control/event/get/type/statistics' //  事件类型数量统计
     this.groupStatusUrl = '/control/plan/total/number/group/status' // 统计方案数量，根据方案状态分组
     this.planListUrl = '/control/plan/list/' // {planStatus}'根据方案状态，查询方案集合，页面初始加载，查询所有，传0
     this.detailUrl = '/control/event/get/detail/' // {eventId}/{eventType}查看事件详情'
@@ -694,28 +695,28 @@ class MonitoringModule extends React.Component {
         const { eventType } = this.eventQuery
         const { userLimit } = this.state
         if (userLimit.includes(100) && result.data && value && this.timeTimeout) { // 具有发布权限才会进行执行管控弹窗
-          const contingencyData = []
-          result.data.forEach((item) => {
-            item.eventData && item.eventData.forEach((items) => {
-              if (items.contingencyId && items.controlStatusType === 0) {
-                contingencyData.push({ ...items, eventName: item.eventName })
-              }
-            })
-          })
-          this.setState({ contingencyData: contingencyData.length ? contingencyData : null })
+          // const contingencyData = []
+          // result.data.forEach((item) => {
+          //   item.eventData && item.eventData.forEach((items) => {
+          //     if (items.contingencyId && items.controlStatusType === 0) {
+          //       contingencyData.push({ ...items, eventName: item.eventName })
+          //     }
+          //   })
+          // })
+          // this.setState({ contingencyData: contingencyData.length ? contingencyData : null })
         }
         if (eventType) { // 查询时候
-          const { SidePopLeft } = this.state
-          window.dataAll = SidePopLeft
-          if (SidePopLeft) {
-            SidePopLeft.forEach((item, index) => {
-              if (item.eventType === eventType) {
-                SidePopLeft[index].eventData = result.data
-                SidePopLeft[index].eventLength = result.data.length
-              }
-            })
-          }
-          this.setState({ eventsPopup: null, SidePopLeft })
+          // const { SidePopLeft } = this.state
+          // window.dataAll = SidePopLeft
+          // if (SidePopLeft) {
+          //   SidePopLeft.forEach((item, index) => {
+          //     if (item.eventType === eventType) {
+          //       SidePopLeft[index].eventData = result.data
+          //       SidePopLeft[index].eventLength = result.data.length
+          //     }
+          //   })
+          // }
+          // this.setState({ eventsPopup: null, SidePopLeft })
         } else { // 正常加载
           this.setState({ eventsPopup: null, SidePopLeft: result.data })
         }
@@ -728,6 +729,7 @@ class MonitoringModule extends React.Component {
     getResponseDatas('get', this.groupTypeUrl).then((res) => {
       const result = res.data
       // console.log(result)
+      // debugger
       if (result.code === 200) {
         this.setState({ groupType: result.data })
       }
