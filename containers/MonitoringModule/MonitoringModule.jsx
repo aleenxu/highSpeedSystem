@@ -95,7 +95,7 @@ class MonitoringModule extends React.Component {
       revokePlanData: null, // 撤销弹窗
       showFrameFourData: null, // 带撤销
       SearchInputCity: null,
-      unitText:null,
+      unitText: null,
     }
     // 修改管控时的参数
     this.controlDatas = {
@@ -172,11 +172,11 @@ class MonitoringModule extends React.Component {
     this.planStatus = 0
     this.eventListUrl = '/control//event/list' // 根据条件查询所有事件
     this.groupTypeUrl = '/control/event/get/type/statistics' //  事件类型数量统计
-    this.groupStatusUrl = '/control/plan/total/number/group/status' // 统计方案数量，根据方案状态分组
+    this.groupStatusUrl = '/control/control/plan/status/group/statistics' // 统计方案数量，根据方案状态分组
     this.planListUrl = '/control/plan/list/' // {planStatus}'根据方案状态，查询方案集合，页面初始加载，查询所有，传0
     this.detailUrl = '/control/event/get/detail/' // {eventId}/{eventType}查看事件详情'
     this.listDetailUrl = '/control/dict/code/list/detail/' // {codeType} 根据字典类型，获取字典详情相关信息'
-    this.hwayUrl = '/control/road/list/hway' //  获取高速编号，用于下拉框'
+    this.hwayUrl = '/control/static/hway/list/direction' //  获取高速编号，用于下拉框'
     this.directionUrl = '/control/road/list/hway/direction/' //获取高速和方向的级联下拉框，用于下拉框
     this.conditionUrl = '/control/device/list/condition' // {deviceTypeId} // 条件查询设备回显'
     this.controlUrl = '/control/plan/start/control' // 发起管控'
@@ -187,7 +187,7 @@ class MonitoringModule extends React.Component {
     this.endTimeUrl = '/control/plan/update/end/time/' // {eventTypeId}/{eventId}/{controllId} 修改管控方案结束时间'
     this.deviceUrl = '/control/event/get/control/type/by/device' // 根据管控类型，获取管控设备集合（去重）
     this.markPublishUrl = '/control/event/mark/publish/' // 标注事件发起管控 和修改管控方案同一个接口
-    this.secUrl = '/control/road/get/latlngs/sec' // 根据道路、方向、起止桩号，计算经纬度和最后一个点所在的道路id
+    this.secUrl = '/control/customize/road/get/lng/lat/by/pilenum' // 根据道路、方向、起止桩号，计算经纬度和最后一个点所在的道路id
     this.timeoutUrl = '/control/plan/list/soon/timeout' // 获取即将超时的管控方案'
     this.promptUrl = '/control/plan/add/no/prompt/' // {eventId} 添加不再提示案件'
     this.codeUrl = '/control/dict/code/list/device/function/code/0' // {codeType} 根据功能类型查询，下拉框字典'
@@ -196,6 +196,7 @@ class MonitoringModule extends React.Component {
     this.revokeUrl = '/control/plan/update/control/plan/revoke/' // {controlId}/{eventId}交警点击管控中的案件撤销，需要交通审核'
     this.confirmRevokeUrl = '/control/plan/update/confirm/revoke/' // {eventId}交警确认收到撤销成功'
     this.plansUrl = '/control/plan/list/wait/confirm/revoke/plans' // 查询等待交警确认撤销的案件集合'
+    this.textUrl = '/control/event/get/define/unit/text'
   }
 
   componentDidMount = () => {
@@ -214,6 +215,8 @@ class MonitoringModule extends React.Component {
     this.handleOverallSituation()
     // 高速下拉
     this.handleUrlAjax(this.hwayUrl, 'hwayList')
+    // 获取所有事件类型定义显示文本（字典接口）
+    // this.handleUrlAjax(this.textUrl, 'unitText')
     // 方向下拉
     this.handleUrlAjax(this.directionUrl, 'directionList')
     // 字典事件类型
@@ -291,6 +294,7 @@ class MonitoringModule extends React.Component {
   }
   getLineCenterPoint = (latlng) => {
     let newCenter = []
+    /* 
     if (latlng.length > 1) {
       const startPoint = Math.abs(latlng[0].lng - latlng[latlng.length - 1].lng) / 2
       const endPoint = Math.abs(latlng[0].lat - latlng[latlng.length - 1].lat) / 2
@@ -303,6 +307,20 @@ class MonitoringModule extends React.Component {
         newCenter[1] = endPoint + Number(latlng[latlng.length - 1][1])
       } else {
         newCenter[1] = endPoint + Number(latlng[0].lat)
+      }
+    } */
+    if (latlng.length > 1) {
+      const startPoint = Math.abs(latlng[0][0] - latlng[latlng.length - 1][0]) / 2
+      const endPoint = Math.abs(latlng[0][1] - latlng[latlng.length - 1][1]) / 2
+      if (latlng[0][0] > latlng[latlng.length - 1][0]) {
+        newCenter[0] = startPoint + Number(latlng[latlng.length - 1][0])
+      } else {
+        newCenter[0] = startPoint + Number(latlng[0][0])
+      }
+      if (latlng[1][1] > latlng[latlng.length - 1][1]) {
+        newCenter[1] = endPoint + Number(latlng[latlng.length - 1][1])
+      } else {
+        newCenter[1] = endPoint + Number(latlng[0][1])
       }
     }
     const nowZoom = window.map.getZoom()
@@ -546,7 +564,7 @@ class MonitoringModule extends React.Component {
         }
       })
     } else if (type === 'controlDatas' && name === 'roadId') {
-      this.state.directionList.forEach((item, index) => {
+      /* this.state.directionList.forEach((item, index) => {
         if (item.roadId === value) {
           this.controlDatas.roadId = item.roadId
           this.controlDatas.roadName = item.roadName
@@ -560,18 +578,35 @@ class MonitoringModule extends React.Component {
             this.handSecUrl()
           })
         }
+      }) */
+      const { hwayList } = this.state
+      hwayList.forEach((item) => {
+        if (item.hwayId === value) {
+          this.controlDatas.roadId = item.hwayId
+          // this.controlDatas.roadName = item.hwayName
+          this.controlDatas.roadName = item.hwayId
+          this.controlDatas.directionId = item.direction[0].directionId
+          this.controlDatas.directionName = item.direction[0].directionName
+          this.setState({ roadNumber: item.direction, directionName: item.direction[0].directionId }, () => {
+            this.handSecUrl()
+          })
+        }
       })
     } else if (type === 'controlDatas' && name === 'directionId') {
       this.state.roadNumber.forEach((item, index) => {
         if (item.directionId === value) {
+          console.log(item);
+
           this.controlDatas.directionId = item.directionId
           this.controlDatas.directionName = item.directionName
           this.setState({
             directionName: item.directionName,
+          }, () => {
+            this.handSecUrl()
           })
         }
       })
-      this.handSecUrl()
+
     } else if (name === 'roadCode' && type === 'VIboardParameters') {
       const { directionList } = this.state
       this[type][name] = value
@@ -1346,12 +1381,90 @@ class MonitoringModule extends React.Component {
     })
   }
   handSecUrl = () => {
+    const aaa=[
+      [
+        "119.94614481925964",
+        "32.320251549993245"
+      ],
+      [
+        "119.94639158248901",
+        "32.32005536556244"
+      ],
+      [
+        "119.94552791118622",
+        "32.32074201107025"
+      ],
+      [
+        "119.94490563869476",
+        "32.32127845287323"
+      ],
+      [
+        "119.94309782981873",
+        "32.32308626174927"
+      ],
+      [
+        "119.93725597858429",
+        "32.3292338848114"
+      ],
+      [
+        "119.93651032447815",
+        "32.33001172542572"
+      ],
+      [
+        "119.93532478809357",
+        "32.33118116855621"
+      ],
+      [
+        "119.93436455726624",
+        "32.332146763801575"
+      ],
+      [
+        "119.9326479434967",
+        "32.33378291130066"
+      ],
+      [
+        "119.93052899837494",
+        "32.33556389808655"
+      ],
+      [
+        "119.92959558963776",
+        "32.33630418777466"
+      ],
+      [
+        "119.92801308631897",
+        "32.33747363090515"
+      ],
+      [
+        "119.92707967758179",
+        "32.338165640830994"
+      ],
+      [
+        "119.92536842823029",
+        "32.33925998210907"
+      ],
+      [
+        "119.92388935759664",
+        "32.340182753449135"
+      ],
+      [
+        "119.92235898971558",
+        "32.341137528419495"
+      ],
+      [
+        "119.92007374763489",
+        "32.34231770038605"
+      ],
+      
+    ]
+    window.drawLine(aaa, true)
     const that = this
     if (!this.controlDatas.roadName) {
       message.info('请选择高速！')
       return
     }
-    if (!this.controlDatas.directionId) {
+    console.log(this.controlDatas.directionId);
+
+    if (this.controlDatas.directionId !== 0 && !this.controlDatas.directionId) {
       message.info('请选择方向！')
       return
     }
@@ -1370,11 +1483,12 @@ class MonitoringModule extends React.Component {
       return
     }
     const params = {
-      direction: this.controlDatas.directionId,
-      roadId: this.controlDatas.roadName,
+      directionId: this.controlDatas.directionId,
+      hwayId: this.controlDatas.roadName,
       startPileNum: this.controlDatas.startPileNum,
       endPileNum: this.controlDatas.endPileNum,
     }
+    
     getResponseDatas('get', this.secUrl, params).then((res) => {
       const result = res.data
       if (result.code === 200) {
@@ -1386,6 +1500,7 @@ class MonitoringModule extends React.Component {
           if (that.state.lineLatlngArr) {
             const latlngArr = JSON.parse(JSON.stringify(that.state.lineLatlngArr))
             const colorFlag = that.controlDatas.eventType !== 3
+            this.getLineCenterPoint(result.data.latlng)
             window.drawLine(latlngArr, colorFlag)
           }
         })
@@ -2046,7 +2161,7 @@ class MonitoringModule extends React.Component {
   }
   render() {
     const {
-      SearchInputCity, showFrameFourData, revokePlanData, showFrameData, contingencyData, InfoWinPopup, roadDirection, hwayDirection, MeasuresList, eventsPopup, groupType, planList, EventTagPopup, EventTagPopupTit, roadNumber, endValueTime, conditionList, boxSelect, flagClose, oldDevicesList,
+      unitText, SearchInputCity, showFrameFourData, revokePlanData, showFrameData, contingencyData, InfoWinPopup, roadDirection, hwayDirection, MeasuresList, eventsPopup, groupType, planList, EventTagPopup, EventTagPopupTit, roadNumber, endValueTime, conditionList, boxSelect, flagClose, oldDevicesList,
       boxSelectList, hwayList, directionList, VIboardPopup, groupStatus, controlPopup, controlBtnFlag, controlBtnFlagText, detailsPopup, whethePopup, reservePopup, startValue, endValue, endOpen, SidePopLeft, detailsLatlng
       , controlTypes, eventTypes, deviceTypes, updatePoint, userLimit, TimeData, deviceCodeList, deviceDetailList, checkedListBox } = this.state
     return (
@@ -2853,7 +2968,7 @@ class MonitoringModule extends React.Component {
                           <Option value="">请选择</Option>
                           {
                             hwayList && hwayList.map((item) => {
-                              return <Option key={item.id} value={item.name}>{item.name}</Option>
+                              return <Option key={item.hwayId} value={item.hwayId}>{item.hwayName}</Option>
                             })
                           }
                         </Select>

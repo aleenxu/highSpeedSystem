@@ -60,12 +60,12 @@ class SpeedLimit extends React.Component {
     this.listByPageUrl = '/control/inforBoard/listByPage' // 分页查询设备
     this.listDetailUrl = '/control/dict/code/list/detail/' // {codeType} 根据字典类型，获取字典详情相关信息'
     this.deleteUrl = '/control/inforBoard/delete' //  删除情报板'
-    this.hwayUrl = '/control/road/list/hway' //  获取高速编号，用于下拉框'
+    // this.hwayUrl = '/control/road/list/hway' //  获取高速编号，用于下拉框'
     this.updateUrl = '/control/inforBoard/update' // 修改情报板'
     this.insertUrl = '/control/inforBoard/insert' // 新增情报板'
     this.Status = '/control/inforBoard/getControlStatus' // 获取情报板状态'
-    this.directionUrl = '/control/road/list/hway/direction' //  获取高速和方向的级联下拉框，用于下拉框'
-    this.secUrl = '/control/road/list/sec' // 根据公路名和方向获取路段'
+    this.directionUrl = '/control/static/hway/list/direction' //  获取高速和方向的级联下拉框，用于下拉框'
+    this.secUrl = '/control/customize/road/by/hway/direction' // 根据公路名和方向获取路段'
   }
   componentDidMount = () => {
     // 获取用户权限
@@ -81,7 +81,7 @@ class SpeedLimit extends React.Component {
     this.handlelistDetail('vendorList', 24)
     this.handlelistDetail('deviceTypeList', 18)
     this.handlelistDetail('deviceSizeList', 25)
-    this.handlelistDetail('currentList', 29)
+    this.handlelistDetail('currentList', 15)
     // 获取级联方向下拉
     this.handlehwayDirection()
   }
@@ -120,88 +120,25 @@ class SpeedLimit extends React.Component {
       }
     })
   }
-  // 获取路干
-  handlelistSec = (name) => {
-    const { direction, roadName } = this.board
-    getResponseDatas('get', this.secUrl, { direction, roadName }).then((res) => {
-      const result = res.data
-      if (result.code === 200) {
-        if (name) {
-          this.board.roadSecId = result.data.length > 0 ? result.data[0].roadSecId : null
-          this.props.form.setFieldsValue({
-            roadSecId: this.board.roadSecId,
-          })
-          this.setState({ roadSecIdItem: this.board.roadSecId })
-        }
-        this.setState({ roadSecIddata: result.data })
-      } else {
-        message.warning('暂无无数据')
+ // 获取路干
+ handlelistSec = (name) => {
+  const { direction, hwayId } = this.board
+  getResponseDatas('get', this.secUrl, { directionId: direction, hwayId }).then((res) => {
+    const result = res.data
+    if (result.code === 200) {
+      if (name) {
+        this.board.roadSecId = result.data.length > 0 ? result.data[0].roadId : null
+        this.props.form.setFieldsValue({
+          roadSecId: this.board.roadSecId,
+        })
+        this.setState({ roadSecIdItem: this.board.roadSecId })
       }
-    })
-  }
-  // 添加与编辑
-  /*  handleListupdate = () => {
-     const { boardLatlng } = this.state
-     const { port, deviceId, deviceName, vendor, deviceSize, roadName, pileNum, direction, roadSecId, deviceIp } = this.board
-     if (deviceId == '') {
-       message.warning('请填写设备编号')
-       return
-     }
-     if (deviceName == '') {
-       message.warning('请填写设备名称')
-       return
-     }
-     if (vendor == '') {
-       message.warning('请填写设备厂家')
-       return
-     }
-     if (deviceSize == '') {
-       message.warning('请填写设备尺寸')
-       return
-     }
-     if (roadName == '') {
-       message.warning('请填写高速公路')
-       return
-     }
-     if (pileNum == '') {
-       message.warning('请填写桩号')
-       return
-     }
-     if (direction == '') {
-       message.warning('请填写方向')
-       return
-     }
- 
-     if (roadSecId == '') {
-       message.warning('请填写所属路段')
-       return
-     }
-     if (boardLatlng == '') {
-       message.warning('请填写经纬度')
-       return
-     }
-     if (vendor == 1) {
-       if (deviceIp == '') {
-         message.warning('请填写Ip地址')
-         return
-       }
-       if (port == '') {
-         message.warning('请填写端口号')
-         return
-       }
-     }
- 
-     const url = this.board.rowId ? this.updateUrl : this.insertUrl
-     getResponseDatas('post', url, this.board).then((res) => {
-       const result = res.data
-       if (result.code === 200) {
-         this.board = JSON.parse(JSON.stringify(this.boardData))
-         this.setState({ boardData: null, boardLatlng: null, directions: null, roadSecIddata: null })
-         this.handleListByPage()
-       }
-       message.success(result.message)
-     })
-   } */
+      this.setState({ roadSecIddata: result.data })
+    } else {
+      message.warning('暂无无数据')
+    }
+  })
+}
   // 通用呆板式接口请求
   handleUrlAjax = (type, url, name, data) => {
     getResponseDatas(type, url, data).then((res) => {
@@ -260,7 +197,7 @@ class SpeedLimit extends React.Component {
   }
   handleSelect = (value, name, type) => {
     this[type][name] = value
-    if (name === 'roadName' && type === 'board') {
+    if (name === 'hwayId' && type === 'board') {
       this.handlehwaySelect(value, name)
     }
     if (name === 'direction' && type === 'board') {
@@ -274,26 +211,26 @@ class SpeedLimit extends React.Component {
   handlehwaySelect = (value, name) => {
     const { hwayList } = this.state
     hwayList.forEach((item) => {
-      if (item.roadId === value) {
+      if (item.hwayId === value) {
         if (name) {
-          this.board.direction = item.directions[0].directionId
+          this.board.direction = item.direction[0].directionId
           this.handlelistSec(name)
           this.props.form.setFieldsValue({
-            direction: item.directions[0].directionId,
+            direction: item.direction[0].directionId,
           })
-          this.setState({ directions: item.directions[0].directionId })
+          this.setState({ directions: item.direction[0].directionId })
         }
-        this.setState({ hwayDirection: item.directions })
+        this.setState({ hwayDirection: item.direction })
       }
     })
   }
   // 查看当前方案详情
   handleboardData = (data) => {
     this.board = JSON.parse(JSON.stringify(data))
-    this.setState({ boardData: data,Intelatlng:null, boardLatlng: data ? data.latlng : null, directions: data ? data.direction : null, roadSecIdItem: data ? data.roadSecId : null }, () => {
+    this.setState({ boardData: data, Intelatlng: null, boardLatlng: data ? data.latlng : null, directions: data ? data.direction : null, roadSecIdItem: data ? data.roadSecId : null }, () => {
       if (data) {
         // 获取方向下拉
-        this.handlehwaySelect(data.roadName)
+        this.handlehwaySelect(data.hwayId)
         // 获取路干下拉
         this.handlelistSec()
       }
@@ -324,8 +261,10 @@ class SpeedLimit extends React.Component {
             this.board = JSON.parse(JSON.stringify(this.boardData))
             this.setState({ boardData: null, boardLatlng: null, directions: null, roadSecIddata: null,Intelatlng:null, })
             this.handleListByPage()
+            message.success(result.message)
+          }else{
+            message.error(result.message)
           }
-          message.success(result.message)
         })
       }
     })
@@ -354,8 +293,8 @@ class SpeedLimit extends React.Component {
                 <div className={styles.listTd} >设备编号</div>
                 <div className={styles.listTd} >设备名称</div>
                 <div className={styles.listTd} >设备厂商</div>
-                {/* <div className={styles.listTd} >型号</div> */}
                 <div className={styles.listTd} >高速公路</div>
+                <div className={styles.listTd} >所属路段</div>
                 <div className={styles.listTd} >桩号</div>
                 <div className={styles.listTd} >经纬度坐标</div>
                 <div className={styles.listTd} >方向</div>
@@ -370,7 +309,7 @@ class SpeedLimit extends React.Component {
                       <div className={styles.listTd} ><span className={styles.roadName} title={item.deviceId}>{item.deviceId}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.deviceName}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{this.handledirection(vendorList, item.vendor)}</span></div>
-                      {/* <div className={styles.listTd} ><span className={styles.roadName}>{item.pileNum}</span></div> */}
+                      <div className={styles.listTd} ><span className={styles.roadName}>{item.hwayName}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.roadName}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.pileNum}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.latlng}</span></div>
@@ -462,7 +401,11 @@ class SpeedLimit extends React.Component {
                           ],
                           initialValue: boardData.vendor,
                         })(
-                          <Select onChange={(e) => { this.handleSelect(e, 'vendor', 'board') }} >
+                          <Select
+                            showSearch
+                            optionFilterProp="children"
+                            onChange={(e) => { this.handleSelect(e, 'vendor', 'board') }}
+                          >
                             {
                               vendorList && vendorList.map((item) => {
                                 return <Option key={item.id} value={item.id}>{item.name}</Option>
@@ -488,51 +431,30 @@ class SpeedLimit extends React.Component {
                         })(<Input onChange={(e) => { this.handleInput(e, 'latlng', 'board') }} onClick={(e) => { this.handleIntelatlng(true) }} />)}
                       </Form.Item>
                     </div>
-                    {/* <div className={styles.Item}>
-                      <Form.Item
-                        name="deviceTypeId"
-                        label="设备类型"
-                      >
-                        {getFieldDecorator('deviceTypeId', {
-                          rules: [
-                            {
-                              required: true,
-                              message: '请输入设备类型!',
-                            },
-                          ],
-                          initialValue: 1,
-                        })(
-                          <Select disabled onChange={(e) => { this.handleSelect(e, 'deviceTypeId', 'board') }} >
-                            {
-                              deviceTypeList && deviceTypeList.map((item) => {
-                                return <Option key={item.id} value={item.id}>{item.name}</Option>
-                              })
-                            }
-                          </Select>)}
-                      </Form.Item>
-                    </div> */}
-
                   </div>
                   <div className={styles.ItemLine}>
                     <div className={styles.Item}>
                       <Form.Item
-                        name="roadName"
+                        name="hwayId"
                         label="高速公路"
                       >
-                        {getFieldDecorator('roadName', {
+                        {getFieldDecorator('hwayId', {
                           rules: [
                             {
                               required: true,
                               message: '请输入高速公路!',
                             },
                           ],
-                          initialValue: boardData.roadName,
+                          initialValue: boardData.hwayId,
                         })(
-                          <Select onChange={(e) => { this.handleSelect(e, 'roadName', 'board') }}>
-
+                          <Select
+                            showSearch
+                            optionFilterProp="children"
+                            onChange={(e) => { this.handleSelect(e, 'hwayId', 'board') }}
+                          >
                             {
                               hwayList && hwayList.map((item) => {
-                                return <Option key={item.roadId} value={item.roadId}>{item.roadName}</Option>
+                                return <Option key={item.hwayId} value={item.hwayId}>{item.hwayName}</Option>
                               })
                             }
                           </Select>
@@ -577,7 +499,11 @@ class SpeedLimit extends React.Component {
                           ],
                           initialValue: directions,
                         })(
-                          <Select onChange={(e) => { this.handleSelect(e, 'direction', 'board') }}>
+                          <Select
+                            showSearch
+                            optionFilterProp="children"
+                            onChange={(e) => { this.handleSelect(e, 'direction', 'board') }}
+                          >
                             {
                               hwayDirection && hwayDirection.map((item) => {
                                 return <Option key={item.directionId} value={item.directionId}>{item.directionName}</Option>
@@ -601,15 +527,18 @@ class SpeedLimit extends React.Component {
                           ],
                           initialValue: roadSecIdItem,
                         })(
-                          <Select onChange={(e) => { this.handleSelect(e, 'roadSecId', 'board') }}>
+                          <Select
+                            onChange={(e) => { this.handleSelect(e, 'roadSecId', 'board') }}
+                            showSearch
+                            optionFilterProp="children"
+                          >
                             {
                               roadSecIddata && roadSecIddata.map((item) => {
-                                return <Option key={item.roadSecId} value={item.roadSecId}>{item.secName}</Option>
+                                return <Option key={item.roadId} value={item.roadId}>{item.roadName}</Option>
                               })
                             }
                           </Select>
                         )}
-                        {/* <Input onChange={(e) => { this.handleInput(e, 'roadSecId', 'board') }} value={roadSecIddata} /> */}
                       </Form.Item>
                     </div>
                   </div>

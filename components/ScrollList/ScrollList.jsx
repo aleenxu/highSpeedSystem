@@ -58,11 +58,11 @@ class ScrollList extends React.Component {
       this.ProgressLength = 0
       this.examineLength = 0
       ProgressData.forEach((item) => {
-        this.ProgressLength += item.count
+        this.ProgressLength += item.total
         // 获取待审核数量
-        if (item.code === 2 || item.code === 4) {
-          this.examineLength += item.count
-        }
+        /*  if (item.code === 2 || item.code === 4) {
+           this.examineLength += item.total
+         } */
       })
     }
   }
@@ -85,11 +85,11 @@ class ScrollList extends React.Component {
         this.ProgressLength = 0
         this.examineLength = 0
         nextProps.ProgressData.forEach((item) => {
-          this.ProgressLength += item.count
+          this.ProgressLength += item.total
           // 获取待审核数量
-          if (item.code === 2 || item.code === 4) {
-            this.examineLength += item.count
-          }
+          /* if (item.code === 2 || item.code === 4) {
+            this.examineLength += item.total
+          } */
         })
       }
       this.setState({ ProgressData: nextProps.ProgressData })
@@ -358,7 +358,7 @@ class ScrollList extends React.Component {
                   {
                     ProgressData && ProgressData.map((item) => {
                       return (
-                        <div key={item.name + item.code} className={styles.ProgressBox}><em>{item.name}</em><Progress strokeColor={this.getColor(item.code)} percent={item.count / this.ProgressLength * 100} format={percent => `${item.count}`} status="active" /></div>
+                        <div key={item.codeName + item.total} className={styles.ProgressBox}><em>{item.codeName}</em><Progress strokeColor={this.getColor(item.code)} percent={this.ProgressLength ? item.total / this.ProgressLength * 100 : 0} format={_ => `${item.total}`} status="active" /></div>
                       )
                     })
                   }
@@ -421,21 +421,32 @@ class ScrollList extends React.Component {
                     )) : <p className={styles.PanelItemNone}>暂无数据</p>
                     }
                   </div> :
-                  data.childs.map((item) => {
+                  data.childs.map((items) => {
                     return (
                       <Collapse >
-                        <Panel header={item.eventTypeName}>
-                          {item.eventInfos.length > 0 ? item.eventInfos.map((item, index) => (
-                            <div key={item.roadCode + item.locs} className={classNames(styles.listItem, 'listItem')} latlng={this.getLineCenterPoint(item.latlng)} onClick={(e) => { this.handleEventPopup(e, 'Details', item) }}>
-                              <i style={{ background: item.controlStatusType > 0 ? 'green' : 'red', boxShadow: item.controlStatusType > 0 ? 'green 0px 0px 20px' : 'red 0px 0px 20px' }} />
-                              <span>{item.roadCode}</span>
-                              <span title={item.roadSection}>{item.roadSection}</span>
-                              <span>{item.eventType === 3 ? '双方向' : item.directionName}</span>
-                              <span>{item.eventType === 5 ? item.eventTypeName : item.situation}</span>
-                              <span>{this.getDate(item.updateTime)}</span>
-                            </div>
-                          )) : <p className={styles.PanelItemNone}>暂无数据</p>
-                          }
+                        <Panel header={items.eventTypeName}>
+                          <div style={{ marginLeft: '-40px' }} className={styles.listBox}>
+                            {listTitle &&
+                              <div className={styles.listItem}>
+                                <i />
+                                <span className={styles.tit}>{listTitle.id}</span>
+                                <span className={styles.tit}>{listTitle.roadName}</span>
+                                <span className={styles.tit}>{listTitle.upTime}</span>
+                                <span className={styles.tit}>{listTitle.traffic}</span>
+                                <span className={styles.tit}>{listTitle.state}</span>
+                              </div>}
+                            {items.eventInfos.length > 0 ? items.eventInfos.map((item, index) => (
+                              <div key={item.roadCode + item.locs} className={classNames(styles.listItem, 'listItem')} latlng={this.getLineCenterPoint(item.latlng)} onClick={(e) => { this.handleEventPopup(e, 'Details', item) }}>
+                                <i style={{ background: item.controlStatusType > 0 ? 'green' : 'red', boxShadow: item.controlStatusType > 0 ? 'green 0px 0px 20px' : 'red 0px 0px 20px' }} />
+                                <span>{item.roadCode}</span>
+                                <span title={item.roadSection}>{item.roadSection}</span>
+                                <span>{item.eventType === 3 ? '双方向' : item.directionName}</span>
+                                <span>{item.eventType === 5 ? item.eventTypeName : item.situation}</span>
+                                <span>{this.getDate(item.updateTime)}</span>
+                              </div>
+                            )) : <p className={styles.PanelItemNone}>暂无数据</p>
+                            }
+                          </div>
                         </Panel>
                       </Collapse>
                     )

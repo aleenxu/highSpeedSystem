@@ -63,7 +63,8 @@ class GMap extends React.Component {
     this.map = null
     this.markers = []
     this.publicLayers = []
-    this.mapPointUrl = '/control/device/list/device/to/map' // 查询设备集合（用于回显到地图）
+    // this.mapPointUrl = '/control/device/list/device/to/map' // 查询设备集合（用于回显到地图）
+    this.mapPointUrl = '/control/device/list/to/map'
     if (props.onRef) {//如果父组件传来该方法 则调用方法将子组件this指针传过去
       props.onRef(this)
     }
@@ -148,8 +149,7 @@ class GMap extends React.Component {
     }
   }
   handleAMap = () => {
-    // this.loadPoint() 渲染点
-    this.loadingMap()
+    this.loadPoint()
   }
   loadPoint = (value) => { // 预案库通过不同类型来筛选地图点位
     const { deviceString, keyWords } = this.state
@@ -160,7 +160,7 @@ class GMap extends React.Component {
         const infoBoardJson = [], infoFBoardJson = [], carRoadJson = [], speedLimitJson = [], tollGateJson = []
         jsonData.data.map((item) => {
           // 根据类型划分图标类型 1、可变情报板;2、F屏情报版;3、可变限速板;4、收费站; 5、车道控制器;
-          switch (item.deviceTypeId) {
+          switch (item.deviceType) {
             case 1:
               infoBoardJson.push(item)
               break;
@@ -340,7 +340,7 @@ class GMap extends React.Component {
     window['lineLayers'].fx = []
     window['lineLayers'].show()
     const polyline = new AMap.Polyline({
-      path: path,
+      path,
       isOutline: true,
       outlineColor: !type ? '#98989a' : 'red',
       borderWeight: !type ? 15 : 8,
@@ -396,14 +396,14 @@ class GMap extends React.Component {
   openInfoWin = (map, dataItem) => {
     window.equipmentInfoWin = this.equipmentInfoWin
     const { detailsPopup, EventTagPopup } = this.state
-    var info = [];
+    const info = []
     this.dataItem = JSON.parse(JSON.stringify(dataItem))
     info.push(`<div class='content_box'>`);
     info.push(`<div class='content_box_title'><h4>设备信息</h4>`);
     info.push(`<p class='input-item'>设备名称：<span>` + dataItem.deviceName + `</span></p>`);
     info.push(`<p class='input-item'>设备类型：<span>` + dataItem.deviceTypeName + `</span></p>`);
     info.push(`<p class='input-item'>桩号：<span>` + dataItem.pileNum + `</span></p>`);
-    info.push(`<p class='input-item'>走向：<span>` + dataItem.directionName + `</span></p>`);
+    info.push(`<p class='input-item'>走向：<span>` + dataItem.roadDirectionName + `</span></p>`);
     info.push(`<p class='input-item'>管控状态：<span>` + (dataItem.controlling ? '已管控' : '未管控') + `</span></p>`);
     info.push(`<p class='input-item'>所属高速：<span>` + dataItem.roadName + `</span></p>`);
     if ((detailsPopup && detailsPopup.controlStatusType === 0) || EventTagPopup) {

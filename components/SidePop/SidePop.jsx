@@ -107,6 +107,13 @@ class SidePop extends React.Component {
       handleEventPopup(type, boolean)
     }
   }
+  // handlunitText=(eventType)=>{
+  //   const {unitText}=this.props
+  //   unitText.find((item)=>{
+  //     return item.eventType===eventType
+  //   })
+  //   retutn unitText
+  // }
   // 左边栏的收起和展开
   handleLeftClick = (e) => {
     const _this = this;
