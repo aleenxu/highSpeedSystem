@@ -279,7 +279,7 @@ class GMap extends React.Component {
   loadLeftModulePoint = () => {
     const _this = this
     this.state.dataAll && this.state.dataAll.map((leftItem, leftIndex) => {
-      if (leftItem.eventData.length > 0) {
+      if (leftItem.eventData&&leftItem.eventData.length > 0) {
         // markEventType
         leftItem.eventData.map((item, index) => {
           const itemData = JSON.parse(JSON.stringify(item))
@@ -392,7 +392,7 @@ class GMap extends React.Component {
   equipmentInfoWin = () => {
     this.props.equipmentInfoWin(this.dataItem)
   }
-  //在指定位置打开信息窗体
+  // 在指定位置打开信息窗体
   openInfoWin = (map, dataItem) => {
     window.equipmentInfoWin = this.equipmentInfoWin
     const { detailsPopup, EventTagPopup } = this.state
@@ -409,7 +409,7 @@ class GMap extends React.Component {
     if ((detailsPopup && detailsPopup.controlStatusType === 0) || EventTagPopup) {
       info.push(dataItem.controlling && this.props.mapID !== 'RpopMap' ? `<p class='input-item input_button'><Button disabled type="primary" class='input-item-button' style="background:#969495">已管控</Button></p>` :
         `<p class='input-item input_button'><Button onclick='window.equipmentInfoWin()' type="primary" class='input-item-button'>编辑管控内容</Button></p>`
-      );
+      )
     }
     const infoWindow = new AMap.InfoWindow({
       content: info.join("")  //使用默认信息窗体框样式，显示信息内容
