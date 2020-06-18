@@ -74,6 +74,7 @@ class ScrollList extends React.Component {
 
         nextProps.eachartData.forEach((item) => {
           this.eachartLength += item.total
+          window[item.eventTypeName] = item.total
           data.push({ value: item.total, name: item.eventTypeName })
         })
         this.getOption(data)
@@ -103,7 +104,7 @@ class ScrollList extends React.Component {
   }
   getLineCenterPoint = (latlng) => {
     let newCenter = []
-    if (latlng.length > 1) {
+    if (latlng && latlng.length > 1) {
       const startPoint = Math.abs(latlng[0][0] - latlng[latlng.length - 1][0]) / 2
       const endPoint = Math.abs(latlng[0][1] - latlng[latlng.length - 1][1]) / 2
       if (latlng[0][0] > latlng[latlng.length - 1][0]) {
@@ -410,13 +411,13 @@ class ScrollList extends React.Component {
                       </div>
                     }
                     {data.eventInfos.length > 0 ? data.eventInfos.map((item, index) => (
-                      <div key={item.roadCode + item.locs} className={classNames(styles.listItem, 'listItem')} latlng={this.getLineCenterPoint(item.latlng)} onClick={(e) => { this.handleEventPopup(e, 'Details', item) }}>
-                        <i style={{ background: item.controlStatusType > 0 ? 'green' : 'red', boxShadow: item.controlStatusType > 0 ? 'green 0px 0px 20px' : 'red 0px 0px 20px' }} />
-                        <span>{item.roadCode}</span>
-                        <span title={item.roadSection}>{item.roadSection}</span>
-                        <span>{item.eventType === 3 ? '双方向' : item.directionName}</span>
-                        <span>{item.eventType === 5 ? item.eventTypeName : item.situation}</span>
-                        <span>{this.getDate(item.updateTime)}</span>
+                      <div key={item.eventNum} className={classNames(styles.listItem, 'listItem')} latlng={this.getLineCenterPoint(item.latlng)} onClick={(e) => { this.handleEventPopup(e, 'Details', item) }}>
+                        <i style={{ background: item.planSource > 0 ? 'green' : 'red', boxShadow: item.planSource > 0 ? 'green 0px 0px 20px' : 'red 0px 0px 20px' }} />
+                        <span>{item.hwayCode}</span>
+                        <span title={item.roadName}>{item.roadName}</span>
+                        <span>{item.eventType === 6 ? '双方向' : item.roadDirectionName}</span>
+                        <span>{item.showValue}</span>
+                        <span>{this.getDate(item.reportTime)}</span>
                       </div>
                     )) : <p className={styles.PanelItemNone}>暂无数据</p>
                     }
@@ -432,17 +433,17 @@ class ScrollList extends React.Component {
                                 <span className={styles.tit}>{listTitle.id}</span>
                                 <span className={styles.tit}>{listTitle.roadName}</span>
                                 <span className={styles.tit}>{listTitle.upTime}</span>
-                                <span className={styles.tit}>{listTitle.traffic}</span>
+                                {/* <span className={styles.tit}>{listTitle.traffic}</span> */}
                                 <span className={styles.tit}>{listTitle.state}</span>
                               </div>}
                             {items.eventInfos.length > 0 ? items.eventInfos.map((item, index) => (
-                              <div key={item.roadCode + item.locs} className={classNames(styles.listItem, 'listItem')} latlng={this.getLineCenterPoint(item.latlng)} onClick={(e) => { this.handleEventPopup(e, 'Details', item) }}>
-                                <i style={{ background: item.controlStatusType > 0 ? 'green' : 'red', boxShadow: item.controlStatusType > 0 ? 'green 0px 0px 20px' : 'red 0px 0px 20px' }} />
-                                <span>{item.roadCode}</span>
-                                <span title={item.roadSection}>{item.roadSection}</span>
-                                <span>{item.eventType === 3 ? '双方向' : item.directionName}</span>
-                                <span>{item.eventType === 5 ? item.eventTypeName : item.situation}</span>
-                                <span>{this.getDate(item.updateTime)}</span>
+                              <div key={item.eventNum} className={classNames(styles.listItem, 'listItem')} latlng={this.getLineCenterPoint(item.latlng)} onClick={(e) => { this.handleEventPopup(e, 'Details', item) }}>
+                                <i style={{ background: item.planSource > 0 ? 'green' : 'red', boxShadow: item.planSource > 0 ? 'green 0px 0px 20px' : 'red 0px 0px 20px' }} />
+                                <span>{item.hwayCode}</span>
+                                <span title={item.roadName}>{item.roadName}</span>
+                                <span>{item.eventType === 6 ? '双方向' : item.roadDirectionName}</span>
+                                {/* <span>{item.showValue}</span> */}
+                                <span>{this.getDate(item.reportTime)}</span>
                               </div>
                             )) : <p className={styles.PanelItemNone}>暂无数据</p>
                             }

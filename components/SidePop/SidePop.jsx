@@ -221,7 +221,7 @@ class SidePop extends React.Component {
             {!!groupType && <ScrollList eachartData={groupType} type="1" dataRes="eacharts" handleEventPopup={this.handleEventPopup}></ScrollList>}
             {!!SidePopLeft && SidePopLeft.map((item, index) => {
               const listTit = {
-                id: '道路编号',
+                id: '高速编号',
                 roadName: '路段',
                 upTime: '方向',
                 traffic: item.eventTypeName === '交通拥堵' ? '路况(km/h)' : item.eventTypeName === '极端天气' ? '能见度(m)' : item.eventTypeName === '主动管控' ? '事件类型' : '影响车道',

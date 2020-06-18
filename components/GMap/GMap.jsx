@@ -74,11 +74,11 @@ class GMap extends React.Component {
     this.handleAMap()
   }
   componentWillReceiveProps = (nextProps) => {
-    if (this.props.deviceString !== nextProps.deviceString) {
+    /* if (this.props.deviceString !== nextProps.deviceString) {
       this.setState({ deviceString: nextProps.deviceString }, () => {
         this.loadPoint(true)
       })
-    }
+    } */
     if (this.props.linePoint !== nextProps.linePoint) {
       this.setState({ linePoint: nextProps.linePoint })
     }
@@ -394,6 +394,8 @@ class GMap extends React.Component {
   }
   // 在指定位置打开信息窗体
   openInfoWin = (map, dataItem) => {
+    console.log(dataItem);
+    
     window.equipmentInfoWin = this.equipmentInfoWin
     const { detailsPopup, EventTagPopup } = this.state
     const info = []
@@ -406,7 +408,7 @@ class GMap extends React.Component {
     info.push(`<p class='input-item'>走向：<span>` + dataItem.roadDirectionName + `</span></p>`);
     info.push(`<p class='input-item'>管控状态：<span>` + (dataItem.controlling ? '已管控' : '未管控') + `</span></p>`);
     info.push(`<p class='input-item'>所属高速：<span>` + dataItem.roadName + `</span></p>`);
-    if ((detailsPopup && detailsPopup.controlStatusType === 0) || EventTagPopup) {
+    if ((detailsPopup && !dataItem.controlling) || EventTagPopup) {
       info.push(dataItem.controlling && this.props.mapID !== 'RpopMap' ? `<p class='input-item input_button'><Button disabled type="primary" class='input-item-button' style="background:#969495">已管控</Button></p>` :
         `<p class='input-item input_button'><Button onclick='window.equipmentInfoWin()' type="primary" class='input-item-button'>编辑管控内容</Button></p>`
       )
