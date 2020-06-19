@@ -243,6 +243,7 @@ class MonitoringModule extends React.Component {
     this.handlesetTimeOut(false) // 启动计时器
     this.handleUrlAjax(this.codeUrl, 'deviceCodeList') // 查询管控方案详情方案五对应下拉
     this.handlelistDetail('deviceDetailList', 29)
+    this.handleUrlAjax(this.byUserUrl, 'controlPopupList')
     // 预案库一键发布调管控方案详情页面
     if (window.contingency) {
       const { eventType, eventId, controlType, planNum } = window.contingency
@@ -373,9 +374,8 @@ class MonitoringModule extends React.Component {
       if (boolean) {
         /* this.planStatus = 0 */
         // this.handlelistDetail('controlPopup', 14)
-        this.handleUrlAjax(this.byUserUrl, 'controlPopup', (data) => {
-          this.setState({ controlPopupList: data })
-        })
+        this.setState({ controlPopup: this.state.controlPopupList })
+        // this.handleUrlAjax(this.byUserUrl, 'controlPopup')
       } else {
         this.setState({
           controlPopup: boolean,
@@ -460,7 +460,6 @@ class MonitoringModule extends React.Component {
     }
     if (type === 'examine') {
       console.log(this.state.controlPopupList);
-
       this.planStatus = boolean ? this.state.controlPopupList[1].id : 0
       this.handleplanList()
     }
@@ -1277,6 +1276,7 @@ class MonitoringModule extends React.Component {
         directionName: this.controlDatas.directionName,
         eventId: this.controlDatas.eventId,
         eventTypeId: this.controlDatas.eventTypeId,
+        eventType: this.controlDatas.eventTypeId,
         eventTypeName: this.controlDatas.eventTypeName,
         pileNum: this.controlDatas.startPileNum + ' ' + this.controlDatas.endPileNum,
         hwayName: this.controlDatas.hwayName,
@@ -2671,7 +2671,7 @@ class MonitoringModule extends React.Component {
                 </div>
                 <div className={styles.ItemFooter}>
                   {
-                    reservePopup.planStatus === 1 ? <span onClick={reservePopup.update === true || reservePopup.update === false ? this.handleMarkControl : this.handleRelease}>发&nbsp;&nbsp;布</span> : null
+                    (reservePopup.planStatus === 1) || (reservePopup.update === true || reservePopup.update === false) ? <span onClick={reservePopup.update === true || reservePopup.update === false ? this.handleMarkControl : this.handleRelease}>发&nbsp;&nbsp;布</span> : null
                   }
                   {
                     ((reservePopup.planStatus === 2 && reservePopup.organization === 1) || (reservePopup.planStatus === 3 && reservePopup.organization === 2)) ? <span onClick={() => { this.handlecancelRel(reservePopup.planNum, 'audit') }}>审&nbsp;&nbsp;核</span> : null
