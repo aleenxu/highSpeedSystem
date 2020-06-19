@@ -39,6 +39,9 @@
   border-top-color: rgba(21, 24, 30, 0.7);
   border-left-color: rgba(21, 24, 30, 0.7);
 }
+:global(.ant-modal-confirm-body .ant-modal-confirm-content) {
+  color: #fff;
+}
 .MonitoringModule {
   ::-webkit-inner-spin-button {
     -webkit-appearance: none;

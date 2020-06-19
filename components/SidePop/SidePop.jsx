@@ -199,11 +199,11 @@ class SidePop extends React.Component {
       },
     ]
     const listTit = {
-      id: '道路编号',
-      roadName: '路段起点',
+      id: '道路',
+      roadName: '管控方案标识',
       upTime: '方向',
-      traffic: '管控时长',
-      time: '剩余时间',
+      traffic: '剩余时间',
+      time: '管控时常',
       state: '状态',
     }
     // 列表数据

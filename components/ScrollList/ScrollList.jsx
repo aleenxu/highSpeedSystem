@@ -359,7 +359,7 @@ class ScrollList extends React.Component {
                   {
                     ProgressData && ProgressData.map((item) => {
                       return (
-                        <div key={item.codeName + item.total} className={styles.ProgressBox}><em>{item.codeName}</em><Progress strokeColor={this.getColor(item.code)} percent={this.ProgressLength ? item.total / this.ProgressLength * 100 : 0} format={_ => `${item.total}`} status="active" /></div>
+                        <div key={item.codeName + item.total} className={styles.ProgressBox}><em>{item.codeName}</em><Progress strokeColor={this.getColor(item.planStatus)} percent={this.ProgressLength ? item.total / this.ProgressLength * 100 : 0} format={_ => `${item.total}`} status="active" /></div>
                       )
                     })
                   }
@@ -371,7 +371,7 @@ class ScrollList extends React.Component {
         {listType === '3' &&
           <div>
             <Checkbox defaultChecked={this.state.one} style={{
-              position: "absolute", zIndex: 9, paddingLeft: "12px", paddingRight: "12px", top: "12px", borderBottom: '1px #fff solid',
+              position: "absolute", zIndex: 9, paddingLeft: "12px", paddingRight: "12px", top: "12px",
               paddingBottom: '13px', background: 'rgba(19, 27, 37, 0.8)',
             }} nowtype={listTitle.type} onChange={this.checkBoxClick} />
             {/* <Checkbox.Group style={{
@@ -397,9 +397,9 @@ class ScrollList extends React.Component {
               onChange={this.callback}
               expandIconPosition="right"
             >
-              <Panel style={{ paddingLeft: '40px' }} header={listTit + ' (' + (window[listTit] || 0) + ')'} key="1" extra={this.genExtra(listTitle, 'Event')}>
+              <Panel header={listTit + ' (' + (window[listTit] || 0) + ')'} key="1" extra={this.genExtra(listTitle, 'Event')}>
                 {data.systemEnabled ?
-                  <div style={{ marginLeft: '-40px' }} className={styles.listBox}>
+                  <div className={styles.listBox}>
                     {listTitle &&
                       <div className={styles.listItem}>
                         <i />
@@ -426,7 +426,7 @@ class ScrollList extends React.Component {
                     return (
                       <Collapse >
                         <Panel header={items.eventTypeName}>
-                          <div style={{ marginLeft: '-40px' }} className={styles.listBox}>
+                          <div className={styles.listBox}>
                             {listTitle &&
                               <div className={styles.listItem}>
                                 <i />
@@ -477,13 +477,13 @@ class ScrollList extends React.Component {
                   }
                   <div style={{ maxHeight: 'calc(100vh - 385px)', overflow: 'auto' }}>
                     {data.length > 0 ? data.map((item, index) => (
-                      <div key={item.eventId + item.roadName} className={classNames(styles.listItem, 'listItem')} onClick={(e) => { this.handleEventPopup(e, 'controldet', item) }} >
-                        <span>{item.roadName}</span>
-                        <span>{item.startPileNum}</span>
-                        <span>{item.directionName}</span>
-                        <span>{item.endTime ? this.formatDuring(new Date(item.endTime).getTime() - new Date().getTime()) : item.planStatusName}</span>
-                        <span>{item.endTime ? this.formatDuring(new Date(item.endTime).getTime() - new Date(item.startTime).getTime()) : item.planStatusName}</span>
-                        <span style={{ color: this.getColor(item.status) }}>{item.planStatusName}</span>
+                      <div key={item.planNum} className={classNames(styles.listItem, 'listItem')} onClick={(e) => { this.handleEventPopup(e, 'controldet', item) }} >
+                        <span>{item.hwayCode}</span>
+                        <span>{item.planSource}</span>
+                        <span>{item.roadDirectionName}</span>
+                        <span>{this.formatDuring(item.controllLongTime)}</span>
+                        <span>{this.formatDuring(item.surplusTime)}</span>
+                        <span style={{ color: this.getColor(item.planStatus) }}>{item.planStatusName}</span>
                       </div>
                     )) : <p className={styles.PanelItemNone}>暂无数据</p>
                     }

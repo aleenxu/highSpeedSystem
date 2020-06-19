@@ -4,6 +4,7 @@
   }
   :global(.ant-collapse > .ant-collapse-item > .ant-collapse-header) {
     color: #fff;
+    padding-left: 70px;
   }
 }
 // 折叠面板
@@ -88,7 +89,7 @@
       width: 60px;
     }
     > span:nth-child(2) {
-      width: 90px;
+      min-width: 90px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
