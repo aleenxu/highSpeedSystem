@@ -305,7 +305,7 @@ class MonitoringModule extends React.Component {
     this.setState({ endOpen: open })
   }
   getLineCenterPoint = (latlng) => {
-    let newCenter = []
+    const newCenter = []
     /* 
     if (latlng.length > 1) {
       const startPoint = Math.abs(latlng[0].lng - latlng[latlng.length - 1].lng) / 2
@@ -589,14 +589,15 @@ class MonitoringModule extends React.Component {
         }
       })
     } else if (type === 'reservePopup' && (name === 'deviceControlType' || name === 'content')) {
+      const { reservePopup } = this.state
       this.reservePopup.list.forEach((item, index) => {
         console.log(item, data);
-
         if (item.deviceId === data.deviceId && data.deviceType === item.deviceType) {
           this.reservePopup.list[index][name] = value
-          console.log(this.reservePopup, this.state.reservePopup, value);
+          reservePopup.list[index][name] = value
+          console.log(this.reservePopup, reservePopup, value,name);
 
-          this.setState({ reservePopup: JSON.parse(JSON.stringify(this.reservePopup)) })
+          this.setState({ reservePopup })
         }
       })
     } else if (type === 'controlDatas' && name === 'hwayId') {
@@ -1646,6 +1647,7 @@ class MonitoringModule extends React.Component {
       //   situation: 0,
       // }
       // 修改管控时的参数
+      const {eventTypes}=this.state
       this.controlDatas = {
         planName: '', // 名称
         eventId: '', // 事件ID
@@ -1654,7 +1656,7 @@ class MonitoringModule extends React.Component {
         startPileNum: '', // 桩号
         endPileNum: '', // 桩号
         hwayName: '', // 高速名称
-        eventTypeId: 7, // 事件类型
+        eventTypeId: eventTypes ? eventTypes[0].eventType : 1, // 事件类型
         eventTypeName: '拥堵', // 事件类型名称
         directionName: '',
         locationMode: '1',
