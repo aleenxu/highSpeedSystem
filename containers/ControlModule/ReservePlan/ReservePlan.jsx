@@ -1034,6 +1034,8 @@ class ReservePlan extends React.Component {
       if (this.state.deviceString.length === 1) {
         value.deviceControlType = this.state.deviceString[0]
       }
+      console.log(MeasuresList,'5555');
+      
       this.handleUrlAjax(this.groupUrl, 'MeasuresList', (data) => {
        /*  if (this.state.deviceString.length === 1) {
           console.log(data[value.deviceTypeId]);
