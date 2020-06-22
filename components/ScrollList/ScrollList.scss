@@ -6,6 +6,14 @@
     color: #fff;
     padding-left: 70px;
   }
+  :global(.ant-collapse-item .ant-collapse-content-box .ant-collapse) {
+    &:last-child {
+      :global(.ant-collapse-item){
+        border-bottom: none;
+      }
+      
+    }
+  }
 }
 // 折叠面板
 :global(.ant-collapse-icon-position-right > .ant-collapse-item > .ant-collapse-header) {
@@ -88,8 +96,8 @@
     > span:nth-child(5) {
       width: 60px;
     }
-    > span:nth-child(2) {
-      min-width: 90px;
+    > span:nth-child(3) {
+      // min-width: 90px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;

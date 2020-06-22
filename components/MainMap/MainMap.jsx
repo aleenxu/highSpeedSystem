@@ -17,14 +17,14 @@ class MainMap extends React.Component {
     const boardLatlng = this.props.boardLatlng
     this.map = new AMap.Map('InmainMap', {
       resizeEnable: true,
-      center: boardLatlng ? [boardLatlng.split(',')[0], boardLatlng.split(',')[1]] : [120.0105285600, 32.3521228100],
+      center: boardLatlng ? [boardLatlng.split(',')[0], boardLatlng.split(',')[1]] : [103.882158, 30.436527],
       zoom: 13,
       mapStyle: "amap://styles/c3fa565f6171961e94b37c4cc2815ef8",
       showIndoorMap: false,
     })
     const marker = new AMap.Marker({
       icon: "//a.amap.com/jsapi_demos/static/demo-center/icons/poi-marker-default.png",
-      position: boardLatlng ? [boardLatlng.split(',')[0], boardLatlng.split(',')[1]] : [120.0105285600, 32.3521228100],
+      position: boardLatlng ? [boardLatlng.split(',')[0], boardLatlng.split(',')[1]] : [103.882158, 30.436527],
       offset: new AMap.Pixel(-13, -30)
     })
     marker.setMap(this.map)

@@ -144,6 +144,7 @@
           justify-content: center;
           align-items: center;
           overflow: hidden;
+          padding: 5px;
           &:last-child {
             flex: 1.5;
           }
@@ -409,7 +410,7 @@
     .listItems {
       display: flex;
       padding: 0 25px;
-      height: 22px;
+      height: 25px;
       margin: 10px 0;
       color: #fff;
       .listTd {
@@ -580,5 +581,14 @@
       margin: 0 19px;
       cursor: pointer;
     }
+  }
+}
+
+.OptGroup {
+  :global(.ant-select-dropdown-menu-item-group-title) {
+    font-size: 14px;
+  }
+  :global(.ant-select-dropdown-menu-item-group-list > .ant-select-dropdown-menu-item) {
+    padding-left: 40px;
   }
 }

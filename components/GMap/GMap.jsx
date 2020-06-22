@@ -71,7 +71,11 @@ class GMap extends React.Component {
   }
 
   componentDidMount = () => {
-    this.handleAMap()
+    if (this.props.mapID === 'HistorcalMap') {
+      this.loadingMap()
+    } else {
+      this.handleAMap()
+    }
   }
   componentWillReceiveProps = (nextProps) => {
     /* if (this.props.deviceString !== nextProps.deviceString) {
@@ -155,7 +159,7 @@ class GMap extends React.Component {
     const { deviceString, keyWords } = this.state
     getResponseDatas('get', this.mapPointUrl + '?searchKey=' + keyWords + (deviceString ? `&controlTypes=${deviceString}` : '')).then((res) => {
       const jsonData = res.data
-      if (jsonData.code == 200 && jsonData.data.length > 0) {
+      if (jsonData.code == 200 && jsonData.data) {
         window.mapPointArr = jsonData.data
         const infoBoardJson = [], infoFBoardJson = [], carRoadJson = [], speedLimitJson = [], tollGateJson = []
         jsonData.data.map((item) => {
@@ -182,6 +186,8 @@ class GMap extends React.Component {
           infoBoardJson, infoFBoardJson, speedLimitJson, tollGateJson, carRoadJson,
         })
         this.loadingMap(value)
+      } else {
+        this.loadingMap(value)
       }
     })
   }
@@ -190,7 +196,7 @@ class GMap extends React.Component {
     if (!value) {
       const map = new AMap.Map(_this.state.mapID, {
         resizeEnable: true, //是否监控地图容器尺寸变化
-        center: [120.0105285600, 32.3521228100], //初始化地图中心点
+        center: [103.882158, 30.436527], //初始化地图中心点
         mapStyle: "amap://styles/c3fa565f6171961e94b37c4cc2815ef8",
         zoom: 11,
       })
@@ -279,7 +285,7 @@ class GMap extends React.Component {
   loadLeftModulePoint = () => {
     const _this = this
     this.state.dataAll && this.state.dataAll.map((leftItem, leftIndex) => {
-      if (leftItem.eventData&&leftItem.eventData.length > 0) {
+      if (leftItem.eventData && leftItem.eventData.length > 0) {
         // markEventType
         leftItem.eventData.map((item, index) => {
           const itemData = JSON.parse(JSON.stringify(item))
@@ -395,8 +401,9 @@ class GMap extends React.Component {
   // 在指定位置打开信息窗体
   openInfoWin = (map, dataItem) => {
     console.log(dataItem);
-    
+
     window.equipmentInfoWin = this.equipmentInfoWin
+    window.equipmentInfoWinImg = this.props.equipmentInfoWinImg
     const { detailsPopup, EventTagPopup } = this.state
     const info = []
     this.dataItem = JSON.parse(JSON.stringify(dataItem))
@@ -405,10 +412,11 @@ class GMap extends React.Component {
     info.push(`<p class='input-item'>设备名称：<span>` + dataItem.deviceName + `</span></p>`);
     info.push(`<p class='input-item'>设备类型：<span>` + dataItem.deviceTypeName + `</span></p>`);
     info.push(`<p class='input-item'>桩号：<span>` + dataItem.pileNum + `</span></p>`);
-    info.push(`<p class='input-item'>走向：<span>` + dataItem.roadDirectionName + `</span></p>`);
+    info.push(`<p class='input-item'>方向：<span>` + dataItem.roadDirectionName + `</span></p>`);
     info.push(`<p class='input-item'>管控状态：<span>` + (dataItem.controlling ? '已管控' : '未管控') + `</span></p>`);
-    info.push(`<p class='input-item'>所属高速：<span>` + dataItem.roadName + `</span></p>`);
-    if ((detailsPopup && !dataItem.controlling) || EventTagPopup) {
+    info.push(`<p class='input-item'>所属高速：<span>` + dataItem.hwayName + `</span></p>`);
+    info.push(`<p class='input-item input_button'><Button onclick='window.equipmentInfoWinImg(true)' type="primary" class='input-item-button'>查看管控内容</Button></p>`)
+    if ((detailsPopup) || EventTagPopup) {
       info.push(dataItem.controlling && this.props.mapID !== 'RpopMap' ? `<p class='input-item input_button'><Button disabled type="primary" class='input-item-button' style="background:#969495">已管控</Button></p>` :
         `<p class='input-item input_button'><Button onclick='window.equipmentInfoWin()' type="primary" class='input-item-button'>编辑管控内容</Button></p>`
       )

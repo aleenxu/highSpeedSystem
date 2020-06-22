@@ -35,7 +35,7 @@ class SidePop extends React.Component {
       alignItems: 'flexStart',
       backgroundColor: 'rgba(20,21,24,.9)',
       zIndex: '99',
-      overflowY: 'auto',
+      /*   overflowY: 'auto', */
     }
     this.stylesH = `position:fixed;
       bottom:5px;
@@ -200,10 +200,11 @@ class SidePop extends React.Component {
     ]
     const listTit = {
       id: '道路',
-      roadName: '管控方案标识',
+      name: '管控名称',
+      roadName: '来源',
       upTime: '方向',
       traffic: '剩余时间',
-      time: '管控时常',
+      time: '管控时长',
       state: '状态',
     }
     // 列表数据
@@ -217,27 +218,32 @@ class SidePop extends React.Component {
     return (
       <div style={this.styles} className={`animated ${this.state.transition}`}>
         {boxRight === 'unset' &&
-          <div style={{ width: '100%' }} onWheel={(e) => { this.handleScroll(e) }}>
-            {!!groupType && <ScrollList eachartData={groupType} type="1" dataRes="eacharts" handleEventPopup={this.handleEventPopup}></ScrollList>}
-            {!!SidePopLeft && SidePopLeft.map((item, index) => {
-              const listTit = {
-                id: '高速编号',
-                roadName: '路段',
-                upTime: '方向',
-                traffic: item.eventTypeName === '交通拥堵' ? '路况(km/h)' : item.eventTypeName === '极端天气' ? '能见度(m)' : item.eventTypeName === '主动管控' ? '事件类型' : '影响车道',
-                state: '上报时间',
-                type: item.eventType,
-                name: item.eventTypeName,
-              }
-              return <ScrollList type="3" key={item.eventTypeName } Tit={item.eventTypeName } Title={listTit} dataAll={SidePopLeft} dataRes={item} handleEventPopup={this.handleEventPopup}></ScrollList>
-            })}
+          <div style={{ width: '100%', overflowY: 'auto' }} onWheel={(e) => { this.handleScroll(e) }}>
+            {!!groupType && <ScrollList key="groupType" eachartData={groupType} type="1" dataRes="eacharts" handleEventPopup={this.handleEventPopup}></ScrollList>}
+            <div style={{ maxHeight: 'calc(100% - 170px)', overflowY: 'auto', height: 'calc(100% - 170px)' }}>
+              {!!SidePopLeft && SidePopLeft.map((item, index) => {
+                const listTit = {
+                  id: '高速编号',
+                  roadName: '路段',
+                  upTime: '方向',
+                  traffic: item.eventTypeName === '交通拥堵' ? '路况(km/h)' : item.eventTypeName === '极端天气' ? '能见度(m)' : item.eventTypeName === '主动管控' ? '事件类型' : '影响车道',
+                  state: '上报时间',
+                  type: item.eventType,
+                  name: item.eventTypeName,
+                }
+                return <ScrollList  type="3" key={item.eventTypeName} Tit={item.eventTypeName} Title={listTit} dataAll={SidePopLeft} dataRes={item} handleEventPopup={this.handleEventPopup}></ScrollList>
+              })}
+            </div>
           </div>
         }
         {
           boxLeft === 'unset' &&
-          <div style={{ width: '100%' }} onWheel={(e) => { this.handleScroll(e) }}>
-            {groupStatus && <ScrollList type="2" ProgressData={groupStatus} dataRes="进度条" handleEventPopup={this.handleEventPopup}></ScrollList>}
-            {SidplanList && <ScrollList type="4" Tit="管控方案" Title={listTit} dataRes={SidplanList} handleEventPopup={this.handleEventPopup}></ScrollList>}
+          <div style={{ width: '100%', overflowY: 'auto' }} onWheel={(e) => { this.handleScroll(e) }}>
+            {groupStatus && <ScrollList key="groupStatus" type="2" ProgressData={groupStatus} dataRes="进度条" handleEventPopup={this.handleEventPopup}></ScrollList>}
+            <div style={{ maxHeight: 'calc(100% - 260px)', overflowY: 'auto', height: 'calc(100% - 260px)' }}>
+              {SidplanList && <ScrollList key="SidplanList" type="4" Tit="管控方案" Title={listTit} dataRes={SidplanList} handleEventPopup={this.handleEventPopup}></ScrollList>}
+            </div>
+            
           </div>
         }
         {boxRight === 'unset' ?

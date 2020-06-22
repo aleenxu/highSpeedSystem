@@ -194,7 +194,9 @@ class ScrollList extends React.Component {
     }
   }
   formatDuring = (mss) => {
-    if (mss <= 0) {
+    if (mss === null) {
+      return '--'
+    } else if (mss <= 0) {
       return '已超时'
     } else {
       // var days = parseInt(mss / (1000 * 60 * 60 * 24));
@@ -424,8 +426,8 @@ class ScrollList extends React.Component {
                   </div> :
                   data.childs.map((items) => {
                     return (
-                      <Collapse >
-                        <Panel header={items.eventTypeName}>
+                      <Collapse key={items.eventTypeName}>
+                        <Panel header={items.eventTypeName + ` (${items.count})`}>
                           <div className={styles.listBox}>
                             {listTitle &&
                               <div className={styles.listItem}>
@@ -468,6 +470,7 @@ class ScrollList extends React.Component {
                   {listTitle &&
                     <div className={classNames(styles.listItem)}>
                       <span className={styles.tit}>{listTitle.id}</span>
+                      <span className={styles.tit}>{listTitle.name}</span>
                       <span className={styles.tit}>{listTitle.roadName}</span>
                       <span className={styles.tit}>{listTitle.upTime}</span>
                       <span className={styles.tit}>{listTitle.time}</span>
@@ -479,7 +482,8 @@ class ScrollList extends React.Component {
                     {data.length > 0 ? data.map((item, index) => (
                       <div key={item.planNum} className={classNames(styles.listItem, 'listItem')} onClick={(e) => { this.handleEventPopup(e, 'controldet', item) }} >
                         <span>{item.hwayCode}</span>
-                        <span>{item.planSource}</span>
+                        <span>{item.planName}</span>
+                        <span>{item.planSourceName}</span>
                         <span>{item.roadDirectionName}</span>
                         <span>{this.formatDuring(item.controllLongTime)}</span>
                         <span>{this.formatDuring(item.surplusTime)}</span>

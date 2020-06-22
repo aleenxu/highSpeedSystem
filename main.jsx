@@ -115,6 +115,7 @@ const LaneControl = Loadable({
 const Parent = () => (
   <div>
     {/* <Route path="*" component={SystemMenu} /> */}
+    <Route exact path="/login" component={Login} />
     <Route exact path="/monitoringmodule" component={MonitoringModule} />
     <Route exact path="/reserveplan" component={ReservePlan} />
     <Route exact path="/basics" component={Basics} />
@@ -134,20 +135,17 @@ const Parent = () => (
     <Route exact path="/historical" component={Historical} />
     <Route exact path="/analysis" component={Analysis} />
     <Route exact path="/laneControl" component={LaneControl} />
-    <Route exact path="/login" component={Login} />
   </div>
 )
 reactDom.render(
   <AppContainer>
     <ConfigProvider locale={zhCN}>
-      {/* //<Provider> */}
       <HashRouter basename="" history={BrowserHistory}>
         <Switch>
-          <Route path="/" component={Parent} />
           <Redirect exact from="/" to="/login" />
+          <Route path="/" component={Parent} />
         </Switch>
       </HashRouter>
-      {/* //</Provider> */}
     </ConfigProvider>
   </AppContainer>
   , document.getElementById('content'),

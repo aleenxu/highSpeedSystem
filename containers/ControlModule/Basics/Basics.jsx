@@ -6,7 +6,7 @@ import styles from '../../EquipmentModule/EquipmentModule.scss'
 import getResponseDatas from '../../../plugs/HttpData/getResponseData'
 import { Pagination, Input, Select, DatePicker, Button, Icon, message } from 'antd'
 import moment from 'moment'
-const { Option } = Select
+const { Option, OptGroup } = Select
 /*        历史管控方案 */
 class Basics extends React.Component {
   constructor(props) {
@@ -23,24 +23,30 @@ class Basics extends React.Component {
     }
     this.Parameters = {
       pageNo: 1,
-      eventTypeId: 0,
+      eventType: 0,
       pageSize: 10,
       roadName: '',
       startTime: '',
       endTime: '',
     }
+    this.typesTreeUrl = '/control/event/get/all/types/tree' // 获取所有的事件类型，分上下级，树形结构'
     this.listDetailUrl = '/control/dict/code/list/detail/' // {codeType} 根据字典类型，获取字典详情相关信息'
-    this.listByPageUrl = '/control/plan/list/history'
-    this.historyUrl = '/control/event/get/history/' // {eventTypeId}/{eventId} //  查询历史事件详情'
-    this.getInfoUrl = '/control/plan/get/info/' // {eventType}/{eventId} 获取管控方案'
-    this.operationUrl = '/control/plan/list/operation/' // {eventTypeId}/{eventId} 查询方案操作记录集合'
-    this.controlUrl = '/control/plan/generate/reserve/by/control/' // {eventTypeId}/{eventId}
+    this.listByPageUrl = '/control/control/plan/list/his'
+    this.historyUrl = '/control/event/get/history/' // {eventType}/{eventId} //  查询历史事件详情'
+    this.getInfoUrl = '/control/control/plan/get/by/' // {eventType}/{eventId} 获取管控方案'
+    this.operationUrl = '/control/control/plan/get/operate/by/' // {planNum}根据管控方案编号获取管控方案操作步骤
+    this.textUrl = '/control/event/get/define/unit/text'
+    this.controlUrl = '/control/control/plan/add/his/to/reserve/' // {eventType}/{eventId}
+    this.hisByUrl = '/control/control/plan/list/simple/his/by/' // {eventNum}根据事件编号，获取历史管控方案集合（用于事件查看管控方案列表接口）'
   }
   componentDidMount = () => {
-    // 事件类型下拉查询
-    this.handlelistDetail('eventTypeData', 13)
     // 列表查询
     this.handleListByPage()
+    // 事件类型下拉查询
+    // this.handlelistDetail('eventTypeData', 13)
+    this.handleUrlAjax(this.textUrl, 'unitText')
+    // 事件类型下拉查询
+    this.handleUrlAjax(this.typesTreeUrl, 'eventTypeData')
   }
   onStartChange = (value) => {
     this.onPickerChange('startValue', value)
@@ -55,7 +61,18 @@ class Basics extends React.Component {
       [field]: value,
     })
   }
-
+  // 通用呆板式接口请求
+  handleUrlAjax = (url, name, callback) => {
+    getResponseDatas('get', url).then((res) => {
+      console.log(res)
+      if (res) {
+        const result = res.data
+        if (result.code === 200) {
+          this.setState({ [name]: result.data }, () => { callback && callback(result.data) })
+        }
+      }
+    })
+  }
   getDate = (data) => {
     const today = new Date(data)
     const year = today.getFullYear()
@@ -81,28 +98,29 @@ class Basics extends React.Component {
   }
   //  管控详情
   handlehistory = (data) => {
-    const { eventId, eventTypeId } = data
-    getResponseDatas('get', this.getInfoUrl + eventTypeId + '/' + eventId).then((res) => {
+    getResponseDatas('get', this.getInfoUrl + data + '/1').then((res) => {
       const result = res.data
       if (result.code === 200) {
         this.setState({ reservePopup: result.data })
       }
     })
-    this.handleoperation(eventId, eventTypeId)
+    this.handleoperation(data)
   }
   // 查询操作记录
-  handleoperation = (eventId, eventTypeId) => {
-    getResponseDatas('get', this.operationUrl + eventTypeId + '/' + eventId).then((res) => {
+  handleoperation = (num) => {
+    getResponseDatas('get', this.operationUrl + num).then((res) => {
       const result = res.data
       if (result.code === 200) {
         this.setState({ operationData: result.data })
+      } else {
+        message.warning(result.message)
       }
     })
   }
   // 添加至预案库
   handlecontrol = (data) => {
-    const { eventId, eventTypeId } = data
-    getResponseDatas('put', this.controlUrl + eventTypeId + '/' + eventId).then((res) => {
+    const { eventId, eventType } = data
+    getResponseDatas('post', this.controlUrl + data).then((res) => {
       const result = res.data
       if (result.code === 200) {
         this.handleListByPage()
@@ -172,7 +190,7 @@ class Basics extends React.Component {
     window.open('#/analysisEchart')
   }
   render() {
-    const { eventTypeData, operationData, reservePopup, listByPage, current, endOpen, endValue, startValue } = this.state
+    const { simpleHis, eventTypeData, operationData, reservePopup, listByPage, current, endOpen, endValue, startValue } = this.state
     return (
       <div>
         <SystemMenu />
@@ -184,12 +202,25 @@ class Basics extends React.Component {
                 <Select
                   style={{ width: '100%' }}
                   placeholder="事件类型"
-                  onChange={(e) => { this.handleSelect(e, 'eventTypeId', 'Parameters') }}
+                  className={styles.OptGroup}
+                  onChange={(e) => { this.handleSelect(e, 'eventType', 'Parameters') }}
                 >
                   <Option value={0}>请选择</Option>
                   {
-                    eventTypeData && eventTypeData.map((item) => {
-                      return <Option key={item.id} value={item.id}>{item.name}</Option>
+                    eventTypeData && eventTypeData.map((items) => {
+                      if (items.childs) {
+                        return (
+                          <OptGroup label={items.eventTypeName} key={items.eventType}>
+                            {
+                              items.childs.map((item) => {
+                                return <Option key={item.eventType} value={item.eventType}>{item.eventTypeName}</Option>
+                              })
+                            }
+                          </OptGroup>
+                        )
+                      } else {
+                        return <Option key={items.eventType} value={items.eventType}>{items.eventTypeName}</Option>
+                      }
                     })
                   }
                 </Select>
@@ -226,10 +257,11 @@ class Basics extends React.Component {
             </div>
             <div className={styles.ContetList}>
               <div className={styles.listItems}>
+                <div className={styles.listTd} >预案名称</div>
                 <div className={styles.listTd} >方案ID</div>
                 <div className={styles.listTd} >事件类型</div>
                 <div className={styles.listTd} >管控类型</div>
-                <div className={styles.listTd} >道路名称</div>
+                <div className={styles.listTd} >高速名称</div>
                 <div className={styles.listTd} >管控路段名称</div>
                 <div className={styles.listTd} >起点</div>
                 <div className={styles.listTd} >终点</div>
@@ -240,19 +272,20 @@ class Basics extends React.Component {
               {
                 !!listByPage && listByPage.data.map((item) => {
                   return (
-                    <div className={styles.listItems} key={item.eventTypeName + item.eventId}>
-                      <div className={styles.listTd} ><span className={styles.roadName}>{item.eventId}P</span></div>
+                    <div className={styles.listItems} key={item.planNum}>
+                      <div className={styles.listTd} ><span className={styles.roadName}>{item.planName}</span></div>
+                      <div className={styles.listTd} ><span className={styles.roadName}>{item.planNum}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName} title={item.eventTypeName}>{item.eventTypeName}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName} title={item.controlTypeName}>{item.controlTypeName}</span></div>
-                      <div className={styles.listTd} ><span className={styles.roadName} title={item.roadName}>{item.roadName}</span></div>
-                      <div className={styles.listTd} ><span className={styles.roadName} title={item.secName}>{item.secName}</span></div>
+                      <div className={styles.listTd} ><span className={styles.roadName} title={item.roadName}>{item.hwaName}</span></div>
+                      <div className={styles.listTd} ><span className={styles.roadName} title={item.secName}>{item.roadName}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.pileNum && item.pileNum.split(' ')[0]}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.pileNum && item.pileNum.split(' ')[1]}</span></div>
-                      <div className={styles.listTd} ><span className={styles.roadName}>{item.publishTime ? this.getDate(item.publishTime) : '-'}</span></div>
-                      <div className={styles.listTd} ><span className={styles.roadName}>{item.publishTime && item.endTime ? this.formatDuring(new Date(item.endTime).getTime() - new Date(item.publishTime).getTime()) : '-'}</span></div>
+                      <div className={styles.listTd} ><span className={styles.roadName}>{item.startTime ? this.getDate(item.startTime) : '-'}</span></div>
+                      <div className={styles.listTd} ><span className={styles.roadName}>{item.controllLongTime ? this.formatDuring(item.controllLongTime) : '-'}</span></div>
                       <div className={styles.listTd} style={{ flex: 1.8 }}>
-                        <Button className={styles.Button} onClick={() => { this.handlehistory(item) }}>管控详情</Button>
-                        <Button className={item.publishTime ? styles.Button : styles.Buttondeb} disabled={!item.publishTime} onClick={() => { this.handlecontrol(item) }}>添加至预案库</Button>
+                        <Button className={styles.Button} onClick={() => { this.handlehistory(item.planNum, false) }}>管控详情</Button>
+                        <Button className={item.canAdd ? styles.Button : styles.Buttondeb} disabled={!item.canAdd} onClick={() => { this.handlecontrol(item.planNum) }}>添加至预案库</Button>
                       </div>
                     </div>
                   )
@@ -267,75 +300,74 @@ class Basics extends React.Component {
             </div>
           </div>
         </div>
-        {reservePopup ?
-          <div className={styles.MaskBox}>
-            <div className={styles.AddBox}>
-              <div className={styles.Title}>管控详情<Icon onClick={() => { this.handleClose('reservePopup', false) }} className={styles.Close} type="close" /></div>
-              <div className={styles.Conten}>
-                <div className={styles.Header}>
-                  <span>方案编号&nbsp;:&nbsp;&nbsp;{reservePopup.eventId}P</span>
-                  <span>事件类型&nbsp;:&nbsp;&nbsp;<span style={{ color: '#f31113' }}>{reservePopup.eventTypeName}</span></span>
-                </div>
-                <div className={styles.ItemBox}>
-                  <div className={styles.HeadItem}>基本信息</div>
-                  <div className={styles.RowBox}>
-                    <p>道路编号&nbsp;:&nbsp;&nbsp;{reservePopup.roadName && reservePopup.roadName.split(' ')[0]}</p>
-                    <p>道路名称&nbsp;:&nbsp;&nbsp;{reservePopup.roadName && reservePopup.roadName.split(' ')[1]}</p>
-                    <p>行驶方向&nbsp;:&nbsp;&nbsp;{reservePopup.directionName}</p>
+        {
+          reservePopup ?
+            <div className={styles.MaskBox} style={{ zIndex: '9999' }}>
+              <div className={styles.AddBox}>
+                <div className={styles.Title}>{reservePopup.devices ? '管控详情' : '事件详情'}<Icon onClick={() => { this.handleClose('reservePopup', false) }} className={styles.Close} type="close" /></div>
+                <div className={styles.Conten}>
+                  <div className={styles.Header}>
+                    <span>事件编号&nbsp;:&nbsp;&nbsp;{reservePopup.eventNum}</span>
+                    <span>事件类型&nbsp;:&nbsp;&nbsp;<span style={{ color: '#f31113' }}>{reservePopup.eventTypeName}</span></span>
                   </div>
-                  <div className={styles.RowBox}>
-                    <p>起始桩号&nbsp;:&nbsp;&nbsp;<span style={{ color: '#c67f03' }}>{reservePopup.pileNum && reservePopup.pileNum.split(' ')[0]}</span></p>
-                    {
-                      reservePopup.eventTypeId === 1 ?
-                        [<p key="situation">平均车速&nbsp;:&nbsp;&nbsp;<span style={{ color: '#c67f03' }}>{reservePopup.situation}km/h</span> </p>,
-                        <p key="eventLength">拥堵路段长度&nbsp;:&nbsp;&nbsp;<span style={{ color: '#f31113' }}>{reservePopup.eventLength}m</span></p>] :
-                        [<p key="situation">能见度&nbsp;:&nbsp;&nbsp;<span style={{ color: '#c67f03' }}>{reservePopup.situation}km/h</span> </p>,
-                        <p key="eventLength">影响道路长度&nbsp;:&nbsp;&nbsp;<span style={{ color: '#f31113' }}>{reservePopup.eventLength}m</span></p>]
-                    }
+                  <div className={styles.ItemBox}>
+                    <div className={styles.HeadItem}>基本信息</div>
+                    <div className={styles.RowBox}>
+                      <p>高速编号&nbsp;:&nbsp;&nbsp;{reservePopup.hwayCode}</p>
+                      <p>高速名称&nbsp;:&nbsp;&nbsp;{reservePopup.hwayName}</p>
+                      <p>行驶方向&nbsp;:&nbsp;&nbsp;{reservePopup.roadDirectionName}</p>
+                    </div>
+                    <div className={styles.RowBox}>
+                      <p>起始桩号&nbsp;:&nbsp;&nbsp;<span style={{ color: '#c67f03' }}>{reservePopup.pileNum && reservePopup.pileNum.split(' ')[0]}</span></p>
+                      {
+                        (reservePopup.planSource === 1 || reservePopup.planSource === 2) || <p key="situation">{this.state.unitText[reservePopup.eventType].tipsText}&nbsp;:&nbsp;&nbsp;<span>{reservePopup.showValue + this.state.unitText[reservePopup.eventType].unit}</span></p>
+                      }
+                      <p key="eventLength">影响路段长度&nbsp;:&nbsp;&nbsp;<span style={{ color: '#f31113' }}>{reservePopup.eventLength}m</span></p>
+                    </div>
+                    <div className={styles.RowBox}>数据来源&nbsp;:&nbsp;&nbsp;<span style={{ color: '#03af01' }}>{reservePopup.planSourceName}</span></div>
                   </div>
-                  <div className={styles.RowBox}>数据来源&nbsp;:&nbsp;&nbsp;<span style={{ color: '#03af01' }}>{reservePopup.dataSourceName}</span></div>
-                </div>
 
-                {operationData ?
-                  <div>
-                    <div className={styles.guanBox}>
-                      <Button className={styles.Button} onClick={this.handleanalysisEchart}>管控效果评估</Button>
-                    </div>
-                    <div className={styles.guanBox}>
-                      <span className={styles.guanTitle}>操作记录</span>
-                    </div>
-                    <div className={styles.listBox}>
-                      <div className={styles.listBoxHead}>
-                        <div className={styles.listItems}>
-                          <div className={styles.listTd} >序号</div>
-                          <div className={styles.listTd} >操作人</div>
-                          <div className={styles.listTd} >操作</div>
-                          <div className={styles.listTd} >剩余管控时长</div>
-                          <div className={styles.listTd} >操作时间</div>
+                  {
+                    operationData ?
+                      <div>
+                        {/* <div className={styles.guanBox}>
+                          <Button className={styles.Button}>管控效果评估</Button>
+                        </div> */}
+                        <div className={styles.guanBox}>
+                          <span className={styles.guanTitle}>操作记录</span>
                         </div>
-                      </div>
-                      <div className={styles.listBoxBody}>
-                        {
-                          operationData && operationData.map((item, index) => {
-                            return (
-                              <div className={styles.listItems} key={item.row_id}>
-                                <div className={styles.listTd} >{index + 1}</div>
-                                <div className={styles.listTd} >{item.operationUser}</div>
-                                <div className={styles.listTd} >{item.operationName}</div>
-                                <div className={styles.listTd} >{item.operationTime && item.endTime ? this.formatDuring(new Date(item.endTime).getTime() - new Date(item.operationTime).getTime()) : '-'}</div>
-                                <div className={styles.listTd} >{item.operationTime}</div>
-                              </div>
-                            )
-                          })
-                        }
-                      </div>
-                    </div>
-                  </div> : null}
-
+                        <div className={styles.listBox}>
+                          <div className={styles.listBoxHead}>
+                            <div className={styles.listItems}>
+                              <div className={styles.listTd} >序号</div>
+                              <div className={styles.listTd} >操作人员</div>
+                              <div className={styles.listTd} >操作名称</div>
+                              <div className={styles.listTd} >操作部门</div>
+                              <div className={styles.listTd} >操作时间</div>
+                            </div>
+                          </div>
+                          <div className={styles.listBoxBody}>
+                            {
+                              operationData && operationData.map((item, index) => {
+                                return (
+                                  <div className={styles.listItems} key={item.row_id}>
+                                    <div className={styles.listTd} >{index + 1}</div>
+                                    <div className={styles.listTd} >{item.operateUserName}</div>
+                                    <div className={styles.listTd} >{item.operateName}</div>
+                                    <div className={styles.listTd} >{item.operateUserDeptName}</div>
+                                    <div className={styles.listTd} >{item.operateTime ? this.getDate(item.operateTime) : '-'}</div>
+                                  </div>
+                                )
+                              })
+                            }
+                          </div>
+                        </div>
+                      </div> : null}
+                </div>
               </div>
-            </div>
-          </div> : null}
-      </div>
+            </div> : null
+        }
+      </div >
     )
   }
 }

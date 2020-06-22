@@ -3,7 +3,7 @@ import { message } from 'antd'
 
 const instance = axios.create({
   baseURL: 'http://192.168.1.124:20207',  
-  // baseURL: 'http://39.100.128.220:3690',
+  // baseURL: 'http://47.108.61.84:8081',
 })
 // 请求拦截
 instance.interceptors.request.use((config) => {
