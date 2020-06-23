@@ -202,7 +202,6 @@ class Basics extends React.Component {
                 <Select
                   style={{ width: '100%' }}
                   placeholder="事件类型"
-                  className={styles.OptGroup}
                   onChange={(e) => { this.handleSelect(e, 'eventType', 'Parameters') }}
                 >
                   <Option value={0}>请选择</Option>

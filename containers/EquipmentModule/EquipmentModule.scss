@@ -584,11 +584,9 @@
   }
 }
 
-.OptGroup {
-  :global(.ant-select-dropdown-menu-item-group-title) {
-    font-size: 14px;
-  }
-  :global(.ant-select-dropdown-menu-item-group-list > .ant-select-dropdown-menu-item) {
-    padding-left: 40px;
-  }
+:global(.ant-select-dropdown-menu-item-group-title) {
+  font-size: 14px;
+}
+:global(.ant-select-dropdown-menu-item-group-list > .ant-select-dropdown-menu-item) {
+  padding-left: 40px;
 }

@@ -227,7 +227,6 @@ class Historical extends React.Component {
                   style={{ width: '100%' }}
                   placeholder="事件类型"
                   showSearch
-                  className={styles.OptGroup}
                   optionFilterProp="children"
                   onChange={(e) => { this.handleSelect(e, 'eventType', 'Parameters') }}
                 >

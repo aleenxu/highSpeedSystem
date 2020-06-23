@@ -288,23 +288,23 @@ class ScrollList extends React.Component {
       const type = this.state.typeNow
       switch (this.state.typeNow) {
         case 1:
-          const dataLength = this.state.dataAll[0].eventData.length
+          const dataLength = event.target.nowLength
           !this.state.one ? this.setState({ one: true }, () => { dataLength > 0 ? window.leftModule0.show() : message.info('暂无数据！') }) : this.setState({ one: false }, () => { window.leftModule0.hide() })
           break;
         case 2:
-          const dataLength1 = this.state.dataAll[1].eventData.length
+          const dataLength1 = event.target.nowLength
           !this.state.two ? this.setState({ two: true }, () => { dataLength1 > 0 ? window.leftModule1.show() : message.info('暂无数据！') }) : this.setState({ two: false }, () => { window.leftModule1.hide() })
           break;
         case 3:
-          const dataLength2 = this.state.dataAll[2].eventData.length
+          const dataLength2 = event.target.nowLength
           !this.state.three ? this.setState({ three: true }, () => { dataLength2 > 0 ? window.leftModule2.show() : message.info('暂无数据！') }) : this.setState({ three: false }, () => { window.leftModule2.hide() })
           break;
         case 4:
-          const dataLength3 = this.state.dataAll[3].eventData.length
+          const dataLength3 = event.target.nowLength
           !this.state.four ? this.setState({ four: true }, () => { dataLength3 > 0 ? window.leftModule3.show() : message.info('暂无数据！') }) : this.setState({ four: false }, () => { window.leftModule3.hide() })
           break;
         case 5:
-          const dataLength4 = this.state.dataAll[4].eventData.length
+          const dataLength4 = event.target.nowLength
           !this.state.five ? this.setState({ five: true }, () => { dataLength4 > 0 ? window.leftModule4.show() : message.info('暂无数据！') }) : this.setState({ five: false }, () => { window.leftModule4.hide() })
           break;
       }
@@ -375,7 +375,7 @@ class ScrollList extends React.Component {
             <Checkbox defaultChecked={this.state.one} style={{
               position: "absolute", zIndex: 9, paddingLeft: "12px", paddingRight: "12px", top: "12px",
               paddingBottom: '13px', background: 'rgba(19, 27, 37, 0.8)',
-            }} nowtype={listTitle.type} onChange={this.checkBoxClick} />
+            }} nowLength={(window[listTit] || 0)} nowtype={listTitle.type} onChange={this.checkBoxClick} />
             {/* <Checkbox.Group style={{
               position: "absolute", zIndex: 9, paddingLeft: "12px", top: "12px", borderBottom: '1px #fff solid',
               paddingBottom: '13px'

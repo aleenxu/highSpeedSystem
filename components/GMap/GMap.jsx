@@ -235,11 +235,11 @@ class GMap extends React.Component {
       this.createLayerGroup('lineLayers') // map中绘制线显示的图层
       // 输入提示
       const autoOptions = {
-        city: '泰州',
+        city: '成都',
         input: 'tipinput',
       }
       const autoOptionsPop = {
-        city: '泰州',
+        city: '成都',
         input: 'tipinputPop',
       }
       const auto = new AMap.Autocomplete(autoOptions)
@@ -401,7 +401,6 @@ class GMap extends React.Component {
   // 在指定位置打开信息窗体
   openInfoWin = (map, dataItem) => {
     console.log(dataItem);
-
     window.equipmentInfoWin = this.equipmentInfoWin
     window.equipmentInfoWinImg = this.props.equipmentInfoWinImg
     const { detailsPopup, EventTagPopup } = this.state

@@ -1054,14 +1054,26 @@ class ReservePlan extends React.Component {
           })
         }
       })
-      console.log(MeasuresList, '5555');
-      if (this.state.deviceString.length === 1) {
+ 
+      /* if (this.state.deviceString.length === 1) {
         value.deviceControlType = this.state.deviceString[0]
         MeasuresList[value.deviceTypeId].forEach((item) => {
-          if (this.state.deviceString[0] === item.deviceType) {
+          if (this.state.deviceString[0] === item.controlType) {
             value.content = item.showContent
           }
         })
+      } */
+      if (!(value.content && value.deviceControlType)) {
+        const MeasData = []
+        MeasuresList[value.deviceTypeId].forEach((item) => {
+          if (this.state.deviceString.includes(item.controlType)) {
+            MeasData.push(item)
+          }
+        })
+        if (MeasData.length === 1) {
+          value.deviceControlType = MeasData[0].controlType
+          value.content = MeasData[0].showContent
+        }
       }
       this.setState({
         InfoWinPopup: value,
