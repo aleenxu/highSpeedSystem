@@ -70,6 +70,9 @@ class ReservePlan extends React.Component {
       MeasuresList: [], // 管控措施下拉
       InfoWinPopup: null,
       showContent: {},
+      officialNum: undefined,
+      roadList: null,
+      controlroadId: '',
     }
     // 修改管控时的参数
     // this.controlDatas = JSON.parse(localStorage.getItem('detailsPopup'))
@@ -121,6 +124,7 @@ class ReservePlan extends React.Component {
     this.controlUrl = '/control/reserve/plan/publish/plan/' // {eventTypeId}/{contingencyId}  交警快速发布管控方案（1.从地图页面提示框点入 2.从预案库点入）'
     this.adeviceTypesUrl = '/control/dict/code/get/control/device/types' // 获取管控类型和事件类型的对应关系'
     this.eventTypeUrl = '/control/event/get/manual/event/type' // 获取主动管控事件类型
+    this.getRoadByUrl = '/control/customize/road/get/road/by/' // {hwayId}/{directionId} // 根据高速id和上下行方向查询出当前登录用户所能看到的系统自定义路段'
   }
   componentDidMount = () => {
     // 获取设备显示隐藏
@@ -182,7 +186,7 @@ class ReservePlan extends React.Component {
               arrId.push(item.id)
             })
             console.log(arrId);
-
+            this.deviceString = JSON.parse(JSON.stringify(arrId))
             this.setState({
               deviceString: arrId,
             })
@@ -266,7 +270,9 @@ class ReservePlan extends React.Component {
           if (that.state.lineLatlngArr.length) {
             this.controlDatas.eventLength = result.data.eventLength
             const latlngArr = JSON.parse(JSON.stringify(that.state.lineLatlngArr))
-            const colorFlag = that.controlDatas.eventType !== 3
+            console.log(that.controlDatas, 'reddddddddddd');
+
+            const colorFlag = that.controlDatas.eventTypeId !== 9
             setTimeout(() => {
               this.getLineCenterPoint(result.data.latlng)
               window.drawLine(latlngArr, colorFlag)
@@ -323,21 +329,6 @@ class ReservePlan extends React.Component {
         }
       })
     } else if (type === 'controlDatas' && name === 'hwayId') {
-      /* this.state.directionList.forEach((item, index) => {
-        if (item.roadId === value) {
-          this.controlDatas.roadId = item.roadId
-          this.controlDatas.roadName = item.roadName
-          this.controlDatas.directionName = item.directions[0].directionName
-          this.controlDatas.directionId = item.directions[0].directionId
-          this.setState({
-            roadNumber: item.directions,
-            directionId: '',
-            directionName: item.directions[0].directionName ? item.directions[0].directionName : '',
-          }, () => {
-            this.handSecUrl()
-          })
-        }
-      }) */
       const { hwayList } = this.state
       hwayList.forEach((item) => {
         if (item.hwayId === value) {
@@ -346,6 +337,12 @@ class ReservePlan extends React.Component {
           this.controlDatas.directionId = item.direction[0].directionId
           this.controlDatas.directionName = item.direction[0].directionName
           this.setState({ roadNumber: item.direction, directionName: item.direction[0].directionId }, () => {
+            this.handleUrlAjax(this.getRoadByUrl + `${this.controlDatas.hwayId}/${this.controlDatas.directionId}`, 'roadList', (data) => {
+              /* if (data.length) {
+                this.controlDatas.roadId = data[0].roadId
+                this.setState({ controlroadId: data[0].roadId })
+              } */
+            })
             this.handSecUrl()
           })
         }
@@ -360,7 +357,23 @@ class ReservePlan extends React.Component {
           })
         }
       })
+      this.handleUrlAjax(this.getRoadByUrl + `${this.controlDatas.hwayId}/${this.controlDatas.directionId}`, 'roadList', (data) => {
+        /*  if (data.length) {
+           this.controlDatas.roadId = data[0].roadId
+           this.setState({ controlroadId: data[0].roadId })
+         } */
+      })
       this.handSecUrl()
+    } else if (name === 'officialNum') {
+      this.controlDatas.roadId = ''
+      console.log(value, 'officialNum');
+      this.setState({ officialNum: Number(value), controlroadId: '' })
+    } else if (type === 'controlDatas' && name === 'roadId') {
+      this.controlDatas.roadId = value.roadId
+      this.controlDatas.startPileNum = value.pileNum.split(' ')[0]
+      this.controlDatas.endPileNum = value.pileNum.split(' ')[1]
+      this.handSecUrl()
+      this.setState({ controlroadId: value.roadId })
     } else {
       if (type === 'Click' && !(value instanceof Array)) {
         this.handSecUrl()
@@ -685,7 +698,9 @@ class ReservePlan extends React.Component {
         this.setState({
           detailsLatlng: boolean.latlng,
         })
-        boolean.eventType === 3 ? window.lineFlag = false : window.lineFlag = true
+        console.log(boolean);
+
+        boolean.eventType === 9 ? window.lineFlag = false : window.lineFlag = true
         // let roadLatlngData = {
         //   "path": boolean.latlng
         // }
@@ -923,41 +938,44 @@ class ReservePlan extends React.Component {
         directionName: '',
         locationMode: '1',
         situation: 0,
+        roadId: '',
       }
       this.setState({
         EventTagPopup: true,
         addFlag: true,
         directionName: '',
-        // deviceString: [],
+        officialNum: undefined,
+        roadList: null,
+        controlroadId: '',
+        deviceString: JSON.parse(JSON.stringify(this.deviceString)),
       }, () => {
         this.getDeviceEventList()
       })
     } else if (name == 'update') {
       this.controlDatas = listByPage.data[nowIndex]
+      this.controlDatas.eventTypeId = listByPage.data[nowIndex].eventType
       this.controlDatas.startPileNum = listByPage.data[nowIndex].pileNum.split(" ")[0]
       this.controlDatas.endPileNum = listByPage.data[nowIndex].pileNum.split(" ")[1]
       this.controlDatas.directionId = listByPage.data[nowIndex].roadDirection
       this.controlDatas.directionName = listByPage.data[nowIndex].roadDirectionName
       this.controlDatas.planName = listByPage.data[nowIndex].planName
-      console.log(this.controlDatas, 'this.controlDatas')
+      this.controlDatas.roadId = listByPage.data[nowIndex].roadId
+      this.handleUrlAjax(this.getRoadByUrl + `${this.controlDatas.hwayId}/${this.controlDatas.directionId}`, 'roadList')
+      console.log(this.controlDatas, 'this.controlDatas', listByPage.data[nowIndex].roadIdentification,)
+      const { hwayList } = this.state
+      hwayList.forEach((item) => {
+        if (item.hwayId === this.controlDatas.hwayId) {
+          this.setState({ roadNumber: item.direction })
+        }
+      })
       this.setState({
+        controlroadId: this.controlDatas.roadId,
+        officialNum: listByPage.data[nowIndex].roadIdentification === 1 ? 1 : 0,
         eventType: listByPage.data[nowIndex].eventType,
         deviceString: listByPage.data[nowIndex].controlTypeId.split(',').map((item) => { return Number(item) }),
-        directionName: listByPage.data[nowIndex].roadDirectionName,
+        directionName: this.controlDatas.directionId,
       })
       console.log(this.state.directionList);
-
-      // this.state.directionList.forEach((item, index) => {
-      //   if (item.roadId === this.controlDatas.roadName) {
-      //     this.setState({
-      //       roadNumber: item.directions,
-      //       // directionId: this.controlDatas.driverDirection,
-      //       directionName: this.controlDatas.directionName,
-      //     })
-      //   }
-      // })
-      // console.log(listByPage.data[nowIndex].deviceControlType.split(','));
-
       this.handleDetailPlan(listByPage.data[nowIndex].rowId) // 根据rowId获取全部设备
     } else if (name == 'edit') {
       console.log('编辑', deviceTypes)
@@ -988,6 +1006,10 @@ class ReservePlan extends React.Component {
       }
       if (!this.controlDatas.directionId && this.controlDatas.directionId !== 0) {
         message.info('请选择方向！')
+        return
+      }
+      if ((!this.controlDatas.roadId) && this.state.officialNum) {
+        message.info('请选择路段！')
         return
       }
       if (!this.controlDatas.startPileNum) {
@@ -1054,15 +1076,6 @@ class ReservePlan extends React.Component {
           })
         }
       })
- 
-      /* if (this.state.deviceString.length === 1) {
-        value.deviceControlType = this.state.deviceString[0]
-        MeasuresList[value.deviceTypeId].forEach((item) => {
-          if (this.state.deviceString[0] === item.controlType) {
-            value.content = item.showContent
-          }
-        })
-      } */
       if (!(value.content && value.deviceControlType)) {
         const MeasData = []
         MeasuresList[value.deviceTypeId].forEach((item) => {
@@ -1078,20 +1091,6 @@ class ReservePlan extends React.Component {
       this.setState({
         InfoWinPopup: value,
       })
-      /*  this.handleUrlAjax(this.groupUrl, 'MeasuresList', (data) => {
-         if (this.state.deviceString.length === 1) {
-           console.log(data[value.deviceTypeId]);
-           value.deviceControlType = this.state.deviceString[0]
-           data[value.deviceTypeId].forEach((item) => {
-             if (this.state.deviceString[0] === item.deviceType) {
-               value.content = item.howContent
-               this.setState({
-                 InfoWinPopup: value,
-               })
-             }
-           })
-         }
-       }) */
     }
     this.setState({
       InfoWinPopup: value,
@@ -1143,7 +1142,8 @@ class ReservePlan extends React.Component {
   render() {
     const {
       InfoWinPopup, MeasuresList, listByPage, current, EventTagPopup, EventTagPopupTit, roadNumber, boxSelect, flagClose, boxSelectList, hwayList, controlBtnFlagText, reservePopup, detailsLatlng,
-      controlTypes, eventTypes, deviceTypes, addFlag, deviceCodeList, deviceDetailList } = this.state
+      controlTypes, eventTypes, deviceTypes, addFlag, deviceCodeList, deviceDetailList, officialNum, roadList,
+    } = this.state
     return (
       <div>
         <SystemMenu />
@@ -1360,7 +1360,7 @@ class ReservePlan extends React.Component {
                   <div className={style.Centent}>
                     <div className={style.ItemBox}>
                       <div className={style.ItemInput}>
-                        <Select defaultValue={this.controlDatas.hwayId} style={{ width: '48%', margin: '0 1%' }} onChange={(e) => { this.handleSelect(e, 'hwayId', 'controlDatas') }}>
+                        <Select defaultValue={this.controlDatas.hwayId} style={{ width: '29%', margin: '0 1%' }} onChange={(e) => { this.handleSelect(e, 'hwayId', 'controlDatas') }}>
                           <Option value="">请选择</Option>
                           {
                             hwayList && hwayList.map((item) => {
@@ -1368,7 +1368,7 @@ class ReservePlan extends React.Component {
                             })
                           }
                         </Select>
-                        <Select value={this.state.directionName} style={{ width: '48%', margin: '0 1%' }} onChange={(e) => { this.handleSelect(e, 'directionId', 'controlDatas') }} >
+                        <Select value={this.state.directionName} style={{ width: '31%', margin: '0 1%' }} onChange={(e) => { this.handleSelect(e, 'directionId', 'controlDatas') }} >
                           <Option value="">请选择</Option>
                           {
                             roadNumber && roadNumber.map((item) => {
@@ -1376,12 +1376,30 @@ class ReservePlan extends React.Component {
                             })
                           }
                         </Select>
-                        <Select defaultValue="1" style={{ width: '26%', margin: '8px 1%' }} disabled onChange={(e) => { this.handleSelect(e, 'locationMode', 'controlDatas') }} >
-                          <Option value="0">收费站</Option>
-                          <Option value="1">里程桩</Option>
+                        <Select defaultValue={this.state.officialNum} placeholder="是否系统路段" style={{ width: '34%', margin: '0 1%' }} onChange={(e) => { this.handleSelect(e, 'officialNum', 'controlDatas') }} >
+                          <Option value={0}>否</Option>
+                          <Option value={1}>是</Option>
                         </Select>
-                        <Input id="startInt" style={{ width: '34%', height: '32px', margin: '8px 1%' }} placeholder="起始桩号如:k1" defaultValue={this.controlDatas.startPileNum} onBlur={(e) => { this.handleInput(e, 'startPileNum', 'controlDatas'); this.handSecUrl() }} />
-                        <Input id="endInt" style={{ width: '34%', height: '32px', margin: '8px 1%' }} placeholder="结束桩号如:k30" defaultValue={this.controlDatas.endPileNum} onBlur={(e) => { this.handleInput(e, 'endPileNum', 'controlDatas'); this.handSecUrl() }} />
+                        {
+                          officialNum ?
+                            <Select value={this.state.controlroadId} style={{ width: '98%', margin: '8px 1%' }}  >
+                              <Option value="">请选择路段</Option>
+                              {
+                                roadList && roadList.map((item) => {
+                                  return <Option key={item.roadId} value={item.roadId} onClick={(e) => { this.handleSelect(item, 'roadId', 'controlDatas') }}>{item.roadName}</Option>
+                                })
+                              }
+                            </Select>
+                            :
+                            <div>
+                              <Select defaultValue="1" style={{ width: '29%', margin: '8px 1%' }} disabled onChange={(e) => { this.handleSelect(e, 'locationMode', 'controlDatas') }} >
+                                <Option value="0">收费站</Option>
+                                <Option value="1">里程桩</Option>
+                              </Select>
+                              <Input id="startInt" style={{ width: '31%', height: '32px', margin: '8px 1%' }} placeholder="起始桩号如:k1" defaultValue={this.controlDatas.startPileNum} onBlur={(e) => { this.handleInput(e, 'startPileNum', 'controlDatas'); this.handSecUrl() }} />
+                              <Input id="endInt" style={{ width: '34%', height: '32px', margin: '8px 1%' }} placeholder="结束桩号如:k30" defaultValue={this.controlDatas.endPileNum} onBlur={(e) => { this.handleInput(e, 'endPileNum', 'controlDatas'); this.handSecUrl() }} />
+                            </div>
+                        }
                       </div>
                     </div>
                   </div>

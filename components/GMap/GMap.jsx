@@ -71,11 +71,7 @@ class GMap extends React.Component {
   }
 
   componentDidMount = () => {
-    if (this.props.mapID === 'HistorcalMap') {
-      this.loadingMap()
-    } else {
-      this.handleAMap()
-    }
+    this.handleAMap()
   }
   componentWillReceiveProps = (nextProps) => {
     /* if (this.props.deviceString !== nextProps.deviceString) {
@@ -153,7 +149,40 @@ class GMap extends React.Component {
     }
   }
   handleAMap = () => {
-    this.loadPoint()
+     const _this = this;
+    const map = new AMap.Map(_this.state.mapID, {
+      resizeEnable: true, //是否监控地图容器尺寸变化
+      center: [103.882158, 30.436527], //初始化地图中心点
+      mapStyle: "amap://styles/c3fa565f6171961e94b37c4cc2815ef8",
+      zoom: 11,
+    })
+    window.map = map
+    this.map = window.map
+    window.map.on('mousemove')
+    window.mouseTool = new AMap.MouseTool(map)
+    //监听draw事件可获取画好的覆盖物
+    window.overlays = []
+    mouseTool.on('draw', function (e) {
+      overlays.push(e.obj);
+    })
+    function draw() {
+      mouseTool.rectangle({
+        fillColor: '#00b0ff',
+        strokeColor: '#80d8ff'
+        // 同Polygon的Option设置
+      })
+    }
+    window.drawRectangle = draw
+    // 实时路况图层
+    const trafficLayer = new AMap.TileLayer.Traffic({
+      zIndex: 10,
+    });
+    trafficLayer.setMap(window.map)
+    if (this.props.mapID === 'HistorcalMap') {
+      this.loadingMap()
+    } else {
+      this.loadPoint()
+    }
   }
   loadPoint = (value) => { // 预案库通过不同类型来筛选地图点位
     const { deviceString, keyWords } = this.state
@@ -194,34 +223,6 @@ class GMap extends React.Component {
   loadingMap = (value) => {
     const _this = this;
     if (!value) {
-      const map = new AMap.Map(_this.state.mapID, {
-        resizeEnable: true, //是否监控地图容器尺寸变化
-        center: [103.882158, 30.436527], //初始化地图中心点
-        mapStyle: "amap://styles/c3fa565f6171961e94b37c4cc2815ef8",
-        zoom: 11,
-      })
-      window.map = map
-      this.map = window.map
-      window.map.on('mousemove')
-      window.mouseTool = new AMap.MouseTool(map)
-      //监听draw事件可获取画好的覆盖物
-      window.overlays = []
-      mouseTool.on('draw', function (e) {
-        overlays.push(e.obj);
-      })
-      function draw() {
-        mouseTool.rectangle({
-          fillColor: '#00b0ff',
-          strokeColor: '#80d8ff'
-          // 同Polygon的Option设置
-        })
-      }
-      window.drawRectangle = draw
-      // 实时路况图层
-      const trafficLayer = new AMap.TileLayer.Traffic({
-        zIndex: 10,
-      });
-      trafficLayer.setMap(window.map)
       this.createLayerGroup('leftModule0') // 交通拥堵选中复选框显示的图层
       this.createLayerGroup('leftModule1') // 道路施工选中复选框显示的图层
       this.createLayerGroup('leftModule2') // 极端天气选中复选框显示的图层

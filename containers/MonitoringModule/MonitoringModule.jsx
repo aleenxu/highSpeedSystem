@@ -176,6 +176,7 @@ class MonitoringModule extends React.Component {
     }
     this.deviceReserve = []
     this.planStatus = 0
+    this.socketState = true
     this.eventListUrl = '/control/event/list' // 根据条件查询所有事件
     this.groupTypeUrl = '/control/event/get/type/statistics' //  事件类型数量统计
     this.groupStatusUrl = '/control/control/plan/status/group/statistics' // 统计方案数量，根据方案状态分组
@@ -201,7 +202,7 @@ class MonitoringModule extends React.Component {
     this.promptUrl = '/control/plan/add/no/prompt/' // {eventId} 添加不再提示案件'
     this.codeUrl = '/control/dict/code/list/device/function/code/0' // {codeType} 根据功能类型查询，下拉框字典'
     this.groupUrl = '/control/dict/code/list/device/control/type/group' // 根据设备类型区分出设备类型下的管控类型，下拉'
-    this.planFastUrl = '/control/plan/fast/publish/control/' // {eventTypeId}/{contingencyId}/{eventId} 交警快速发布管控方案（1.从地图页面提示框点入 2.从预案库点入）'
+    this.planFastUrl = '/control//event/fast/publish/' //  交警快速发布管控方案（1.从地图页面提示框点入 2.从预案库点入）'
     this.revokeUrl = '/control/plan/update/control/plan/revoke/' // {controlId}/{eventId}交警点击管控中的案件撤销，需要交通审核'
     this.confirmRevokeUrl = '/control/plan/update/confirm/revoke/' // {eventId}交警确认收到撤销成功'
     this.plansUrl = '/control/plan/list/wait/confirm/revoke/plans' // 查询等待交警确认撤销的案件集合'
@@ -261,6 +262,7 @@ class MonitoringModule extends React.Component {
     }
     if (this.wsocket) {
       this.wsocket.close()
+      this.socketState = false
     }
   }
 
@@ -367,7 +369,9 @@ class MonitoringModule extends React.Component {
         window.listItemDom.style.background = ''
       }
       if (boolean) {
-        boolean.eventType === 3 || boolean.markEventType === 3 ? window.lineFlag = false : window.lineFlag = true
+        console.log(boolean);
+
+        boolean.eventType === 9 || boolean.markEventType === 9 ? window.lineFlag = false : window.lineFlag = true
         this.handledetai(boolean)
       } else {
         this.setState({
@@ -408,6 +412,8 @@ class MonitoringModule extends React.Component {
       this.setState({ conditionList: boolean })
     }
     if (type === 'controldet') {
+      console.log(boolean, '11111');
+
       this.handleViewControl(boolean.planNum)
     }
     if (type === 'examine') {
@@ -1144,7 +1150,9 @@ class MonitoringModule extends React.Component {
       // ws.close(); 
     }
     ws.onclose = (evt) => {
-      setTimeout(this.handleSocket, 2000)
+      if (this.socketState) {
+        setTimeout(this.handleSocket, 2000)
+      }
       console.log('连接关闭', evt)
     }
     ws.onerror = (evt) => {
@@ -1226,7 +1234,7 @@ class MonitoringModule extends React.Component {
       }
       if (this.controlDatas.situation === '' || this.controlDatas.situation < 0) {
         this.controlDatas.situation = 0
-        if (eventType !== 3) {
+        if (eventType !== 9) {
           message.info('请输入正确的平均车速！')
         } else {
           message.info('请输入正确的能见度！')
@@ -1496,8 +1504,10 @@ class MonitoringModule extends React.Component {
         }, () => {
           this.controlDatas.eventLength = result.data.eventLength
           if (that.state.lineLatlngArr.length) {
+            console.log(that.controlDatas);
+
             const latlngArr = JSON.parse(JSON.stringify(that.state.lineLatlngArr))
-            const colorFlag = that.controlDatas.eventType !== 3
+            const colorFlag = that.controlDatas.eventTypeId !== 9
             this.getLineCenterPoint(result.data.latlng)
             window.drawLine(latlngArr, colorFlag)
           } else {
@@ -1505,6 +1515,11 @@ class MonitoringModule extends React.Component {
           }
         })
       } else {
+        if (window['lineLayers']) {
+          window['lineLayers'].hide()
+          window['lineLayers'].fx = []
+          window['lineLayers'].show()
+        }
         message.info(result.message)
       }
     })
@@ -1590,7 +1605,7 @@ class MonitoringModule extends React.Component {
           planName: result.data.planName,
           planNum: result.data.planNum,
           channel: '3',
-          controlDes: result.data.planDes || (result.data.startTime ? this.getDate(result.data.startTime) : this.getDate() + ' ' + result.data.hwayName + result.data.roadDirectionName + result.data.pileNum.split(' ')[0] + '米处,发生' + result.data.eventTypeName + (((result.data.planSource === 1 || result.data.planSource === 2) || this.state.unitText[result.data.eventType].tipsText + '为' + result.data.showValue + this.state.unitText[result.data.eventType].unit) + '影响道路长度为' + result.data.eventLength + 'm')),
+          controlDes: result.data.planDes || (result.data.startTime ? this.getDate(result.data.startTime) : this.getDate() + ' ' + result.data.hwayName + result.data.roadDirectionName + result.data.pileNum.split(' ')[0] + '米处,发生' + result.data.eventTypeName + (((result.data.planSource === 1 || result.data.planSource === 2) ? '' : (this.state.unitText[result.data.eventType].tipsText + '为' + result.data.showValue + this.state.unitText[result.data.eventType].unit)))) + '影响道路长度为' + result.data.eventLength + 'm',
           endTime: result.data.endTime ? this.getDate(result.data.endTime) : this.getDate(null, 2),
           list,
           startTime: result.data.startTime ? this.getDate(result.data.startTime) : this.getDate(),
@@ -1638,7 +1653,7 @@ class MonitoringModule extends React.Component {
         }
       })
       setTimeout(() => {
-        window.drawLine(this.controlDatas.latlng, this.controlDatas.eventType != 3)
+        window.drawLine(this.controlDatas.latlng, this.controlDatas.eventType != 9)
         this.getLineCenterPoint(this.controlDatas.latlng)
       }, 1000)
       // this.handlelistDetail('controlTypes', 13)
@@ -1779,6 +1794,11 @@ class MonitoringModule extends React.Component {
         if (detailsPopup) {
           this.handledetai({ planNum: this.publishPlanVO.planNum })
         }
+        if (window['lineLayers']) {
+          window['lineLayers'].hide()
+          window['lineLayers'].fx = []
+          window['lineLayers'].show()
+        }
         if (this.ChildPage) {
           this.ChildPage.loadPoint() //调用子组件的handleAMap方法
         }
@@ -1862,6 +1882,12 @@ class MonitoringModule extends React.Component {
                 if (window.listItemDom) {
                   window.listItemDom.style.background = '' // 清左侧选择的方案
                 }
+                if (window['lineLayers']) {
+                  window['lineLayers'].hide()
+                  window['lineLayers'].fx = []
+                  window['lineLayers'].show()
+                }
+
                 _this.ChildPage.loadPoint() // 调用子组件的handleAMap方法
               }
               resolve()
@@ -2129,14 +2155,14 @@ class MonitoringModule extends React.Component {
     this.setState({ showFrameData: showFrameData.length ? showFrameData : null })
   }
   handleconplanFast = (data) => {
-    const { contingencyId, eventId, eventType, planNum } = data
-    getResponseDatas('post', this.planFastUrl + `${eventType}/${contingencyId}/${eventId}`).then((res) => {
+    const { planId, eventNum } = data
+    getResponseDatas('post', this.planFastUrl + `${planId}/${eventNum}`).then((res) => {
       const result = res.data
       if (result.code === 200) {
         message.success(result.message)
         this.handleOverallSituation()
-        this.handleViewControl(planNum)
-        this.setState({ contingencyData: null, })
+        this.handleViewControl(result.data)
+        this.setState({ contingencyData: null })
       } else {
         message.warning(result.message)
       }
@@ -2166,7 +2192,7 @@ class MonitoringModule extends React.Component {
   }
   render() {
     const {
-      unitText, SearchInputCity, showFrameFourData, revokePlanData, showFrameData, contingencyData, InfoWinPopup, roadDirection, hwayDirection, MeasuresList, eventsPopup, groupType, planList, EventTagPopup, EventTagPopupTit, roadNumber, endValueTime, conditionList, boxSelect, flagClose, oldDevicesList,
+      operationData, unitText, SearchInputCity, showFrameFourData, revokePlanData, showFrameData, contingencyData, InfoWinPopup, roadDirection, hwayDirection, MeasuresList, eventsPopup, groupType, planList, EventTagPopup, EventTagPopupTit, roadNumber, endValueTime, conditionList, boxSelect, flagClose, oldDevicesList,
       boxSelectList, hwayList, directionList, VIboardPopup, groupStatus, controlPopup, controlBtnFlag, controlBtnFlagText, detailsPopup, whethePopup, reservePopup, startValue, endValue, endOpen, SidePopLeft, detailsLatlng
       , controlTypes, eventTypes, deviceTypes, updatePoint, reservePopupOne, userLimit, TimeData, deviceCodeList, deviceDetailList, checkedListBox } = this.state
     return (
@@ -3320,34 +3346,72 @@ class MonitoringModule extends React.Component {
               </div>
             </div>
           </div> : null}
+
         {
           reservePopupOne ?
-            <div className={styles.MaskBox} style={{ zIndex: '9999' }}>
-              <div className={eqStyle.AddBox}>
-                <div className={eqStyle.Title}>{reservePopupOne.devices ? '管控详情' : '事件详情'}<Icon onClick={() => { this.setState({ reservePopupOne: null }) }} className={styles.Close} type="close" /></div>
-                <div className={eqStyle.Conten}>
-                  <div className={eqStyle.Header}>
+            <div className={styles.MaskBox}>
+              <div className={classNames(styles.DetailsBox, styles.ReserveBox)} style={{ height: 'auto', maxHeight: '630px' }}>
+                <div className={styles.Title}>{reservePopupOne.devices ? '管控详情' : '事件详情'}<Icon className={styles.Close} onClick={() => { this.setState({ reservePopupOne: null }) }} type="close" /></div>
+                <div className={styles.Content}>
+                  <div className={styles.Header} style={{ marginTop: '5px' }} >
                     <span>事件编号&nbsp;:&nbsp;&nbsp;{reservePopupOne.eventNum}</span>
                     <span>事件类型&nbsp;:&nbsp;&nbsp;<span style={{ color: '#f31113' }}>{reservePopupOne.eventTypeName}</span></span>
                   </div>
-                  <div className={eqStyle.ItemBox}>
-                    <div className={eqStyle.HeadItem}>基本信息</div>
-                    <div className={eqStyle.RowBox}>
+                  <div className={styles.ItemBox}>
+                    <div className={styles.HeadItem}>基本信息</div>
+                    <div className={styles.RowBox}>
                       <p>高速编号&nbsp;:&nbsp;&nbsp;{reservePopupOne.hwayCode}</p>
                       <p>高速名称&nbsp;:&nbsp;&nbsp;{reservePopupOne.hwayName}</p>
                       <p>行驶方向&nbsp;:&nbsp;&nbsp;{reservePopupOne.roadDirectionName}</p>
                     </div>
-                    <div className={eqStyle.RowBox}>
+                    <div className={styles.RowBox}>
                       <p>起始桩号&nbsp;:&nbsp;&nbsp;<span style={{ color: '#c67f03' }}>{reservePopupOne.pileNum && reservePopupOne.pileNum.split(' ')[0]}</span></p>
                       {
                         (reservePopupOne.planSource === 1 || reservePopupOne.planSource === 2) || <p key="situation">{this.state.unitText[reservePopupOne.eventType].tipsText}&nbsp;:&nbsp;&nbsp;<span>{reservePopupOne.showValue + this.state.unitText[reservePopupOne.eventType].unit}</span></p>
                       }
-                      <p key="eventLength">影响路段长度&nbsp;:&nbsp;&nbsp;<span style={{ color: '#f31113' }}>{reservePopupOne.eventLength}m</span></p>
+                      <p key="eventLength">影响路段长度&nbsp;:&nbsp;&nbsp;<span style={{ color: '#f31113' }}>{reservePopupOne.eventLength || 0}m</span></p>
                     </div>
-                    <div className={eqStyle.RowBox}>数据来源&nbsp;:&nbsp;&nbsp;<span style={{ color: '#03af01' }}>{reservePopupOne.planSourceName}</span></div>
+                    <div className={styles.RowBox}>数据来源&nbsp;:&nbsp;&nbsp;<span style={{ color: '#03af01' }}>{reservePopupOne.planSourceName}</span></div>
                   </div>
+                  {
+                    operationData ?
+                      <div>
+                        {/* <div className={styles.guanBox}>
+                          <Button className={styles.Button}>管控效果评估</Button>
+                        </div> */}
+                        <div className={styles.guanBox}>
+                          <span className={styles.guanTitle}>操作记录</span>
+                        </div>
+                        <div className={styles.listBox}>
+                          <div className={styles.listBoxHead}>
+                            <div className={styles.listItems}>
+                              <div className={styles.listTd} >序号</div>
+                              <div className={styles.listTd} >操作人员</div>
+                              <div className={styles.listTd} >操作名称</div>
+                              <div className={styles.listTd} >操作部门</div>
+                              <div className={styles.listTd} >操作时间</div>
+                            </div>
+                          </div>
+                          <div className={styles.listBoxBody}>
+                            {
+                              operationData && operationData.map((item, index) => {
+                                return (
+                                  <div className={styles.listItems} key={item.row_id}>
+                                    <div className={styles.listTd} >{index + 1}</div>
+                                    <div className={styles.listTd} >{item.operateUserName}</div>
+                                    <div className={styles.listTd} >{item.operateName}</div>
+                                    <div className={styles.listTd} >{item.operateUserDeptName}</div>
+                                    <div className={styles.listTd} >{item.operateTime ? this.getDate(item.operateTime) : '-'}</div>
+                                  </div>
+                                )
+                              })
+                            }
+                          </div>
+                        </div>
+                      </div> : null}
                 </div>
               </div>
+
             </div> : null
         }
       </div>

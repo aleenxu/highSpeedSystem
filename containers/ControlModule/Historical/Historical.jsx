@@ -123,7 +123,7 @@ class Historical extends React.Component {
             setTimeout(() => {
               const latlngArr = JSON.parse(JSON.stringify(result.data.latlng))
               this.getLineCenterPoint(result.data.latlng)
-              window.drawLine(latlngArr, window.lineFlag)
+              window.drawLine(latlngArr, result.data.eventType !== 9)
             }, 0)
           } else {
             this.handleoperation(data)
@@ -345,9 +345,9 @@ class Historical extends React.Component {
                       {
                         (reservePopup.planSource === 1 || reservePopup.planSource === 2) || <p key="situation">{this.state.unitText[reservePopup.eventType].tipsText}&nbsp;:&nbsp;&nbsp;<span>{reservePopup.showValue + this.state.unitText[reservePopup.eventType].unit}</span></p>
                       }
-                      <p key="eventLength">影响路段长度&nbsp;:&nbsp;&nbsp;<span style={{ color: '#f31113' }}>{reservePopup.eventLength}m</span></p>
+                      <p key="eventLength">影响路段长度&nbsp;:&nbsp;&nbsp;<span style={{ color: '#f31113' }}>{reservePopup.eventLength || 0}m</span></p>
                     </div>
-                    <div className={styles.RowBox}>数据来源&nbsp;:&nbsp;&nbsp;<span style={{ color: '#03af01' }}>{reservePopup.planSourceName}</span></div>
+                    <div className={styles.RowBox}>数据来源&nbsp;:&nbsp;&nbsp;<span style={{ color: '#03af01' }}>{reservePopup.planSourceName || reservePopup.eventSourceName}</span></div>
                   </div>
 
                   {
