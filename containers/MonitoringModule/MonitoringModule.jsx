@@ -3,7 +3,6 @@ import SystemMenu from '../../components/SystemMenu/SystemMenu'
 import GMap from '../../components/GMap/GMap'
 import SidePop from '../../components/SidePop/SidePop'
 import styles from './MonitoringModule.scss'
-import eqStyle from '../EquipmentModule/EquipmentModule.scss'
 import classNames from 'classnames'
 import 'animate.css'
 import audioSrc from '../../imgs/ppxmu.mp3'
@@ -561,21 +560,6 @@ class MonitoringModule extends React.Component {
         }
       })
     } else if (type === 'controlDatas' && name === 'hwayId') {
-      /* this.state.directionList.forEach((item, index) => {
-        if (item.roadId === value) {
-          this.controlDatas.roadId = item.roadId
-          this.controlDatas.roadName = item.roadName
-          this.controlDatas.directionName = item.directions[0].directionName
-          this.controlDatas.directionId = item.directions[0].directionId
-          this.setState({
-            roadNumber: item.directions,
-            directionId: '',
-            directionName: item.directions[0].directionName ? item.directions[0].directionName : '',
-          }, () => {
-            this.handSecUrl()
-          })
-        }
-      }) */
       const { hwayList } = this.state
       hwayList.forEach((item) => {
         if (item.hwayId === value) {
@@ -1144,7 +1128,12 @@ class MonitoringModule extends React.Component {
           const text = `管控方案 :${data.plan.planName},管控编号 :${data.plan.planNum},${x}!`
           this.openNotification(text, click, data.plan.planNum)
         } else if (data.event) {
-          this.setState({ contingencyData: data.event })
+          this.setState({ contingencyData: data.event }) // TimeData
+        } else if (data.soonTimeout) {
+          /* const { TimeData } = this.state
+          if (TimeData) {
+            TimeData.push(data.soonTimeout)
+          } */
         }
       }
       // ws.close(); 
@@ -2303,12 +2292,12 @@ class MonitoringModule extends React.Component {
               {
                 TimeData.map((item, index) => {
                   return (
-                    <div className={classNames(styles.TimeData)} key={item.eventId + item.eventTypeId}>
-                      <div className={styles.Title}>{item.eventTypeName}-{item.eventId}P-管控方案超时提醒<Icon className={styles.Close} onClick={() => { this.handleTimeDataState(index) }} type="close" /></div>
+                    <div className={classNames(styles.TimeData)} key={item.planNum}>
+                      <div className={styles.Title}>{item.planName}-{item.planNum}-管控方案超时提醒<Icon className={styles.Close} onClick={() => { this.handleTimeDataState(index) }} type="close" /></div>
                       <div className={styles.Content}>
                         <div className={styles.ItemBox}>
                           <div className={styles.RowBox}>
-                            <div className={styles.left}>{item.eventId}P方案-{item.secName}-{item.eventTypeName}方案将要超时,请及时操作!</div>
+                            <div className={styles.left}>{item.planName}方案-编号{item.planNum}-将要超时,请及时操作!</div>
                             <div className={styles.right}><Button onClick={() => { this.handleNoneTimeState(item, index) }} className={styles.Button}>不再提示</Button><Button className={styles.Button} onClick={() => { this.handleEndValueTimeState(item, index) }}>延时</Button></div>
                           </div>
                         </div>

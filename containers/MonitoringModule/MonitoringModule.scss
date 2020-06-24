@@ -633,7 +633,7 @@
     overflow-y: auto;
   }
   :global(.ant-collapse > .ant-collapse-item > .ant-collapse-header) {
-    background: rgba(19, 27, 37, 0.8);
+    background: rgba(19, 27, 37, 0.8) ;
     color: #fff;
   }
 
@@ -832,7 +832,15 @@
     padding-bottom: 30px;
     overflow-y: auto;
     :global(.ant-collapse) {
-      border-bottom: none;
+      border: none;
+      background-color: transparent;
+    }
+    :global(.ant-collapse-icon-position-right > .ant-collapse-item > .ant-collapse-header) {
+      background: rgba(19, 27, 37, 0.8);
+    }
+    :global(.ant-collapse-content) {
+      background-color: transparent;
+      border-radius: unset;
     }
     .Centent {
       overflow-y: auto;

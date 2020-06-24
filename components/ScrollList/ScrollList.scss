@@ -14,12 +14,10 @@
       
     }
   }
-}
-// 折叠面板
+  // 折叠面板
 :global(.ant-collapse-icon-position-right > .ant-collapse-item > .ant-collapse-header) {
   background: rgba(19, 27, 37, 0.8);
   color: #fff;
-  padding-left: 30px;
 }
 :global(.ant-collapse > .ant-collapse-item:last-child) {
   border-radius: unset;
@@ -47,6 +45,12 @@
 :global(.ant-checkbox-inner) {
   background: transparent;
 }
+// eacharts
+:global(.ant-collapse-content > .ant-collapse-content-box) {
+  padding: 8px 0;
+}
+}
+
 // 数据列表
 .iconImg {
   display: inline-block;
@@ -165,10 +169,7 @@
 :global(.ant-progress-inner) {
   background-color: #132235;
 }
-// eacharts
-:global(.ant-collapse-content > .ant-collapse-content-box) {
-  padding: 8px 0;
-}
+
 .eachartsBox {
   display: flex;
   justify-content: space-around;
