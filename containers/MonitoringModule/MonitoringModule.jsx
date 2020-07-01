@@ -100,6 +100,7 @@ class MonitoringModule extends React.Component {
       showContent: {},
       reservePopupOne: null,
       operationData: null,
+      TypeWinPopup: null,
     }
     // 修改管控时的参数
     this.controlDatas = {
@@ -192,13 +193,13 @@ class MonitoringModule extends React.Component {
     this.getDeviceAllUrl = '/control/device/get/in/area' // 获取指定区域内的设备
     this.publishUrl = '/control/control/plan/publish' // 发布管控方案'
     this.examineUrl = '/control/control/plan/' // {operation}/{controllId} // 方案审核接口（通过，取消）'
-    this.endTimeUrl = '/control/plan/update/end/time/' // {eventTypeId}/{eventId}/{controllId} 修改管控方案结束时间'
+    this.endTimeUrl = '/control/control/plan/update/end/time/' // {eventTypeId}/{eventId}/{controllId} 修改管控方案结束时间'
     // this.deviceUrl = '/control/event/get/control/type/by/device' // 根据管控类型，获取管控设备集合（去重）
     this.deviceUrl = '/control/control/plan/get/device/group/type'
     this.markPublishUrl = '/control/event/mark/publish' // 标注事件发起管控 和修改管控方案同一个接口
     this.secUrl = '/control/customize/road/get/lng/lat/by/pilenum' // 根据道路、方向、起止桩号，计算经纬度和最后一个点所在的道路id
     this.timeoutUrl = '/control/plan/list/soon/timeout' // 获取即将超时的管控方案'
-    this.promptUrl = '/control/plan/add/no/prompt/' // {eventId} 添加不再提示案件'
+    this.promptUrl = '/control/control/plan/disable/timeout/notify/' // {eventId} 添加不再提示案件'
     this.codeUrl = '/control/dict/code/list/device/function/code/0' // {codeType} 根据功能类型查询，下拉框字典'
     this.groupUrl = '/control/dict/code/list/device/control/type/group' // 根据设备类型区分出设备类型下的管控类型，下拉'
     this.planFastUrl = '/control//event/fast/publish/' //  交警快速发布管控方案（1.从地图页面提示框点入 2.从预案库点入）'
@@ -449,6 +450,7 @@ class MonitoringModule extends React.Component {
   }
   handlelimitArr = () => {
     const limitArr = JSON.parse(localStorage.getItem('userLimit')) || []
+    this.userInfo = JSON.parse(localStorage.getItem('userInfo'))
     const userLimit = []
     limitArr.forEach((item) => {
       userLimit.push(item.id)
@@ -830,6 +832,8 @@ class MonitoringModule extends React.Component {
                   devices: _this.state.deviceTypes,
                   roadPileNum: _this.controlDatas.startPileNum + ' ' + _this.controlDatas.endPileNum,
                   eventType: _this.state.eventType,
+                  hwayId: _this.controlDatas.hwayId,
+                  roadDirection: _this.controlDatas.directionId,
                 }
                 _this.state.controlBtnFlagText === '关闭框选' ? _this.getDevice(params) : null
               } else if (_this.state.EventTagPopupTit === '修改管控方案' || _this.state.EventTagPopupTit === '标题') {
@@ -912,8 +916,12 @@ class MonitoringModule extends React.Component {
         })
       }
     }
+    console.log(item, '====================>是啥');
+
     const { deviceString } = this.state
-    let params = {
+    const params = {
+      hwayId: item.hwayId,
+      directionId: item.roadDirection,
       area: window.newPoint,
       control: false,
       eventPileNum: item.roadPileNum,
@@ -925,9 +933,9 @@ class MonitoringModule extends React.Component {
       const result = res.data
       if (result.code === 200) {
         const noDevices = []
-        result.data.map((item) => {
-          if (!(existsDevices.includes(item.appendId))) {
-            noDevices.push(item.appendId)
+        result.data.map((items) => {
+          if (!(existsDevices.includes(items.appendId))) {
+            noDevices.push(items.appendId)
           }
         })
         if (result.data.length > 0) {
@@ -1109,10 +1117,16 @@ class MonitoringModule extends React.Component {
       console.log(evt, '收到消息', typeof evt);
       if (evt.data !== '连接成功') {
         const data = JSON.parse(evt.data)
-        console.log(data, data.plan);
+        console.log(data, data.soonTimeout);
         if (data.plan) {
           let x, click
           switch (data.plan.type) {
+            case 2: x = '待审核'
+              click = this.handleViewControl
+              break
+            case 3: x = '待审核'
+              click = this.handleViewControl
+              break
             case 4: x = '审核成功'
               click = this.handleViewControl
               break
@@ -1130,13 +1144,27 @@ class MonitoringModule extends React.Component {
         } else if (data.event) {
           this.setState({ contingencyData: data.event }) // TimeData
         } else if (data.soonTimeout) {
-          /* const { TimeData } = this.state
+          const { TimeData = [] } = this.state
+          console.log(TimeData);
+          let ds = true
+          this.endValueTime = moment(Number(data.soonTimeout.planEndTime)).format('YYYY-MM-DD:HH:MM:SS')
           if (TimeData) {
-            TimeData.push(data.soonTimeout)
-          } */
+            TimeData.forEach((item) => {
+              if (item.planNum === data.soonTimeout.planNum) {
+                item = { ...data.soonTimeout }
+                ds = fasle
+              }
+              if (ds) {
+                TimeData.push(data.soonTimeout)
+                ds = true
+              }
+            })
+            this.setState({ TimeData })
+          } else {
+            this.setState({ TimeData: [data.soonTimeout] })
+          }
         }
       }
-      // ws.close(); 
     }
     ws.onclose = (evt) => {
       if (this.socketState) {
@@ -1568,6 +1596,7 @@ class MonitoringModule extends React.Component {
   }
   handleViewControl = (planNum, index, deviceReserve, type) => {
     this.deviceReserve = deviceReserve ? deviceReserve : []
+
     getResponseDatas('get', this.getInfoUrl + planNum).then((res) => {
       const result = res.data
       if (result.code === 200) {
@@ -1595,10 +1624,12 @@ class MonitoringModule extends React.Component {
           planNum: result.data.planNum,
           channel: '3',
           controlDes: result.data.planDes || (result.data.startTime ? this.getDate(result.data.startTime) : this.getDate() + ' ' + result.data.hwayName + result.data.roadDirectionName + result.data.pileNum.split(' ')[0] + '米处,发生' + result.data.eventTypeName + (((result.data.planSource === 1 || result.data.planSource === 2) ? '' : (this.state.unitText[result.data.eventType].tipsText + '为' + result.data.showValue + this.state.unitText[result.data.eventType].unit)))) + '影响道路长度为' + result.data.eventLength + 'm',
-          endTime: result.data.endTime ? this.getDate(result.data.endTime) : this.getDate(null, 2),
+          endTime: result.data.endTime ? this.getDate(result.data.endTime) : moment().add(2, 'hour').format('YYYY-MM-DD HH:mm:ss'),
           list,
           startTime: result.data.startTime ? this.getDate(result.data.startTime) : this.getDate(),
         }
+        // console.log(this.publishPlanVO.startTime,moment(this.publishPlanVO.startTime).add(2,'hour').format('YYYY-MM-DD HH:mm:ss'))
+
         result.data.controlDes = this.publishPlanVO.controlDes
         this.handleUrlAjax(this.groupUrl, 'MeasuresList')
         this.setState({
@@ -1721,11 +1752,19 @@ class MonitoringModule extends React.Component {
       EventTagPopupTit: e ? $(e.target).text() : '标题',
     }, () => {
       // console.log(this.state.EventTagPopupTit)
+      console.log(this.controlDatas, '11111111');
+
       if (this.controlDatas.latlng) {
         const latlngArr = JSON.parse(JSON.stringify(this.controlDatas.latlng))
         setTimeout(() => {
           window.drawLine(latlngArr, window.lineFlag)
-        }, 3000)
+        }, 1000)
+      }
+      if (this.state.detailsPopup && (!this.state.EventTagPopup)) {
+        const latlngArr = JSON.parse(JSON.stringify(this.state.detailsPopup.latlng))
+        setTimeout(() => {
+          window.drawLine(latlngArr, window.lineFlag)
+        }, 1000)
       }
       // 加载ID、和经纬度
       /* if (boolean && this.state.EventTagPopupTit !== '主动管控') {
@@ -1745,6 +1784,8 @@ class MonitoringModule extends React.Component {
   handleRelease = () => {
     const { list, controlDes, planName } = this.publishPlanVO
     const { reservePopup, startValue, endValue, detailsPopup } = this.state
+    console.log(this.publishPlanVO, detailsPopup);
+
     if (!planName && planName !== 0) {
       message.warning('请填写方案名称')
       return
@@ -1906,8 +1947,8 @@ class MonitoringModule extends React.Component {
   }
   handleWhethe = () => {
     const { reservePopup, endValueTime } = this.state
-    const { eventTypeId, eventId, controllId } = reservePopup
-    getResponseDatas('put', this.endTimeUrl + eventTypeId + '/' + eventId + '/' + controllId + '?endTime=' + endValueTime).then((res) => {
+    const { planNum } = reservePopup
+    getResponseDatas('put', this.endTimeUrl + planNum + '?endTime=' + endValueTime).then((res) => {
       const result = res.data
       if (result.code === 200) {
         message.success(result.message)
@@ -1941,7 +1982,7 @@ class MonitoringModule extends React.Component {
       this.TimeState = item
       this.TimeIndex = index
       this.setState({
-        endValueTime: this.getDate(),
+        endValueTime: this.endValueTime || this.getDate(),
       })
     } else {
       this.setState({
@@ -1952,8 +1993,8 @@ class MonitoringModule extends React.Component {
   }
   handleWhetheState = () => {
     const { endValueTime } = this.state
-    const { eventTypeId, eventId, controllId } = this.TimeState
-    getResponseDatas('put', this.endTimeUrl + eventTypeId + '/' + eventId + '/' + controllId + '?endTime=' + endValueTime).then((res) => {
+    const { planNum } = this.TimeState
+    getResponseDatas('put', this.endTimeUrl + planNum + '?endTime=' + endValueTime).then((res) => {
       const result = res.data
       if (result.code === 200) {
         message.success(result.message)
@@ -1967,8 +2008,8 @@ class MonitoringModule extends React.Component {
     })
   }
   handleNoneTimeState = (item, index) => {
-    const { eventId } = item
-    getResponseDatas('put', this.promptUrl + eventId).then((res) => {
+    const { planNum } = item
+    getResponseDatas('put', this.promptUrl + planNum).then((res) => {
       const result = res.data
       if (result.code === 200) {
         message.success(result.message)
@@ -1981,20 +2022,6 @@ class MonitoringModule extends React.Component {
     })
   }
 
-  // 一分钟计时器
-  /*  handlesetTimeOut = (value) => {
-     if (this.timeTimeout) {
-       clearTimeout(this.timeTimeout)
-       this.timeTimeout = null
-     }
-     if (!value) {
-       this.timeTimeout = setTimeout(() => {
-         this.handleOverallSituation(true) // 页面初始加载数据
-         // 开始下一次执行
-         this.handlesetTimeOut()
-       }, 60000)
-     }
-   } */
   // 暂停计时器
   handlesetTimeOut = (value) => {
     if (this.timeTimeout) {
@@ -2004,7 +2031,7 @@ class MonitoringModule extends React.Component {
     const { detailsPopup, reservePopup } = this.state
     // console.log(detailsPopup, reservePopup);
     if (detailsPopup || reservePopup) { return }
-    this.TimingTime = this.TimingTime ? this.TimingTime : 60
+    this.TimingTime = this.TimingTime ? this.TimingTime : 20
     if (!value) {
       this.timeTimeout = setTimeout(() => {
         this.TimingTime -= 1
@@ -2025,6 +2052,9 @@ class MonitoringModule extends React.Component {
       eventType: '',
       searchKey: '',
     }
+    /* if (window.listItemDom) {
+      window.listItemDom.style.background = ''
+    } */
     const { SidePopLeft, userLimit } = this.state
     SidePopLeft && SidePopLeft.forEach((item) => { this['searchKey' + item.eventType] = '' })
     // 查询左侧列表数据
@@ -2053,43 +2083,48 @@ class MonitoringModule extends React.Component {
       } else {
         data = detailsPopup.devices
       }
-      // console.log(data, value);
+      console.log(data, value);
       data.forEach((item) => {
         if (item.dictCode === value.deviceType) {
           item.device.forEach((items) => {
-            if (items.deviceId === value.deviceId) {
-              value.content = items.content || items.showContent
-              value.deviceControlType = items.deviceControlType
+            if (value.innerDevices) {
+              value.innerDevices.forEach((it) => {
+                if (items.deviceId === it.deviceId) {
+                  it.content = items.content || items.showContent
+                  it.deviceControlType = items.deviceControlType
+                }
+              })
+            } else {
+              if (items.deviceId === value.deviceId) {
+                value.content = items.content || items.showContent
+                value.deviceControlType = items.deviceControlType
+              }
             }
           })
         }
       })
-      /* if (this.state.deviceString.length === 1) {
-        value.deviceControlType = this.state.deviceString[0]
-        console.log(MeasuresList, value);
-        MeasuresList[value.deviceType].forEach((item) => {
-          if (this.state.deviceString[0] === item.controlType) {
-            value.content = item.showContent
-          }
+      if (value.innerDevices) {
+        this.setState({
+          TypeWinPopup: value,
         })
-      } */
-
-      if (!(value.content && value.deviceControlType)) {
-        const MeasData = []
-        MeasuresList[value.deviceType].forEach((item) => {
-          if (this.state.deviceString.includes(item.controlType)) {
-            MeasData.push(item)
+      } else {
+        if (!(value.content && value.deviceControlType)) {
+          const MeasData = []
+          MeasuresList[value.deviceType].forEach((item) => {
+            if (this.state.deviceString.includes(item.controlType)) {
+              MeasData.push(item)
+            }
+          })
+          if (MeasData.length === 1) {
+            value.deviceControlType = MeasData[0].controlType
+            value.content = MeasData[0].showContent
           }
-        })
-        if (MeasData.length === 1) {
-          value.deviceControlType = MeasData[0].controlType
-          value.content = MeasData[0].showContent
         }
+        this.setState({
+          InfoWinPopup: value,
+        })
       }
     }
-    this.setState({
-      InfoWinPopup: value,
-    })
   }
   handleInfoWinChange = (e, name) => {
     const value = typeof (e) === 'object' ? e.target.value : e
@@ -2179,9 +2214,38 @@ class MonitoringModule extends React.Component {
       }
     })
   }
+  handledisabledEndDate = (endValue) => {
+    return endValue && endValue < moment(this.endValueTime)
+  }
+  range = (start, end) => {
+    const result = []
+    for (let i = start; i < end; i++) {
+      result.push(i)
+    }
+    return result
+  }
+  handleFormat = (value, key) => {
+    if (key) {
+      return moment(Number(value))[key]()
+    } else {
+      return moment(value).format('YYYY-MM-DD HH:mm:ss')
+    }
+  }
+  disabledDateTime = (value) => {
+    if (this.handleFormat(this.endValueTime) === this.handleFormat(value)) {
+      const Hours = this.handleFormat(this.endValueTime, 'hour')
+      const Minutes = this.handleFormat(this.endValueTime, 'minute')
+      const Seconds = this.handleFormat(this.endValueTime, 'second')
+      return {
+        disabledHours: () => this.range(0, Hours),
+        disabledMinutes: () => this.range(0, Minutes),
+        disabledSeconds: () => this.range(0, Seconds),
+      }
+    }
+  }
   render() {
     const {
-      operationData, unitText, SearchInputCity, showFrameFourData, revokePlanData, showFrameData, contingencyData, InfoWinPopup, roadDirection, hwayDirection, MeasuresList, eventsPopup, groupType, planList, EventTagPopup, EventTagPopupTit, roadNumber, endValueTime, conditionList, boxSelect, flagClose, oldDevicesList,
+      TypeWinPopup, operationData, unitText, SearchInputCity, showFrameFourData, revokePlanData, showFrameData, contingencyData, InfoWinPopup, roadDirection, hwayDirection, MeasuresList, eventsPopup, groupType, planList, EventTagPopup, EventTagPopupTit, roadNumber, endValueTime, conditionList, boxSelect, flagClose, oldDevicesList,
       boxSelectList, hwayList, directionList, VIboardPopup, groupStatus, controlPopup, controlBtnFlag, controlBtnFlagText, detailsPopup, whethePopup, reservePopup, startValue, endValue, endOpen, SidePopLeft, detailsLatlng
       , controlTypes, eventTypes, deviceTypes, updatePoint, reservePopupOne, userLimit, TimeData, deviceCodeList, deviceDetailList, checkedListBox } = this.state
     return (
@@ -2189,7 +2253,7 @@ class MonitoringModule extends React.Component {
         <SystemMenu />
         {<SidePop left="5px" groupType={groupType} SidePopLeft={SidePopLeft} handleEventPopup={this.handleEventPopup} />}
         {!!detailsPopup || <SidePop SidplanList={planList} groupStatus={groupStatus} right="5px" handleEventPopup={this.handleEventPopup} />}
-        <GMap onRef={el => this.ChildPage = el} mapID={'container'} dataAll={SidePopLeft} roadLatlng={detailsLatlng} updatePoint={updatePoint} handledetai={this.handledetai} detailsPopup={detailsPopup} boxSelect={boxSelect} flagClose={flagClose} EventTagPopup={EventTagPopup} detailsPopup={detailsPopup} equipmentInfoWin={this.equipmentInfoWin} equipmentInfoWinImg={this.equipmentInfoWinImg} />
+        <GMap onRef={el => this.ChildPage = el} key="container" mapID="container" dataAll={SidePopLeft} roadLatlng={detailsLatlng} updatePoint={updatePoint} handledetai={this.handledetai} detailsPopup={detailsPopup} boxSelect={boxSelect} flagClose={flagClose} EventTagPopup={EventTagPopup} detailsPopup={detailsPopup} equipmentInfoWin={this.equipmentInfoWin} equipmentInfoWinImg={this.equipmentInfoWinImg} />
         <div id="searchBox" className={`${styles.searchBox} animated ${'bounceInDown'}`}><Search id="tipinput" placeholder="请输入内容" enterButton />
           {/* <s>框选设备</s> */}
         </div>
@@ -2454,17 +2518,6 @@ class MonitoringModule extends React.Component {
                     </div>
                     <div className={styles.RowBox}>
                       <p>起始桩号&nbsp;:&nbsp;&nbsp;<span style={{ color: '#c67f03' }}>{reservePopup.pileNum && reservePopup.pileNum.split(' ')[0]}</span></p>
-                      {/* {
-                        (reservePopup.eventTypeId == 5 && reservePopup.markEventType == 3) || reservePopup.eventTypeId == 3 ?
-                          [
-                            <p key="situation1">能见度&nbsp;:&nbsp;&nbsp;<span>{reservePopup.situation}m</span></p>,
-                            <p key="eventLength1">影响道路长度&nbsp;:&nbsp;&nbsp;<span style={{ color: '#f31113' }}>{reservePopup.eventLength}m</span></p>,
-                          ] :
-                          [
-                            <p key="situation1">平均车速&nbsp;:&nbsp;&nbsp;<span style={{ color: '#c67f03' }}>{reservePopup.situation}km/h</span></p>,
-                            <p key="eventLength1">拥堵路段长度&nbsp;:&nbsp;&nbsp;<span style={{ color: '#f31113' }}>{reservePopup.eventLength}m</span></p>,
-                          ]
-                      } */}
                       {
                         (reservePopup.planSource === 1 || reservePopup.planSource === 2) || <p key="situation">{this.state.unitText[reservePopup.eventType].tipsText}&nbsp;:&nbsp;&nbsp;<span>{reservePopup.showValue ? (reservePopup.showValue + this.state.unitText[reservePopup.eventType].unit) : '待生成'}</span></p>
                       }
@@ -2472,60 +2525,19 @@ class MonitoringModule extends React.Component {
                     </div>
                     <div className={styles.RowBox}>数据来源&nbsp;:&nbsp;&nbsp;<span style={{ color: '#03af01' }}>{reservePopup.planSourceName}</span></div>
                   </div>
-                  {
-                    reservePopup.devices && reservePopup.devices.map((items, indexs) => {
-                      return (
-                        items.dictCode === 1 || items.dictCode === 2 ?
-                          <div className={styles.ItemBox} key={items.dictCode}>
-                            <div className={styles.HeadItem}>{items.codeName}{/* <span className={styles.AddItem} onClick={(e) => { this.genExtraAddOnclick(e, items, reservePopup) }}><Icon type="plus" /></span> */}</div>
-                            <div className={styles.RowBox}>
-                              {
-                                items.device && items.device.map((item, index) => {
-                                  return (
-                                    <div className={styles.InputBox} key={item.deviceId + item.deviceTypeId}>
-                                      <div className={styles.ItemInput} style={{ width: '30%', height: '32px', lineHeight: '32px', overflow: 'hidden' }} title={index + 1 + '.' + item.deviceName + '-' + item.directionName}>
-                                        {
-                                          reservePopup.planStatus === 1 ?
-                                            <Icon type="close-circle" className={styles.CloneItem} onClick={() => { this.handleCloseCircle(indexs, index, item) }} />
-                                            : null
-                                        }
-                                        {index + 1}.{item.deviceName + '-' + item.roadDirectionName}&nbsp;:
-                                      </div>
-                                      <div className={styles.ItemInput} style={{ width: '16%' }}>
-                                        <Select disabled={reservePopup.planStatus > 1} defaultValue={item.deviceControlType ? item.deviceControlType : 0} style={{ width: '100%' }} onChange={(e) => { reservePopup.update == true || reservePopup.update == false ? this.handleSelect(e, 'deviceControlType', 'reservePopup', item) : this.handleSelect(e, 'deviceControlType', 'publishPlanVO', item) }}>
-                                          <Option value={0}>请选择</Option>
-                                          {
-                                            MeasuresList[items.dictCode] && MeasuresList[items.dictCode].map((itemss) => {
-                                              if ((reservePopup.update == true || reservePopup.update == false) || this.deviceReserve.length) {
-                                                if (this.deviceReserve.includes(itemss.controlType)) {
-                                                  return <Option key={itemss.controlType} value={itemss.controlType} onClick={() => { this.handleSelect(itemss.showContent, 'content', reservePopup.update == true || reservePopup.update == false ? 'reservePopup' : 'publishPlanVO', item) }}>{itemss.controlTypeName}</Option>
-                                                }
-                                              } else {
-                                                return <Option key={itemss.controlType} value={itemss.controlType} onClick={() => { this.handleSelect(itemss.showContent, 'content', reservePopup.update == true || reservePopup.update == false ? 'reservePopup' : 'publishPlanVO', item) }}>{itemss.controlTypeName}</Option>
-                                              }
-                                            })
-                                          }
-                                        </Select>
-                                      </div>
-                                      <div className={styles.ItemInput} style={{ width: '50%' }}>
-                                        <Input key={item.content} maxLength={50} value={this.state.showContent[item.appendId]} style={{ textAlign: 'center', color: 'red' }} onChange={(e) => { reservePopup.update == true || reservePopup.update == false ? this.handleInput(e, 'content', 'reservePopup', item) : this.handleInput(e, 'content', 'publishPlanVO', item) }} disabled={reservePopup.planStatus > 1} />
-                                      </div>
-
-                                    </div>
-                                  )
-                                })
-                              }
-                              {!!items.device.length || <div className={styles.PanelItemNone}>暂无数据</div>}
-                            </div>
-                          </div> : items.dictCode === 3 ?
+                  <div style={{ overflowY: 'auto', maxHeight: '360px' }}>
+                    {
+                      reservePopup.devices && reservePopup.devices.map((items, indexs) => {
+                        return (
+                          items.dictCode === 1 || items.dictCode === 2 ?
                             <div className={styles.ItemBox} key={items.dictCode}>
-                              <div className={styles.HeadItem}>{items.codeName}</div>
+                              <div className={styles.HeadItem}>{items.codeName}{/* <span className={styles.AddItem} onClick={(e) => { this.genExtraAddOnclick(e, items, reservePopup) }}><Icon type="plus" /></span> */}</div>
                               <div className={styles.RowBox}>
                                 {
                                   items.device && items.device.map((item, index) => {
                                     return (
-                                      <div className={styles.InputBox} key={item.deviceId + item.deviceTypeId}>
-                                        <div className={styles.ItemInput} style={{ width: '30%', height: '32px', lineHeight: '32px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={index + 1 + '.' + item.deviceName + '-' + item.directionName}>
+                                      <div className={styles.InputBox} key={item.appendId}>
+                                        <div className={styles.ItemInput} style={{ width: '30%', height: '32px', lineHeight: '32px', overflow: 'hidden' }} title={index + 1 + '.' + item.deviceName + '-' + item.roadDirectionName}>
                                           {
                                             reservePopup.planStatus === 1 ?
                                               <Icon type="close-circle" className={styles.CloneItem} onClick={() => { this.handleCloseCircle(indexs, index, item) }} />
@@ -2533,8 +2545,8 @@ class MonitoringModule extends React.Component {
                                           }
                                           {index + 1}.{item.deviceName + '-' + item.roadDirectionName}&nbsp;:
                                         </div>
-                                        <div className={styles.ItemInput} style={{ width: '36%' }}>
-                                          <Select disabled={reservePopup.planStatus > 1} defaultValue={item.deviceControlType ? item.deviceControlType : 0} style={{ width: '85%' }} onChange={(e) => { reservePopup.update == true || reservePopup.update == false ? this.handleSelect(e, 'deviceControlType', 'reservePopup', item) : this.handleSelect(e, 'deviceControlType', 'publishPlanVO', item) }}>
+                                        <div className={styles.ItemInput} style={{ width: '16%' }}>
+                                          <Select disabled={reservePopup.planStatus > 1} defaultValue={item.deviceControlType ? item.deviceControlType : 0} style={{ width: '100%' }} onChange={(e) => { reservePopup.update == true || reservePopup.update == false ? this.handleSelect(e, 'deviceControlType', 'reservePopup', item) : this.handleSelect(e, 'deviceControlType', 'publishPlanVO', item) }}>
                                             <Option value={0}>请选择</Option>
                                             {
                                               MeasuresList[items.dictCode] && MeasuresList[items.dictCode].map((itemss) => {
@@ -2549,36 +2561,31 @@ class MonitoringModule extends React.Component {
                                             }
                                           </Select>
                                         </div>
-                                        <div className={styles.ItemInput} style={{ width: '30%' }}>
-                                          <Select disabled={reservePopup.planStatus > 1} value={this.state.showContent[item.appendId]} style={{ width: '100%' }} onChange={(e) => { reservePopup.update == true || reservePopup.update == false ? this.handleSelect(e, 'content', 'reservePopup', item) : this.handleSelect(e, 'content', 'publishPlanVO', item) }}>
-                                            <Option value="">请选择</Option>
-                                            {
-                                              deviceCodeList && deviceCodeList[1].map((itemss) => {
-                                                return <Option key={itemss.dictCode} value={'' + itemss.dictCode}>{itemss.codeName}</Option>
-                                              })
-                                            }
-                                          </Select>
+                                        <div className={styles.ItemInput} style={{ width: '50%' }}>
+                                          <Input key={item.content} maxLength={50} value={this.state.showContent[item.appendId]} style={{ textAlign: 'center', color: 'red' }} onChange={(e) => { reservePopup.update == true || reservePopup.update == false ? this.handleInput(e, 'content', 'reservePopup', item) : this.handleInput(e, 'content', 'publishPlanVO', item) }} disabled={reservePopup.planStatus > 1} />
                                         </div>
+
                                       </div>
                                     )
                                   })
                                 }
                                 {!!items.device.length || <div className={styles.PanelItemNone}>暂无数据</div>}
                               </div>
-                            </div> : items.dictCode === 4 ?
+                            </div> : items.dictCode === 3 ?
                               <div className={styles.ItemBox} key={items.dictCode}>
                                 <div className={styles.HeadItem}>{items.codeName}</div>
                                 <div className={styles.RowBox}>
                                   {
                                     items.device && items.device.map((item, index) => {
                                       return (
-                                        <div className={styles.InputBox} key={item.deviceId + item.deviceTypeId}>
-                                          <div className={styles.ItemInput} style={{ width: '30%', height: '32px', lineHeight: '32px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={index + 1 + '.' + item.deviceName + '-' + item.directionName + '-' + (item.laneNum || '')}>
+                                        <div className={styles.InputBox} key={item.appendId}>
+                                          <div className={styles.ItemInput} style={{ width: '30%', height: '32px', lineHeight: '32px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={index + 1 + '.' + item.deviceName + '-' + item.roadDirectionName}>
                                             {
-                                              reservePopup.planStatus === 1 ? <Icon type="close-circle" className={styles.CloneItem} onClick={() => { this.handleCloseCircle(indexs, index, item) }} />
+                                              reservePopup.planStatus === 1 ?
+                                                <Icon type="close-circle" className={styles.CloneItem} onClick={() => { this.handleCloseCircle(indexs, index, item) }} />
                                                 : null
                                             }
-                                            {index + 1}.{item.deviceName + '-' + item.roadDirectionName + '-' + item.laneNum}&nbsp;:
+                                            {index + 1}.{item.deviceName + '-' + item.roadDirectionName}&nbsp;:
                                           </div>
                                           <div className={styles.ItemInput} style={{ width: '36%' }}>
                                             <Select disabled={reservePopup.planStatus > 1} defaultValue={item.deviceControlType ? item.deviceControlType : 0} style={{ width: '85%' }} onChange={(e) => { reservePopup.update == true || reservePopup.update == false ? this.handleSelect(e, 'deviceControlType', 'reservePopup', item) : this.handleSelect(e, 'deviceControlType', 'publishPlanVO', item) }}>
@@ -2600,7 +2607,7 @@ class MonitoringModule extends React.Component {
                                             <Select disabled={reservePopup.planStatus > 1} value={this.state.showContent[item.appendId]} style={{ width: '100%' }} onChange={(e) => { reservePopup.update == true || reservePopup.update == false ? this.handleSelect(e, 'content', 'reservePopup', item) : this.handleSelect(e, 'content', 'publishPlanVO', item) }}>
                                               <Option value="">请选择</Option>
                                               {
-                                                deviceCodeList && deviceCodeList[0].map((itemss) => {
+                                                deviceCodeList && deviceCodeList[1].map((itemss) => {
                                                   return <Option key={itemss.dictCode} value={'' + itemss.dictCode}>{itemss.codeName}</Option>
                                                 })
                                               }
@@ -2612,21 +2619,20 @@ class MonitoringModule extends React.Component {
                                   }
                                   {!!items.device.length || <div className={styles.PanelItemNone}>暂无数据</div>}
                                 </div>
-                              </div> : items.dictCode === 5 ?
+                              </div> : items.dictCode === 4 ?
                                 <div className={styles.ItemBox} key={items.dictCode}>
                                   <div className={styles.HeadItem}>{items.codeName}</div>
                                   <div className={styles.RowBox}>
                                     {
                                       items.device && items.device.map((item, index) => {
                                         return (
-                                          <div className={styles.InputBox} key={item.deviceId + item.deviceTypeId}>
-                                            <div className={styles.ItemInput} style={{ width: '30%', height: '32px', lineHeight: '32px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={index + 1 + '.' + item.deviceName + '-' + item.directionName + '-' + item.laneNum}>
+                                          <div className={styles.InputBox} key={item.appendId}>
+                                            <div className={styles.ItemInput} style={{ width: '30%', height: '32px', lineHeight: '32px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={index + 1 + '.' + item.deviceName + '-' + item.roadDirectionName}>
                                               {
-                                                reservePopup.planStatus === 1 ?
-                                                  <Icon type="close-circle" className={styles.CloneItem} onClick={() => { this.handleCloseCircle(indexs, index, item) }} />
+                                                reservePopup.planStatus === 1 ? <Icon type="close-circle" className={styles.CloneItem} onClick={() => { this.handleCloseCircle(indexs, index, item) }} />
                                                   : null
                                               }
-                                              {index + 1}.{item.deviceName + '-' + item.roadDirectionName + '-' + item.laneNum}&nbsp;:
+                                              {index + 1}.{item.deviceName + '-' + item.roadDirectionName}&nbsp;:
                                             </div>
                                             <div className={styles.ItemInput} style={{ width: '36%' }}>
                                               <Select disabled={reservePopup.planStatus > 1} defaultValue={item.deviceControlType ? item.deviceControlType : 0} style={{ width: '85%' }} onChange={(e) => { reservePopup.update == true || reservePopup.update == false ? this.handleSelect(e, 'deviceControlType', 'reservePopup', item) : this.handleSelect(e, 'deviceControlType', 'publishPlanVO', item) }}>
@@ -2648,7 +2654,7 @@ class MonitoringModule extends React.Component {
                                               <Select disabled={reservePopup.planStatus > 1} value={this.state.showContent[item.appendId]} style={{ width: '100%' }} onChange={(e) => { reservePopup.update == true || reservePopup.update == false ? this.handleSelect(e, 'content', 'reservePopup', item) : this.handleSelect(e, 'content', 'publishPlanVO', item) }}>
                                                 <Option value="">请选择</Option>
                                                 {
-                                                  deviceCodeList && deviceCodeList[2].map((itemss) => {
+                                                  deviceCodeList && deviceCodeList[0].map((itemss) => {
                                                     return <Option key={itemss.dictCode} value={'' + itemss.dictCode}>{itemss.codeName}</Option>
                                                   })
                                                 }
@@ -2660,10 +2666,60 @@ class MonitoringModule extends React.Component {
                                     }
                                     {!!items.device.length || <div className={styles.PanelItemNone}>暂无数据</div>}
                                   </div>
-                                </div> : null
-                      )
-                    })
-                  }
+                                </div> : items.dictCode === 5 ?
+                                  <div className={styles.ItemBox} key={items.dictCode}>
+                                    <div className={styles.HeadItem}>{items.codeName}</div>
+                                    <div className={styles.RowBox}>
+                                      {
+                                        items.device && items.device.map((item, index) => {
+                                          return (
+                                            <div className={styles.InputBox} key={item.appendId}>
+                                              <div className={styles.ItemInput} style={{ width: '30%', height: '32px', lineHeight: '32px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={index + 1 + '.' + item.deviceName + '-' + item.roadDirectionName}>
+                                                {
+                                                  reservePopup.planStatus === 1 ?
+                                                    <Icon type="close-circle" className={styles.CloneItem} onClick={() => { this.handleCloseCircle(indexs, index, item) }} />
+                                                    : null
+                                                }
+                                                {index + 1}.{item.deviceName + '-' + item.roadDirectionName}&nbsp;:
+                                              </div>
+                                              <div className={styles.ItemInput} style={{ width: '36%' }}>
+                                                <Select disabled={reservePopup.planStatus > 1} defaultValue={item.deviceControlType ? item.deviceControlType : 0} style={{ width: '85%' }} onChange={(e) => { reservePopup.update == true || reservePopup.update == false ? this.handleSelect(e, 'deviceControlType', 'reservePopup', item) : this.handleSelect(e, 'deviceControlType', 'publishPlanVO', item) }}>
+                                                  <Option value={0}>请选择</Option>
+                                                  {
+                                                    MeasuresList[items.dictCode] && MeasuresList[items.dictCode].map((itemss) => {
+                                                      if ((reservePopup.update == true || reservePopup.update == false) || this.deviceReserve.length) {
+                                                        if (this.deviceReserve.includes(itemss.controlType)) {
+                                                          return <Option key={itemss.controlType} value={itemss.controlType} onClick={() => { this.handleSelect(itemss.showContent, 'content', reservePopup.update == true || reservePopup.update == false ? 'reservePopup' : 'publishPlanVO', item) }}>{itemss.controlTypeName}</Option>
+                                                        }
+                                                      } else {
+                                                        return <Option key={itemss.controlType} value={itemss.controlType} onClick={() => { this.handleSelect(itemss.showContent, 'content', reservePopup.update == true || reservePopup.update == false ? 'reservePopup' : 'publishPlanVO', item) }}>{itemss.controlTypeName}</Option>
+                                                      }
+                                                    })
+                                                  }
+                                                </Select>
+                                              </div>
+                                              <div className={styles.ItemInput} style={{ width: '30%' }}>
+                                                <Select disabled={reservePopup.planStatus > 1} value={this.state.showContent[item.appendId]} style={{ width: '100%' }} onChange={(e) => { reservePopup.update == true || reservePopup.update == false ? this.handleSelect(e, 'content', 'reservePopup', item) : this.handleSelect(e, 'content', 'publishPlanVO', item) }}>
+                                                  <Option value="">请选择</Option>
+                                                  {
+                                                    deviceCodeList && deviceCodeList[2].map((itemss) => {
+                                                      return <Option key={itemss.dictCode} value={'' + itemss.dictCode}>{itemss.codeName}</Option>
+                                                    })
+                                                  }
+                                                </Select>
+                                              </div>
+                                            </div>
+                                          )
+                                        })
+                                      }
+                                      {!!items.device.length || <div className={styles.PanelItemNone}>暂无数据</div>}
+                                    </div>
+                                  </div> : null
+                        )
+                      })
+                    }
+                  </div>
+
                   <div className={styles.ItemBox}>
                     <div className={styles.HeadItem}>管控时段</div>
                     <div className={styles.RowBox}>
@@ -2726,16 +2782,16 @@ class MonitoringModule extends React.Component {
                     (reservePopup.planStatus === 1 || (reservePopup.planStatus === 2 && reservePopup.organization === 1) || (reservePopup.planStatus === 3 && reservePopup.organization === 2) || reservePopup.planStatus === 4) ? <span onClick={() => { this.handlecancelRel(reservePopup.planNum, 'cancel') }}>{reservePopup.planStatus === 4 ? '取 消' : '撤 销'}</span> : null
                   } */}
                   <span onClick={() => { this.handlecancelRel(reservePopup.planNum, 'cancel') }}>{reservePopup.planStatus === 4 ? '取 消' : '撤 销'}</span>
-                  {/* {
-                    reservePopup.planStatus === 3 ? <span onClick={() => { this.handleEndValueTime(true) }}>延&nbsp;&nbsp;时</span> : null
-                  } */}
+                  {
+                    (reservePopup.planStatus === 4 && this.userInfo.password == reservePopup.organization) ? <span onClick={() => { this.handleEndValueTime(true) }}>延&nbsp;&nbsp;时</span> : null
+                  }
                   <span onClick={() => { this.handleEventPopup('Reserve', false) }}>返&nbsp;&nbsp;回</span>
                 </div>
               </div>
             </div> : null
         }
         {
-          (endValueTime) ?
+          endValueTime ?
             <div className={classNames(styles.EventPopup, styles.WhethePopupr)} ref={(el) => { el ? el.onmousedown = drags : null }}>
               <div className={styles.Title}>是否修改管控时段结束时间?</div>
               <div className={styles.Centent}>
@@ -2743,7 +2799,8 @@ class MonitoringModule extends React.Component {
                   结束时间&nbsp;:&nbsp;&nbsp;
                   <p className={styles.ItemInput}>
                     <DatePicker
-                      disabledDate={this.disabledEndDate}
+                      disabledDate={this.handledisabledEndDate}
+                      disabledTime={this.disabledDateTime}
                       showTime
                       format="YYYY-MM-DD HH:mm:ss"
                       value={endValueTime ? moment(endValueTime, 'YYYY-MM-DD HH:mm:ss') : endValue}
@@ -2784,17 +2841,6 @@ class MonitoringModule extends React.Component {
                         <p>起始桩号&nbsp;:&nbsp;&nbsp;<span style={{ color: '#c67f03' }}>{detailsPopup.pileNum && detailsPopup.pileNum.split(' ')[0]}</span></p>
                       </div>
                       <div className={styles.RowBox}>
-                        {/*  {
-                          (detailsPopup.eventType == 5 && detailsPopup.markEventType == 3) || detailsPopup.eventType == 3 ?
-                            [
-                              <p key="situation">能见度&nbsp;:&nbsp;&nbsp;<span>{detailsPopup.showValue}m</span></p>,
-                              <p key="eventLength">影响道路长度&nbsp;:&nbsp;&nbsp;<span style={{ color: '#f31113' }}>{detailsPopup.eventLength}m</span></p>
-                            ] :
-                            [
-                              <p key="situation">平均车速&nbsp;:&nbsp;&nbsp;<span style={{ color: '#c67f03' }}>{detailsPopup.showValue}km/h</span></p>,
-                              <p key="eventLength">拥堵路段长度&nbsp;:&nbsp;&nbsp;<span style={{ color: '#f31113' }}>{detailsPopup.eventLength}m</span></p>
-                            ]
-                        } */}
                         {
                           (detailsPopup.planSource === 1 || detailsPopup.planSource === 2) || <p key="situation">{this.state.unitText[detailsPopup.eventType].tipsText}&nbsp;:&nbsp;&nbsp;<span>{detailsPopup.showValue + this.state.unitText[detailsPopup.eventType].unit}</span></p>
                         }
@@ -2804,23 +2850,30 @@ class MonitoringModule extends React.Component {
                     </div>
                   </div>
                 </Panel>
-                {
-                  detailsPopup.devices && detailsPopup.devices.map((item, ind) => {
-                    return (
-                      <Panel className={styles.PanelChs} header={item.codeName} key={item.dictCode} extra={detailsPopup.planSource > -1000 ? null : this.genExtraAdd(item, detailsPopup)}>
-                        <div>
-                          {
-                            item.device && item.device.map((items, index) => {
-                              return <div className={styles.PanelBox} key={items.appendId}><p className={styles.PanelItem} onClick={() => { this.handleSelect(items.latlng, items.appendId, 'Click', items) }}>{`${index + 1}. ${items.deviceName} ${items.roadDirectionName} ${items.laneNum || ''} ${item.codeName} `}</p>{detailsPopup.planSource > 0 || <Icon onClick={() => { this.handleSubDetailsPopupList(ind, index) }} className={styles.MinusItem} type="close" />}</div>
-                            })
-                          }
-                          {(item.device && item.device.length === 0) ? <p className={styles.PanelItemNone}>暂无数据</p> : null}
-                        </div>
-                      </Panel>
-                    )
-                  })
-                }
               </Collapse>
+              <div className={styles.detailCollapse}>
+                <Collapse
+                  defaultActiveKey={[0, 1, 2, 3, 4, 5]}
+                  expandIconPosition="right-bottom"
+                >
+                  {
+                    detailsPopup.devices && detailsPopup.devices.map((item, ind) => {
+                      return (
+                        <Panel className={styles.PanelChs} header={item.codeName} key={item.dictCode} extra={detailsPopup.planSource > -1000 ? null : this.genExtraAdd(item, detailsPopup)}>
+                          <div>
+                            {
+                              item.device && item.device.map((items, index) => {
+                                return <div className={styles.PanelBox} key={items.appendId}><p className={styles.PanelItem} onClick={() => { this.handleSelect(items.latlng, items.appendId, 'Click', items) }}>{`${index + 1}. ${items.deviceName} ${items.roadDirectionName} ${item.codeName} `}</p>{detailsPopup.planSource > 0 || <Icon onClick={() => { this.handleSubDetailsPopupList(ind, index) }} className={styles.MinusItem} type="close" />}</div>
+                              })
+                            }
+                            {(item.device && item.device.length === 0) ? <p className={styles.PanelItemNone}>暂无数据</p> : null}
+                          </div>
+                        </Panel>
+                      )
+                    })
+                  }
+                </Collapse>
+              </div>
               <div className={styles.panelBtnBox}>
                 {detailsPopup.planSource > 0 ?
                   <div className={styles.Panelbutton}>
@@ -2974,7 +3027,7 @@ class MonitoringModule extends React.Component {
           EventTagPopup ?
             <div className={styles.MaskBox} style={{ zIndex: '996' }}>
               <div className={styles.EventTagging}>
-                <GMap equipmentInfoWinImg={this.equipmentInfoWinImg} deviceString={this.state.deviceString.join()} EventTagPopup={EventTagPopup} equipmentInfoWin={this.equipmentInfoWin} styles={this.mapStyles} mapID='popMap' dataAll={SidePopLeft} roadLatlng={detailsLatlng} handledetai={this.handledetai} detailsPopup={detailsPopup} boxSelect={boxSelect} flagClose={flagClose} />
+                <GMap equipmentInfoWinImg={this.equipmentInfoWinImg} deviceString={this.state.deviceString.join()} EventTagPopup={EventTagPopup} equipmentInfoWin={this.equipmentInfoWin} styles={this.mapStyles} key="popMap" mapID="popMap" dataAll={SidePopLeft} roadLatlng={detailsLatlng} handledetai={this.handledetai} detailsPopup={detailsPopup} boxSelect={boxSelect} flagClose={flagClose} />
                 <div className={styles.EventTaggingLeft} style={{ zIndex: '999' }}>
                   <div className={styles.Title} style={{ background: '#132334', position: 'fixed', top: '61px', left: 'calc(5% + 6px)', zIndex: '999', width: 'calc(21.6% - 2px)' }}>{EventTagPopupTit}<Icon className={styles.Close} onClick={() => { this.handleEventTag(false) }} type="close" /></div>
                   {
@@ -3192,6 +3245,86 @@ class MonitoringModule extends React.Component {
               </div>
             </div> : null
         }
+        {/* 多设备 类型展示框 */}
+        {
+          TypeWinPopup ?
+            <div className={styles.TypeMaskBox}>
+              <div className={styles.TypePopup}>
+                <div className={styles.Title}>{TypeWinPopup.deviceName}-{TypeWinPopup.directionName}-{TypeWinPopup.deviceTypeName}<Icon className={styles.Close} type="close" onClick={() => { this.setState({ TypeWinPopup: null }) }} /></div>
+                <div className={styles.Main}>
+                  {
+                    TypeWinPopup.innerDevices.map((it) => {
+                      return (
+                        it.deviceType === 4 ?
+                          <div className={styles.Centent}>
+                            <div className={styles.Subhead}>{it.deviceName} :</div>
+                            <div className={styles.ItemBox}>
+                              <div className={styles.ItemInput}>
+                                <Select style={{ width: '100%' }} placeholder="管控类型">
+                                  <Option value="">请选择</Option>
+                                  {
+                                    MeasuresList[it.deviceType] && MeasuresList[it.deviceType].map((itemss) => {
+                                      if (EventTagPopup && this.state.deviceString.length) {
+                                        if (this.state.deviceString.includes(itemss.controlType)) {
+                                          return <Option key={itemss.controlType}>{itemss.controlTypeName}</Option>
+                                        }
+                                      } else {
+                                        return <Option key={itemss.controlType} >{itemss.controlTypeName}</Option>
+                                      }
+                                    })
+                                  }
+                                </Select>
+                              </div>
+                              <div className={styles.ItemInput}>
+                                <Select style={{ width: '100%' }} placeholder="显示内容">
+                                  <Option value="">请选择</Option>
+                                  {
+                                    deviceCodeList && deviceCodeList[0].map((itemss) => {
+                                      return <Option key={itemss.dictCode}>{itemss.codeName}</Option>
+                                    })
+                                  }
+                                </Select>
+                              </div>
+                            </div>
+                          </div> :
+                          <div className={styles.Centent}>
+                            <div className={styles.Subhead}>{it.deviceName} :</div>
+                            <div className={styles.ItemBox}>
+                              <div className={styles.ItemInput}>
+                                <Select style={{ width: '100%' }} placeholder="管控类型">
+                                  <Option value="">请选择</Option>
+                                  {
+                                    MeasuresList[it.deviceType] && MeasuresList[it.deviceType].map((itemss) => {
+                                      if (EventTagPopup && this.state.deviceString.length) {
+                                        if (this.state.deviceString.includes(itemss.controlType)) {
+                                          return <Option key={itemss.controlType} >{itemss.controlTypeName}</Option>
+                                        }
+                                      } else {
+                                        return <Option key={itemss.controlType}>{itemss.controlTypeName}</Option>
+                                      }
+                                    })
+                                  }
+                                </Select>
+                              </div>
+                              <div className={styles.ItemInput}>
+                                <Select style={{ width: '100%' }} placeholder="显示内容">
+                                  <Option value="">请选择</Option>
+                                  {
+                                    deviceCodeList && deviceCodeList[2].map((itemss) => {
+                                      return <Option key={itemss.dictCode} >{itemss.codeName}</Option>
+                                    })
+                                  }
+                                </Select>
+                              </div>
+                            </div>
+                          </div>
+                      )
+                    })
+                  }
+                </div>
+              </div>
+            </div> : null
+        }
         {InfoWinPopup ?
           <div className={styles.MaskBox}>
             <div className={classNames(styles.EventPopup, styles.VIboardPopup)}>
@@ -3356,7 +3489,7 @@ class MonitoringModule extends React.Component {
                     <div className={styles.RowBox}>
                       <p>起始桩号&nbsp;:&nbsp;&nbsp;<span style={{ color: '#c67f03' }}>{reservePopupOne.pileNum && reservePopupOne.pileNum.split(' ')[0]}</span></p>
                       {
-                        (reservePopupOne.planSource === 1 || reservePopupOne.planSource === 2) || <p key="situation">{this.state.unitText[reservePopupOne.eventType].tipsText}&nbsp;:&nbsp;&nbsp;<span>{reservePopupOne.showValue + this.state.unitText[reservePopupOne.eventType].unit}</span></p>
+                        ((reservePopupOne.planSource === 1 || reservePopupOne.planSource === 2) && reservePopupOne.eventType) || <p key="situation">{this.state.unitText[reservePopupOne.eventType].tipsText}&nbsp;:&nbsp;&nbsp;<span>{reservePopupOne.showValue + this.state.unitText[reservePopupOne.eventType].unit}</span></p>
                       }
                       <p key="eventLength">影响路段长度&nbsp;:&nbsp;&nbsp;<span style={{ color: '#f31113' }}>{reservePopupOne.eventLength || 0}m</span></p>
                     </div>

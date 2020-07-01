@@ -42,3 +42,6 @@
   display: inline-block;
   border-bottom: none;
 }
+:global(.ant-menu-submenu-popup) {
+  background: transparent !important;
+}

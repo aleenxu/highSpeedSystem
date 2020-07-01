@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "cross-env http_ENV=production webpack -p --color --progress",
-    "dev": "cross-env http_ENV=development webpack-dev-server --devtool eval --progress --colors --hot --host --open --content-base build",
+    "dev": "cross-env http_ENV=development webpack-dev-server --devtool eval --progress --colors --hot --host 192.168.1.132 --open --content-base build",
     "serve": "serve ./build"
   },
   "author": "",

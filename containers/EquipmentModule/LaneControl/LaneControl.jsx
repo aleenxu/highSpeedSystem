@@ -315,7 +315,7 @@ class LaneControl extends React.Component {
                 <div className={styles.listTd} >经纬度坐标</div>
                 <div className={styles.listTd} >方向</div>
                 <div className={styles.listTd} >IP地址</div>
-                <div className={styles.listTd} >端口号</div>
+                <div className={styles.listTd} style={{ flex: '1.7' }}>端口号</div>
                 {userLimit.includes(86) || userLimit.includes(87) ? <div className={styles.listTd} >操作</div> : null}
               </div>
               {
@@ -335,7 +335,7 @@ class LaneControl extends React.Component {
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.deviceIp}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.port}</span></div>
                       {userLimit.includes(86) || userLimit.includes(87) ?
-                        <div className={styles.listTd} >
+                        <div className={styles.listTd} style={{ flex: '1.7' }}>
                           {userLimit.includes(86) && <Button className={styles.Button} onClick={() => { this.handleboardData(item) }}>修&nbsp;&nbsp;改</Button>}
                           {userLimit.includes(87) && <Button className={styles.Button} onClick={() => { this.handleDelect(item.rowId) }}>删&nbsp;&nbsp;除</Button>}
                         </div> : null}
@@ -581,7 +581,7 @@ class LaneControl extends React.Component {
                               message: '请输入正确的IP',
                             },
                             {
-                              required: this.board.vendor == 1 ,
+                              required: this.board.vendor == 1,
                               message: '请输入IP地址!',
                             },
                             {

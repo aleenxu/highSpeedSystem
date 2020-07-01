@@ -425,6 +425,8 @@ class ReservePlan extends React.Component {
     }
     const { deviceString } = this.state
     let params = {
+      hwayId: item.hwayId,
+      directionId: item.roadDirection,
       area: window.newPoint,
       control: false,
       eventPileNum: item.roadPileNum,
@@ -510,6 +512,8 @@ class ReservePlan extends React.Component {
                   devices: _this.state.deviceTypes,
                   roadPileNum: _this.controlDatas.startPileNum + ' ' + _this.controlDatas.endPileNum,
                   eventType: _this.state.eventType,
+                  hwayId: _this.controlDatas.hwayId,
+                  roadDirection: _this.controlDatas.directionId,
                 }
                 _this.state.controlBtnFlagText === '关闭框选' ? _this.getDevice(params) : null
               }
@@ -1528,12 +1532,12 @@ class ReservePlan extends React.Component {
                                 return (
                                   <div key={item.deviceId + item.deviceTypeId}>
                                     <div className={style.InputBox}>
-                                      <div className={style.ItemInput} style={{ width: '30%', textAlign: 'left', lineHeight: '30px', paddingRight: '8px' }} title={index + 1 + '.' + item.deviceName + '-' + item.directionName + items.codeName}>
+                                      <div className={style.ItemInput} style={{ width: '30%', textAlign: 'left', lineHeight: '30px', paddingRight: '8px' }} title={index + 1 + '.' + item.deviceName + '-' + item.roadDirectionName}>
                                         {deviceTypes.status === 1 ?
                                           <Icon type="close-circle" className={styles.CloneItem} onClick={() => { this.handleCloseCircle(indexs, index, item.deviceId) }} />
                                           : null
                                         }
-                                        {index + 1}.{item.deviceName + '-' + item.roadDirectionName + items.codeName}&nbsp;:
+                                        {index + 1}.{item.deviceName + '-' + item.roadDirectionName }&nbsp;:
                                       </div>
                                       <div className={style.ItemInput} style={{ width: '16%' }}>
                                         <Select disabled={deviceTypes.status > 1} defaultValue={item.deviceControlType ? item.deviceControlType : 0} style={{ width: '100%' }} onChange={(e) => { this.handleSelect(e, 'deviceControlType', 'controlDatas', item) }}>
@@ -1567,8 +1571,8 @@ class ReservePlan extends React.Component {
                                 items.device && items.device.map((item, index) => {
                                   return (
                                     <div className={style.InputBox} key={item.deviceId + item.deviceTypeId}>
-                                      <div className={style.ItemInput} style={{ width: '30%', textAlign: 'left', lineHeight: '30px', paddingRight: '8px' }} title={index + 1 + '.' + item.deviceName + '-' + item.directionName + items.codeName}>
-                                        {index + 1}.{item.deviceName + '-' + item.roadDirectionName + items.codeName}&nbsp;:
+                                      <div className={style.ItemInput} style={{ width: '30%', textAlign: 'left', lineHeight: '30px', paddingRight: '8px' }} title={index + 1 + '.' + item.deviceName + '-' + item.roadDirectionName }>
+                                        {index + 1}.{item.deviceName + '-' + item.roadDirectionName }&nbsp;:
                                       </div>
                                       <div className={style.ItemInput} style={{ width: '36%' }}>
                                         <Select disabled={deviceTypes.status > 1} defaultValue={item.deviceControlType ? item.deviceControlType : 0} style={{ width: '85%' }} onChange={(e) => { this.handleSelect(e, 'deviceControlType', 'controlDatas', item) }}>
@@ -1610,8 +1614,8 @@ class ReservePlan extends React.Component {
                                   items.device && items.device.map((item, index) => {
                                     return (
                                       <div className={style.InputBox} key={item.deviceId + item.deviceTypeId}>
-                                        <div className={style.ItemInput} style={{ width: '30%', textAlign: 'left', lineHeight: '30px', paddingRight: '8px' }} title={index + 1 + '.' + item.deviceName + '-' + item.directionName + items.codeName}>
-                                          {index + 1}.{item.deviceName + '-' + item.roadDirectionName + items.codeName}&nbsp;:
+                                        <div className={style.ItemInput} style={{ width: '30%', textAlign: 'left', lineHeight: '30px', paddingRight: '8px' }} title={index + 1 + '.' + item.deviceName + '-' + item.roadDirectionName }>
+                                          {index + 1}.{item.deviceName + '-' + item.roadDirectionName }&nbsp;:
                                         </div>
                                         <div className={style.ItemInput} style={{ width: '36%' }}>
                                           <Select disabled={deviceTypes.status > 1} defaultValue={item.deviceControlType ? item.deviceControlType : 0} style={{ width: '85%' }} onChange={(e) => { this.handleSelect(e, 'deviceControlType', 'controlDatas', item) }}>
@@ -1653,8 +1657,8 @@ class ReservePlan extends React.Component {
                                     items.device && items.device.map((item, index) => {
                                       return (
                                         <div className={style.InputBox} key={item.deviceId + item.deviceTypeId}>
-                                          <div className={style.ItemInput} style={{ width: '30%', textAlign: 'left', lineHeight: '30px', paddingRight: '8px' }} title={index + 1 + '.' + item.deviceName + '-' + item.directionName + items.codeName}>
-                                            {index + 1}.{item.deviceName + '-' + item.roadDirectionName + items.codeName}&nbsp;:
+                                          <div className={style.ItemInput} style={{ width: '30%', textAlign: 'left', lineHeight: '30px', paddingRight: '8px' }} title={index + 1 + '.' + item.deviceName + '-' + item.roadDirectionName }>
+                                            {index + 1}.{item.deviceName + '-' + item.roadDirectionName }&nbsp;:
                                           </div>
                                           <div className={style.ItemInput} style={{ width: '36%' }}>
                                             <Select disabled={deviceTypes.status > 1} defaultValue={item.deviceControlType ? item.deviceControlType : 0} style={{ width: '85%' }} onChange={(e) => { this.handleSelect(e, 'deviceControlType', 'controlDatas', item) }}>

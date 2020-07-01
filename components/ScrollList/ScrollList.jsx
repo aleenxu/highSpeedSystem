@@ -20,7 +20,7 @@ class ScrollList extends React.Component {
       dataAll: this.props.dataAll, // 总数据
       listTit: this.props.Tit, // 模块标题
       listTitle: this.props.Title, // 标题名
-      eachartData: this.props.eachartData,
+      eachartData: this.props.eachartData||[],
       sideachart: null,
       ProgressData: this.props.ProgressData,
       typeNow: 0, //选中的是哪个模块  1；2；3；4；
@@ -399,7 +399,7 @@ class ScrollList extends React.Component {
               onChange={this.callback}
               expandIconPosition="right"
             >
-              <Panel header={listTit + ' (' + (window[listTit] || 0) + ')'} key="1" extra={this.genExtra(listTitle, 'Event')}>
+              <Panel header={listTit + ' ( ' + (window[listTit] || 0) + ' )'} key="1" extra={this.genExtra(listTitle, 'Event')}>
                 {data.systemEnabled ?
                   <div className={styles.listBox}>
                     {listTitle &&
@@ -427,7 +427,7 @@ class ScrollList extends React.Component {
                   data.childs.map((items) => {
                     return (
                       <Collapse key={items.eventTypeName}>
-                        <Panel header={items.eventTypeName + ` (${items.count})`}>
+                        <Panel header={items.eventTypeName + ` ( ${items.count} )`}>
                           <div className={styles.listBox}>
                             {listTitle &&
                               <div className={styles.listItem}>
