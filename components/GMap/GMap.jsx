@@ -101,7 +101,7 @@ class GMap extends React.Component {
 
     }
     if (this.props.styles !== nextProps.styles) {
-      this.props.styles = nextProps.styles
+      this.setState({styles:nextProps.styles})
     }
     if (this.props.roadLatlng !== nextProps.roadLatlng) {
       this.setState({ roadLatlng: nextProps.roadLatlng })

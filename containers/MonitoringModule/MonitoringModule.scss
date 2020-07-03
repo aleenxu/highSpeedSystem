@@ -237,6 +237,9 @@
     top: 0;
     z-index: 999;
     background: rgba(19, 35, 52, 0.9);
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
   // 标题
   .Title {
@@ -446,9 +449,7 @@
   }
   .TimeData {
     background: none !important;
-    /* width: auto !important; */
     width: 400px;
-    /* height: 200px !important; */
     position: relative;
     left: 0;
     top: 0;
@@ -566,9 +567,7 @@
     background-size: 100% 100%;
     width: 44%;
     height: 88%;
-    margin: 0 auto;
-    top: 50%;
-    transform: translateY(-50%);
+    color: #fff;
     .Content {
       height: calc(100% - 97px);
       min-height: calc(100% - 97px);
@@ -615,169 +614,7 @@
   width: 185px !important;
   margin: 0 8px;
 }
-.Eventdetails {
-  position: fixed;
-  top: 55px;
-  bottom: 5px;
-  right: 5px;
-  width: 24%;
-  /* display: flex;
-  align-items: flex-start; */
-  background-color: rgba(20, 21, 24, 0.9);
-  z-index: 99;
-  /*  overflow-y: auto; */
-  .detailCollapse {
-    max-height: calc(100% - 330px);
-    overflow-y: auto;
-    :global(.ant-collapse > .ant-collapse-item) {
-      &:nth-child(1) {
-        :global(.ant-collapse-content) {
-          border-top: none;
-        }
-      }
-      :global(.ant-collapse-header .ant-collapse-arrow) {
-        right: 16px;
-        left: auto;
-      }
-    }
-  }
-  :global(.ant-collapse) {
-    width: 100%;
-    border: none !important;
-    max-height: calc(100% - 45px);
-    /* overflow-y: auto; */
-    background-color: transparent;
-  }
-  :global(.ant-collapse > .ant-collapse-item > .ant-collapse-header) {
-    background: rgba(19, 27, 37, 0.8);
-    color: #fff;
-    padding-left: 30px;
-  }
 
-  :global(.anticon-setting svg) {
-    color: #2d81ad;
-    &:hover {
-      transition: all 0.5s;
-      transform: rotate(180deg);
-      color: #26ff6d;
-    }
-  }
-
-  :global(.anticon-plus svg) {
-    color: #2d81ad;
-    font-size: 17px;
-    margin-top: -9px;
-    &:hover {
-      transition: all 0.5s;
-      transform: rotate(180deg);
-      color: #26ff6d;
-      font-size: 18px;
-    }
-  }
-  :global(.ant-collapse > .ant-collapse-item) {
-    border: none !important;
-    &:nth-child(1) {
-      :global(.ant-collapse-content) {
-        border-top: 1px solid #fff;
-      }
-    }
-  }
-  :global(.ant-collapse-content) {
-    border: none;
-    color: #fff;
-    background-color: transparent;
-  }
-  :global(.ant-collapse-content > .ant-collapse-content-box) {
-    padding: 8px 0;
-  }
-  .PanelChs {
-    border: none !important;
-    :global(.ant-collapse-header) {
-      color: #446b92 !important;
-      height: 25px;
-      line-height: 0;
-    }
-    /* :global(.ant-collapse-content) {
-      border: none !important;
-      color: #fff;
-      background-color: transparent;
-    } */
-  }
-  .ScrollItem {
-    max-height: 135px;
-    overflow-y: auto;
-  }
-  .PanelBox {
-    position: relative;
-    margin-top: 20px;
-    &:last-child {
-      margin-bottom: 20px;
-    }
-    .PanelItem {
-      height: 25px;
-      line-height: 25px;
-      margin: 0;
-      text-indent: 22px;
-      color: #646a82;
-      background: #0e151d;
-      cursor: pointer;
-      margin: 0 13px !important;
-      &:last-child {
-        border-bottom: 0;
-      }
-      &:hover {
-        color: #fff;
-        background: #0d2645;
-      }
-    }
-    .MinusItem {
-      position: absolute;
-      right: 15px;
-      top: 4px;
-      cursor: pointer;
-      color: #2d81ad;
-      &:hover {
-        transition: all 0.5s;
-        transform: rotate(180deg);
-        color: #26ff6d;
-      }
-    }
-  }
-
-  .Close {
-    position: absolute;
-    top: 16px;
-    left: 10px;
-    color: #2d81ad;
-    cursor: pointer;
-    & svg:hover {
-      transition: all 0.5s;
-      transform: rotate(180deg);
-      color: #26ff6d;
-    }
-  }
-  .Panelbutton {
-    width: 160px;
-    height: 25px;
-    text-align: center;
-    line-height: 25px;
-    background: #143757;
-    color: #fff;
-    position: absolute;
-    bottom: 10px;
-    cursor: pointer;
-    left: 50%;
-    margin-left: -80px;
-    > span {
-      width: 100%;
-      height: 100%;
-      display: inline-block;
-    }
-    &:hover {
-      color: #26ff6d;
-    }
-  }
-}
 .VIboardPopup {
   height: auto !important;
   width: 421px !important;
@@ -993,15 +830,6 @@
       -o-transform: translate(-25%, 0);
     }
   }
-}
-.PanelItemNone {
-  height: 45px;
-  line-height: 45px;
-  margin: 0;
-  text-align: center;
-  text-indent: 22px;
-  color: #446b92;
-  font-size: 16px;
 }
 .equipment {
   position: fixed;
@@ -1234,4 +1062,3 @@
     }
   }
 }
- 

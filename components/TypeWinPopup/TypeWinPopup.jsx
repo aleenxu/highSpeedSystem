@@ -1,8 +1,9 @@
 import React from 'react'
 import { Select, Icon } from 'antd'
 import styles from './TypeWinPopup.scss'
+
 const { Option } = Select
-class TypeWinPop extends React.Component {
+class TypeWinPop extends React.Component { // 地图点位编辑管控内容弹窗
   constructor(props) {
     super(props)
     this.state = {

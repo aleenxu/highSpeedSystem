@@ -8,7 +8,7 @@ import getResponseDatas from '../../../plugs/HttpData/getResponseData'
 import GMap from '../../../components/GMap/GMap'
 import classNames from 'classnames'
 import TypeWinPop from '../../../components/TypeWinPopup/TypeWinPopup'
-import { Pagination, Input, Button, Checkbox, Radio, Icon, Popover, Switch, DatePicker, Collapse, Select, Modal, message } from 'antd'
+import { Pagination, Input, Button, Checkbox, Icon, Popover, Collapse, Select, Modal, message } from 'antd'
 const { Panel } = Collapse
 const { Search } = Input
 const { Option } = Select
@@ -1541,137 +1541,50 @@ class ReservePlan extends React.Component {
                             }
                             {!!items.device.length || <div className={style.PanelItemNone}>暂无数据</div>}
                           </div>
-                        </div> : items.dictCode === 3 ?
-                          <div className={styles.ItemBox} key={items.dictCode}>
-                            <div className={styles.HeadItem}>{items.codeName}</div>
-                            <div className={styles.RowBox}>
-                              {
-                                items.device && items.device.map((item, index) => {
-                                  return (
-                                    <div className={style.InputBox} key={item.deviceId + item.deviceTypeId}>
-                                      <div className={style.ItemInput} style={{ width: '30%', textAlign: 'left', lineHeight: '30px', paddingRight: '8px' }} title={index + 1 + '.' + item.deviceName + '-' + item.roadDirectionName}>
-                                        {index + 1}.{item.deviceName + '-' + item.roadDirectionName}&nbsp;:
+                        </div> :
+                        <div className={styles.ItemBox} key={items.dictCode}>
+                          <div className={styles.HeadItem}>{items.codeName}</div>
+                          <div className={styles.RowBox}>
+                            {
+                              items.device && items.device.map((item, index) => {
+                                return (
+                                  <div className={style.InputBox} key={item.deviceId + item.deviceTypeId}>
+                                    <div className={style.ItemInput} style={{ width: '30%', textAlign: 'left', lineHeight: '30px', paddingRight: '8px' }} title={index + 1 + '.' + item.deviceName + '-' + item.roadDirectionName}>
+                                      {index + 1}.{item.deviceName + '-' + item.roadDirectionName}&nbsp;:
                                       </div>
-                                      <div className={style.ItemInput} style={{ width: '36%' }}>
-                                        <Select disabled={deviceTypes.status > 1} defaultValue={item.deviceControlType ? item.deviceControlType : 0} style={{ width: '85%' }} onChange={(e) => { this.handleSelect(e, 'deviceControlType', 'controlDatas', item) }}>
-                                          <Option value={0}>请选择</Option>
-                                          {
-                                            MeasuresList[items.dictCode] && MeasuresList[items.dictCode].map((itemss) => {
-                                              if (this.state.deviceString.length) {
-                                                if (this.state.deviceString.includes(itemss.controlType)) {
-                                                  return <Option key={itemss.controlType} value={itemss.controlType} onClick={() => { this.handleSelect(itemss.showContent, 'content', 'controlDatas', item) }}>{itemss.controlTypeName}</Option>
-                                                }
-                                              } else {
-                                                return <Option key={itemss.controlType} onClick={() => { this.handleSelect(itemss.showContent, 'content', 'controlDatas', item) }} value={itemss.controlType}>{itemss.controlTypeName}</Option>
+                                    <div className={style.ItemInput} style={{ width: '36%' }}>
+                                      <Select disabled={deviceTypes.status > 1} defaultValue={item.deviceControlType ? item.deviceControlType : 0} style={{ width: '85%' }} onChange={(e) => { this.handleSelect(e, 'deviceControlType', 'controlDatas', item) }}>
+                                        <Option value={0}>请选择</Option>
+                                        {
+                                          MeasuresList[items.dictCode] && MeasuresList[items.dictCode].map((itemss) => {
+                                            if (this.state.deviceString.length) {
+                                              if (this.state.deviceString.includes(itemss.controlType)) {
+                                                return <Option key={itemss.controlType} value={itemss.controlType} onClick={() => { this.handleSelect(itemss.showContent, 'content', 'controlDatas', item) }}>{itemss.controlTypeName}</Option>
                                               }
-                                            })
-                                          }
-                                        </Select>
-                                      </div>
-                                      <div className={style.ItemInput} style={{ width: '30%' }}>
-                                        <Select value={this.state.showContent[item.appendId] || ''} style={{ width: '100%' }} onChange={(e) => { this.handleSelect(e, 'content', 'controlDatas', item) }}>
-                                          <Option value="">请选择</Option>
-                                          {
-                                            deviceCodeList && deviceCodeList[1].map((itemss) => {
-                                              return <Option key={itemss.dictCode} value={'' + itemss.dictCode}>{itemss.codeName}</Option>
-                                            })
-                                          }
-                                        </Select>
-                                      </div>
+                                            } else {
+                                              return <Option key={itemss.controlType} onClick={() => { this.handleSelect(itemss.showContent, 'content', 'controlDatas', item) }} value={itemss.controlType}>{itemss.controlTypeName}</Option>
+                                            }
+                                          })
+                                        }
+                                      </Select>
                                     </div>
-                                  )
-                                })
-                              }
-                              {!!items.device.length || <div className={style.PanelItemNone}>暂无数据</div>}
-                            </div>
-                          </div> : items.dictCode === 4 ?
-                            <div className={styles.ItemBox} key={items.dictCode}>
-                              <div className={styles.HeadItem}>{items.codeName}</div>
-                              <div className={styles.RowBox}>
-                                {
-                                  items.device && items.device.map((item, index) => {
-                                    return (
-                                      <div className={style.InputBox} key={item.deviceId + item.deviceTypeId}>
-                                        <div className={style.ItemInput} style={{ width: '30%', textAlign: 'left', lineHeight: '30px', paddingRight: '8px' }} title={index + 1 + '.' + item.deviceName + '-' + item.roadDirectionName}>
-                                          {index + 1}.{item.deviceName + '-' + item.roadDirectionName}&nbsp;:
-                                        </div>
-                                        <div className={style.ItemInput} style={{ width: '36%' }}>
-                                          <Select disabled={deviceTypes.status > 1} defaultValue={item.deviceControlType ? item.deviceControlType : 0} style={{ width: '85%' }} onChange={(e) => { this.handleSelect(e, 'deviceControlType', 'controlDatas', item) }}>
-                                            <Option value={0}>请选择</Option>
-                                            {
-                                              MeasuresList[items.dictCode] && MeasuresList[items.dictCode].map((itemss) => {
-                                                if (this.state.deviceString.length) {
-                                                  if (this.state.deviceString.includes(itemss.controlType)) {
-                                                    return <Option key={itemss.controlType} value={itemss.controlType} onClick={() => { this.handleSelect(itemss.showContent, 'content', 'controlDatas', item) }}>{itemss.controlTypeName}</Option>
-                                                  }
-                                                } else {
-                                                  return <Option key={itemss.controlType} onClick={() => { this.handleSelect(itemss.showContent, 'content', 'controlDatas', item) }} value={itemss.controlType}>{itemss.controlTypeName}</Option>
-                                                }
-                                              })
-                                            }
-                                          </Select>
-                                        </div>
-                                        <div className={style.ItemInput} style={{ width: '30%' }}>
-                                          <Select value={this.state.showContent[item.appendId] || ''} style={{ width: '100%' }} onChange={(e) => { this.handleSelect(e, 'content', 'controlDatas', item) }}>
-                                            <Option value="">请选择</Option>
-                                            {
-                                              deviceCodeList && deviceCodeList[0].map((itemss) => {
-                                                return <Option key={itemss.dictCode} value={(itemss.dictCode).toString()}>{itemss.codeName}</Option>
-                                              })
-                                            }
-                                          </Select>
-                                        </div>
-                                      </div>
-                                    )
-                                  })
-                                }
-                                {!!items.device.length || <div className={style.PanelItemNone}>暂无数据</div>}
-                              </div>
-                            </div> : items.dictCode === 5 ?
-                              <div className={styles.ItemBox} key={items.dictCode}>
-                                <div className={styles.HeadItem}>{items.codeName}</div>
-                                <div className={styles.RowBox}>
-                                  {
-                                    items.device && items.device.map((item, index) => {
-                                      return (
-                                        <div className={style.InputBox} key={item.deviceId + item.deviceTypeId}>
-                                          <div className={style.ItemInput} style={{ width: '30%', textAlign: 'left', lineHeight: '30px', paddingRight: '8px' }} title={index + 1 + '.' + item.deviceName + '-' + item.roadDirectionName}>
-                                            {index + 1}.{item.deviceName + '-' + item.roadDirectionName}&nbsp;:
-                                          </div>
-                                          <div className={style.ItemInput} style={{ width: '36%' }}>
-                                            <Select disabled={deviceTypes.status > 1} defaultValue={item.deviceControlType ? item.deviceControlType : 0} style={{ width: '85%' }} onChange={(e) => { this.handleSelect(e, 'deviceControlType', 'controlDatas', item) }}>
-                                              <Option value={0}>请选择</Option>
-                                              {
-                                                MeasuresList[items.dictCode] && MeasuresList[items.dictCode].map((itemss) => {
-                                                  if (this.state.deviceString.length) {
-                                                    if (this.state.deviceString.includes(itemss.controlType)) {
-                                                      return <Option key={itemss.controlType} value={itemss.controlType} onClick={() => { this.handleSelect(itemss.showContent, 'content', 'controlDatas', item) }}>{itemss.controlTypeName}</Option>
-                                                    }
-                                                  } else {
-                                                    return <Option key={itemss.controlType} onClick={() => { this.handleSelect(itemss.showContent, 'content', 'controlDatas', item) }} value={itemss.controlType}>{itemss.controlTypeName}</Option>
-                                                  }
-                                                })
-                                              }
-                                            </Select>
-                                          </div>
-                                          <div className={style.ItemInput} style={{ width: '30%' }}>
-                                            <Select value={this.state.showContent[item.appendId] || ''} style={{ width: '100%' }} onChange={(e) => { this.handleSelect(e, 'content', 'controlDatas', item) }}>
-                                              <Option value="">请选择</Option>
-                                              {
-                                                deviceCodeList && deviceCodeList[2].map((itemss) => {
-                                                  return <Option key={itemss.dictCode} value={(itemss.dictCode).toString()}>{itemss.codeName}</Option>
-                                                })
-                                              }
-                                            </Select>
-                                          </div>
-                                        </div>
-                                      )
-                                    })
-                                  }
-                                  {!!items.device.length || <div className={style.PanelItemNone}>暂无数据</div>}
-                                </div>
-                              </div> : null
-
+                                    <div className={style.ItemInput} style={{ width: '30%' }}>
+                                      <Select value={this.state.showContent[item.appendId] || ''} style={{ width: '100%' }} onChange={(e) => { this.handleSelect(e, 'content', 'controlDatas', item) }}>
+                                        <Option value="">请选择</Option>
+                                        {
+                                          deviceCodeList && deviceCodeList[items.dictCode === 3 ? 1 : items.dictCode === 4 ? 0 : 2].map((itemss) => {
+                                            return <Option key={itemss.dictCode} value={'' + itemss.dictCode}>{itemss.codeName}</Option>
+                                          })
+                                        }
+                                      </Select>
+                                    </div>
+                                  </div>
+                                )
+                              })
+                            }
+                            {!!items.device.length || <div className={style.PanelItemNone}>暂无数据</div>}
+                          </div>
+                        </div>
                     )
                   })
                 }
