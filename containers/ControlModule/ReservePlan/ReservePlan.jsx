@@ -359,7 +359,7 @@ class ReservePlan extends React.Component {
           })
         }
       })
-      this.handleUrlAjax(this.getRoadByUrl + `${this.controlDatas.hwayId}/${this.controlDatas.directionId}`, 'roadList', (data) => {
+      this.handleUrlAjax(`${this.getRoadByUrl + this.controlDatas.hwayId}/${this.controlDatas.directionId}`, 'roadList', (data) => {
         /*  if (data.length) {
            this.controlDatas.roadId = data[0].roadId
            this.setState({ controlroadId: data[0].roadId })
@@ -1330,7 +1330,7 @@ class ReservePlan extends React.Component {
               <div className={style.EventTagging}>
                 <GMap equipmentInfoWinImg={this.equipmentInfoWinImg} deviceString={this.state.deviceString.join()} equipmentInfoWin={this.equipmentInfoWin} onRef={el => this.ChildPage = el} styles={this.mapStyles} mapID={'RpopMap'} roadLatlng={detailsLatlng} handledetai={this.handledetai} detailsPopup={this.controlDatas} boxSelect={boxSelect} flagClose={flagClose} EventTagPopup={EventTagPopup} />
                 <div className={style.EventTaggingLeft} style={{ zIndex: '999' }}>
-                  <div className={style.Title} style={{ background: '#132334', position: 'fixed', top: '61px', left: 'calc(5% + 6px)', zIndex: '999', width: 'calc(21.6% - 2px)' }}>{'修改预案库'}<Icon className={style.Close} onClick={() => { this.handleEventTag(false) }} type="close" /></div>
+                  <div className={style.Title} style={{ background: '#132334', position: 'fixed', top: '61px', left: 'calc(5% + 6px)', zIndex: '999', width: 'calc(21.6% - 2px)' }}>修改预案库<Icon className={style.Close} onClick={() => { this.handleEventTag(false) }} type="close" /></div>
                   <div className={style.Title} style={{ background: '#132334', lineHeight: '20px', height: '20px', marginTop: '60px', fontSize: '12px' }}>预案名称</div>
                   <div className={style.Centent}>
                     <div className={style.ItemBox}>

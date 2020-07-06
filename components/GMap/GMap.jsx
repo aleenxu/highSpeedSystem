@@ -26,6 +26,8 @@ window.linePoint = null
 class GMap extends React.Component {
   constructor(props) {
     super(props)
+    console.log(props);
+
     this.state = {
       keyWords: '', // 查询的关键词
       infoBoardJson: [], //情报版
@@ -46,6 +48,7 @@ class GMap extends React.Component {
       detailsPopup: this.props.detailsPopup, // 事件详情
       EventTagPopup: this.props.EventTagPopup, // 主动管控
       deviceString: this.props.deviceString, // 地图管控事件类型
+      appendIds: this.props.appendIds,
     }
     this.styles = {
       position: 'fixed',
@@ -101,14 +104,14 @@ class GMap extends React.Component {
 
     }
     if (this.props.styles !== nextProps.styles) {
-      this.setState({styles:nextProps.styles})
+      this.setState({ styles: nextProps.styles })
     }
     if (this.props.roadLatlng !== nextProps.roadLatlng) {
       this.setState({ roadLatlng: nextProps.roadLatlng })
     }
-    /* if (this.props.detailsPopup !== nextProps.detailsPopup) {
-      this.setState({ detailsPopup: nextProps.detailsPopup })
-    } */
+    if (this.props.appendIds !== nextProps.appendIds) {
+      this.setState({ appendIds: nextProps.appendIds })
+    }
     if (this.props.EventTagPopup !== nextProps.EventTagPopup) {
       this.setState({ EventTagPopup: nextProps.EventTagPopup })
     }
@@ -325,17 +328,22 @@ class GMap extends React.Component {
     }
     if (map) {
       for (let i = 0; i < positions.length; i++) {
+        console.log(positions[i], this.state.appendIds && this.state.appendIds.includes(positions[i].appendId), positions[i].appendId);
+
+        if (this.props.mapID === 'ReserveMap' && !(this.state.appendIds && this.state.appendIds.includes(positions[i].appendId))) { continue }
         const latlng = positions[i].latlng
         const marker = new AMap.Marker({
           position: new AMap.LngLat(latlng[0], latlng[1]),
           offset: new AMap.Pixel(-22.5, -22.5),
           icon: imgIcon,
         })
-        marker.on('click', (event) => {
-          const nowZoom = map.getZoom()
-          map.setZoomAndCenter(nowZoom, positions[i].latlng) // 同时设置地图层级与中心点
-          this.openInfoWin(map, positions[i])
-        })
+        if (!(this.props.mapID === 'ReserveMap')) {
+          marker.on('click', (event) => {
+            const nowZoom = map.getZoom()
+            map.setZoomAndCenter(nowZoom, positions[i].latlng) // 同时设置地图层级与中心点
+            this.openInfoWin(map, positions[i])
+          })
+        }
         this[layer].push(marker)
       }
       window[layer].addLayers(this[layer]) // 把点添加到层组中

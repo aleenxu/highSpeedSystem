@@ -21,7 +21,7 @@ class AnalysisCharts extends React.Component {
     const { chartsItems } = this.state
     const option = {
       legend: {
-        data: ['当前', '对比', '涨跌'],
+        data: ['当前', '对比'],
         // color: ['rgba(0,115,219,.5)', 'rgba(108,81,28,.5)', 'rgba(103,102,102,.5)'],
         textStyle: {
           color: '#fff',
@@ -31,7 +31,8 @@ class AnalysisCharts extends React.Component {
         name: '时间',
         type: 'category',
         boundaryGap: false,
-        data: ['28日00点', '28日10点', '28日20点', '28日30点', '28日40点', '28日50点', '29日00点', '29日10点', '29日20点', '29日30点', '29日40点', '29日50点'],
+        data: chartsItems.dataX,
+        // data: ['28日00点', '28日10点', '28日20点', '28日30点', '28日40点', '28日50点', '29日00点', '29日10点', '29日20点', '29日30点', '29日40点', '29日50点'],
         nameTextStyle: {
           fontSize: 16,
           padding: 18,
@@ -157,19 +158,8 @@ class AnalysisCharts extends React.Component {
             },
           ],
         },
-        data: [220, 332, 601, 234, 490, 730, 590, 220, 332, 601, 234, 490],
-        // itemStyle: {
-        //   normal: {
-        //     label: {
-        //       show: true,
-        //       color: '#fff',
-        //       fontSize: 12,
-        //     },
-        //     color: '#0073db',
-        //     borderColor: '0073db',
-        //     borderWidth: 2,
-        //   },
-        // },
+        data: chartsItems.dataYOne,
+        // data: [220, 332, 601, 234, 490, 730, 590, 220, 332, 601, 234, 490],
         lineStyle: {
           normal: {
             width: 2,
@@ -238,19 +228,8 @@ class AnalysisCharts extends React.Component {
             },
           ],
         },
-        data: [820, 132, 201, 434, 990, 230, 390, 820, 132, 201, 434, 990],
-        // itemStyle: {
-        //   normal: {
-        //     label: {
-        //       show: true,
-        //       color: '#fff',
-        //       fontSize: 12,
-        //     },
-        //     color: '#0efcff',
-        //     borderColor: '0efcff',
-        //     borderWidth: 2,
-        //   },
-        // },
+        data: chartsItems.dataYTwo,
+        // data: [820, 132, 201, 434, 990, 230, 390, 820, 132, 201, 434, 990],
         lineStyle: {
           normal: {
             width: 2,
@@ -272,55 +251,6 @@ class AnalysisCharts extends React.Component {
             }, {
               offset: 1,
               color: 'rgba(14,252,255,0)', // 100% 处的颜色
-            }],
-            global: false, // 缺省为 false
-          },
-        },
-      },
-      {
-        name: '涨跌',
-        type: 'line',
-        smooth: true,
-        symbol: 'none',
-        symbolSize: 7,
-        markPoint: {
-          symbol: 'circle',
-        },
-
-        data: [120, 332, 301, 534, 690, 230, 890, 120, 332, 301, 534, 690],
-        // itemStyle: {
-        //   normal: {
-        //     label: {
-        //       show: true,
-        //       color: '#fff',
-        //       fontSize: 12,
-        //     },
-        //     color: '#676666',
-        //     borderColor: '676666',
-        //     borderWidth: 2,
-        //   },
-        // },
-        lineStyle: {
-          normal: {
-            width: 2,
-            color: '#676666',
-            shadowColor: '#676666',
-            shadowBlur: 10,
-          },
-        },
-        areaStyle: {
-          color: {
-            type: 'linear',
-            x: 0,
-            y: 0,
-            x2: 0,
-            y2: 1,
-            colorStops: [{
-              offset: 0.5,
-              color: 'rgba(103,102,102,.5)', // 0% 处的颜色
-            }, {
-              offset: 1,
-              color: 'rgba(103,102,102,0)', // 100% 处的颜色
             }],
             global: false, // 缺省为 false
           },

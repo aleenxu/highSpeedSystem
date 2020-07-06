@@ -1137,6 +1137,7 @@ class MonitoringModule extends React.Component {
   handleMarkControlPop = () => {
     const { EventTagPopupTit, deviceString, deviceTypes, detailsPopup, eventType, importantId, lineLatlngArr } = this.state
     const deviceAry = []
+    const appendIds = []
     this.deviceReserve = JSON.parse(JSON.stringify(deviceString))
     const that = this
     if (EventTagPopupTit === '主动管控') {
@@ -1193,6 +1194,7 @@ class MonitoringModule extends React.Component {
             content: items.content,
             deviceControlType: items.deviceControlType,
           })
+          appendIds.push(items.appendId)
         })
       })
       if (deviceAry.length === 0) {
@@ -1200,6 +1202,7 @@ class MonitoringModule extends React.Component {
         return
       }
       this.reservePopup = {
+        appendIds,
         planName: this.controlDatas.planName,
         planSourceName: '平台数据',
         startPileNum: this.controlDatas.startPileNum,
@@ -1505,6 +1508,7 @@ class MonitoringModule extends React.Component {
         $('#searchBox').attr('style', 'transition:all .5s;')
         $('#roadStateBox').attr('style', 'transition:all .5s;')
         const list = []
+        const appendIds = []
         this.state.showContent = {}
         result.data.devices.forEach((item) => {
           item.device.forEach((items) => {
@@ -1519,6 +1523,7 @@ class MonitoringModule extends React.Component {
               deviceType: items.deviceType,
               deviceControlType: items.deviceControlType,
             })
+            appendIds.push(items.appendId)
           })
         })
         this.publishPlanVO = {
@@ -1531,6 +1536,9 @@ class MonitoringModule extends React.Component {
           startTime: result.data.startTime ? this.getDate(result.data.startTime) : this.getDate(),
         }
         result.data.controlDes = this.publishPlanVO.controlDes
+        result.data.appendIds = appendIds
+        console.log(result.data);
+        
         this.handleUrlAjax(this.groupUrl, 'MeasuresList')
         this.setState({
           reservePopup: result.data,
@@ -2298,8 +2306,9 @@ class MonitoringModule extends React.Component {
         {
           reservePopup ?
             <div className={styles.MaskBox}>
-              <div style={{ width: '44%', height: '88%' }}>
-                <GMap mapID="ReserveMap" styles={{ width: '100%', height: '100%' }} />
+              <div className={styles.ReserveBox} style={{ width: '44%', height: '88%' }}>
+                <div className={styles.Title}>设备展示</div>
+                <GMap appendIds={reservePopup.appendIds} mapID="ReserveMap" styles={{ width: '100%', height: 'calc(100% - 50px)' }} />
               </div>
               <div className={styles.ReserveBox}> {/* classNames(styles.DetailsBox, styles.ReserveBox) */}
                 <div className={styles.Title}>管控方案详情<Icon className={styles.Close} onClick={() => { this.handleEventPopup('Reserve', false) }} type="close" /></div>
