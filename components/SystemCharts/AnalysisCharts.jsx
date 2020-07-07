@@ -122,6 +122,7 @@ class AnalysisCharts extends React.Component {
         smooth: true,
         symbol: 'none',
         symbolSize: 7,
+        color: '#0073db',
         markPoint: {
           symbol: 'circle',
         },
@@ -140,7 +141,7 @@ class AnalysisCharts extends React.Component {
           },
           lineStyle: {
             type: 'solid',
-            color: '#6d2a17',
+            color: '#0073db',
             width: 2,
           },
           data: [
@@ -149,11 +150,11 @@ class AnalysisCharts extends React.Component {
               lineStyle: {
                 normal: {
                   width: 2,
-                  color: '#6c511c',
+                  color: '#0073db',
                 },
               },
               label: {
-                backgroundColor: 'rgba(108,81,28,.5)',
+                backgroundColor: 'rgba(0,115,219,.5)',
               },
             },
           ],
@@ -192,6 +193,7 @@ class AnalysisCharts extends React.Component {
         smooth: true,
         symbol: 'none',
         symbolSize: 7,
+        color: '#0efcff',
         markPoint: {
           symbol: 'circle',
         },
@@ -210,7 +212,7 @@ class AnalysisCharts extends React.Component {
           },
           lineStyle: {
             type: 'solid',
-            color: '#6d2a17',
+            color: '#0efcff',
             width: 2,
           },
           data: [
@@ -219,11 +221,11 @@ class AnalysisCharts extends React.Component {
               lineStyle: {
                 normal: {
                   width: 2,
-                  color: '#6d2a17',
+                  color: '#0efcff',
                 },
               },
               label: {
-                backgroundColor: 'rgba(109,42,23,.5)',
+                backgroundColor: 'rgba(14,252,255,.5)',
               },
             },
           ],

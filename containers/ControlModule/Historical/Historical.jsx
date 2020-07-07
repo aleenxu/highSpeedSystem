@@ -211,6 +211,11 @@ class Historical extends React.Component {
   handleClose = (name, value) => {
     this.setState({ [name]: value, operationData: null })
   }
+  handleanalysisEchart = () => {
+    const { reservePopup } = this.state
+    localStorage.setItem('analysisEchart', JSON.stringify(reservePopup))
+    window.open('#/analysisEchart')
+  }
   render() {
     const {
       eventTypeData, userLimit, operationData, reservePopup, listByPage, current, endOpen, endValue, startValue, simpleHis,
@@ -353,9 +358,9 @@ class Historical extends React.Component {
                   {
                     operationData ?
                       <div>
-                        {/* <div className={styles.guanBox}>
-                          <Button className={styles.Button}>管控效果评估</Button>
-                        </div> */}
+                        <div className={styles.guanBox}>
+                          <Button onClick={this.handleanalysisEchart} className={styles.Button}>管控效果评估</Button>
+                        </div>
                         <div className={styles.guanBox}>
                           <span className={styles.guanTitle}>操作记录</span>
                         </div>

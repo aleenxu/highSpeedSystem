@@ -108,9 +108,17 @@
           background-color: #191c22;
           color: #fff;
         }
-        :gloabl(.ant-calendar-picker-icon) {
+        :global(.ant-time-picker-clear) {
+          background-color: #191c22;
           color: #fff;
         }
+        :gloabl(.ant-calendar-picker-icon) {
+          color: #fff !important;
+        }
+        :global(.ant-time-picker-icon .ant-time-picker-clock-icon) {
+          color: #fff;
+        }
+         
         .Button {
           min-width: 80px;
           height: 25px;

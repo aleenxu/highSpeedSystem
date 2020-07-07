@@ -186,7 +186,8 @@ class Basics extends React.Component {
     this.setState({ [name]: value, operationData: null })
   }
   handleanalysisEchart = () => {
-    // const analysisEchart = JSON.parse(localStorage.getItem('analysisEchart'))
+    const { reservePopup } = this.state
+    localStorage.setItem('analysisEchart', JSON.stringify(reservePopup))
     window.open('#/analysisEchart')
   }
   render() {
@@ -329,9 +330,9 @@ class Basics extends React.Component {
                   {
                     operationData ?
                       <div>
-                        {/* <div className={styles.guanBox}>
-                          <Button className={styles.Button}>管控效果评估</Button>
-                        </div> */}
+                        <div className={styles.guanBox}>
+                          <Button onClick={this.handleanalysisEchart} className={styles.Button}>管控效果评估</Button>
+                        </div>
                         <div className={styles.guanBox}>
                           <span className={styles.guanTitle}>操作记录</span>
                         </div>

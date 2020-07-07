@@ -655,7 +655,11 @@ class ReservePlan extends React.Component {
         if (item.appendId === items) {
           deviceTypes.forEach((itemss, index) => {
             if (itemss.dictCode === item.deviceType) {
-              deviceTypes[index].device.push(item)
+              if (item.innerDevices) {
+                deviceTypes[index].device.push(...item.innerDevices)
+              } else {
+                deviceTypes[index].device.push(item)
+              }
             }
           })
         }

@@ -906,19 +906,28 @@ class MonitoringModule extends React.Component {
   }
   handleBoxSelectList = () => {
     const { checkedListBox, detailsPopup, boxSelectList, oldDevicesList, EventTagPopupTit, deviceTypes } = this.state
+    console.log(boxSelectList);
     boxSelectList.forEach((item) => {
       checkedListBox && checkedListBox.forEach((items) => {
         if (item.appendId === items) {
           if (EventTagPopupTit !== '主动管控') {
             detailsPopup.devices.forEach((itemss, index) => {
               if (itemss.dictCode === item.deviceType) {
-                detailsPopup.devices[index].device.push(item)
+                if (item.innerDevices) {
+                  detailsPopup.devices[index].device.push(...item.innerDevices)
+                } else {
+                  detailsPopup.devices[index].device.push(item)
+                }
               }
             })
           } else {
             deviceTypes.forEach((itemss, index) => {
               if (itemss.dictCode === item.deviceType) {
-                deviceTypes[index].device.push(item)
+                if (item.innerDevices) {
+                  deviceTypes[index].device.push(...item.innerDevices)
+                } else {
+                  deviceTypes[index].device.push(item)
+                }
               }
             })
           }
@@ -1538,7 +1547,7 @@ class MonitoringModule extends React.Component {
         result.data.controlDes = this.publishPlanVO.controlDes
         result.data.appendIds = appendIds
         console.log(result.data);
-        
+
         this.handleUrlAjax(this.groupUrl, 'MeasuresList')
         this.setState({
           reservePopup: result.data,
@@ -1979,23 +1988,27 @@ class MonitoringModule extends React.Component {
           })
         }
       })
-
+      const MeasData = []
+      MeasuresList[value.deviceType].forEach((item) => {
+        if (this.state.deviceString.includes(item.controlType)) {
+          MeasData.push(item)
+        }
+      })
       if (value.innerDevices) {
+        if (MeasData.length === 1) {
+          value.innerDevices.forEach((it) => {
+            it.content = MeasData[0].content || MeasData[0].showContent
+            it.deviceControlType = MeasData[0].controlType
+          })
+        }
         this.setState({
           TypeWinPopup: value,
         })
       } else { // 设置选择只有一个时候默认值
-        if (!(value.content && value.deviceControlType)) {
-          const MeasData = []
-          MeasuresList[value.deviceType].forEach((item) => {
-            if (this.state.deviceString.includes(item.controlType)) {
-              MeasData.push(item)
-            }
-          })
-          if (MeasData.length === 1) {
-            value.deviceControlType = MeasData[0].controlType
-            value.content = MeasData[0].showContent
-          }
+        /* if (!(value.content && value.deviceControlType)) {} */
+        if (MeasData.length === 1) {
+          value.deviceControlType = MeasData[0].controlType
+          value.content = MeasData[0].showContent
         }
         this.setState({
           InfoWinPopup: value,
@@ -2004,6 +2017,7 @@ class MonitoringModule extends React.Component {
     } else {
       this.setState({
         InfoWinPopup: value,
+        TypeWinPopup: value,
       })
     }
   }
