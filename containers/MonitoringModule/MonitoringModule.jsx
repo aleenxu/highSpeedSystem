@@ -18,18 +18,6 @@ const { Panel } = Collapse
 const { Search } = Input
 const { Option } = Select
 const { confirm } = Modal
-const options = [
-  { label: '交通拥堵', value: '1' },
-  { label: '道路施工', value: '2' },
-  { label: '极端天气', value: '3' },
-  { label: '交通事故', value: '4' },
-]
-const plainOptions = [
-  { label: '一级', value: '1' },
-  { label: '二级', value: '2' },
-  { label: '三级', value: '3' },
-  { label: '四级', value: '4' },
-]
 window.newPoint = new Array(4).fill(null) // 绘制地图记录的点
 class MonitoringModule extends React.Component {
   constructor(props) {
@@ -2529,7 +2517,6 @@ class MonitoringModule extends React.Component {
                   <p className={styles.ItemInput}>
                     <DatePicker
                       disabledDate={this.handledisabledEndDate}
-                      disabledTime={this.disabledDateTime}
                       showTime
                       format="YYYY-MM-DD HH:mm:ss"
                       value={endValueTime ? moment(endValueTime, 'YYYY-MM-DD HH:mm:ss') : endValue}

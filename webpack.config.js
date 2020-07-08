@@ -117,7 +117,7 @@ if (!httpENV) { // 如果是开发环境
   webpackConfig.devServer = {
     proxy: {
       '/app': {
-        target: 'http://192.168.1.124:20203/',
+        target: 'http://47.108.61.84:8081/',
         // pathRewrite: { '^/api': '' },
         // changeOrigion: true, // 这个参数可以让target参数是域名。
         secure: false, // 设置后，可以接受运行在 HTTPS 上，可以使用无效证书的后端服务器

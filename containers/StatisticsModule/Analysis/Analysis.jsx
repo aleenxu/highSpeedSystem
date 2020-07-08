@@ -82,6 +82,7 @@ class Analysis extends React.Component {
   }
   // 通用模板式接口请求
   handleUrlAjax = (url, name, callback) => {
+    console.log(url);
     getResponseDatas('get', url).then((res) => {
       const result = res.data
       if (result.code === 200) {
@@ -327,12 +328,11 @@ class Analysis extends React.Component {
                   <DatePicker
                     format="YYYY-MM-DD"
                     placeholder="当前日期"
-                    disabledDate={this.disabledStartDate}
-                    showTime
                     value={startValue}
                     onChange={this.onStartChange}
-                    onOpenChange={this.handleStartOpenChange}
                   />
+                  {/* disabledDate={this.disabledStartDate}
+                    onOpenChange={this.handleStartOpenChange} */}
                 </div>
                 <div className={style.Listlable}>
                   对比日期&nbsp;&nbsp;:&nbsp;&nbsp;
@@ -341,13 +341,12 @@ class Analysis extends React.Component {
                   <DatePicker
                     format="YYYY-MM-DD"
                     placeholder="对比日期"
-                    disabledDate={this.disabledEndDate}
-                    showTime
                     value={endValue}
                     onChange={this.onEndChange}
-                    open={endOpen}
-                    onOpenChange={this.handleEndOpenChange}
                   />
+                  {/* open={endOpen}
+                   disabledDate={this.disabledEndDate}
+                    onOpenChange={this.handleEndOpenChange} */}
                 </div>
                 <div className={style.Listlable}>
                   开始时间&nbsp;&nbsp;:&nbsp;&nbsp;

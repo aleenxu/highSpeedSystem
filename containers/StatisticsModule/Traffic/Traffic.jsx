@@ -24,28 +24,28 @@ class Traffic extends React.Component {
       Roadsection: null, // 路段
     }
     this.Parameters = {
-      RoadSection: '',
-      endTime: '',
-      startTime: '',
-      eventType: '',
-      region: '',
-      road: '',
+      endTime: moment().endOf('day').format('YYYY-MM-DD HH:mm:ss'),
+      startTime: moment().startOf('day').format('YYYY-MM-DD HH:mm:ss'),
     }
-    this.eventStatisticsUrl = '/control/statis/eventStatistics' // 事件统计
-    this.MessageUrl = '/control/statis/getRoadMessage' // 获取高速信息'
+    this.start = true
+    this.getRoadByUrl = '/control/customize/road/get/road/by/' // {hwayId}/{directionId} // 根据高速id和上下行方向查询出当前登录用户所能看到的系统自定义路段'
+    this.eventStatisticsUrl = '/control/statistics/event/' // 事件统计
+    this.MessageUrl = '/control/static/hway/list/direction' // 获取高速信息'
   }
   componentDidMount = () => {
     // 获取高速信息
     this.getRoadMessage()
+    console.log(moment().startOf('day').format('YYYY-MM-DD HH:mm:ss'))
+    console.log(moment().endOf('day').format('YYYY-MM-DD HH:mm:ss'))
   }
   onSecondChange = (value, name) => {
     this.setState({
       [name]: value,
     })
   }
-  getJurisdiction = (value, type) => {
+  getJurisdiction = (value) => {
     const { RoadMessage = [] } = this.state
-    if (value == '') {
+    if (value === '') {
       this.setState({
         Jurisdiction: value,
         RoadData: [],
@@ -56,25 +56,20 @@ class Traffic extends React.Component {
       return
     }
     RoadMessage.forEach((item) => {
-      if (item.key === value) {
+      if (item.hwayId === value) {
         this.setState({
           Jurisdiction: value,
-          RoadData: item.value,
-          RoadValue: item.value[0].key,
-          RoadsectionData: item.value[0].value,
-          Roadsection: item.value[0].value[0].road_sec_id,
-        }, () => {
-          // 初始化查询
-          if (type === 'DidMount') {
-            this.geteventStatistics()
-          }
+          RoadData: item.direction,
+          RoadValue: item.direction[0].directionId,
         })
+        this.handlegetRoadBy({ hwayId: item.hwayId, directionId: item.direction[0] ? item.direction[0].directionId : '' })
       }
     })
   }
+
   getRoadData = (value) => {
-    const { RoadData } = this.state
-    if (value == '') {
+    const { RoadData, Jurisdiction } = this.state
+    if (value === '') {
       this.setState({
         RoadValue: value,
         RoadsectionData: [],
@@ -83,33 +78,25 @@ class Traffic extends React.Component {
       return
     }
     RoadData.forEach((item) => {
-      if (item.key === value) {
+      if (item.directionId === value) {
         this.setState({
           RoadValue: value,
-          RoadsectionData: item.value,
-          Roadsection: item.value[0].road_sec_id,
         })
+        this.handlegetRoadBy({ hwayId: Jurisdiction, directionId: value })
       }
     })
   }
   geteventStatistics = () => {
-    const { Roadsection, RoadValue, Jurisdiction, eventValue } = this.state
-    const data = {
-      ...this.Parameters,
-      RoadSection: Roadsection,
-      eventType: eventValue,
-      region: Jurisdiction,
-      road: RoadValue,
-    }
-    getResponseDatas('get', this.eventStatisticsUrl, data).then((res) => {
+    const { Roadsection, eventValue } = this.state
+    getResponseDatas('get', `${this.eventStatisticsUrl + eventValue}/${Roadsection || 0}`, this.Parameters).then((res) => {
       const result = res.data
       if (result.code === 200) {
-        // console.log(result.data)
+        console.log(result.data)
         const dataX = []
         const dataY = []
         result.data.forEach((item) => {
-          dataX.push(item.key)
-          dataY.push(item.value)
+          dataX.push(item.x)
+          dataY.push(item.y)
         })
         this.setState({
           chartsData: { dataX, dataY }
@@ -121,35 +108,45 @@ class Traffic extends React.Component {
     getResponseDatas('get', this.MessageUrl).then((res) => {
       const result = res.data
       if (result.code === 200) {
-        // console.log(result.data)
-        this.setState({
-          RoadMessage: result.data,
-          Jurisdiction: result.data[0].key,
-        }, () => {
-          this.getJurisdiction(result.data[0].key, 'DidMount')
+        if (result.data.length) {
+          this.setState({
+            RoadMessage: result.data,
+            Jurisdiction: result.data[0].hwayId,
+          }, () => {
+            this.getJurisdiction(result.data[0].hwayId, 'DidMount')
+          })
+        }
+      }
+    })
+  }
+  // 通用模板式接口请求
+  handleUrlAjax = (url, name, callback) => {
+    getResponseDatas('get', url).then((res) => {
+      const result = res.data
+      if (result.code === 200) {
+        this.setState({ [name]: result.data }, () => {
+          if (callback) {
+            callback(result.data)
+          }
         })
       }
     })
   }
-  getDate = (name) => {
-    const today = new Date()
-    const year = today.getFullYear()
-    const month = ('0' + (today.getMonth() + 1)).slice(-2)
-    const day = ('0' + (today.getDate())).slice(-2)
-    const hour = ('0' + (today.getHours())).slice(-2)
-    const minutes = ('0' + (today.getMinutes())).slice(-2)
-    const seconds = ('0' + (today.getSeconds())).slice(-2)
-    const navtime = year + '-' + month + '-' + day + ' '
-    const navmse = hour + ':' + minutes + ':' + seconds
-    if (name === 'startTime') {
-      return navtime + '00:00:00'
-    } else {
-      return navtime + navmse
-    }
+  handlegetRoadBy = (item) => {
+    this.handleUrlAjax(`${this.getRoadByUrl + item.hwayId}/${item.directionId}`, 'RoadsectionData', (data) => {
+      if (data.length) {
+        this.setState({
+          Roadsection: data[0].roadId,
+        }, () => {
+          if (this.start) {
+            this.geteventStatistics()
+            this.start = false
+          }
+        })
+      }
+    })
   }
   handleDatastring = (value, dateString) => {
-    // console.log('Selected Time: ', value)
-    // console.log('Formatted Selected Time: ', dateString);
     this.Parameters.startTime = dateString[0]
     this.Parameters.endTime = dateString[1]
   }
@@ -180,14 +177,14 @@ class Traffic extends React.Component {
               </div>
               <div className={styles.OperationItem}>
                 <Select
-                  style={{ width: '100%' }} // 辖区
+                  style={{ width: '100%' }} // 高速
                   onChange={this.getJurisdiction}
                   value={Jurisdiction}
                 >
                   <Option value="">全部</Option>
                   {
                     RoadMessage && RoadMessage.map((item) => {
-                      return <Option key={item.key} value={item.key}>{item.key}</Option>
+                      return <Option key={item.hwayId} value={item.hwayId}>{item.hwayName}</Option>
                     })
                   }
                 </Select>
@@ -197,12 +194,12 @@ class Traffic extends React.Component {
                   onChange={this.getRoadData}
                   style={{ width: '100%' }}
                   value={RoadValue}
-                  disabled={!Jurisdiction}
+                  disabled={!Jurisdiction} // 方向
                 >
                   <Option value="">全部</Option>
                   {
                     RoadData && RoadData.map((item) => {
-                      return <Option value={item.key} key={item.key}>{item.key}</Option>
+                      return <Option key={item.directionId} value={item.directionId}>{item.directionName}</Option>
                     })
                   }
                 </Select>
@@ -217,7 +214,7 @@ class Traffic extends React.Component {
                   <Option value="">全部</Option>
                   {
                     RoadsectionData && RoadsectionData.map((item) => {
-                      return <Option value={item.road_sec_id} key={item.road_sec_id}>{item.sec_name}</Option>
+                      return <Option key={item.roadId} value={item.roadId}>{item.roadName}</Option>
                     })
                   }
 
@@ -228,6 +225,7 @@ class Traffic extends React.Component {
                   showTime={{ format: 'HH:mm:ss' }}
                   format="YYYY-MM-DD HH:mm:ss"
                   onChange={this.handleDatastring}
+                  defaultValue={[moment().startOf('day'), moment().endOf('day')]}
                   onOk={this.handleDataonOk}
                 />
               </div>

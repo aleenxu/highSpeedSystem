@@ -161,11 +161,8 @@ class analysisEchart extends React.Component {
                   <DatePicker
                     format="YYYY-MM-DD"
                     placeholder="当前日期"
-                    disabledDate={this.disabledStartDate}
-                    showTime
                     value={startValue}
                     onChange={this.onStartChange}
-                    onOpenChange={this.handleStartOpenChange}
                   />
                 </div>
                 <div className={style.Listlable}>
@@ -175,12 +172,8 @@ class analysisEchart extends React.Component {
                   <DatePicker
                     format="YYYY-MM-DD"
                     placeholder="对比日期"
-                    disabledDate={this.disabledEndDate}
-                    showTime
                     value={endValue}
                     onChange={this.onEndChange}
-                    open={endOpen}
-                    onOpenChange={this.handleEndOpenChange}
                   />
                 </div>
                 <div className={style.Listlable}>
