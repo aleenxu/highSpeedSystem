@@ -248,6 +248,7 @@ class MonitoringModule extends React.Component {
       this.wsocket.close()
       this.socketState = false
     }
+    notification.destroy()
   }
 
   onStartChange = (value) => {

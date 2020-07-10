@@ -7,6 +7,7 @@ import getResponseDatas from '../../../plugs/HttpData/getResponseData'
 import SystemCharts from '../../../components/SystemCharts/SystemCharts'
 import { Select, DatePicker, Button } from 'antd'
 import moment from 'moment'
+
 const { Option } = Select
 const { RangePicker } = DatePicker
 /*        事件统计            */
@@ -17,11 +18,11 @@ class Traffic extends React.Component {
       chartsData: null,
       RoadMessage: null,
       eventValue: 1, // 事件类型
-      Jurisdiction: null, // 辖区
+      Jurisdiction: '', // 辖区
       RoadData: null, // 道路下拉数据
-      RoadValue: null, // 道路
+      RoadValue: '', // 道路
       RoadsectionData: null, // 路段下拉数据
-      Roadsection: null, // 路段
+      Roadsection: '', // 路段
     }
     this.Parameters = {
       endTime: moment().endOf('day').format('YYYY-MM-DD HH:mm:ss'),
@@ -111,9 +112,10 @@ class Traffic extends React.Component {
         if (result.data.length) {
           this.setState({
             RoadMessage: result.data,
-            Jurisdiction: result.data[0].hwayId,
+            // Jurisdiction: result.data[0].hwayId,
           }, () => {
-            this.getJurisdiction(result.data[0].hwayId, 'DidMount')
+            this.geteventStatistics()
+            // this.getJurisdiction(result.data[0].hwayId, 'DidMount')
           })
         }
       }
@@ -138,10 +140,10 @@ class Traffic extends React.Component {
         this.setState({
           Roadsection: data[0].roadId,
         }, () => {
-          if (this.start) {
+          /* if (this.start) {
             this.geteventStatistics()
             this.start = false
-          }
+          } */
         })
       }
     })
@@ -208,7 +210,7 @@ class Traffic extends React.Component {
                 <Select
                   style={{ width: '100%' }}
                   value={Roadsection}
-                  disabled={!RoadValue}
+                  disabled={RoadValue === ''}
                   onChange={(e) => { this.onSecondChange(e, 'Roadsection') }}
                 >
                   <Option value="">全部</Option>
