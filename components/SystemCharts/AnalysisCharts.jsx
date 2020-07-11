@@ -126,6 +126,28 @@ class AnalysisCharts extends React.Component {
         markPoint: {
           symbol: 'circle',
         },
+        markArea: {
+          silent: true,
+          label: {
+            position: [10, 10],
+            color: '#0efcff',
+            fontSize: 14,
+            fontWeight: 'bold'
+          },
+          itemStyle: {
+            color: 'rgba(23,166,132,0.3)',
+
+          },
+          data: this.props.time ? [
+            [{
+              xAxis: this.props.time.startTime,
+              name: '管控时间',
+
+            }, {
+              xAxis: this.props.time.endTime,
+            }],
+          ] : [],
+        },
         markLine: {
           symbol: 'none',
           label: {
@@ -197,6 +219,28 @@ class AnalysisCharts extends React.Component {
         markPoint: {
           symbol: 'circle',
         },
+        markArea: {
+          silent: true,
+          label: {
+            position: [10, 10],
+            color: '#0efcff',
+            fontSize: 14,
+            fontWeight: 'bold'
+          },
+          itemStyle: {
+            color: 'rgba(23,166,132,0.3)',
+
+          },
+          data: this.props.time ? [
+            [{
+              xAxis: this.props.time.startTime,
+              name: '管控时间',
+
+            }, {
+              xAxis: this.props.time.endTime,
+            }],
+          ] : [],
+        },
         markLine: {
           symbol: 'none',
           label: {
@@ -263,6 +307,8 @@ class AnalysisCharts extends React.Component {
     return option
   }
   render() {
+    console.log(this.props.time);
+
     return (
       <ReactEcharts option={this.getOptions()} style={{ height: this.props.height }} />
     )

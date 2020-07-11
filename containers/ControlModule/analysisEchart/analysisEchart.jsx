@@ -28,6 +28,7 @@ class analysisEchart extends React.Component {
       startPileNum: '',
       endPileNum: '',
     }
+    this.time = null
   }
   componentDidMount = () => {
     this.handleanalyData()
@@ -66,6 +67,25 @@ class analysisEchart extends React.Component {
   handleEndOpenChange = (open) => {
     this.setState({ endOpen: open })
   }
+  handleFive = (sV) => {
+    let startTim = sV
+    if (sV % 5) {
+      if (sV > 0 && sV < 5) {
+        if (sV > 2.5) {
+          startTim = 5
+        } else {
+          startTim = 0
+        }
+      } else {
+        if (sV > 7.5) {
+          startTim = 0
+        } else {
+          startTim = 5
+        }
+      }
+    }
+    return startTim
+  }
   handleanalyData = () => {
     const analyData = JSON.parse(localStorage.getItem('analysisEchart'))
     console.log(analyData)
@@ -75,11 +95,21 @@ class analysisEchart extends React.Component {
     } else {
       this.Parameters.startPileNum = analyData.pileNum && analyData.pileNum.split(' ')[0]
       this.Parameters.endPileNum = analyData.pileNum && analyData.pileNum.split(' ')[1]
+      const start = moment(analyData.startValue).format('HH:mm')
+      const end = moment(analyData.endTime).format('HH:mm')
+      const startTime = start.slice(0, -1) + this.handleFive(Number(start.slice(-1)))
+      const endTime = end.slice(0, -1) + this.handleFive(Number(end.slice(-1)))
+      this.time = {
+        startTime,
+        endTime,
+      }
+      console.log(this.time);
+      
       this.setState({
         startValue: moment(analyData.startTime),
         endValue: moment(analyData.startTime).add(-1, 'day'),
-        startTimeValue: moment(analyData.startValue).format('HH:mm:ss'),
-        endTimeValue: moment(analyData.endTime).format('HH:mm:ss'),
+        /*  startTimeValue: moment(analyData.startValue).format('HH:mm:ss'),
+         endTimeValue: moment(analyData.endTime).format('HH:mm:ss'), */
       })
     }
     this.setState({ analyData }, () => {
@@ -241,7 +271,11 @@ class analysisEchart extends React.Component {
               </div>
               <div className={style.listRight} style={{ height: 'calc(100% - 60px)' }}>
                 <div className={style.ChartsBox}>
-                  <AnalysisCharts chartsItems={chartsItems} height="100%" />
+                  {analyData && <AnalysisCharts
+                    chartsItems={chartsItems}
+                    height="100%"
+                    time={this.time}
+                  />}
                 </div>
               </div>
             </div>

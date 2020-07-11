@@ -441,8 +441,8 @@ class LaneControl extends React.Component {
                         {getFieldDecorator('laneNum', {
                           rules: [
                             {
-                              pattern: /(^[1-6]$)/,
-                              message: '请输入正整数,且不大于6!',
+                              pattern: /^(?:[1-9]|1[0-9]|20)$/,
+                              message: '请输入正整数,且不大于20,不等于0!',
                             },
                             {
                               required: true,

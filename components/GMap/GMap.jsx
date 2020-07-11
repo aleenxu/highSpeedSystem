@@ -203,7 +203,7 @@ class GMap extends React.Component {
         resizeEnable: true, //是否监控地图容器尺寸变化
         center: [103.882158, 30.436527], //初始化地图中心点
         mapStyle: "amap://styles/c3fa565f6171961e94b37c4cc2815ef8",
-        zoom: 11,
+        zoom: this.props.mapID === 'HistorcalMap' ? 12 : 14,
       })
       window.map = map
       this.map = window.map
@@ -350,6 +350,29 @@ class GMap extends React.Component {
       window[layer].setMap(map) // 层组渲染到地图中
     }
   }
+  circle = (path, type) => {
+    window['lineLayers'].hide()
+    // window['lineLayers'].clearLayer()
+    window['lineLayers'].fx = []
+    window['lineLayers'].show()
+    const circle = new AMap.Circle({
+      center: ["103.854255", "30.457343"],
+      radius: 250, // 半径
+      borderWeight: 3,
+      // strokeColor: "#98989a",
+      strokeOpacity: 1,
+      strokeWeight: 6,
+      strokeOpacity: 0.2,
+      fillOpacity: 0.4,
+      strokeStyle: 'dashed',
+      strokeDasharray: [10, 10],
+      // 线样式还支持 'dashed'
+      fillColor: '#98989a',
+      zIndex: 50,
+    })
+    window['lineLayers'].addLayer(circle)
+    window['lineLayers'].setMap(this.map)
+  }
   drawLine = (path, type) => {
     window['lineLayers'].hide()
     // window['lineLayers'].clearLayer()
@@ -418,7 +441,7 @@ class GMap extends React.Component {
     this.dataItem = JSON.parse(JSON.stringify(dataItem))
     info.push(`<div class='content_box'>`);
     info.push(`<div class='content_box_title'><h4>设备信息</h4>`);
-    info.push(`<p class='input-item'>设备名称：<span>` + dataItem.deviceName + `</span></p>`);
+    info.push(`<p class='input-item'>设备名称：<span>` + (dataItem.deviceType === 4 ? '新津花源收费站' : dataItem.deviceName) + `</span></p>`);
     info.push(`<p class='input-item'>设备类型：<span>` + dataItem.deviceTypeName + `</span></p>`);
     info.push(`<p class='input-item'>桩号：<span>` + dataItem.pileNum + `</span></p>`);
     info.push(`<p class='input-item'>方向：<span>` + dataItem.roadDirectionName + `</span></p>`);
