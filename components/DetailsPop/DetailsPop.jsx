@@ -2,6 +2,7 @@ import React from 'react'
 import { Icon, Collapse } from 'antd'
 import styles from './DetailsPop.scss'
 import NoData from '../NoData/NoData'
+
 const { Panel } = Collapse
 class DetailsPop extends React.Component { // 事件详情
   constructor(props) {
@@ -37,6 +38,8 @@ class DetailsPop extends React.Component { // 事件详情
   }
   render() {
     const { detailsPopup } = this.state
+    console.log(detailsPopup);
+    
     const { unitText, handleSelect, handleEventTag, handleClose, handleViewControl, handleControl } = this.props
     return (
       <div className={styles.Eventdetails}>

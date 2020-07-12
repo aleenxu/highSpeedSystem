@@ -331,7 +331,7 @@ class Basics extends React.Component {
                     operationData ?
                       <div>
                         <div className={styles.guanBox}>
-                          <Button onClick={this.handleanalysisEchart} className={styles.Button}>管控效果评估</Button>
+                          <Button onClick={this.handleanalysisEchart} style={{ margin: '0 22px' }} className={reservePopup.startTime ? styles.Button : styles.Buttondeb} disabled={!reservePopup.startTime}>管控效果评估</Button>
                         </div>
                         <div className={styles.guanBox}>
                           <span className={styles.guanTitle}>操作记录</span>

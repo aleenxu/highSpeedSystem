@@ -315,25 +315,25 @@ class LaneControl extends React.Component {
                 <div className={styles.listTd} >经纬度坐标</div>
                 <div className={styles.listTd} >方向</div>
                 <div className={styles.listTd} >IP地址</div>
-                <div className={styles.listTd} style={{ flex: '1.7' }}>端口号</div>
-                {userLimit.includes(86) || userLimit.includes(87) ? <div className={styles.listTd} >操作</div> : null}
+                <div className={styles.listTd} >端口号</div>
+                {userLimit.includes(86) || userLimit.includes(87) ? <div className={styles.listTd} style={{ flex: '1.7' }}>操作</div> : null}
               </div>
               {
                 !!listByPage && listByPage.data.map((item) => {
                   return (
                     <div className={styles.listItems} key={item.deviceName + item.deviceId}>
-                      <div className={styles.listTd} ><span className={styles.roadName}>{item.deviceId}</span></div>
-                      <div className={styles.listTd} ><span className={styles.roadName}>{item.deviceName}</span></div>
-                      <div className={styles.listTd} ><span className={styles.roadName}>{this.handledirection(vendorList, item.vendor)}</span></div>
-                      <div className={styles.listTd} ><span className={styles.roadName}>{item.hwayName}</span></div>
-                      <div className={styles.listTd} ><span className={styles.roadName}>{item.roadName}</span></div>
-                      <div className={styles.listTd} ><span className={styles.roadName}>{item.pileNum}</span></div>
-                      <div className={styles.listTd} ><span className={styles.roadName}>{item.laneNum}</span></div>
-                      <div className={styles.listTd} ><span className={styles.roadName}>{this.handledirection(functionList, item.function)}</span></div>
-                      <div className={styles.listTd} ><span className={styles.roadName}>{item.latlng}</span></div>
-                      <div className={styles.listTd} ><span className={styles.roadName}>{item.directionName}</span></div>
-                      <div className={styles.listTd} ><span className={styles.roadName}>{item.deviceIp}</span></div>
-                      <div className={styles.listTd} ><span className={styles.roadName}>{item.port}</span></div>
+                      <div className={styles.listTd} title={item.deviceId}><span className={styles.roadName}>{item.deviceId}</span></div>
+                      <div className={styles.listTd} title={item.deviceName}><span className={styles.roadName}>{item.deviceName}</span></div>
+                      <div className={styles.listTd} title={this.handledirection(vendorList, item.vendor)}><span className={styles.roadName}>{this.handledirection(vendorList, item.vendor)}</span></div>
+                      <div className={styles.listTd} title={item.hwayName}><span className={styles.roadName}>{item.hwayName}</span></div>
+                      <div className={styles.listTd} title={item.roadName}><span className={styles.roadName}>{item.roadName}</span></div>
+                      <div className={styles.listTd} title={item.pileNum}><span className={styles.roadName}>{item.pileNum}</span></div>
+                      <div className={styles.listTd} title={item.laneNum}><span className={styles.roadName}>{item.laneNum}</span></div>
+                      <div className={styles.listTd} title={this.handledirection(functionList, item.function)}><span className={styles.roadName}>{this.handledirection(functionList, item.function)}</span></div>
+                      <div className={styles.listTd} title={item.latlng}><span className={styles.roadName}>{item.latlng}</span></div>
+                      <div className={styles.listTd} title={item.directionName}><span className={styles.roadName}>{item.directionName}</span></div>
+                      <div className={styles.listTd} title={item.deviceIp}><span className={styles.roadName}>{item.deviceIp}</span></div>
+                      <div className={styles.listTd} title={item.port}><span className={styles.roadName}>{item.port}</span></div>
                       {userLimit.includes(86) || userLimit.includes(87) ?
                         <div className={styles.listTd} style={{ flex: '1.7' }}>
                           {userLimit.includes(86) && <Button className={styles.Button} onClick={() => { this.handleboardData(item) }}>修&nbsp;&nbsp;改</Button>}

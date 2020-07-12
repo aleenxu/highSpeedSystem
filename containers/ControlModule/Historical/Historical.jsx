@@ -114,19 +114,20 @@ class Historical extends React.Component {
   }
   //  事件详情
   handlehistory = (data, type) => {
-    const url = type ? this.historyUrl : this.getInfoUrl
-    getResponseDatas('get', url + data + '/1').then((res) => {
+    console.log(data);
+    const url = type ? `${this.historyUrl + data.eventNum}/${data.eventType}/1` : `${this.getInfoUrl + data.planNum}/1`
+    getResponseDatas('get', url).then((res) => {
       const result = res.data
       if (result.code === 200) {
         this.setState({ reservePopup: result.data }, () => {
           if (type) {
             setTimeout(() => {
               const latlngArr = JSON.parse(JSON.stringify(result.data.latlng))
-              this.getLineCenterPoint(result.data.latlng)
+              // this.getLineCenterPoint(result.data.latlng)
               window.drawLine(latlngArr, result.data.eventType !== 9)
             }, 0)
           } else {
-            this.handleoperation(data)
+            this.handleoperation(data.planNum)
           }
         })
       }
@@ -312,7 +313,7 @@ class Historical extends React.Component {
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.sustainTime ? this.formatDuring(item.sustainTime) : '-'}</span></div>
                       <div className={styles.listTd} ><span className={styles.roadName}>{item.controllId ? '是' : '否'}</span></div>
                       <div className={styles.listTd} >
-                        <Button className={styles.Button} onClick={() => { this.handlehistory(item.eventNum, true) }}>事件详情</Button>
+                        <Button className={styles.Button} onClick={() => { this.handlehistory(item, true) }}>事件详情</Button>
                         <Button className={item.controlPlanExists ? styles.Button : styles.Buttondeb} disabled={!item.controlPlanExists} onClick={() => { this.handleUrlAjax(this.hisByUrl + item.eventNum, 'simpleHis') }}>管控记录</Button>
                       </div>
                     </div>
@@ -359,7 +360,7 @@ class Historical extends React.Component {
                     operationData ?
                       <div>
                         <div className={styles.guanBox}>
-                          <Button onClick={this.handleanalysisEchart} className={styles.Button}>管控效果评估</Button>
+                          <Button onClick={this.handleanalysisEchart} style={{ margin: '0 22px' }} className={reservePopup.startTime ? styles.Button : styles.Buttondeb} disabled={!reservePopup.startTime}>管控效果评估</Button>
                         </div>
                         <div className={styles.guanBox}>
                           <span className={styles.guanTitle}>操作记录</span>
@@ -429,7 +430,7 @@ class Historical extends React.Component {
                               <div className={styles.listTd} >{item.startTime ? this.getDate(item.startTime) : '-'}</div>
                               <div className={styles.listTd} >{item.endTime ? this.getDate(item.endTime) : '-'}</div>
                               <div className={styles.listTd} >
-                                <Button className={styles.Button} onClick={() => { this.handlehistory(item.planNum, false) }}>管控详情</Button>
+                                <Button className={styles.Button} onClick={() => { this.handlehistory(item, false) }}>管控详情</Button>
                               </div>
                             </div>
                           )

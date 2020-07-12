@@ -196,7 +196,8 @@ class MonitoringModule extends React.Component {
     this.byEventUrl = '/control/device/get/by/event/' // {eventNum}/{eventType}/{hwayId}/{roadId}/{roadDirection} 根据事件获取设备'
     this.byUserUrl = '/control/dict/code/get/plan/status/by/user'
     this.operationUrl = '/control/control/plan/get/operate/by/' // {planNum}根据管控方案编号获取管控方案操作步骤
-    this.socketUrl = 'ws://192.168.1.124:20207/control/notify/traffic/'
+    this.contentUrl = '/control/device/get/current/show/content' // 获取设备当前显示内容'
+    this.socketUrl = 'ws://47.108.61.84:8081/control/notify/traffic/'
   }
   componentWillMount = () => {
     // 获取用户权限
@@ -793,11 +794,11 @@ class MonitoringModule extends React.Component {
   }
   // 获取右侧事件详情
   handledetai = (item) => {
-    getResponseDatas('get', this.detailUrl + item.eventNum).then((res) => {
+    getResponseDatas('get', `${this.detailUrl + item.eventNum}/${item.eventType}`).then((res) => {
       const result = res.data
       if (result.code === 200) {
         const latlngArr = JSON.parse(JSON.stringify(result.data.latlng))
-        this.getLineCenterPoint(result.data.latlng)
+        // this.getLineCenterPoint(result.data.latlng)
         window.drawLine(latlngArr, window.lineFlag)
         this.state.detailsPopup = result.data
         this.setState({
@@ -1060,7 +1061,7 @@ class MonitoringModule extends React.Component {
             default:
               x = ''
           }
-          const text = `管控方案 :${data.plan.planName},管控编号 :${data.plan.planNum},${x}!`
+          const text = `管控方案 :${data.plan.planName || "无"},管控编号 :${data.plan.planNum},${x}!`
           this.openNotification(text, click, data.plan.planNum)
         } else if (data.event) { // 达到管控
           this.setState({ contingencyData: data.event }) // TimeData
@@ -1429,7 +1430,7 @@ class MonitoringModule extends React.Component {
 
             const latlngArr = JSON.parse(JSON.stringify(that.state.lineLatlngArr))
             const colorFlag = that.controlDatas.eventTypeId !== 9
-            this.getLineCenterPoint(result.data.latlng)
+            // this.getLineCenterPoint(result.data.latlng)
             window.drawLine(latlngArr, colorFlag)
           } else {
             message.warning('暂无定义')
@@ -1448,7 +1449,7 @@ class MonitoringModule extends React.Component {
   handleControl = () => {
     const that = this
     const { detailsPopup } = that.state
-    const { devices, eventNum } = detailsPopup
+    const { devices, eventNum, eventType } = detailsPopup
     const deviceAry = []
     devices.forEach((item) => {
       item.device.forEach((items) => {
@@ -1468,7 +1469,7 @@ class MonitoringModule extends React.Component {
     getResponseDatas('post', that.controlUrl + eventNum, deviceAry).then((res) => {
       const result = res.data
       if (result.code === 200) {
-        that.handledetai({ eventNum })
+        that.handledetai({ eventNum, eventType })
         that.handleOverallSituation()
         // 获取方案详情
         that.handleViewControl(result.data)
@@ -1575,7 +1576,7 @@ class MonitoringModule extends React.Component {
       })
       setTimeout(() => {
         window.drawLine(this.controlDatas.latlng, this.controlDatas.eventType != 9)
-        this.getLineCenterPoint(this.controlDatas.latlng)
+        // this.getLineCenterPoint(this.controlDatas.latlng)
       }, 1000)
     } else if (boolean && $(e.target).text() === '主动管控') {
       this.getDeviceEventList() // 清空交通管控设施
@@ -1946,7 +1947,32 @@ class MonitoringModule extends React.Component {
     // console.log(userLimit);
   }
   equipmentInfoWinImg = (value) => {
-    this.setState({ contentImg: value })
+    const appendId = []
+    if (value.innerDevices) {
+      value.innerDevices.forEach((item) => {
+        appendId.push(item.appendId)
+      })
+    } else {
+      appendId.push(value.appendId)
+    }
+    getResponseDatas('post', this.contentUrl, appendId).then((res) => {
+      const result = res.data
+      if (result.code === 200) {
+        let data = null
+        if (value.innerDevices) {
+          value.innerDevices.forEach((item, index) => {
+            item.Scontent = result.data[index]
+          })
+          data = value.innerDevices
+        } else {
+          value.Scontent = result.data[0]
+          data = [value]
+        }
+        this.setState({ contentImg: data })
+      } else {
+        message.warning(result.message)
+      }
+    })
   }
   equipmentInfoWin = (value) => {
     if (value) {
@@ -2299,9 +2325,18 @@ class MonitoringModule extends React.Component {
         {this.state.contentImg ?
           <div className={styles.MaskBoxImg} >
             <div className={styles.MaskBoxImgCenten}>
-              <div className={styles.Title}>默认显示内容<Icon className={styles.Close} onClick={() => { this.equipmentInfoWinImg(false) }} type="close" /></div>
+              <div className={styles.Title}>默认显示内容<Icon className={styles.Close} onClick={() => { this.setState({ contentImg: null }) }} type="close" /></div>
               <div className={styles.Content}>
-                <img src={"http://222.175.148.125:50080/api/screenshot?timg=" + new Date().getTime()} />
+                {
+                  this.state.contentImg.map((item, index) => {
+                    return (
+                      <div className={styles.ItemBox} key={item.appendId}>
+                        <div className={styles.HeadItem}>{index + 1}.{item.deviceName}</div>
+                        <div className={styles.RowBox}>{item.Scontent || '暂无数据'}</div>
+                      </div>
+                    )
+                  })
+                }
               </div>
             </div>
           </div> : null}
@@ -2539,7 +2574,7 @@ class MonitoringModule extends React.Component {
               unitText={this.state.unitText}
               detailsPopup={detailsPopup}
               handleSelect={this.handleSelect}
-              handleClose={() => { this.setState({ detailsPopup: null }) }}
+              handleClose={() => { this.handleEventPopup('Details', false) }}
               handleViewControl={this.handleViewControl}
               handleControl={this.handleControl}
               genExtraAddOnclick={this.genExtraAddOnclick}

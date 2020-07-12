@@ -9,6 +9,18 @@
 :global(.ant-modal-confirm-body .ant-modal-confirm-title) {
   color: #dcdce6;
 }
+.Buttondeb {
+  min-width: 80px;
+  height: 25px;
+  display: inline-block;
+  background: #969495;
+  border: 1px solid #969495;
+  margin: 0 5px;
+  color: #ccc;
+  text-align: center;
+  line-height: 25px;
+  border-radius: 0;
+}
 .EqMain {
   height: calc(100vh - 54.5px);
   background: #0e151d;
@@ -34,18 +46,7 @@
         background: #0b0e13;
       }
     }
-    .Buttondeb {
-      min-width: 80px;
-      height: 25px;
-      display: inline-block;
-      background: #969495;
-      border: 1px solid #969495;
-      margin: 0 5px;
-      color: #ccc;
-      text-align: center;
-      line-height: 25px;
-      border-radius: 0;
-    }
+    
     .Operation {
       width: 100%;
       // height: 60px;

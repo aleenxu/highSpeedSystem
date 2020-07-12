@@ -205,23 +205,25 @@ class GMap extends React.Component {
         mapStyle: "amap://styles/c3fa565f6171961e94b37c4cc2815ef8",
         zoom: this.props.mapID === 'HistorcalMap' ? 12 : 14,
       })
-      window.map = map
-      this.map = window.map
-      window.map.on('mousemove')
-      window.mouseTool = new AMap.MouseTool(map)
-      //监听draw事件可获取画好的覆盖物
-      window.overlays = []
-      mouseTool.on('draw', function (e) {
-        overlays.push(e.obj);
-      })
-      function draw() {
-        mouseTool.rectangle({
-          fillColor: '#00b0ff',
-          strokeColor: '#80d8ff'
-          // 同Polygon的Option设置
+      if (this.props.mapID !== 'ReserveMap') {
+        window.map = map
+        window.map.on('mousemove')
+        window.mouseTool = new AMap.MouseTool(map)
+        //监听draw事件可获取画好的覆盖物
+        window.overlays = []
+        mouseTool.on('draw', function (e) {
+          overlays.push(e.obj);
         })
+        function draw() {
+          mouseTool.rectangle({
+            fillColor: '#00b0ff',
+            strokeColor: '#80d8ff'
+            // 同Polygon的Option设置
+          })
+        }
+        window.drawRectangle = draw
       }
-      window.drawRectangle = draw
+      this.map = map
       // 实时路况图层
       const trafficLayer = new AMap.TileLayer.Traffic({
         zIndex: 10,
@@ -237,7 +239,10 @@ class GMap extends React.Component {
       this.createLayerGroup('deviceInfoBoard') // map中车道控制器情报版限速显示的图层
       this.createLayerGroup('deviceTurnBoard') // map中门架情报板显示的图层
       this.createLayerGroup('carRoadBoard') // map中车道控制器显示的图层
-      this.createLayerGroup('lineLayers') // map中绘制线显示的图层
+      if (this.props.mapID !== 'ReserveMap') {
+        this.createLayerGroup('lineLayers') // map中绘制线显示的图层
+      }
+
       // 输入提示
       const autoOptions = {
         city: '成都',
@@ -269,11 +274,15 @@ class GMap extends React.Component {
     // 图标车道控制器
     this.drawMarkers(this.state.carRoadJson, carLimitIcon, 'carRoadBoard')
     // 左侧功能数据图标
-    setTimeout(() => {
-      this.loadLeftModulePoint()
-    }, 500)
-    // 线的绘制
-    window.drawLine = this.drawLine
+
+
+    if (this.props.mapID !== 'ReserveMap') {
+      setTimeout(() => {
+        this.loadLeftModulePoint()
+      }, 500)
+      // 线的绘制
+      window.drawLine = this.handledrawLineCircle
+    }
     // 弹层的自定义
     //覆盖默认的dom结构
     AMapUI.defineTpl("ui/overlay/SimpleInfoWindow/tpl/container.html", [], function () {
@@ -346,8 +355,39 @@ class GMap extends React.Component {
         }
         this[layer].push(marker)
       }
+      // this.map.setFitView(this[layer])
       window[layer].addLayers(this[layer]) // 把点添加到层组中
       window[layer].setMap(map) // 层组渲染到地图中
+    }
+  }
+  getLineCenterPoint = (latlng) => {
+    const newCenter = []
+    if (latlng.length > 1) {
+      const startPoint = Math.abs(latlng[0][0] - latlng[latlng.length - 1][0]) / 2
+      const endPoint = Math.abs(latlng[0][1] - latlng[latlng.length - 1][1]) / 2
+      if (latlng[0][0] > latlng[latlng.length - 1][0]) {
+        newCenter[0] = startPoint + Number(latlng[latlng.length - 1][0])
+      } else {
+        newCenter[0] = startPoint + Number(latlng[0][0])
+      }
+      if (latlng[1][1] > latlng[latlng.length - 1][1]) {
+        newCenter[1] = endPoint + Number(latlng[latlng.length - 1][1])
+      } else {
+        newCenter[1] = endPoint + Number(latlng[0][1])
+      }
+    }
+    const nowZoom = window.map.getZoom()
+    window.map.setZoomAndCenter(nowZoom, newCenter)
+  }
+  handledrawLineCircle = (path, type) => {
+    console.log(path);
+    if (typeof (path[0]) === 'string') {
+      // const nowZoom = window.map.getZoom()
+      // window.map.setZoomAndCenter(nowZoom, path)
+      this.circle(path, type)
+    } else {
+      // this.getLineCenterPoint(path)
+      this.drawLine(path, type)
     }
   }
   circle = (path, type) => {
@@ -356,7 +396,7 @@ class GMap extends React.Component {
     window['lineLayers'].fx = []
     window['lineLayers'].show()
     const circle = new AMap.Circle({
-      center: ["103.854255", "30.457343"],
+      center: path,
       radius: 250, // 半径
       borderWeight: 3,
       // strokeColor: "#98989a",
@@ -370,6 +410,7 @@ class GMap extends React.Component {
       fillColor: '#98989a',
       zIndex: 50,
     })
+    this.map.setFitView([circle])
     window['lineLayers'].addLayer(circle)
     window['lineLayers'].setMap(this.map)
   }
@@ -394,6 +435,7 @@ class GMap extends React.Component {
       lineCap: 'round',
       zIndex: 50,
     })
+    this.map.setFitView([polyline])
     window['lineLayers'].addLayer(polyline)
     window['lineLayers'].setMap(this.map)
   }
@@ -431,11 +473,14 @@ class GMap extends React.Component {
   equipmentInfoWin = () => {
     this.props.equipmentInfoWin(this.dataItem)
   }
+  equipmentInfoWinImg=()=>{
+    this.props.equipmentInfoWinImg(this.dataItem)
+  }
   // 在指定位置打开信息窗体
   openInfoWin = (map, dataItem) => {
     console.log(dataItem);
     window.equipmentInfoWin = this.equipmentInfoWin
-    window.equipmentInfoWinImg = this.props.equipmentInfoWinImg
+    window.equipmentInfoWinImg = this.equipmentInfoWinImg
     const { detailsPopup, EventTagPopup } = this.state
     const info = []
     this.dataItem = JSON.parse(JSON.stringify(dataItem))
@@ -447,7 +492,7 @@ class GMap extends React.Component {
     info.push(`<p class='input-item'>方向：<span>` + dataItem.roadDirectionName + `</span></p>`);
     info.push(`<p class='input-item'>管控状态：<span>` + (dataItem.controlling ? '已管控' : '未管控') + `</span></p>`);
     info.push(`<p class='input-item'>所属高速：<span>` + dataItem.hwayName + `</span></p>`);
-    info.push(`<p class='input-item input_button'><Button onclick='window.equipmentInfoWinImg(true)' type="primary" class='input-item-button'>查看管控内容</Button></p>`)
+    info.push(`<p class='input-item input_button'><Button onclick='window.equipmentInfoWinImg()' type="primary" class='input-item-button'>查看管控内容</Button></p>`)
     if ((detailsPopup) || EventTagPopup) {
       info.push(dataItem.controlling && this.props.mapID !== 'RpopMap' ? `<p class='input-item input_button'><Button disabled type="primary" class='input-item-button' style="background:#969495">已管控</Button></p>` :
         `<p class='input-item input_button'><Button onclick='window.equipmentInfoWin()' type="primary" class='input-item-button'>编辑管控内容</Button></p>`
