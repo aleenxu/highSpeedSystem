@@ -20,7 +20,7 @@ class ScrollList extends React.Component {
       dataAll: this.props.dataAll, // 总数据
       listTit: this.props.Tit, // 模块标题
       listTitle: this.props.Title, // 标题名
-      eachartData: this.props.eachartData||[],
+      eachartData: this.props.eachartData || [],
       sideachart: null,
       ProgressData: this.props.ProgressData,
       typeNow: 0, //选中的是哪个模块  1；2；3；4；
@@ -330,7 +330,7 @@ class ScrollList extends React.Component {
                     {!!sideachart && <ReactEcharts option={sideachart} style={{ height: '100px', width: '100%' }} />}
                   </div>
                   <div className={styles.rightInfoBox}>
-                    <p>重大事件 {this.eachartLength}起 </p>
+                    <p style={{ fontSize: '12px' }}>重大事件 {this.eachartLength}起 </p>
                     <p>
                       {!!eachartData && eachartData.map((item) => {
                         return <span key={item.total + item.eventTypeName}>{item.total}<br />{item.eventTypeName}</span>

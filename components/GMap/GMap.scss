@@ -8,14 +8,14 @@
 }
 
 :global(.content_box) {
-    background: rgba(9, 9, 9, .8) !important;
+    background: rgba(9, 9, 9, 0.8) !important;
     padding: 0px !important;
 }
 
 :global(.content_box_title) {
     line-height: 30px;
     color: #fff;
-    background: rgba(19, 27, 37, .6) !important;
+    background: rgba(19, 27, 37, 0.6) !important;
     padding: 45px 15px 15px;
 }
 
@@ -29,6 +29,7 @@
     right: 0;
     background: #131a22;
     top: 0;
+    font-family: FZLTZCHK--GBK1-0;
 }
 
 :global(.content_box_title p.input-item) {
@@ -66,5 +67,5 @@
 }
 
 :global(.amap-info-sharp) {
-    border-top-color: rgba(9, 9, 9, .8) !important;
+    border-top-color: rgba(9, 9, 9, 0.8) !important;
 }

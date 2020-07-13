@@ -46,7 +46,7 @@
         background: #0b0e13;
       }
     }
-    
+
     .Operation {
       width: 100%;
       // height: 60px;
@@ -119,7 +119,7 @@
         :global(.ant-time-picker-icon .ant-time-picker-clock-icon) {
           color: #fff;
         }
-         
+
         .Button {
           min-width: 80px;
           height: 25px;
@@ -250,6 +250,8 @@
       position: relative;
       font-size: 18px;
       margin-bottom: 20px;
+      font-family: FZLTZCHK--GBK1-0;
+      color: #ffffff;
       .Close {
         position: absolute;
         top: 16px;
@@ -348,6 +350,7 @@
         text-overflow: ellipsis;
         white-space: nowrap;
         vertical-align: middle;
+        font-family: FZLTZHUNHK--GBK1-0;
       }
     }
     .ItemBox {
@@ -361,6 +364,7 @@
         color: #4a759c;
         padding: 0px 22px;
         margin: 5px 0;
+        font-family: FZLTZCHK--GBK1-0;
         .AddItem {
           float: right;
           cursor: pointer;
@@ -374,6 +378,7 @@
         margin: 6px 0;
         padding: 0px 22px;
         color: #6d738d;
+        font-family: FZLTZHUNHK--GBK1-0;
         > p {
           width: 33.33%;
           display: inline-block;
@@ -529,7 +534,8 @@
     font-size: 15px;
     position: relative;
     background: #11181f;
-    color: #fff;
+    font-family: FZLTZCHK--GBK1-0;
+    color: #ffffff;
     .Close {
       position: absolute;
       top: 16px;

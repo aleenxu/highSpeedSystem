@@ -3,52 +3,53 @@
     overflow: initial !important;
   }
   :global(.ant-collapse > .ant-collapse-item > .ant-collapse-header) {
-    color: #fff;
     padding-left: 70px;
+    font-family: FZLTZCHK--GBK1-0;
+    color: #ffffff;
   }
   :global(.ant-collapse-item .ant-collapse-content-box .ant-collapse) {
     &:last-child {
-      :global(.ant-collapse-item){
+      :global(.ant-collapse-item) {
         border-bottom: none;
       }
-      
     }
   }
   // 折叠面板
-:global(.ant-collapse-icon-position-right > .ant-collapse-item > .ant-collapse-header) {
-  background: rgba(19, 27, 37, 0.8);
-  color: #fff;
-}
-:global(.ant-collapse > .ant-collapse-item:last-child) {
-  border-radius: unset;
-}
+  :global(.ant-collapse-icon-position-right > .ant-collapse-item > .ant-collapse-header) {
+    background: rgba(19, 27, 37, 0.8);
+    font-family: FZLTZCHK--GBK1-0;
+    color: #ffffff;
+  }
+  :global(.ant-collapse > .ant-collapse-item:last-child) {
+    border-radius: unset;
+  }
 
-:global(.ant-collapse) {
-  background: unset;
-  border: unset;
-  /* border-bottom: 1px solid #ccc; */
-  color: #fff;
-  border-radius: 0;
-  position: relative;
-}
-:global(.ant-collapse-content) {
-  background: unset;
-  color: #fff;
-  border-radius: unset;
-}
-:global(.ant-collapse > i) {
-  position: absolute;
-  left: 10px;
-  top: 16px;
-  z-index: 99;
-}
-:global(.ant-checkbox-inner) {
-  background: transparent;
-}
-// eacharts
-:global(.ant-collapse-content > .ant-collapse-content-box) {
-  padding: 8px 0;
-}
+  :global(.ant-collapse) {
+    background: unset;
+    border: unset;
+    /* border-bottom: 1px solid #ccc; */
+    color: #fff;
+    border-radius: 0;
+    position: relative;
+  }
+  :global(.ant-collapse-content) {
+    background: unset;
+    color: #fff;
+    border-radius: unset;
+  }
+  :global(.ant-collapse > i) {
+    position: absolute;
+    left: 10px;
+    top: 16px;
+    z-index: 99;
+  }
+  :global(.ant-checkbox-inner) {
+    background: transparent;
+  }
+  // eacharts
+  :global(.ant-collapse-content > .ant-collapse-content-box) {
+    padding: 8px 0;
+  }
 }
 
 // 数据列表
@@ -88,6 +89,7 @@
       color: #4a759c;
       border-right: 1px #4a759c solid;
       padding: 0 5px;
+      font-family: FZLTZCHK--GBK1-0;
     }
     > span.tit:last-child {
       border-right: unset;
@@ -193,6 +195,7 @@
         text-align: center;
         font-size: 12px;
         flex-wrap: nowrap;
+        font-family: FZLTZCHK--GBK1-0;
       }
       > span:nth-child(1) {
         color: #ed7e2f;

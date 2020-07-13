@@ -104,6 +104,8 @@
     align-items: center;
     background: #153a61;
     box-sizing: border-box;
+    font-family: FZLTZCHK--GBK1-0;
+    color: #ffffff;
     > span {
       padding: 2px 5px;
       border-right: 1px #838a9a solid;
@@ -250,7 +252,8 @@
     font-size: 15px;
     position: relative;
     background: #11181f;
-    color: #fff;
+    font-family: FZLTZCHK--GBK1-0;
+    color: #ffffff;
     .Close {
       position: absolute;
       right: 15px;
@@ -456,6 +459,7 @@
     margin: 0 10px;
     .Title {
       background: #11181f;
+      font-family: FZLTZCHK--GBK1-0;
     }
     .Content {
       background: #0b0c0d;
@@ -468,6 +472,7 @@
       overflow-y: auto;
       .RowBox {
         margin: 15px 0 !important;
+        font-family: FZLTZHUNHK--GBK1-0;
         .left {
           line-height: 30px;
         }
@@ -508,11 +513,12 @@
         height: 100%;
         display: inline-block;
         line-height: 30px;
-        font-size: 12px;
+        // font-size: 12px;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
         vertical-align: middle;
+        font-family: FZLTZHUNHK--GBK1-0;
       }
     }
     .ItemBox {
@@ -526,6 +532,7 @@
         color: #4a759c;
         padding: 0px 22px;
         margin: 5px 0;
+        font-family: FZLTZCHK--GBK1-0;
         .AddItem {
           float: right;
           cursor: pointer;
@@ -539,6 +546,7 @@
         margin: 6px 0;
         padding: 0px 22px;
         color: #6d738d;
+        font-family: FZLTZHUNHK--GBK1-0;
         > p {
           width: 50%;
           display: inline-block;
@@ -574,6 +582,7 @@
       overflow-y: auto;
       .RowBox > p {
         width: 33.33%;
+        font-family: FZLTZHUNHK--GBK1-0;
       }
       :global(.ant-input) {
         height: 32px;
@@ -607,6 +616,7 @@
     }
     .Title {
       line-height: 35px !important;
+      font-family: FZLTZCHK--GBK1-0;
     }
   }
 }
@@ -710,6 +720,7 @@
     }
     :global(.ant-collapse-icon-position-right > .ant-collapse-item > .ant-collapse-header) {
       background: rgba(19, 27, 37, 0.8);
+      font-family: FZLTZCHK--GBK1-0;
     }
     :global(.ant-collapse-content) {
       background-color: transparent;
@@ -730,6 +741,7 @@
         .PanelItem {
           height: 25px;
           line-height: 25px;
+          font-family: FZLTXHK;
           margin: 0;
           /* text-indent: 22px; */
           color: #646a82;
@@ -740,6 +752,7 @@
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
+          font-family: FZLTZHUNHK--GBK1-0;
           &:last-child {
             border-bottom: 0;
           }
@@ -769,6 +782,7 @@
           line-height: 0;
           margin: 8px 0;
           padding-left: 8px;
+          font-family: FZLTZCHK--GBK1-0;
         }
         :global(.ant-collapse-content) {
           border: none !important;
@@ -855,6 +869,7 @@
   transform: translate(-50%, -50%);
   .Title {
     line-height: 50px !important;
+    font-family: FZLTZCHK--GBK1-0;
   }
 }
 .Proposal {
@@ -933,12 +948,14 @@
           color: #4a759c;
           padding: 0px 22px;
           margin: 5px 0;
+          font-family: FZLTZCHK--GBK1-0;
         }
         .RowBox {
           width: 100%;
           margin: 6px 0;
           padding: 0px 22px;
           color: #6d738d;
+          font-family: FZLTZHUNHK--GBK1-0;
         }
       }
     }

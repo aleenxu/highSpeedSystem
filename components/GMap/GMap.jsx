@@ -382,11 +382,11 @@ class GMap extends React.Component {
   handledrawLineCircle = (path, type) => {
     console.log(path);
     if (typeof (path[0]) === 'string') {
-      // const nowZoom = window.map.getZoom()
-      // window.map.setZoomAndCenter(nowZoom, path)
+      const nowZoom = window.map.getZoom()
+      window.map.setZoomAndCenter(nowZoom, path)
       this.circle(path, type)
     } else {
-      // this.getLineCenterPoint(path)
+      this.getLineCenterPoint(path)
       this.drawLine(path, type)
     }
   }
@@ -410,7 +410,7 @@ class GMap extends React.Component {
       fillColor: '#98989a',
       zIndex: 50,
     })
-    this.map.setFitView([circle])
+    // this.map.setFitView([circle])
     window['lineLayers'].addLayer(circle)
     window['lineLayers'].setMap(this.map)
   }
@@ -435,7 +435,7 @@ class GMap extends React.Component {
       lineCap: 'round',
       zIndex: 50,
     })
-    this.map.setFitView([polyline])
+    // this.map.setFitView([polyline])
     window['lineLayers'].addLayer(polyline)
     window['lineLayers'].setMap(this.map)
   }

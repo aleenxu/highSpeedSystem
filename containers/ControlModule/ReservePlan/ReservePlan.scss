@@ -74,7 +74,8 @@
   text-indent: 22px;
   font-size: 15px;
   position: relative;
-  color: #fff;
+  font-family: FZLTZCHK--GBK1-0;
+  color: #ffffff;
   .Close {
     position: absolute;
     right: 15px;
@@ -328,6 +329,7 @@
     line-height: 0;
     margin: 8px 0;
     padding-left: 8px;
+    font-family: FZLTZCHK--GBK1-0;
   }
   :global(.ant-collapse-content) {
     border: none !important;
@@ -349,6 +351,7 @@
     background: #0e151d;
     cursor: pointer;
     margin: 0 13px !important;
+    font-family: FZLTZHUNHK--GBK1-0;
     &:last-child {
       border-bottom: 0;
     }
@@ -507,7 +510,8 @@
   }
   :global(.ant-collapse > .ant-collapse-item > .ant-collapse-header) {
     background: rgba(19, 27, 37, 0.8);
-    color: #fff;
+    font-family: FZLTZCHK--GBK1-0;
+    color: #ffffff;
   }
 }
 :global(.anticon-setting svg) {
@@ -580,6 +584,7 @@
           background: #0e151d;
           cursor: pointer;
           margin: 0 8px !important;
+          font-family: FZLTZHUNHK--GBK1-0;
           &:last-child {
             border-bottom: 0;
           }
@@ -610,6 +615,7 @@
           line-height: 0;
           margin: 8px 0;
           padding-left: 8px;
+          font-family: FZLTZCHK--GBK1-0;
         }
         :global(.ant-collapse-content) {
           border: none !important;
@@ -691,7 +697,8 @@
     font-size: 15px;
     position: relative;
     background: #11181f;
-    color: #fff;
+    font-family: FZLTZCHK--GBK1-0;
+    color: #ffffff;
     .Close {
       position: absolute;
       right: 15px;

@@ -197,7 +197,7 @@ class MonitoringModule extends React.Component {
     this.byUserUrl = '/control/dict/code/get/plan/status/by/user'
     this.operationUrl = '/control/control/plan/get/operate/by/' // {planNum}根据管控方案编号获取管控方案操作步骤
     this.contentUrl = '/control/device/get/current/show/content' // 获取设备当前显示内容'
-    this.socketUrl = 'ws://47.108.61.84:8081/control/notify/traffic/'
+    this.socketUrl = 'ws://192.168.1.124:20207/control/notify/traffic/'
   }
   componentWillMount = () => {
     // 获取用户权限
