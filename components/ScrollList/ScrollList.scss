@@ -1,10 +1,15 @@
+
+@font-face {
+  font-family: FZLTZHUNHK--GBK1-0;
+  src: url("../../plugs/font/FZLTZHUNHK--GBK1-0.ttf");
+}
 .scrollBox {
   :global(.ant-collapse-item:last-child > .ant-collapse-content) {
     overflow: initial !important;
   }
   :global(.ant-collapse > .ant-collapse-item > .ant-collapse-header) {
     padding-left: 70px;
-    font-family: FZLTZCHK--GBK1-0;
+    font-family: FZLTZHUNHK--GBK1-0  ;
     color: #ffffff;
   }
   :global(.ant-collapse-item .ant-collapse-content-box .ant-collapse) {
@@ -17,7 +22,7 @@
   // 折叠面板
   :global(.ant-collapse-icon-position-right > .ant-collapse-item > .ant-collapse-header) {
     background: rgba(19, 27, 37, 0.8);
-    font-family: FZLTZCHK--GBK1-0;
+    font-family: FZLTZHUNHK--GBK1-0  ;
     color: #ffffff;
   }
   :global(.ant-collapse > .ant-collapse-item:last-child) {
@@ -89,7 +94,7 @@
       color: #4a759c;
       border-right: 1px #4a759c solid;
       padding: 0 5px;
-      font-family: FZLTZCHK--GBK1-0;
+      font-family: FZLTZHUNHK--GBK1-0  ;
     }
     > span.tit:last-child {
       border-right: unset;
@@ -195,7 +200,7 @@
         text-align: center;
         font-size: 12px;
         flex-wrap: nowrap;
-        font-family: FZLTZCHK--GBK1-0;
+        font-family: FZLTZHUNHK--GBK1-0  ;
       }
       > span:nth-child(1) {
         color: #ed7e2f;

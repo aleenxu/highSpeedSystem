@@ -1,4 +1,9 @@
 /* 地图 */
+
+@font-face {
+    font-family: FZLTZHUNHK--GBK1-0;
+    src: url("../../plugs/font/FZLTZHUNHK--GBK1-0.ttf");
+  }
 :global(.amap-info-content) {
     position: relative;
     background: transparent;
@@ -22,19 +27,19 @@
 :global(.content_box_title h4) {
     color: #fff;
     line-height: 35px;
-    font-size: 16px;
+    font-size: 14px;
     position: absolute;
     padding-left: 10px;
     left: 0;
     right: 0;
     background: #131a22;
     top: 0;
-    font-family: FZLTZCHK--GBK1-0;
+    font-family: FZLTZHUNHK--GBK1-0  ;
 }
 
 :global(.content_box_title p.input-item) {
     line-height: 25px;
-    font-size: 14px;
+    font-size: 12px;
     text-indent: 15px;
 }
 
@@ -49,6 +54,7 @@
     border: 1px #838a9a solid;
     cursor: pointer;
     width: 82%;
+    font-size: 14px;
 }
 
 :global(.amap-info-close) {

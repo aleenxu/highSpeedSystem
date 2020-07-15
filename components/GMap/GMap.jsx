@@ -225,10 +225,15 @@ class GMap extends React.Component {
       }
       this.map = map
       // 实时路况图层
+      /*   const trafficLayer = new AMap.TileLayer.Traffic({
+          zIndex: 10,
+        }); */
       const trafficLayer = new AMap.TileLayer.Traffic({
+        autoRefresh: true, // 是否自动刷新，默认为 false
+        interval: 60, // 刷新间隔，默认60s
         zIndex: 10,
-      });
-      trafficLayer.setMap(window.map)
+      })
+      trafficLayer.setMap(map)
       this.createLayerGroup('leftModule0') // 交通拥堵选中复选框显示的图层
       this.createLayerGroup('leftModule1') // 道路施工选中复选框显示的图层
       this.createLayerGroup('leftModule2') // 极端天气选中复选框显示的图层
@@ -473,7 +478,7 @@ class GMap extends React.Component {
   equipmentInfoWin = () => {
     this.props.equipmentInfoWin(this.dataItem)
   }
-  equipmentInfoWinImg=()=>{
+  equipmentInfoWinImg = () => {
     this.props.equipmentInfoWinImg(this.dataItem)
   }
   // 在指定位置打开信息窗体

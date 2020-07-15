@@ -1,3 +1,8 @@
+
+@font-face {
+  font-family: FZLTZHUNHK--GBK1-0;
+  src: url("../../plugs/font/FZLTZHUNHK--GBK1-0.ttf");
+}
 :global(.ant-message-notice-content) {
   background: #343a52;
   color: #dcdce6;
@@ -170,6 +175,7 @@
             text-overflow: ellipsis;
             white-space: nowrap;
             word-break: break-all;
+            font-size: 12px;
           }
         }
       }
@@ -248,9 +254,9 @@
       line-height: 50px;
       text-indent: 25px;
       position: relative;
-      font-size: 18px;
+      font-size: 16px;
       margin-bottom: 20px;
-      font-family: FZLTZCHK--GBK1-0;
+      font-family: FZLTZHUNHK--GBK1-0  ;
       color: #ffffff;
       .Close {
         position: absolute;
@@ -364,7 +370,7 @@
         color: #4a759c;
         padding: 0px 22px;
         margin: 5px 0;
-        font-family: FZLTZCHK--GBK1-0;
+        font-family: FZLTZHUNHK--GBK1-0  ;
         .AddItem {
           float: right;
           cursor: pointer;
@@ -382,6 +388,7 @@
         > p {
           width: 33.33%;
           display: inline-block;
+          font-size: 12px;
         }
       }
     }
@@ -440,6 +447,7 @@
         justify-content: center;
         align-items: center;
         overflow: hidden;
+        font-size: 12px;
         &:last-child {
           flex: 1.2;
         }
@@ -531,10 +539,10 @@
     height: 50px;
     line-height: 50px;
     text-indent: 22px;
-    font-size: 15px;
+    font-size: 16px;
     position: relative;
     background: #11181f;
-    font-family: FZLTZCHK--GBK1-0;
+    font-family: FZLTZHUNHK--GBK1-0  ;
     color: #ffffff;
     .Close {
       position: absolute;

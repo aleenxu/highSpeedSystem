@@ -1335,7 +1335,7 @@ class ReservePlan extends React.Component {
                 <GMap equipmentInfoWinImg={this.equipmentInfoWinImg} deviceString={this.state.deviceString.join()} equipmentInfoWin={this.equipmentInfoWin} onRef={el => this.ChildPage = el} styles={this.mapStyles} mapID={'RpopMap'} roadLatlng={detailsLatlng} handledetai={this.handledetai} detailsPopup={this.controlDatas} boxSelect={boxSelect} flagClose={flagClose} EventTagPopup={EventTagPopup} />
                 <div className={style.EventTaggingLeft} style={{ zIndex: '999' }}>
                   <div className={style.Title} style={{ background: '#132334', position: 'fixed', top: '61px', left: 'calc(5% + 6px)', zIndex: '999', width: 'calc(21.6% - 2px)' }}>修改预案库<Icon className={style.Close} onClick={() => { this.handleEventTag(false) }} type="close" /></div>
-                  <div className={style.Title} style={{ background: '#132334', lineHeight: '20px', height: '20px', marginTop: '60px', fontSize: '12px' }}>预案名称</div>
+                  <div className={style.Title} style={{ background: '#132334', lineHeight: '20px', height: '20px', marginTop: '60px', fontSize: '14px' }}>预案名称</div>
                   <div className={style.Centent}>
                     <div className={style.ItemBox}>
                       <div className={style.ItemInput}>
@@ -1343,7 +1343,7 @@ class ReservePlan extends React.Component {
                       </div>
                     </div>
                   </div>
-                  <div className={style.Title} style={{ background: '#132334', lineHeight: '20px', height: '20px', fontSize: '12px' }}>选择道路</div>
+                  <div className={style.Title} style={{ background: '#132334', lineHeight: '20px', height: '20px', fontSize: '14px' }}>选择道路</div>
                   <div className={style.Centent}>
                     <div className={style.ItemBox}>
                       <div className={style.ItemInput}>
@@ -1391,7 +1391,7 @@ class ReservePlan extends React.Component {
                       </div>
                     </div>
                   </div>
-                  <div className={style.Title} style={{ background: '#132334', lineHeight: '20px', height: '20px', fontSize: '12px' }}>选择事件类型</div>
+                  <div className={style.Title} style={{ background: '#132334', lineHeight: '20px', height: '20px', fontSize: '14px' }}>选择事件类型</div>
                   <div className={style.Centent}>
                     <div className={style.ItemBox}>
                       <div className={style.ItemInput}>
@@ -1405,7 +1405,7 @@ class ReservePlan extends React.Component {
                     </div>
                   </div>
 
-                  <div className={style.Title} style={{ background: '#132334', lineHeight: '20px', height: '20px', fontSize: '12px' }}>选择交通管控类型</div>
+                  <div className={style.Title} style={{ background: '#132334', lineHeight: '20px', height: '20px', fontSize: '14px' }}>选择交通管控类型</div>
                   <div className={style.Centent}>
                     <div className={style.ItemBox}>
                       <div className={style.ItemInput}>
@@ -1418,7 +1418,7 @@ class ReservePlan extends React.Component {
                       </div>
                     </div>
                   </div>
-                  <div className={style.Title} style={{ background: '#132334', lineHeight: '20px', height: '20px', fontSize: '12px' }}>选择交通管控设施</div>
+                  <div className={style.Title} style={{ background: '#132334', lineHeight: '20px', height: '20px', fontSize: '14px' }}>选择交通管控设施</div>
                   <div className={style.Centent} style={{ maxHeight: '245px' }}>
                     <Collapse
                       defaultActiveKey={[1]}

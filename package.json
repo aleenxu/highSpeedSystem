@@ -1,7 +1,7 @@
 {
   "name": "high-speed-system",
   "version": "1.0.0",
-  "description": "* 智慧高速管控系统",
+  "description": "",
   "main": "index.js",
   "scripts": {
     "build": "cross-env http_ENV=production webpack -p --color --progress",

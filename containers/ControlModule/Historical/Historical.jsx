@@ -379,7 +379,7 @@ class Historical extends React.Component {
                             {
                               operationData && operationData.map((item, index) => {
                                 return (
-                                  <div className={styles.listItems} key={item.row_id}>
+                                  <div className={styles.listItems} key={item.row_id} >
                                     <div className={styles.listTd} >{index + 1}</div>
                                     <div className={styles.listTd} >{item.operateUserName}</div>
                                     <div className={styles.listTd} >{item.operateName}</div>
@@ -423,7 +423,7 @@ class Historical extends React.Component {
                       {
                         simpleHis && simpleHis.map((item, index) => {
                           return (
-                            <div className={styles.listItems} key={item.planNum}>
+                            <div className={styles.listItems} key={item.planNum} style={{ padding: '0' }}>
                               <div className={styles.listTd} >{index + 1}</div>
                               <div className={styles.listTd} >{item.planName}</div>
                               <div className={styles.listTd} >{item.planNum}</div>

@@ -1,3 +1,8 @@
+
+@font-face {
+  font-family: FZLTZHUNHK--GBK1-0;
+  src: url("../../../plugs/font/FZLTZHUNHK--GBK1-0.ttf");
+}
 :global(.ant-popover-content) {
   background: rgba(21, 24, 30, 0.7);
   border-radius: 5px;
@@ -65,6 +70,7 @@
   justify-content: flex-start;
   display: flex;
   flex-wrap: nowrap;
+  font-size: 12px;
 }
 // 标题
 .Title {
@@ -72,9 +78,9 @@
   height: 50px;
   line-height: 50px;
   text-indent: 22px;
-  font-size: 15px;
+  font-size: 16px;
   position: relative;
-  font-family: FZLTZCHK--GBK1-0;
+  font-family: FZLTZHUNHK--GBK1-0  ;
   color: #ffffff;
   .Close {
     position: absolute;
@@ -170,6 +176,7 @@
     background-color: #191c22;
     border: 1px solid #959595;
     border-radius: 0;
+    font-size: 12px;
   }
   // 修改多选框按钮
   :global(.ant-checkbox-wrapper) {
@@ -206,6 +213,10 @@
     color: #ccc;
     border-radius: 0;
     border: 1px solid #959595;
+    font-size: 12px;
+  }
+  :global(.ant-select-dropdown-menu-item){
+    font-size: 12px;
   }
   :global(.ant-select-dropdown) {
     background-color: #191c22;
@@ -329,7 +340,7 @@
     line-height: 0;
     margin: 8px 0;
     padding-left: 8px;
-    font-family: FZLTZCHK--GBK1-0;
+    font-family: FZLTZHUNHK--GBK1-0  ;
   }
   :global(.ant-collapse-content) {
     border: none !important;
@@ -350,6 +361,7 @@
     color: #646a82;
     background: #0e151d;
     cursor: pointer;
+    font-size: 12px;
     margin: 0 13px !important;
     font-family: FZLTZHUNHK--GBK1-0;
     &:last-child {
@@ -510,7 +522,7 @@
   }
   :global(.ant-collapse > .ant-collapse-item > .ant-collapse-header) {
     background: rgba(19, 27, 37, 0.8);
-    font-family: FZLTZCHK--GBK1-0;
+    font-family: FZLTZHUNHK--GBK1-0  ;
     color: #ffffff;
   }
 }
@@ -583,6 +595,7 @@
           color: #646a82;
           background: #0e151d;
           cursor: pointer;
+          font-size: 12px;
           margin: 0 8px !important;
           font-family: FZLTZHUNHK--GBK1-0;
           &:last-child {
@@ -615,7 +628,7 @@
           line-height: 0;
           margin: 8px 0;
           padding-left: 8px;
-          font-family: FZLTZCHK--GBK1-0;
+          font-family: FZLTZHUNHK--GBK1-0  ;
         }
         :global(.ant-collapse-content) {
           border: none !important;
@@ -649,6 +662,7 @@
           text-align: center;
           cursor: pointer;
           margin: 1%;
+          font-size: 12px;
           padding: 0 5px;
         }
         .currentSel {
@@ -694,10 +708,10 @@
     height: 50px;
     line-height: 50px;
     text-indent: 22px;
-    font-size: 15px;
+    font-size: 16px;
     position: relative;
     background: #11181f;
-    font-family: FZLTZCHK--GBK1-0;
+    font-family: FZLTZHUNHK--GBK1-0  ;
     color: #ffffff;
     .Close {
       position: absolute;

@@ -1,3 +1,7 @@
+@font-face {
+  font-family: FZLTZHUNHK--GBK1-0;
+  src: url("../../plugs/font/FZLTZHUNHK--GBK1-0.ttf");
+}
 :global(.ant-popover-content) {
   background: rgba(21, 24, 30, 0.7);
   border-radius: 5px;
@@ -104,7 +108,7 @@
     align-items: center;
     background: #153a61;
     box-sizing: border-box;
-    font-family: FZLTZCHK--GBK1-0;
+    font-family: FZLTZHUNHK--GBK1-0;
     color: #ffffff;
     > span {
       padding: 2px 5px;
@@ -249,10 +253,10 @@
     height: 50px;
     line-height: 50px;
     text-indent: 22px;
-    font-size: 15px;
+    font-size: 16px;
     position: relative;
     background: #11181f;
-    font-family: FZLTZCHK--GBK1-0;
+    font-family: FZLTZHUNHK--GBK1-0;
     color: #ffffff;
     .Close {
       position: absolute;
@@ -366,6 +370,10 @@
       color: #ccc;
       border-radius: 0;
       border: 1px solid #959595;
+      font-size: 12px;
+    }
+    :global(.ant-select-dropdown-menu-item){
+      font-size: 12px;
     }
     :global(.ant-select-dropdown) {
       background-color: #191c22;
@@ -459,7 +467,7 @@
     margin: 0 10px;
     .Title {
       background: #11181f;
-      font-family: FZLTZCHK--GBK1-0;
+      font-family: FZLTZHUNHK--GBK1-0;
     }
     .Content {
       background: #0b0c0d;
@@ -513,7 +521,7 @@
         height: 100%;
         display: inline-block;
         line-height: 30px;
-        // font-size: 12px;
+        font-size: 12px;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
@@ -532,7 +540,7 @@
         color: #4a759c;
         padding: 0px 22px;
         margin: 5px 0;
-        font-family: FZLTZCHK--GBK1-0;
+        font-family: FZLTZHUNHK--GBK1-0;
         .AddItem {
           float: right;
           cursor: pointer;
@@ -546,6 +554,7 @@
         margin: 6px 0;
         padding: 0px 22px;
         color: #6d738d;
+        font-size: 12px;
         font-family: FZLTZHUNHK--GBK1-0;
         > p {
           width: 50%;
@@ -591,6 +600,7 @@
         background-color: #191c22;
         border: 1px solid #959595;
         border-radius: 0;
+        font-size: 12px;
       }
     }
     .ItemFooter {
@@ -616,7 +626,7 @@
     }
     .Title {
       line-height: 35px !important;
-      font-family: FZLTZCHK--GBK1-0;
+      font-family: FZLTZHUNHK--GBK1-0;
     }
   }
 }
@@ -720,7 +730,7 @@
     }
     :global(.ant-collapse-icon-position-right > .ant-collapse-item > .ant-collapse-header) {
       background: rgba(19, 27, 37, 0.8);
-      font-family: FZLTZCHK--GBK1-0;
+      font-family: FZLTZHUNHK--GBK1-0;
     }
     :global(.ant-collapse-content) {
       background-color: transparent;
@@ -782,7 +792,7 @@
           line-height: 0;
           margin: 8px 0;
           padding-left: 8px;
-          font-family: FZLTZCHK--GBK1-0;
+          font-family: FZLTZHUNHK--GBK1-0;
         }
         :global(.ant-collapse-content) {
           border: none !important;
@@ -869,7 +879,7 @@
   transform: translate(-50%, -50%);
   .Title {
     line-height: 50px !important;
-    font-family: FZLTZCHK--GBK1-0;
+    font-family: FZLTZHUNHK--GBK1-0;
   }
 }
 .Proposal {
@@ -948,7 +958,7 @@
           color: #4a759c;
           padding: 0px 22px;
           margin: 5px 0;
-          font-family: FZLTZCHK--GBK1-0;
+          font-family: FZLTZHUNHK--GBK1-0;
         }
         .RowBox {
           width: 100%;

@@ -2350,7 +2350,7 @@ class MonitoringModule extends React.Component {
               </div>
               <div className={styles.ReserveBox}> {/* classNames(styles.DetailsBox, styles.ReserveBox) */}
                 <div className={styles.Title}>管控方案详情<Icon className={styles.Close} onClick={() => { this.handleEventPopup('Reserve', false) }} type="close" /></div>
-                <div className={styles.Content}>
+                <div className={styles.Content} style={{ height: 'auto' }}>
                   <div className={styles.Header} style={{ marginTop: '5px' }} >
                     <span>方案名称&nbsp;:&nbsp;&nbsp;{reservePopup.planStatus > 1 ? reservePopup.planName : <Input style={{ width: '200px', height: '25px', lineHeight: '25px' }} maxLength={50} defaultValue={reservePopup.planName} onChange={(e) => { reservePopup.update == true || reservePopup.update == false ? this.handleInput(e, 'planName', 'reservePopup') : this.handleInput(e, 'planName', 'publishPlanVO') }} />}</span>
                     <span style={{ width: '30%' }}>方案状态&nbsp;:&nbsp;&nbsp;{reservePopup.planStatusName || '待生成'}</span>
