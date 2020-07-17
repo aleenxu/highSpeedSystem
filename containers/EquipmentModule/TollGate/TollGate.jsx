@@ -596,8 +596,58 @@ class TollGate extends React.Component {
                               message: '超出最大长度',
                             },
                           ],
-                          initialValue: boardData.port ? (boardData.port + '') : '',
+                          initialValue: boardData.port ? (boardData.port).toString() : '',
                         })(<Input onChange={(e) => { this.handleInput(e, 'port', 'board') }} />)}
+                      </Form.Item>
+                    </div>
+                  </div>
+                  <div className={styles.ItemLine}>
+                    <div className={styles.Item}>
+                      <Form.Item
+                        name="direction"
+                        label="出入口"
+                      >
+                        {getFieldDecorator('direction', {
+                          rules: [
+                            {
+                              required: true,
+                              message: '请输入出入口!',
+                            },
+                          ],
+                          initialValue: directions,
+                        })(
+                          <Select
+                            showSearch
+                            optionFilterProp="children"
+                            onChange={(e) => { this.handleSelect(e, 'direction', 'board') }}
+                          >
+
+                          </Select>
+                        )}
+                      </Form.Item>
+                    </div>
+                    <div className={styles.Item}>
+                      <Form.Item
+                        name="roadSecId"
+                        label="收费站"
+                      >
+                        {getFieldDecorator('roadSecId', {
+                          rules: [
+                            {
+                              required: true,
+                              message: '请输入收费站!',
+                            },
+                          ],
+                          initialValue: roadSecIdItem,
+                        })(
+                          <Select
+                            onChange={(e) => { this.handleSelect(e, 'roadSecId', 'board') }}
+                            showSearch
+                            optionFilterProp="children"
+                          >
+
+                          </Select>
+                        )}
                       </Form.Item>
                     </div>
                   </div>

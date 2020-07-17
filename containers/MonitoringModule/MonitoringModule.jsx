@@ -1910,7 +1910,7 @@ class MonitoringModule extends React.Component {
     const { detailsPopup, reservePopup } = this.state
     // console.log(detailsPopup, reservePopup);
     if (detailsPopup || reservePopup) { return }
-    this.TimingTime = this.TimingTime ? this.TimingTime : 20
+    this.TimingTime = this.TimingTime ? this.TimingTime : 60
     if (!value) {
       this.timeTimeout = setTimeout(() => {
         this.TimingTime -= 1
@@ -2526,10 +2526,10 @@ class MonitoringModule extends React.Component {
                 </div>
                 <div className={styles.ItemFooter}>
                   {
-                    (reservePopup.planStatus === 1) || (reservePopup.update === true || reservePopup.update === false) ? <span onClick={reservePopup.update === true || reservePopup.update === false ? this.handleMarkControl : this.handleRelease}>发&nbsp;&nbsp;布</span> : null
+                    userLimit.includes(100) && (reservePopup.planStatus === 1 || (reservePopup.update === true || reservePopup.update === false)) ? <span onClick={reservePopup.update === true || reservePopup.update === false ? this.handleMarkControl : this.handleRelease}>发&nbsp;&nbsp;布</span> : null
                   }
                   {
-                    ((reservePopup.planStatus === 2 && reservePopup.organization === 1) || (reservePopup.planStatus === 3 && reservePopup.organization === 2)) ? <span onClick={() => { this.handlecancelRel(reservePopup.planNum, 'audit') }}>审&nbsp;&nbsp;核</span> : null
+                    userLimit.includes(101) && ((reservePopup.planStatus === 2 && reservePopup.organization === 1) || (reservePopup.planStatus === 3 && reservePopup.organization === 2)) ? <span onClick={() => { this.handlecancelRel(reservePopup.planNum, 'audit') }}>审&nbsp;&nbsp;核</span> : null
                   }
                   {/* {
                     (reservePopup.planStatus === 1 || (reservePopup.planStatus === 2 && reservePopup.organization === 1) || (reservePopup.planStatus === 3 && reservePopup.organization === 2) || reservePopup.planStatus === 4) ? <span onClick={() => { this.handlecancelRel(reservePopup.planNum, 'cancel') }}>{reservePopup.planStatus === 4 ? '取 消' : '撤 销'}</span> : null

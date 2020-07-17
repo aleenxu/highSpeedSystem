@@ -5,7 +5,8 @@ import styles from './SystemMenu.scss'
 import Times from '../DateTime/DateTime'
 import IsLogin from '../IsLogin/IsLogin'
 import IconLogo from '../../imgs/logo.png'
-const { SubMenu } = Menu;
+
+const { SubMenu } = Menu
 class SystemMenu extends React.Component {
   constructor(props) {
     super(props)
@@ -29,7 +30,6 @@ class SystemMenu extends React.Component {
       path.push('#' + item.path) // 所有路由权限
     })
     // console.log(path, window.location.hash);
-
     if (!path.includes(window.location.hash)) { // 判断当前是否有当前路由权限
       // window.location.hash = '#/login'
       this.props.history.push('login')
@@ -42,7 +42,7 @@ class SystemMenu extends React.Component {
           item.Children.push(items) // 添加对应的一级目录子目录
         }
       })
-      /*   return item.Children.length || item.path === '/monitoringmodule' // 筛选出要展示的目录 */
+        return item.Children.length || item.path === '/monitoringmodule' // 筛选出要展示的目录
     })
 
 

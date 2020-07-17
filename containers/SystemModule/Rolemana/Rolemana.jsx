@@ -48,6 +48,7 @@ class Rolemana extends React.Component {
       name: '',
       remark: '',
     }
+    this.TreeData = []
   }
   componentDidMount = () => {
     // 获取用户权限
@@ -65,14 +66,11 @@ class Rolemana extends React.Component {
     getResponseDatas('post', this.listTrueUrl).then((res) => {
       const { code, data } = res.data
       if (code === 0) {
+        this.handleTreeData(data)
+        console.log(this.TreeData);
         this.setState({ treeData: data })
       }
     })
-  }
-  handlePagination = (pageNumber) => {
-    // console.log('Page: ', pageNumber)
-    this.listParams.pageNo = pageNumber
-    this.getDeptList()
   }
   onExpand = (expandedKeys) => {
     // console.log('onExpand', expandedKeys)
@@ -81,16 +79,71 @@ class Rolemana extends React.Component {
       autoExpandParent: false,
     })
   }
+  
+  onCheck = (check, e) => {
+    // console.log('onCheck', checkedKeys, e, this.state.treeData)
+    const { checkedKeys } = this.state
+    // console.log(checked);
+    const Item = e.checkedNodes[e.checkedNodes.length - 1]
+    const dataRefs = Item.props.dataRef
+    this.Ids = []
+    this.parentIds = []
+    this.childrenItem = null
+    this.Ids.push(Item.key)
+    if (e.checked) {
+      if (dataRefs.parentId) {
+        this.Ids.push((dataRefs.parentId).toString())
+        // console.log(dataRefs.parentId, '1111111111111');
+        this.handleCheckparentId(dataRefs.parentId)
+        this.Ids.push(...this.parentIds)
+      }
+      this.handleCheckedKeys(Item.props.children)
+      // console.log(this.Ids);
+      this.defaultparams.menuIds = [...new Set([...check.checked, ...this.Ids])]
+    } else {
+      checkedKeys.forEach((item) => { // 取出取消的项id
+        if (!check.checked.includes(item)) {
+          this.handleCheckparentId(item, true) // 拿到this.childrenItem 当前取消项数据
+          // this.handleCheckparentId(item) // 拿到 this.parentIds 当前取消项所有的父亲id
+          this.TreeData.forEach((it) => {
+            if (it.id === Number(item)) { // 找到当前级别是否取消父节
+              this.TreeData.forEach((ite) => {
+                if (ite.id === Number(it.parentId)) { // 找到当前的父亲项
+                  const childrenId = []
+                  ite.children.forEach((t) => {
+                    childrenId.push(check.checked.includes((t.id).toString())) // 判断是受当前父亲项下有勾选
+                  })
+                  const bl = childrenId.some((x) => { return x === true }) // 有一项为true时候就是true
+                  if (!bl) { // 无勾选则取消父亲项的勾选
+                    if (it.type === 1) { // 判断是否是按钮，1的时候为菜单 2的时候为按钮
+                      if (check.checked.includes((it.parentId).toString())) {
+                        check.checked.splice(check.checked.indexOf((it.parentId).toString()), 1)
+                      }
+                    }
+                  }
+                }
+              })
 
-  onCheck = (checkedKeys, e) => {
-    // console.log('onCheck', checkedKeys, e)
-    this.defaultparams.menuIds = checkedKeys.checked
-    /*  this.defaultparams.menuIds = [...e.halfCheckedKeys, ...checkedKeys] */
-    this.setState({ checkedKeys: checkedKeys.checked })
+              if (it.children) { // 取消掉当前项下所有子项的勾选
+                it.children.forEach((i) => {
+                  // console.log(check.checked, i.id);
+                  if (check.checked.includes((i.id).toString())) {
+                    check.checked.splice(check.checked.indexOf((i.id).toString()), 1)
+                  }
+                })
+              }
+            }
+          })
+        }
+      })
+      console.log(checkedKeys, check.checked, this.childrenItem)
+      this.defaultparams.menuIds = [...new Set(check.checked)]
+    }
+    this.setState({ checkedKeys: this.defaultparams.menuIds })
   }
 
-  onSelect = (selectedKeys, info) => {
-    // console.log('onSelect', info)
+  onSelect = (selectedKeys, e) => {
+    // console.log(selectedKeys, e);
     this.setState({ selectedKeys })
   }
   getSystemMenu = () => {
@@ -140,6 +193,44 @@ class Rolemana extends React.Component {
     // console.log(formData)
     return formData
   }
+  handleCheckedKeys = (data) => {
+    data.map((item) => {
+      this.Ids.push(item.key || item.id)
+      console.log(item);
+      if (item.props.children) {
+        this.handleCheckedKeys(item.props.children)
+      }
+    })
+  }
+  handleTreeData = (data) => {
+    this.TreeData.push(...data)
+    data.forEach((item) => {
+      if (item.children) {
+        this.handleTreeData(item.children)
+      }
+    })
+  }
+  handleCheckparentId = (id, bool) => {
+    for (let i = 0; i < this.TreeData.length; i++) {
+      const item = this.TreeData[i]
+      // console.log(item, item.id === id);
+      if (item.id === Number(id)) {
+        if (bool) {
+          this.childrenItem = item
+          return
+        } else if (item.parentId) {
+          this.parentIds.push((item.parentId).toString())
+          this.handleCheckparentId(item.parentId)
+          return
+        }
+      }
+    }
+  }
+  handlePagination = (pageNumber) => {
+    // console.log('Page: ', pageNumber)
+    this.listParams.pageNo = pageNumber
+    this.getDeptList()
+  }
   handleAddGroup = () => {
     this.isAdd = true
     this.setState({
@@ -154,7 +245,7 @@ class Rolemana extends React.Component {
       name: '',
       remark: '',
     }
-    this.setState({ showGroupMsg: false, expandedKeys: [], checkedKeys: [38], selectedKeys: [], autoExpandParent: true, })
+    this.setState({ showGroupMsg: false, expandedKeys: [], checkedKeys: [38], selectedKeys: [], autoExpandParent: true })
   }
   handleEditItems = (id) => {
     this.isAdd = false
@@ -181,48 +272,6 @@ class Rolemana extends React.Component {
     const value = typeof (e) === 'object' ? e.target.value : e
     this.defaultparams[itemname] = value
   }
-  /* handleAddEdit = () => {
-    if (this.isAdd) {
-      getResponseDatas('post', this.addListUrl, this.getFormData(this.defaultparams)).then((res) => {
-        const { code, msg } = res.data
-        if (code === 0) {
-          this.listParams.keyword = ''
-          this.listParams.pageNo = 1
-          this.state.checkedKeys = []
-          this.defaultparams = {
-            id: '',
-            menuIds: '',
-            name: '',
-            remark: '',
-          }
-          message.info('添加成功!')
-          this.getDeptList()
-        } else {
-          message.info(msg)
-        }
-      })
-    } else {
-      getResponseDatas('post', this.updateUrl, this.getFormData(this.defaultparams)).then((res) => {
-        const { code, msg } = res.data
-        if (code === 0) {
-          this.listParams.keyword = ''
-          this.listParams.pageNo = 1
-          this.state.checkedKeys = []
-          this.defaultparams = {
-            id: '',
-            menuIds: '',
-            name: '',
-            remark: '',
-          }
-          message.info('修改成功!')
-          this.getDeptList()
-        } else {
-          message.info(msg)
-        }
-      })
-    }
-    this.handleCloseGroupMsg()
-  } */
   handleDeleteItem = (id) => {
     const that = this
     this.deleteParams.roleIds.push(id)
@@ -236,8 +285,6 @@ class Rolemana extends React.Component {
             const { code, msg } = res.data
             if (code === 0) {
               message.info('删除成功！')
-              /* that.listParams.keyword = '' */
-              // this.listParams.pageNo = 1
               that.getDeptList()
               resolve()
             } else {
@@ -391,6 +438,7 @@ class Rolemana extends React.Component {
                             <Tree
                               checkable
                               checkStrictly
+                              defaultExpandAll
                               onExpand={this.onExpand}
                               expandedKeys={this.state.expandedKeys}
                               autoExpandParent={this.state.autoExpandParent}
@@ -398,7 +446,6 @@ class Rolemana extends React.Component {
                               checkedKeys={this.state.checkedKeys}
                               onSelect={this.onSelect}
                               selectedKeys={this.state.selectedKeys}
-                              defaultExpandAll={true}
                             >
                               {this.renderTreeNodes(treeData)}
                             </Tree> : null}
