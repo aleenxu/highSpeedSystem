@@ -62,7 +62,8 @@ class GMap extends React.Component {
       backgroundColor: '#1e375d',
       dataAll: this.props.dataAll,
     }
-    this.placeSearch = null;
+    this.placeSearch = null
+    this.routeLineData = []
     this.map = null
     this.markers = []
     this.publicLayers = []
@@ -205,6 +206,7 @@ class GMap extends React.Component {
         mapStyle: "amap://styles/c3fa565f6171961e94b37c4cc2815ef8",
         zoom: this.props.mapID === 'HistorcalMap' ? 12 : 14,
       })
+      map.on('click', (e) => { console.log([e.lnglat.getLng(), e.lnglat.getLat()]) })
       if (this.props.mapID !== 'ReserveMap') {
         window.map = map
         window.map.on('mousemove')
@@ -514,9 +516,91 @@ class GMap extends React.Component {
       infoWindow.close()
     })
   }
-  searchKeyWords = e => {
-    this.placeSearch.setCity(e.poi.adcode);
-    this.placeSearch.search(e.poi.name);  //关键字查询查询
+  searchKeyWords = (e) => {
+    this.placeSearch.setCity(e.poi.adcode)
+    this.placeSearch.search(e.poi.name)  //关键字查询查询
+  }
+  // 创建绘画线路径
+  handleDrivingPolicy = (data, lineLatlngArr, color) => {
+    console.log(data);
+    const drivingOption = {
+      policy: window.AMap.DrivingPolicy.LEAST_TIME,
+      ferry: 1, // 是否可以使用轮渡
+      province: '京', // 车牌省份的汉字缩写
+      // map:this.map,
+      // showTraffic:true,
+    }
+    // 构造路线导航类
+    const driving = new window.AMap.Driving(drivingOption)
+    // 规避的区域
+    const gons = lineLatlngArr.map((item) => {
+      return new window.AMap.LngLat(...item)
+    })
+    console.log(gons)
+    driving.setAvoidPolygons([
+      gons,
+    ])
+    // 根据起终点经纬度规划驾车导航路线
+    driving.search(new window.AMap.LngLat(104.037479, 30.361498), new window.AMap.LngLat(...data.lnglat), (status, result) => {
+      if (status === 'complete') {
+        if (result.routes && result.routes.length) {
+          // 绘制第一条路线，也可以按需求绘制其它几条路线
+          this.drawRoute(result.routes[0], color)
+          console.log('绘制驾车路线完成', result)
+          let itemData = result.routes[0].steps[0]
+          result.routes[0].steps.forEach((item) => {
+            if (item.distance > itemData.distance) {
+              itemData = item
+            }
+          })
+          this.props.handleStepsList({ city: data.name, distance: result.routes[0].distance, road: itemData.road, time: result.routes[0].time })
+        }
+      } else {
+        console.log('获取驾车数据失败：' + result)
+      }
+    })
+  }
+  drawRoute = (route, color) => {
+    const path = this.parseRouteToPath(route)
+    const startMarker = new window.AMap.Marker({
+      position: path[0],
+      icon: 'https://webapi.amap.com/theme/v1.3/markers/n/start.png',
+      map: this.map,
+    })
+    const endMarker = new window.AMap.Marker({
+      position: path[path.length - 1],
+      icon: 'https://webapi.amap.com/theme/v1.3/markers/n/end.png',
+      map: this.map,
+    })
+console.log(`rgba(${Math.round(Math.random() * 255)},${Math.round(Math.random() * 255)},${Math.round(Math.random() * 255)},1)`);
+    const routeLine = new window.AMap.Polyline({
+      path,
+      isOutline: true,
+      outlineColor: '#ffeeee',
+      borderWeight: 2,
+      strokeWeight: 5,
+      // strokeColor: color,
+      strokeColor: `rgba(${Math.round(Math.random() * 255)},${Math.round(Math.random() * 255)},${Math.round(Math.random() * 255)},1})`,
+      lineJoin: 'round',
+    })
+    this.routeLineData.push([startMarker, endMarker, routeLine])
+    this.map.add(routeLine)
+    // 调整视野达到最佳显示区域
+    this.map.setFitView([startMarker, endMarker, routeLine])
+  }
+  handlerouteLineData = (index) => {
+    this.map.remove(this.routeLineData[index])
+    this.routeLineData.splice(index, 1)
+  }
+  parseRouteToPath = (route) => {
+    const path = []
+    for (let i = 0, l = route.steps.length; i < l; i++) {
+      const step = route.steps[i]
+      for (let j = 0, n = step.path.length; j < n; j++) {
+        path.push(step.path[j])
+      }
+    }
+    return path
   }
   render() {
     const { mapID, styles } = this.state

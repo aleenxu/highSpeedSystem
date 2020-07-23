@@ -45,7 +45,7 @@ class SearchInput extends React.Component {
       // TODO: 使用districtSearch对象调用行政区查询的功能
       districtSearch.search(value, (status, result) => {
         // TODO : 按照自己需求处理查询结果
-        console.log(value || '泰州市', result)
+        console.log(value || '成都', result)
         this.cityData = []
         if (result.info === 'OK') {
           this.handlecityData(result.districtList)
@@ -56,9 +56,11 @@ class SearchInput extends React.Component {
     })
   }
   handlecityData = (data) => {
+    console.log(data);
     data.forEach((item) => {
-      if (item.level === 'city' || item.level === 'province') {
+      if (item.level === 'city' || item.level === 'province' || item.level === 'district') {
         this.cityData.push(item)
+        this.handlecityData(item.districtList)
       } else {
         if (item.districtList) {
           this.handlecityData(item.districtList)
@@ -73,7 +75,7 @@ class SearchInput extends React.Component {
     }
     this.setState({ value })
   }
-  handleSearch = (value = '') => {
+  handleSearch = (value = '成都') => {
     if (timeout) {
       clearTimeout(timeout)
       timeout = null
@@ -83,8 +85,14 @@ class SearchInput extends React.Component {
     timeout = setTimeout(this.handleFake.bind(null, value), 300)
   }
   handleChange = (value) => {
+    console.log(value);
     this.setState({ value })
   }
+  OpenInforItem = (item) => {
+    console.log(item, { adcode: item.adcode, citycode: item.citycode, lnglat: [item.center.getLng(), item.center.getLat()] })
+    this.props.OpenInforItem({ adcode: item.adcode, citycode: item.citycode, lnglat: [item.center.getLng(), item.center.getLat()], name: item.name })
+  }
+
   render() {
     return (
       <Select
@@ -101,7 +109,7 @@ class SearchInput extends React.Component {
         onFocus={this.handleonFocus}
       >
         {this.state.data.map((item) => {
-          return <Option key={item.adcode} onClick={(e) => { this.props.OpenInforItem(item) }}>{item.name}</Option>
+          return <Option key={item.adcode} onClick={(e) => { this.OpenInforItem(item) }}>{item.name}</Option>
         })}
       </Select>
     )

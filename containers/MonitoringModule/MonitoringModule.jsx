@@ -89,6 +89,9 @@ class MonitoringModule extends React.Component {
       reservePopupOne: null,
       operationData: null,
       TypeWinPopup: null,
+      policyList: [],
+      stepsList: [],
+      routeLine: []
     }
     // 修改管控时的参数
     this.controlDatas = {
@@ -197,8 +200,8 @@ class MonitoringModule extends React.Component {
     this.byUserUrl = '/control/dict/code/get/plan/status/by/user'
     this.operationUrl = '/control/control/plan/get/operate/by/' // {planNum}根据管控方案编号获取管控方案操作步骤
     this.contentUrl = '/control/device/get/current/show/content' // 获取设备当前显示内容'
-    // this.socketUrl = 'ws://47.108.61.84:8081/control/notify/traffic/'
-    this.socketUrl = 'ws://192.168.1.124:20207/control/notify/traffic/'
+    this.socketUrl = 'ws://47.108.61.84:8081/control/notify/traffic/'
+    // this.socketUrl = 'ws://192.168.1.124:20207/control/notify/traffic/'
   }
   componentWillMount = () => {
     // 获取用户权限
@@ -1610,13 +1613,12 @@ class MonitoringModule extends React.Component {
       window.mouseTool.close(true) //关闭，并清除覆盖物
     } else {
       this.controlDatas = {
+        planName: '', // 名称
         eventId: '', // 事件ID
-        roadId: '', // 高速ID
+        hwayId: '', // 高速ID
         directionId: '', // 方向ID
-        startPileNum: '', //桩号
-        endPileNum: '', //桩号
-        roadName: '', // 高速名称
-        eventType: 1, // 事件类型
+        startPileNum: '', // 桩号
+        endPileNum: '', // 桩号
         directionName: '',
         locationMode: '1',
         situation: 0,
@@ -1627,6 +1629,8 @@ class MonitoringModule extends React.Component {
         boxFlag: null,
         controlBtnFlagText: '框选设备',
         directionName: '',
+        policyList: [],
+        stepsList: [],
         // deviceString: [],
         // EventTagPopupTit: '标题',
       })
@@ -2177,9 +2181,43 @@ class MonitoringModule extends React.Component {
       }
     }
   }
+  handlePlaceSearch = () => {
+    const { policyList, lineLatlngArr } = this.state
+    if (!lineLatlngArr) {
+      this.handSecUrl()
+      this.setState({ SearchInputCity: null })
+      return
+    }
+    for (let i = 0; i < policyList.length; i++) {
+      if (policyList[i].adcode === this.SearchInputValue.adcode) {
+        message.warning('当前城市已存在！')
+        return
+      }
+    }
+    policyList.push(this.SearchInputValue)
+    if (this.eqChildGMap) {
+      this.eqChildGMap.handleDrivingPolicy(this.SearchInputValue, lineLatlngArr, 'blue')
+    }
+    this.setState({ SearchInputCity: null, policyList })
+  }
+  handleStepsList = (item) => {
+    const { stepsList } = this.state
+    console.log(item);
+    stepsList.push(item)
+    this.setState({ stepsList })
+  }
+  handlerouteLineData = (index) => {
+    const { policyList, stepsList } = this.state
+    if (this.eqChildGMap) {
+      this.eqChildGMap.handlerouteLineData(index)
+    }
+    policyList.splice(index)
+    stepsList.splice(index)
+    this.setState({ policyList, stepsList })
+  }
   render() {
     const {
-      TypeWinPopup, operationData, SearchInputCity, contingencyData, InfoWinPopup, roadDirection, hwayDirection, MeasuresList, eventsPopup, groupType, planList, EventTagPopup, EventTagPopupTit, roadNumber, endValueTime, conditionList, boxSelect, flagClose, oldDevicesList,
+      stepsList, policyList, TypeWinPopup, operationData, SearchInputCity, contingencyData, InfoWinPopup, roadDirection, hwayDirection, MeasuresList, eventsPopup, groupType, planList, EventTagPopup, EventTagPopupTit, roadNumber, endValueTime, conditionList, boxSelect, flagClose, oldDevicesList,
       boxSelectList, hwayList, directionList, VIboardPopup, groupStatus, controlPopup, controlBtnFlag, controlBtnFlagText, detailsPopup, whethePopup, reservePopup, startValue, endValue, endOpen, SidePopLeft, detailsLatlng
       , controlTypes, eventTypes, deviceTypes, updatePoint, reservePopupOne, userLimit, TimeData, deviceCodeList, deviceDetailList, checkedListBox } = this.state
     return (
@@ -2193,7 +2231,7 @@ class MonitoringModule extends React.Component {
         </div>
         <div id="deviceBox" className={`${styles.mapIconManage} animated ${'bounceInDown'}`}>
           {controlBtnFlag ? <span onClick={(e) => { this.controlBtnClick(e) }}>{controlBtnFlagText}</span> : null}
-          {/* <span onClick={(e) => { this.handleEventTag(true, e) }}>道路封闭</span> */}
+          <span onClick={(e) => { this.handleEventTag(true, e) }}>道路封闭</span>
           <span>
             <Popover content={(<div>
               <p className={this.state.deviceTurnBoard ? styles.true : ''} onClick={() => { this.mapLayerShowHide(!this.state.deviceTurnBoard, 'deviceTurnBoard') }}>门架情报板</p>
@@ -2710,7 +2748,7 @@ class MonitoringModule extends React.Component {
           EventTagPopup ?
             <div className={styles.MaskBox} style={{ zIndex: '996' }}>
               <div className={styles.EventTagging}>
-                <GMap equipmentInfoWinImg={this.equipmentInfoWinImg} deviceString={this.state.deviceString.join()} EventTagPopup={EventTagPopup} equipmentInfoWin={this.equipmentInfoWin} styles={this.mapStyles} key="popMap" mapID="popMap" dataAll={SidePopLeft} roadLatlng={detailsLatlng} handledetai={this.handledetai} detailsPopup={detailsPopup} boxSelect={boxSelect} flagClose={flagClose} />
+                <GMap handleStepsList={this.handleStepsList} onRef={(el) => { this.eqChildGMap = el }} equipmentInfoWinImg={this.equipmentInfoWinImg} deviceString={this.state.deviceString.join()} EventTagPopup={EventTagPopup} equipmentInfoWin={this.equipmentInfoWin} styles={this.mapStyles} key="popMap" mapID="popMap" dataAll={SidePopLeft} roadLatlng={detailsLatlng} handledetai={this.handledetai} detailsPopup={detailsPopup} boxSelect={boxSelect} flagClose={flagClose} />
                 <div className={styles.EventTaggingLeft} style={{ zIndex: '999' }}>
                   <div className={styles.Title} style={{ background: '#132334', position: 'fixed', top: '61px', left: 'calc(5% + 6px)', zIndex: '999', width: 'calc(21.6% - 2px)' }}>{EventTagPopupTit}<Icon className={styles.Close} onClick={() => { this.handleEventTag(false) }} type="close" /></div>
                   {
@@ -2782,7 +2820,7 @@ class MonitoringModule extends React.Component {
                             <div className={styles.ItemInput}>
                               {
                                 controlTypes && controlTypes.map((item) => {
-                                  return <div className={classNames(styles.AddItem, (this.state.deviceString.includes(item.id) ? styles.currentSel : null))} key={'controlTypes' + item.id} onClick={() => { this.updateControlTypes(item.id) }}>{item.name}</div>
+                                  return <div className={classNames(styles.AddItem, (this.state.deviceString.includes(item.id) ? styles.currentSel : null))} key={item.id} onClick={() => { this.updateControlTypes(item.id) }}>{item.name}</div>
                                 })
                               }
                             </div>
@@ -2794,10 +2832,11 @@ class MonitoringModule extends React.Component {
                           <div className={styles.ItemBox} style={{ marginTop: '5px' }}>
                             <div className={styles.ItemInput}>
                               {
-                                eventTypes && eventTypes.map((item, i) => {
-                                  return <div className={classNames(styles.AddItem, styles.currentSel)} key={item.eventType} style={{ position: 'relative', width: '31%', paddingRight: '22px' }}>{item.eventTypeName}<Icon style={{ position: 'absolute', right: '5px', top: '8px' }} type="close" /></div>
+                                policyList && policyList.map((item, index) => {
+                                  return <div className={classNames(styles.AddItem, styles.currentSel)} key={item.adcode} style={{ position: 'relative', width: '31%', paddingRight: '22px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.name}<Icon style={{ position: 'absolute', right: '5px', top: '8px' }} type="close" onClick={() => { this.handlerouteLineData(index) }} /></div>
                                 })
                               }
+                              {(policyList && policyList.length === 0) ? <NoData /> : null}
                             </div>
                           </div>
                         </div>,
@@ -2806,10 +2845,11 @@ class MonitoringModule extends React.Component {
                           <div className={styles.ItemBox} style={{ marginTop: '5px' }}>
                             <div className={styles.ItemInput}>
                               {
-                                eventTypes && eventTypes.map((item, i) => {
-                                  return <div className={styles.Proposal} key={i}>{i}</div>
+                                stepsList && stepsList.map((item, index) => {
+                                  return <div className={styles.Proposal} key={item.road + item.time + item.distance}>{index + 1}.去往{item.city}请绕行{item.road},全程{item.distance}米</div>
                                 })
                               }
+                              {(stepsList && stepsList.length === 0) ? <NoData /> : null}
                             </div>
                           </div>
                         </div>,
@@ -2910,7 +2950,7 @@ class MonitoringModule extends React.Component {
                   </div>
                 </div>
                 <div className={styles.ItemFooter} style={{ bottom: '-15px' }}>
-                  <span>确&nbsp;&nbsp;认</span>
+                  <span onClick={this.handlePlaceSearch}>确&nbsp;&nbsp;认</span>
                   <span onClick={() => { this.setState({ SearchInputCity: null }) }}>返&nbsp;&nbsp;回</span>
                 </div>
               </div>
