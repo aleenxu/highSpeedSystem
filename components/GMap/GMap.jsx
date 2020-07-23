@@ -228,7 +228,7 @@ class GMap extends React.Component {
       /*   const trafficLayer = new AMap.TileLayer.Traffic({
           zIndex: 10,
         }); */
-      const trafficLayer = new AMap.TileLayer.Traffic({
+      const trafficLayer = new window.AMap.TileLayer.Traffic({
         autoRefresh: true, // 是否自动刷新，默认为 false
         interval: 60, // 刷新间隔，默认60s
         zIndex: 10,

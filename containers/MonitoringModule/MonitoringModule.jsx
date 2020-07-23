@@ -197,6 +197,7 @@ class MonitoringModule extends React.Component {
     this.byUserUrl = '/control/dict/code/get/plan/status/by/user'
     this.operationUrl = '/control/control/plan/get/operate/by/' // {planNum}根据管控方案编号获取管控方案操作步骤
     this.contentUrl = '/control/device/get/current/show/content' // 获取设备当前显示内容'
+    // this.socketUrl = 'ws://47.108.61.84:8081/control/notify/traffic/'
     this.socketUrl = 'ws://192.168.1.124:20207/control/notify/traffic/'
   }
   componentWillMount = () => {
@@ -2513,16 +2514,6 @@ class MonitoringModule extends React.Component {
                       <div style={{ width: '100%' }} className={styles.ItemInput}><Input maxLength={80} defaultValue={reservePopup.controlDes} onChange={(e) => { reservePopup.update == true || reservePopup.update == false ? this.handleInput(e, 'controlDes', 'reservePopup') : this.handleInput(e, 'controlDes', 'publishPlanVO') }} disabled={reservePopup.planStatus > 1} placeholder="事件描述" /></div>
                     </div>
                   </div>
-                  {/* <div className={styles.ItemBox}>
-                    <div className={styles.HeadItem}>发布渠道
-                      <div style={{ marginLeft: '10px' }} className={styles.ItemInput}>
-                        <Checkbox.Group defaultValue={reservePopup.channel} onChange={(e) => { reservePopup.update == true || reservePopup.update == false ? this.handleCheckboxGroup(e, 'channel', 'reservePopup') : this.handleCheckboxGroup(e, 'channel', 'publishPlanVO') }}>
-                          <Checkbox value="1" >高德</Checkbox>
-                          <Checkbox value="2" >管控设备</Checkbox>
-                        </Checkbox.Group>
-                      </div>
-                    </div>
-                  </div> */}
                 </div>
                 <div className={styles.ItemFooter}>
                   {
@@ -2531,9 +2522,6 @@ class MonitoringModule extends React.Component {
                   {
                     userLimit.includes(101) && ((reservePopup.planStatus === 2 && reservePopup.organization === 1) || (reservePopup.planStatus === 3 && reservePopup.organization === 2)) ? <span onClick={() => { this.handlecancelRel(reservePopup.planNum, 'audit') }}>审&nbsp;&nbsp;核</span> : null
                   }
-                  {/* {
-                    (reservePopup.planStatus === 1 || (reservePopup.planStatus === 2 && reservePopup.organization === 1) || (reservePopup.planStatus === 3 && reservePopup.organization === 2) || reservePopup.planStatus === 4) ? <span onClick={() => { this.handlecancelRel(reservePopup.planNum, 'cancel') }}>{reservePopup.planStatus === 4 ? '取 消' : '撤 销'}</span> : null
-                  } */}
                   {(reservePopup.update === true || reservePopup.update === false) || <span onClick={() => { this.handlecancelRel(reservePopup.planNum, 'cancel') }}>{reservePopup.planStatus === 4 ? '取 消' : '撤 销'}</span>}
                   {
                     (reservePopup.planStatus === 4 && this.userInfo.password == reservePopup.organization) ? <span onClick={() => { this.handleEndValueTime(true) }}>延&nbsp;&nbsp;时</span> : null
