@@ -203,6 +203,7 @@ class GMap extends React.Component {
       const map = new AMap.Map(_this.state.mapID, {
         resizeEnable: true, //是否监控地图容器尺寸变化
         center: [103.882158, 30.436527], //初始化地图中心点
+        features: ['bg', 'road', 'building'], // point
         mapStyle: "amap://styles/c3fa565f6171961e94b37c4cc2815ef8",
         zoom: this.props.mapID === 'HistorcalMap' ? 12 : 14,
       })
@@ -572,7 +573,7 @@ class GMap extends React.Component {
       icon: 'https://webapi.amap.com/theme/v1.3/markers/n/end.png',
       map: this.map,
     })
-console.log(`rgba(${Math.round(Math.random() * 255)},${Math.round(Math.random() * 255)},${Math.round(Math.random() * 255)},1)`);
+    console.log(`rgba(${Math.round(Math.random() * 255)},${Math.round(Math.random() * 255)},${Math.round(Math.random() * 255)},1)`);
     const routeLine = new window.AMap.Polyline({
       path,
       isOutline: true,

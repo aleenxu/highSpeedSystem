@@ -1,8 +1,11 @@
 import axios from 'axios'
 
+console.log(process.env.NODE_ENV);
 const instance = axios.create({
   // baseURL: 'http://192.168.1.124:20207',  
-  baseURL: 'http://47.108.61.84:8081',
+  baseURL: process.env.NODE_ENV === 'development' ?
+    'http://192.168.1.124:20207' :
+    'http://47.108.61.84:8081',
 })
 // 请求拦截
 instance.interceptors.request.use((config) => {

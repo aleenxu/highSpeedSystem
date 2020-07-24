@@ -372,7 +372,7 @@
       border: 1px solid #959595;
       font-size: 12px;
     }
-    :global(.ant-select-dropdown-menu-item){
+    :global(.ant-select-dropdown-menu-item) {
       font-size: 12px;
     }
     :global(.ant-select-dropdown) {
@@ -889,6 +889,9 @@
   background: rgba(19, 27, 37, 0.8);
   padding-left: 8px;
   margin: 5px 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .proposalPlus {
   float: right;
