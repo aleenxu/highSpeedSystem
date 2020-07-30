@@ -601,7 +601,7 @@ class TollGate extends React.Component {
                       </Form.Item>
                     </div>
                   </div>
-                  <div className={styles.ItemLine}>
+                  {/*  <div className={styles.ItemLine}>
                     <div className={styles.Item}>
                       <Form.Item
                         name="direction"
@@ -650,7 +650,7 @@ class TollGate extends React.Component {
                         )}
                       </Form.Item>
                     </div>
-                  </div>
+                  </div> */}
                   <div className={styles.ItemLine}>
                     <div className={styles.Item}>
                       <Form.Item

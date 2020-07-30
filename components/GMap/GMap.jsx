@@ -197,15 +197,29 @@ class GMap extends React.Component {
       }
     })
   }
+
   loadingMap = (value) => {
     const _this = this;
     if (!value) {
       const map = new AMap.Map(_this.state.mapID, {
-        resizeEnable: true, //是否监控地图容器尺寸变化
-        center: [103.882158, 30.436527], //初始化地图中心点
-        features: ['bg', 'road', 'building'], // point
-        mapStyle: "amap://styles/c3fa565f6171961e94b37c4cc2815ef8",
+        resizeEnable: true,
+        rotateEnable: true,
+        pitchEnable: true,
         zoom: this.props.mapID === 'HistorcalMap' ? 12 : 14,
+        pitch: 50,
+        rotation: -15,
+        viewMode: '3D',//开启3D视图,默认为关闭
+        buildingAnimation: true,//楼块出现是否带动画
+        mapStyle: 'amap://styles/darkblue',
+        expandZoomRange: true,
+        zooms: [3, 20],
+       /*  layers: [
+          // 卫星
+          new AMap.TileLayer.Satellite(),
+          // 路网
+          new AMap.TileLayer.RoadNet()
+        ], */
+        center: [103.882158, 30.436527], //初始化地图中心点
       })
       map.on('click', (e) => { console.log([e.lnglat.getLng(), e.lnglat.getLat()]) })
       if (this.props.mapID !== 'ReserveMap') {
@@ -561,6 +575,13 @@ class GMap extends React.Component {
       }
     })
   }
+  handleRgb = () => { // rgb颜色随机
+    const r = Math.floor(Math.random() * 256)
+    const g = Math.floor(Math.random() * 256)
+    const b = Math.floor(Math.random() * 256)
+    const color = `#${r.toString(16) + g.toString(16) + b.toString(16)}`
+    return color
+  }
   drawRoute = (route, color) => {
     const path = this.parseRouteToPath(route)
     const startMarker = new window.AMap.Marker({
@@ -573,7 +594,6 @@ class GMap extends React.Component {
       icon: 'https://webapi.amap.com/theme/v1.3/markers/n/end.png',
       map: this.map,
     })
-    console.log(`rgba(${Math.round(Math.random() * 255)},${Math.round(Math.random() * 255)},${Math.round(Math.random() * 255)},1)`);
     const routeLine = new window.AMap.Polyline({
       path,
       isOutline: true,
@@ -581,7 +601,7 @@ class GMap extends React.Component {
       borderWeight: 2,
       strokeWeight: 5,
       // strokeColor: color,
-      strokeColor: `rgba(${Math.round(Math.random() * 255)},${Math.round(Math.random() * 255)},${Math.round(Math.random() * 255)},1})`,
+      strokeColor: this.handleRgb(),
       lineJoin: 'round',
     })
     this.routeLineData.push([startMarker, endMarker, routeLine])

@@ -24,7 +24,7 @@ class SearchInput extends React.Component {
     }
   }
   componentDidMount = () => {
-
+    this.handleSearch()
   }
   componentWillUnmount = () => {
 
@@ -34,14 +34,14 @@ class SearchInput extends React.Component {
     /* $.getJSON('//restapi.amap.com/v3/direction/driving?key=931cce038c6e2e206f941225fbb9c0fd&origin=116.481028,39.989643&destination=116.434446,39.90816&originid=&destinationid=&extensions=base&strategy=0&waypoints=116.357483,39.907234&avoidpolygons=&avoidroad=', function (data) {
       console.log(data);
     }); */
-    AMap.service('AMap.DistrictSearch', () => { // 回调函数
+    window.AMap.service('AMap.DistrictSearch', () => { // 回调函数
       const opts = {
-        subdistrict: 2,   // 返回下一级行政区
+        subdistrict: 2, // 返回下一级行政区
         level: 'city', // 查询的范围
-        showbiz: false,  // 查询行政级别为 市
+        showbiz: false, // 查询行政级别为 市
       }
       // 实例化DistrictSearch
-      const districtSearch = new AMap.DistrictSearch(opts)
+      const districtSearch = new window.AMap.DistrictSearch(opts)
       // TODO: 使用districtSearch对象调用行政区查询的功能
       districtSearch.search(value, (status, result) => {
         // TODO : 按照自己需求处理查询结果
