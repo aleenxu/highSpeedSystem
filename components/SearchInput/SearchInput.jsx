@@ -13,10 +13,6 @@ class SearchInput extends React.Component {
       data: [],
       value: undefined,
     }
-    this.key = '931cce038c6e2e206f941225fbb9c0fd' // web服务
-    this.mapurl = 'https://restapi.amap.com/v3/config/district?'
-    this.mapurl2 = '//restapi.amap.com/v3/config/district?key=e9c21a13b9e2994799069908c9f56f9b&subdistrict=2&extensions=base&keywords='
-    this.mapurl1 = 'https://restapi.amap.com/v3/config/district?subdistrict=2&extensions=base&key=e9c21a13b9e2994799069908c9f56f9b&keywords='
     this.mapData = {
       keywords: '',
       subdistrict: 2,
@@ -34,7 +30,7 @@ class SearchInput extends React.Component {
     /* $.getJSON('//restapi.amap.com/v3/direction/driving?key=931cce038c6e2e206f941225fbb9c0fd&origin=116.481028,39.989643&destination=116.434446,39.90816&originid=&destinationid=&extensions=base&strategy=0&waypoints=116.357483,39.907234&avoidpolygons=&avoidroad=', function (data) {
       console.log(data);
     }); */
-    window.AMap.service('AMap.DistrictSearch', () => { // 回调函数
+    window.AMap.plugin('AMap.DistrictSearch', () => { // 回调函数
       const opts = {
         subdistrict: 2, // 返回下一级行政区
         level: 'city', // 查询的范围

@@ -210,15 +210,15 @@ class GMap extends React.Component {
         rotation: -15,
         viewMode: '3D',//开启3D视图,默认为关闭
         buildingAnimation: true,//楼块出现是否带动画
-        mapStyle: 'amap://styles/darkblue',
+        mapStyle: 'amap://styles/00299eb5f22c3d9cd9fb6589cb0d0a08',
         expandZoomRange: true,
         zooms: [3, 20],
-       /*  layers: [
-          // 卫星
-          new AMap.TileLayer.Satellite(),
-          // 路网
-          new AMap.TileLayer.RoadNet()
-        ], */
+        /*  layers: [
+           // 卫星
+           new AMap.TileLayer.Satellite(),
+           // 路网
+           new AMap.TileLayer.RoadNet()
+         ], */
         center: [103.882158, 30.436527], //初始化地图中心点
       })
       map.on('click', (e) => { console.log([e.lnglat.getLng(), e.lnglat.getLat()]) })
@@ -250,7 +250,7 @@ class GMap extends React.Component {
         interval: 60, // 刷新间隔，默认60s
         zIndex: 10,
       })
-      trafficLayer.setMap(map)
+      // trafficLayer.setMap(map)
       this.createLayerGroup('leftModule0') // 交通拥堵选中复选框显示的图层
       this.createLayerGroup('leftModule1') // 道路施工选中复选框显示的图层
       this.createLayerGroup('leftModule2') // 极端天气选中复选框显示的图层
@@ -274,15 +274,20 @@ class GMap extends React.Component {
         city: '成都',
         input: 'tipinputPop',
       }
-      const auto = new AMap.Autocomplete(autoOptions)
-      const autoPop = new AMap.Autocomplete(autoOptionsPop)
-      this.placeSearch = new AMap.PlaceSearch({
-        map: map,
-      })  //构造地点查询类
-      AMap.event.addListener(auto, 'select', this.searchKeyWords) // 注册监听，当选中某条记录时会触发
-      AMap.event.addListener(autoPop, 'select', this.searchKeyWords) // 注册监听，当选中某条记录时会触发
+      window.AMap.plugin(['AMap.PlaceSearch', 'AMap.AutoComplete'], () => {
+        const auto = new window.AMap.AutoComplete(autoOptions)
+        const autoPop = new window.AMap.AutoComplete(autoOptionsPop)
+        const placeSearch = new window.AMap.PlaceSearch({
+          map,
+        })
+        function select(e) {
+          placeSearch.setCity(e.poi.adcode)
+          placeSearch.search(e.poi.name)
+        }
+        autoPop.on('select', select)
+        auto.on('select', select)
+      })
     }
-
 
     // 点的新建
     // 图标收费站匝道灯
@@ -416,7 +421,7 @@ class GMap extends React.Component {
     window['lineLayers'].hide()
     // window['lineLayers'].clearLayer()
     window['lineLayers'].fx = []
-    window['lineLayers'].show()
+    // window['lineLayers'].show()
     const circle = new AMap.Circle({
       center: path,
       radius: 250, // 半径
@@ -440,15 +445,16 @@ class GMap extends React.Component {
     window['lineLayers'].hide()
     // window['lineLayers'].clearLayer()
     window['lineLayers'].fx = []
-    window['lineLayers'].show()
+    // window['lineLayers'].show()
     const polyline = new AMap.Polyline({
       path,
+      showDir: true,
       isOutline: true,
-      outlineColor: !type ? '#98989a' : 'red',
-      borderWeight: !type ? 15 : 8,
-      strokeColor: !type ? '#98989a' : 'red',
+      outlineColor: !type ? '#98989a' : '28F',
+      // borderWeight: !type ? 15 : 8,
+      strokeColor: !type ? '#98989a' : '28F',
       strokeOpacity: !type ? .6 : .9,
-      strokeWeight: 0,
+      strokeWeight: 12,
       // 折线样式还支持 'dashed
       strokeStyle: "solid",
       // strokeStyle是dashed时有效
