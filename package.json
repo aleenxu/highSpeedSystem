@@ -28,7 +28,7 @@
     "jsx-loader": "^0.13.2",
     "mini-css-extract-plugin": "^0.8.0",
     "node-sass": "^4.13.1",
-    "postcss": "^7.0.16",
+    "postcss": "^8.2.10",
     "postcss-cli": "^6.1.2",
     "postcss-loader": "^3.0.0",
     "sass-loader": "^7.1.0",
